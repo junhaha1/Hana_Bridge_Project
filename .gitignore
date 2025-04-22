@@ -1,0 +1,83 @@
+# --- Java 기본 ---
+*.class
+*.log
+*.ctxt
+*.jar
+*.war
+*.iml
+*.ipr
+*.iws
+*.DS_Store
+
+# --- Gradle ---
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle-cache/
+out/
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# --- VSCode ---
+.vscode/
+
+# --- OS별 불필요 파일 ---
+*.swp
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Lombok config (optional) ---
+lombok.config
+
+# --- 환경설정 파일 ---
+.env
+.env.*
+application-local.yml
+application-local.properties
+application-secret.yml
+application-secret.properties
+
+# --- JWT 키, Redis config 등 민감 정보 (직접 관리 시) ---
+*.key
+*.pem
+*.crt
+
+# --- 테스트 결과 ---
+test-output/
+test-results/
+
+# --- 로그 파일 ---
+logs/
+*.log
+
+# Node modules (필수)
+node_modules/
+
+# 빌드 결과물
+dist/
+build/
+
+# 환경 설정
+.env
+.env.local
+.env.*.local
+
+# 로그 및 캐시
+*.log
+.yarn/
+.pnpm-debug.log
+.cache/
+.vite/
+
+# IDE 설정
+.vscode/
+.idea/
+
+# OS 시스템 파일
+.DS_Store
+Thumbs.db
