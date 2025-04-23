@@ -3,8 +3,14 @@ package com.adela.hana_bridge_beapi.controller;
 import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.dto.board.BoardUpdateRequest;
+import com.adela.hana_bridge_beapi.dto.comment.CommentAddRequest;
+import com.adela.hana_bridge_beapi.dto.comment.CommentResponse;
+import com.adela.hana_bridge_beapi.dto.comment.CommentUpdateRequest;
 import com.adela.hana_bridge_beapi.entity.Board;
+import com.adela.hana_bridge_beapi.entity.Comment;
+import com.adela.hana_bridge_beapi.repository.UsersRepository;
 import com.adela.hana_bridge_beapi.service.BoardService;
+import com.adela.hana_bridge_beapi.service.CommentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,10 +26,16 @@ import java.util.stream.Collectors;
 @Tag(name = "ApiV1BoardController", description = "공지, 코드 게시판에 접근할 경우")
 public class BoardApiController {
     private final BoardService boardService;
+    private final UsersRepository usersRepository;
+    private final CommentService commentService;
 
     //글 등록
     @PostMapping("/article")
     public ResponseEntity<Board> addBoard(@RequestBody BoardAddRequest request) {
+        //userId 하드코딩,,, userId를 저장해야되서,,,,
+        //추후에 user == null 경우 예외 처리
+        Long userId = 2L;
+        request.connectionUserEntity(usersRepository.findById(userId).get());
         Board savedBoard = boardService.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -62,4 +74,47 @@ public class BoardApiController {
         return ResponseEntity.ok()
                 .body(updateBoard);
     }
+
+
+
+    //--------------------댓글---------------------------
+    //댓글 추가
+    @PostMapping("/comment/{boardId}")
+    public ResponseEntity<Comment> addComment(@PathVariable Long boardId, @RequestBody CommentAddRequest request) {
+        request.connectionArticle(boardService.findById(boardId));
+
+        //추후에 user == null 경우 예외 처리
+        //userId 하드코딩,,, userId를 저장해야되서,,,,
+        Long userId = 2L;
+        request.connectionUserEntity(usersRepository.findById(userId).get());
+        Comment savedComment = commentService.save(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(savedComment);
+    }
+
+    //댓글 삭제
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("commentId") long commentId){
+        commentService.delete(commentId);
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    //댓글 조회
+    @GetMapping("/comment/{boardId}")
+    public ResponseEntity<List<CommentResponse>> findByBoardIdComments(@PathVariable("boardId") long boardId) {
+        List<CommentResponse> comments = commentService.findComment(boardId)
+                .stream()
+                .map(comment -> new CommentResponse(comment))
+                .toList();
+        return ResponseEntity.ok().body(comments);
+    }
+
+    //댓글 수정
+    @PutMapping("/comment/{commentId}")
+    public ResponseEntity<String> updateComment(@PathVariable("commentId") long commentId, @RequestBody CommentUpdateRequest request){
+        Comment updateComment = commentService.update(commentId, request);
+        return ResponseEntity.ok("댓글이 수정되었습니다.");
+    }
+
 }

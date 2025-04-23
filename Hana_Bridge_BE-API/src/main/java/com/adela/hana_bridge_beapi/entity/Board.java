@@ -16,8 +16,9 @@ public class Board {
     @Column(name = "board_id", updatable = false)
     private Long boardId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users users;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -38,8 +39,8 @@ public class Board {
     private LocalDate updateAt;
 
     @Builder
-    public Board(Long userId, String title, String category, String code, String content, LocalDate createAt, LocalDate updateAt) {
-        this.userId = userId;
+    public Board(Users users, String title, String category, String code, String content, LocalDate createAt, LocalDate updateAt) {
+        this.users = users;
         this.title = title;
         this.category = category;
         this.code = code;

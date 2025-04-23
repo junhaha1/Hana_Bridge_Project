@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Getter
 public class BoardResponse {
     private final Long boardId;
-    private final Long userId;
+    private final String nickName;
     private final String title;
     private final String category;
     private final String content;
@@ -17,7 +17,7 @@ public class BoardResponse {
 
     public BoardResponse(Board board) {
         this.boardId = board.getBoardId();
-        this.userId = board.getUserId();
+        this.nickName = board.getUsers().getNickName();
         this.title = board.getTitle();
         this.category = board.getCategory();
         this.content = board.getContent();
