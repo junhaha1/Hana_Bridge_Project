@@ -4,14 +4,15 @@ import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class AssembleBoardService {
-    private AssembleRepository assembleRepository;
+    private final AssembleRepository assembleRepository;
 
     //모든 assemble 게시글 조회
     public List<AssembleBoard> findAllAssembleBoards() {
