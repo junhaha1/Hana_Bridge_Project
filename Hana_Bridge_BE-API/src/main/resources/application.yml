@@ -10,4 +10,3 @@ spring:
     username: test_user
     password : test0701
     driver-class-name: com.mysql.cj.jdbc.Driver
-
