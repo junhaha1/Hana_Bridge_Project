@@ -5,6 +5,7 @@ import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.dto.board.BoardUpdateRequest;
 import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.service.BoardService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/board")
+@Tag(name = "ApiV1BoardController", description = "공지, 코드 게시판에 접근할 경우")
 public class BoardApiController {
     private final BoardService boardService;
 
