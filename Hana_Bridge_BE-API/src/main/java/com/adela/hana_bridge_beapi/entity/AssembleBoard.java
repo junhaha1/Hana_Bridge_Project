@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "assembleboard")
 public class AssembleBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
