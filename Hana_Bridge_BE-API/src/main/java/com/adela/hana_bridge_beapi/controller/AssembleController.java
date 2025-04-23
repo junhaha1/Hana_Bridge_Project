@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.controller;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/assemble")
 @RequiredArgsConstructor
+@Tag(name = "ApiV1AssembleController", description = "assemble 게시판에 접근할 경우")
 public class AssembleController {
     private final AssembleBoardService assembleBoardService;
 
