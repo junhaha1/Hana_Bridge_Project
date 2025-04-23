@@ -5,6 +5,7 @@ import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,9 @@ public class AssembleBoardService {
 
     //게시글 ID를 통한 삭제
     public void deleteAssembleBoardById(Long assembleBoardId) {
-            assembleRepository.deleteById(assembleBoardId);
+        if (!assembleRepository.existsById(assembleBoardId)) {
+            throw new IllegalArgumentException("게시글이 존재하지 않습니다: " + assembleBoardId);
+        }
+        assembleRepository.deleteById(assembleBoardId);
     }
 }
