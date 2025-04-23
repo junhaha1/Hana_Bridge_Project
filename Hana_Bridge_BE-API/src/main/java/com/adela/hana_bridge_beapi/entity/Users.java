@@ -1,4 +1,4 @@
-package com.adela.hana_bridge_beapi.repository;
+package com.adela.hana_bridge_beapi.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +13,7 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    private int id;
+    private Long id;
 
     @Column(name = "email", unique = true)
     private String email;
@@ -25,7 +25,7 @@ public class Users {
     private String name;
 
     @Column(name = "nickname", nullable = false)
-    private String nickname;
+    private String nickName;
 
     @Column(name = "oauth_provider", nullable = true)
     private String oauthProvider;
@@ -40,11 +40,11 @@ public class Users {
     private LocalDateTime createdAt;
 
     @Builder
-    public Users(String email, String password, String name, String nickname, String oauthProvider, String oauthId, String role) {
+    public Users(String email, String password, String name, String nickName, String oauthProvider, String oauthId, String role) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.nickname = nickname;
+        this.nickName = nickName;
         this.oauthProvider = oauthProvider;
         this.oauthId = oauthId;
         this.role = role;
