@@ -81,3 +81,6 @@ build/
 # OS 시스템 파일
 .DS_Store
 Thumbs.db
+
+#데이터베이스 관련
+SQL
