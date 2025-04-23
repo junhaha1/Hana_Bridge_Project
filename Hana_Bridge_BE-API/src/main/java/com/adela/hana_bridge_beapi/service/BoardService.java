@@ -48,6 +48,9 @@ public class BoardService {
 
     //글 삭제
     public void delete(long boardId){
+        if (!boardRepository.existsById(boardId)) {
+            throw new IllegalArgumentException("게시글이 존재하지 않습니다: " + boardId);
+        }
         boardRepository.deleteById(boardId);
     }
 }
