@@ -1,10 +1,7 @@
 package com.adela.hana_bridge_beapi.repository;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -41,5 +38,18 @@ public class Users {
 
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Builder
+    public Users(String email, String password, String name, String nickname, String oauthProvider, String oauthId, String role) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.oauthProvider = oauthProvider;
+        this.oauthId = oauthId;
+        this.role = role;
+        this.createdAt = LocalDateTime.now();
+    }
+
 
 }
