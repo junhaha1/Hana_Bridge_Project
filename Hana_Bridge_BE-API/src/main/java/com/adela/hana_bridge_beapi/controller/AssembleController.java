@@ -3,17 +3,19 @@ package com.adela.hana_bridge_beapi.controller;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/assemble")
+@RequiredArgsConstructor
 public class AssembleController {
-    private AssembleBoardService assembleBoardService;
+    private final AssembleBoardService assembleBoardService;
 
     //게시글 전체 조회
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<AssembleBoardResponse>> findAllAssembleBoards() {
         //추후 확장을 위해 assembleBoard를 직접 전달
         List<AssembleBoardResponse> assembleBoardResponses = assembleBoardService.findAllAssembleBoards()
