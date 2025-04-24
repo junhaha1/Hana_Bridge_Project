@@ -4,6 +4,7 @@ import com.adela.hana_bridge_beapi.dto.user.LoginRequest;
 import com.adela.hana_bridge_beapi.dto.user.UserResponse;
 import com.adela.hana_bridge_beapi.service.TokenService;
 import com.adela.hana_bridge_beapi.service.UsersService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
@@ -41,7 +42,9 @@ public class UsersApiController {
 
     //로그아웃 API 호출
     @DeleteMapping("user/logout")
+    @SecurityRequirement(name = "bearer-key")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearerToken){
+        System.out.println("Authorization Header: " + bearerToken);
         tokenService.deleteRefreshToken(bearerToken.replace("Bearer ", ""));
         return ResponseEntity.ok().build();
     }
