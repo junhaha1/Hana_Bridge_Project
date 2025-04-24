@@ -24,7 +24,7 @@ public class BoardService {
     public List<Board> findByCategory(String category) {
         List<Board> boards = boardRepository.findByCategory(category);
         if (boards.isEmpty()) {
-            throw new IllegalArgumentException("not found: " + category);
+            throw new IllegalArgumentException("not found category: " + category);
         }
         return boards;
     }
@@ -32,7 +32,7 @@ public class BoardService {
     //글 상세 조회
     public Board findById(long boardId){
         return boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("not found: " + boardId));
+                .orElseThrow(() -> new IllegalArgumentException("not found boardId: " + boardId));
     }
 
 
@@ -40,7 +40,7 @@ public class BoardService {
     @Transactional
     public Board update(long boardId, BoardUpdateRequest request){
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("not found: " + boardId));
+                .orElseThrow(() -> new IllegalArgumentException("not found boardId: " + boardId));
         board.update(request.getTitle(), request.getCode(), request.getContent(), request.getUpdateAt());
 
         return board;
