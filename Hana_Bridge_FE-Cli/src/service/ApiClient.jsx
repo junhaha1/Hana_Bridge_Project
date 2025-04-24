@@ -11,12 +11,13 @@ class ApiClient{
 
 
   //Board 등록 
-  static sendBoard(userId, title, category, content, code, createAt, updateAt){
+  static sendBoard(accessToken, title, category, content, code, createAt, updateAt){
     console.log("POST Board");
-    return fetch(ApiClient.SEVER_URL + ApiClient.BOARD + '/aricle', {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/aricle', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       },
       body: JSON.stringify({
         userId: userId,
@@ -32,17 +33,18 @@ class ApiClient{
   //Board 전체 조회
   static getBoards(category){
     console.log("Get Boards By category: " + category);
-    return fetch(ApiClient.SEVER_URL + ApiClient.Board + '/category/' + category);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category);
   }
   //Board 상세 조회
   static getBoard(boardId){
     console.log("Get Article By boardId: " + boardId);
-    return fetch(ApiClient.SEVER_URL + ApiClient.Board + '/' + boardId);
+    console.log(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + boardId);
   }
   //Board 수정
   static updateBoard(boardId, title, content, code, updateAt){
     console.log("Update Boards By boardId: " + boardId);
-    return fetch(ApiClient.SEVER_URL + ApiClient.Board + '/article/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +60,7 @@ class ApiClient{
   //Board 삭제 
   static deleteBoard(boardId){
     console.log("Delete Board By boardId ");
-    return fetch(ApiClient.SEVER_URL + ApiClient.Board + '/article/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId, {
       method: "DELETE", 
       headers: {
         "Content-Type": "application/json"
@@ -71,17 +73,17 @@ class ApiClient{
   //Assemble 전체 조회
   static getAssembleBoards(){
     console.log("Get AssembleBoard");
-    return fetch(ApiClient.SEVER_URL + ApiClient.ASSEMBLE_BOARD);
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD);
   }
   //Assemble 상세 조회
   static getAssembleBoard(assembleBoardId){
     console.log("Get AssembleBoard By assembleBoardId: " + assembleBoardId);
-    return fetch(ApiClient.SEVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId);
   }
   //Assemble 삭제 
   static deleteAssembleBoard(assembleBoardId){
     console.log("Delete AssembleBoard By boardId ");
-    return fetch(ApiClient.SEVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId, {
       method: "DELETE", 
       headers: {
         "Content-Type": "application/json"
@@ -104,7 +106,40 @@ class ApiClient{
   }
 
   
-
+  //comment 조회 /board/comment/{board_id}
+  static getComments(boardId){
+    console.log("Get Comments By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + boardId);
+  }
+  //comment 등록 /board/comment/{board_id}
+  static sendComment(boardId, content, createAt){
+    console.log("POST Comment By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOABOARD_COMMENTRD + '/' + boardId, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: content,
+        createAt: createAt,
+      }),
+    });
+  }
+  //comment 수정 /board/comment/{comment_id}
+  static updateComment(commentId, content, createAt){
+    console.log("Update Comment By commentId: " + commentId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOABOARD_COMMENTRD + '/' + commentId, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: content,
+        createAt: createAt,
+      }),
+    });
+  }
+  //comment 삭제 /board/comment/{comment_id}
 
 
 
