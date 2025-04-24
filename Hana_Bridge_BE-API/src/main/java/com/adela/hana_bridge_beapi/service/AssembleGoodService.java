@@ -6,6 +6,7 @@ import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.repository.AssembleGoodRepository;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
 import com.adela.hana_bridge_beapi.repository.UsersRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +33,14 @@ public class AssembleGoodService {
                             .orElseThrow(() -> new IllegalArgumentException("User Not Found : " + request.getUserId()));
 
             assembleGoodRepository.save(request.toEntity(assembleBoard, users));
+        } else {
+            throw new IllegalArgumentException("Assemble Board Already Exists : " + request.getUserId());
         }
     }
 
     //해당 게시글의 좋아요 삭제
-    public void deleteAssembleBoardGood(Long assembleBoardId, Long userId) {
-        assembleGoodRepository.deleteByAssembleBoard_AssembleBoardIdAndUsers_Id(assembleBoardId, userId);
+    @Transactional
+    public void deleteAssembleBoardGood(AssembleGoodRequest request) {
+        assembleGoodRepository.deleteByAssembleBoard_AssembleBoardIdAndUsers_Id(request.getAssembleBoardId(), request.getUserId());
     }
 }

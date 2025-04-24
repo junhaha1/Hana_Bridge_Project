@@ -22,6 +22,12 @@ public class TokenService {
     //RefreshToken 유효시간 24시간
     private final long EXPIRATION_REFRESH_TIME = 1000 * 60 * 60 * 24;
 
+    //-------------Token 공통 기능--------------
+    public Long findUsersIdByToken(String token) {
+        String email = tokenProvider.getEmail(token);
+        Users users = usersService.findByEmail(email);
+        return users.getId();
+    }
 
     //-------------AccessToken 기능--------------
     //AccessToken 로그인 시에 처음 발급

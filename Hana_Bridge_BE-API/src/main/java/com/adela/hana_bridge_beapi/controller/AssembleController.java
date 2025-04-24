@@ -1,13 +1,17 @@
 package com.adela.hana_bridge_beapi.controller;
 
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
+import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodRequest;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
 import com.adela.hana_bridge_beapi.service.AssembleGoodService;
+import com.adela.hana_bridge_beapi.service.TokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,6 +21,7 @@ import java.util.List;
 public class AssembleController {
     private final AssembleBoardService assembleBoardService;
     private final AssembleGoodService assembleGoodService;
+    private final TokenService tokenService;
 
     //게시글 전체 조회
     @GetMapping("")
@@ -55,16 +60,18 @@ public class AssembleController {
     //게시글 좋아요 등록
     //Users 정보를 토큰에서 추출하도록 구현
     @PostMapping("/good/{assembleboard_id}")
-    public ResponseEntity<Void> registAssembleBoardGood(@PathVariable("assembleboard_id") Long assembleBoardId) {
-        //JWT 토큰 생성 후 구현
+    public ResponseEntity<Void> registAssembleBoardGood(@RequestHeader("Authorization") String accessToken, @PathVariable("assembleboard_id") Long assembleBoardId) {
+        Long userId = tokenService.findUsersIdByToken(accessToken.replace("Bearer ", ""));
+        assembleGoodService.registAssembleBoardGood(new AssembleGoodRequest(LocalDateTime.now(), userId, assembleBoardId));
         return ResponseEntity.ok().build();
     }
 
     //게시글 좋아요 삭제
     //Users 정보를 토큰에서 추출하도록 구현
     @DeleteMapping("/good/{assembleboard_id}")
-    public ResponseEntity<Void> deleteAssembleBoardGood(@PathVariable("assembleboard_id") Long assembleBoardId) {
-        //JWT 토큰 생성 후 구현
+    public ResponseEntity<Void> deleteAssembleBoardGood(@RequestHeader("Authorization") String accessToken, @PathVariable("assembleboard_id") Long assembleBoardId) {
+        Long userId = tokenService.findUsersIdByToken(accessToken.replace("Bearer ", ""));
+        assembleGoodService.deleteAssembleBoardGood(new AssembleGoodRequest(LocalDateTime.now(), userId, assembleBoardId));
         return ResponseEntity.ok().build();
     }
 }
