@@ -1,0 +1,56 @@
+package com.adela.hana_bridge_beapi.service;
+
+import com.adela.hana_bridge_beapi.entity.Board;
+import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
+import com.adela.hana_bridge_beapi.dto.board.BoardUpdateRequest;
+import com.adela.hana_bridge_beapi.repository.BoardRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class BoardService {
+    private final BoardRepository boardRepository;
+
+    //글 저장
+    public Board save(BoardAddRequest request){
+        return boardRepository.save(request.toEntity());
+    }
+
+    //글 전체 조회
+    public List<Board> findByCategory(String category) {
+        List<Board> boards = boardRepository.findByCategory(category);
+        if (boards.isEmpty()) {
+            throw new IllegalArgumentException("not found category: " + category);
+        }
+        return boards;
+    }
+
+    //글 상세 조회
+    public Board findById(long boardId){
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("not found boardId: " + boardId));
+    }
+
+
+    //글 수정
+    @Transactional
+    public Board update(long boardId, BoardUpdateRequest request){
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("not found boardId: " + boardId));
+        board.update(request.getTitle(), request.getCode(), request.getContent(), request.getUpdateAt());
+
+        return board;
+    }
+
+    //글 삭제
+    public void delete(long boardId){
+        if (!boardRepository.existsById(boardId)) {
+            throw new IllegalArgumentException("게시글이 존재하지 않습니다: " + boardId);
+        }
+        boardRepository.deleteById(boardId);
+    }
+}
