@@ -15,7 +15,9 @@ public class BoardResponse {
     private final LocalDate createAt;
     private final LocalDate updateAt;
 
-    public BoardResponse(Board board) {
+    private final Long likeCount;
+
+    public BoardResponse(Board board, Long likeCount) {
         this.boardId = board.getBoardId();
         this.nickName = board.getUsers().getNickName();
         this.title = board.getTitle();
@@ -24,5 +26,7 @@ public class BoardResponse {
         this.code = board.getCode();
         this.createAt = board.getCreateAt();
         this.updateAt = board.getUpdateAt();
+
+        this.likeCount = likeCount;
     }
 }
