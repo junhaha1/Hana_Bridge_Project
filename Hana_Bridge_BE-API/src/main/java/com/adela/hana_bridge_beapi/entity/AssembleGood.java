@@ -14,7 +14,7 @@ public class AssembleGood {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "assemblegood_id", nullable = false)
-    private Long assembleBoardId;
+    private Long assembleGoodId;
 
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createdAt;
