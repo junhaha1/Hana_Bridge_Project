@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.controller;
 import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.dto.board.BoardUpdateRequest;
+import com.adela.hana_bridge_beapi.dto.board.GoodAddRequest;
 import com.adela.hana_bridge_beapi.dto.comment.CommentAddRequest;
 import com.adela.hana_bridge_beapi.dto.comment.CommentResponse;
 import com.adela.hana_bridge_beapi.dto.comment.CommentUpdateRequest;
@@ -11,6 +12,7 @@ import com.adela.hana_bridge_beapi.entity.Comment;
 import com.adela.hana_bridge_beapi.repository.UsersRepository;
 import com.adela.hana_bridge_beapi.service.BoardService;
 import com.adela.hana_bridge_beapi.service.CommentService;
+import com.adela.hana_bridge_beapi.service.GoodService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ public class BoardApiController {
     private final BoardService boardService;
     private final UsersRepository usersRepository;
     private final CommentService commentService;
+    private final GoodService goodService;
 
     //글 등록
     @PostMapping("/article")
@@ -47,8 +50,8 @@ public class BoardApiController {
     public ResponseEntity<List<BoardResponse>> findAllBoard(@PathVariable("category") String category) {
         List<BoardResponse> boards = boardService.findByCategory(category)
                 .stream()
-                .map(BoardResponse::new)
-                .collect(Collectors.toList());
+                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId())))
+                .toList();
         return ResponseEntity.ok().body(boards);
     }
 
@@ -56,7 +59,8 @@ public class BoardApiController {
     @GetMapping("/{boardId}")
     public ResponseEntity<BoardResponse> findArticle(@PathVariable("boardId") long boardId){
         Board board = boardService.findById(boardId);
-        return ResponseEntity.ok().body(new BoardResponse(board));
+        Long likeCount = goodService.goodCount(boardId);
+        return ResponseEntity.ok().body(new BoardResponse(board, likeCount));
     }
 
     //글 삭제
@@ -117,4 +121,26 @@ public class BoardApiController {
         return ResponseEntity.ok("댓글이 수정되었습니다.");
     }
 
+
+    //--------------------code  게시판 좋아요 ---------------------------
+    //좋아요 생성
+    @PostMapping("/good/{boardId}")
+    public ResponseEntity<String> GoodSave(@PathVariable Long boardId, @RequestBody GoodAddRequest request){
+        //JWT사용
+        //goodService.goodSave(request);
+        return ResponseEntity.ok().build();
+    }
+    //좋아요 조회
+    @GetMapping("/good/{boardId}")
+    public ResponseEntity<Long> CountGood(@PathVariable("boardId") long boardId){
+        Long likeCount = goodService.goodCount(boardId);
+        return ResponseEntity.ok().body(likeCount);
+    }
+    //좋아요 삭제
+    @DeleteMapping("/good/{boardId}")
+    public ResponseEntity<String> GoodRemove(@PathVariable Long boardId, @PathVariable Long userId){
+        //JWT사용
+        //goodService.goodRemove(boardId, userId);
+        return ResponseEntity.ok().build();
+    }
 }
