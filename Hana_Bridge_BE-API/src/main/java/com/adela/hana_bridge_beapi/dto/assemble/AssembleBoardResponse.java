@@ -19,12 +19,16 @@ public class AssembleBoardResponse {
     private String content;
     private LocalDateTime createdAt;
 
-    public AssembleBoardResponse(AssembleBoard assembleBoard) {
+    private Long goodCount;
+
+    public AssembleBoardResponse(AssembleBoard assembleBoard, Long goodCount ) {
         this.assembleBoardId = assembleBoard.getAssembleBoardId();
         this.title = assembleBoard.getTitle();
         this.nickName = assembleBoard.getUsers().getNickName();
         this.category = assembleBoard.getCategory();
         this.content = assembleBoard.getContent();
         this.createdAt = assembleBoard.getCreatedAt();
+
+        this.goodCount = goodCount;
     }
 }

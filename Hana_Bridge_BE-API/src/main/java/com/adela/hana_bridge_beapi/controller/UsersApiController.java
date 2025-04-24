@@ -44,7 +44,6 @@ public class UsersApiController {
     @DeleteMapping("user/logout")
     @SecurityRequirement(name = "bearer-key")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearerToken){
-        System.out.println("Authorization Header: " + bearerToken);
         tokenService.deleteRefreshToken(bearerToken.replace("Bearer ", ""));
         return ResponseEntity.ok().build();
     }
