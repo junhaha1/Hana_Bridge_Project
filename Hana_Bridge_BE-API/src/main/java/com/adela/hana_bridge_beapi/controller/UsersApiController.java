@@ -32,8 +32,11 @@ public class UsersApiController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(60 * 60 * 24) // 1일
-                .sameSite("Strict")
+                .maxAge(60 * 60 * 24)
+                //로컬 테스트용 쿠키 설정
+                .sameSite("Lax")
+                .secure(false)
+                //--------------------
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
 
