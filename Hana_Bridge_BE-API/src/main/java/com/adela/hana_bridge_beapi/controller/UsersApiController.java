@@ -5,10 +5,14 @@ import com.adela.hana_bridge_beapi.dto.user.UserResponse;
 import com.adela.hana_bridge_beapi.service.TokenService;
 import com.adela.hana_bridge_beapi.service.UsersService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -45,9 +49,37 @@ public class UsersApiController {
 
     //로그아웃 API 호출
     @DeleteMapping("user/logout")
-    @SecurityRequirement(name = "bearer-key")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearerToken){
-        tokenService.deleteRefreshToken(bearerToken.replace("Bearer ", ""));
+    @WithMockUser
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response){
+        // 1. 쿠키에서 refreshToken 꺼내기
+        String refreshToken = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        // 2. refreshToken이 없으면 예외 처리
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // 3. 토큰 삭제 (ex. Redis에서 제거)
+        tokenService.deleteRefreshToken(refreshToken);
+
+        // 4. 브라우저 쿠키 삭제
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false) // HTTPS 환경에선 true
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.addHeader("Set-Cookie", deleteCookie.toString());
+
         return ResponseEntity.ok().build();
     }
 }
