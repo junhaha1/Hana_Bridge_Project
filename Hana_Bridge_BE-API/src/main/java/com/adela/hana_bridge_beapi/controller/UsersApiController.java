@@ -40,6 +40,7 @@ public class UsersApiController {
                 .builder()
                 .email(email)
                 .name(users.getName())
+                .nickname(users.getNickName())
                 .role(users.getRole())
                 .build()
         );
