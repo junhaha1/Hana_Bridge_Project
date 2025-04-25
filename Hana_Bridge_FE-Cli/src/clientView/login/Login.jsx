@@ -7,38 +7,30 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/userSlice';
 
 function Login() {
-  const [userId, setUserId] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [name, setName] = useState('guest');
+  const [email, setEmail] = useState();
+  const [pwd, setPwd] = useState();
+  const [userInformation, setUserInformation] = useState(null);
 
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
 
-  const handleSubmit = (id, pw) => {
-    ApiClient.getUser(userId)
+  const loginButton = (email, pw) =>{
+    ApiClient.userLogin(email, pw)
       .then((res) => {
-        if (!res.ok) {
+        if(!res.ok){
           throw new Error("User not found");
         }
         return res.json();
       })
-      .then((data) => {
-        if (id.trim() !== data.userId.trim()) {
-          alert("아이디를 확인해주세요");
-          return;
-        }
-  
-        if (pw.trim() !== data.pwd.trim()) {
-          alert("비밀번호를 확인해주세요");
-          return;
-        }
-  
-        dispatch(setUser({ userId: data.userId, name: data.name }));
+      .then((data) =>{
+        console.log(data);
+        setUserInformation(data);
+        dispatch(setUser({email: data.email, name: data.name, nickName: data.nickName, accessToken: data.accessToken}));
         navigate('/');
       })
       .catch((error) => {
-        console.error("Error fetching user:", error);
-        alert("아이디를 확인해주세요"); // 또는 상세 메시지
+        console.error("Error fetching user login:", error);
+        alert("아이디를 확인해주세요"); 
       });
   }
   
@@ -56,13 +48,13 @@ function Login() {
           <div className="card mx-auto" style={{ maxWidth: '400px' }}>
             <div className="card-body">
               <h2 className="card-title text-center">Login</h2>
-              <input className="form-control mb-3" type="text" placeholder="ID" value={userId} onChange={(e) => setUserId(e.target.value)} />
+              <input className="form-control mb-3" type="text" placeholder="ID(EMAIL)" value={email} onChange={(e) => setEmail(e.target.value)} />
               <input className="form-control mb-3" type="password" placeholder="PASSWORD" value={pwd} onChange={(e) => setPwd(e.target.value)} />
               <div className="d-flex justify-content-between">
                 <Link to={'/'}>비밀번호 찾기 / 아이디 찾기</Link>
               </div>
               <div className="d-flex justify-content-between mt-3">
-                <button className="btn btn-primary" onClick={() => handleSubmit(userId, pwd)}>로그인</button>
+                <button className="btn btn-primary" onClick={() => loginButton(email, pwd)}>로그인</button>
                 <Link className="btn btn-secondary" to={'/'}>처음으로</Link>
               </div>
             </div>

@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
  
  const initialState = {
-   userId: null,
-   nickName: 'guest',
+   email: null,
+   name: 'guest',
+   nickName: 'guest@email.com',
    accessToken: null,
  };
  
@@ -11,13 +12,15 @@ import { createSlice } from '@reduxjs/toolkit';
    initialState, // 초기 상태
    reducers: {
      setUser: (state, action) => {
-       state.userId = action.payload.userId;
+       state.email = action.payload.email;
+       state.name = action.payload.name;
        state.nickName = action.payload.nickName;
        state.accessToken = action.payload.accessToken;
      },
      clearUser: (state) => {
-       state.userId = null;
-       state.nickName = 'guest';
+       state.email = null;
+       state.name = 'guest';
+       state.nickName = 'guest@email.com';
        state.accessToken = null;
      },
    },

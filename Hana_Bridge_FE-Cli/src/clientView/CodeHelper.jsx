@@ -1,4 +1,3 @@
-// src/components/CodeHelperButton.jsx
 import React from "react";
 
 const CodeHelper = () => {
