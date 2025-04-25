@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
 const DetailBoard = () => {
-  const userId = useSelector((state) => state.user.userId) || 'guest';
+  const email = useSelector((state) => state.user.email) || 'guest';
   const nickName = useSelector((state) => state.user.nickName) || 'guest';
 
   const { boardId } = useParams(); 

@@ -92,6 +92,30 @@ class ApiClient{
   }
 
 
+  //사용자 로그인
+  static userLogin(email, password){
+    console.log("login by Email: " + email + ", Password: " + password);
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/login', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+  }
+  //사용자 로그아웃
+  static userLogout(){
+    console.log("logout ");
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER , {
+      method: "DELETE", 
+      headers: {
+          "Content-Type": "application/json"
+      }
+    });
+  }  
   //사용자 등록
   static sendUser(){
   }
@@ -140,56 +164,14 @@ class ApiClient{
     });
   }
   //comment 삭제 /board/comment/{comment_id}
-
-
-
-
-
-
-  //댓글
-  // static sendComment(articleId, userId, content, codeContent, regDate, updateDate){
-  //     console.log("댓글 저장 API 호출 후 : " + articleId +", " + userId );
-  //     return fetch(ApiClient.SEVER_URL + ApiClient.POST_COMMENT + articleId +"/" + userId, {
-  //         method: "POST",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //             articleId: articleId,
-  //             userId: userId,
-  //             comment: content,
-  //             codeComment: codeContent,
-  //             regDate: regDate,
-  //             updateDate: updateDate,
-  //         }),
-  //     });
-  // }
-
-  // static getComment(articleId){
-  //     console.log("Get Comment By articleId ");
-  //     return fetch(ApiClient.SEVER_URL + ApiClient.GET_COMMENT + articleId);
-  // }
-
-  // static updateComment(commentId, content, codeContent){
-  //     return fetch(ApiClient.SEVER_URL + ApiClient.PUT_COMMENT + commentId, {
-  //         method: "PUT",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //             comment: content,
-  //             codeComment: codeContent
-  //         }),
-  //     });
-  // }
-  // static deleteComment(commentId){
-  //     console.log("Delete Comment By commentId ");
-  //     return fetch(ApiClient.SEVER_URL + ApiClient.DELETE_COMMENT + commentId, {
-  //         method: "DELETE", 
-  //         headers: {
-  //             "Content-Type": "application/json"
-  //         }
-  //     });
-  // }   
+  static deleteComment(commentId){
+    console.log("Delete Comment By commentId ");
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + commentId, {
+      method: "DELETE", 
+      headers: {
+          "Content-Type": "application/json"
+      }
+    });
+  }   
 }
 export default ApiClient;
