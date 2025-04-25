@@ -44,8 +44,10 @@ public class AssembleController {
 
     //게시글 삭제
     @DeleteMapping("/{assembleboard_id}")
-    public ResponseEntity<Void> deleteAssembleBoard(@PathVariable("assembleboard_id") Long assembleBoardId) {
-        assembleBoardService.deleteAssembleBoardById(assembleBoardId);
+    public ResponseEntity<Void> deleteAssembleBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+        assembleBoardService.deleteAssembleBoardById(email, assembleBoardId);
 
         return ResponseEntity.ok().build();
     }
@@ -60,8 +62,11 @@ public class AssembleController {
     //게시글 좋아요 등록
     //Users 정보를 토큰에서 추출하도록 구현
     @PostMapping("/good/{assembleboard_id}")
-    public ResponseEntity<Void> registAssembleBoardGood(@RequestHeader("Authorization") String accessToken, @PathVariable("assembleboard_id") Long assembleBoardId) {
-        Long userId = tokenService.findUsersIdByToken(accessToken.replace("Bearer ", ""));
+    public ResponseEntity<Void> registAssembleBoardGood(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
+
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
         assembleGoodService.registAssembleBoardGood(new AssembleGoodRequest(LocalDateTime.now(), userId, assembleBoardId));
         return ResponseEntity.ok().build();
     }
@@ -69,8 +74,10 @@ public class AssembleController {
     //게시글 좋아요 삭제
     //Users 정보를 토큰에서 추출하도록 구현
     @DeleteMapping("/good/{assembleboard_id}")
-    public ResponseEntity<Void> deleteAssembleBoardGood(@RequestHeader("Authorization") String accessToken, @PathVariable("assembleboard_id") Long assembleBoardId) {
-        Long userId = tokenService.findUsersIdByToken(accessToken.replace("Bearer ", ""));
+    public ResponseEntity<Void> deleteAssembleBoardGood(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
         assembleGoodService.deleteAssembleBoardGood(new AssembleGoodRequest(LocalDateTime.now(), userId, assembleBoardId));
         return ResponseEntity.ok().build();
     }
