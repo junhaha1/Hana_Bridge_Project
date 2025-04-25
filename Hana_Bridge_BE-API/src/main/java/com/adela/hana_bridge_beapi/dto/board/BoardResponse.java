@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.dto.board;
 import com.adela.hana_bridge_beapi.entity.Board;
 import lombok.Getter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 public class BoardResponse {
@@ -12,8 +13,8 @@ public class BoardResponse {
     private final String category;
     private final String content;
     private final String code;
-    private final LocalDate createAt;
-    private final LocalDate updateAt;
+    private final LocalDateTime createAt;
+    private final LocalDateTime updateAt;
 
     private final Long likeCount;
 

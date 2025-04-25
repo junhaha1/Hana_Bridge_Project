@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -33,13 +34,13 @@ public class Board {
     private String content;
 
     @Column(name = "create_at", nullable = false)
-    private LocalDate createAt;
+    private LocalDateTime createAt;
 
     @Column(name = "update_at", nullable = false)
-    private LocalDate updateAt;
+    private LocalDateTime updateAt;
 
     @Builder
-    public Board(Users users, String title, String category, String code, String content, LocalDate createAt, LocalDate updateAt) {
+    public Board(Users users, String title, String category, String code, String content, LocalDateTime createAt, LocalDateTime updateAt) {
         this.users = users;
         this.title = title;
         this.category = category;
@@ -49,7 +50,7 @@ public class Board {
         this.updateAt = updateAt;
     }
 
-    public void update(String title, String code, String content, LocalDate updateAt){
+    public void update(String title, String code, String content, LocalDateTime updateAt){
         this.title = title;
         this.code = code;
         this.content = content;
