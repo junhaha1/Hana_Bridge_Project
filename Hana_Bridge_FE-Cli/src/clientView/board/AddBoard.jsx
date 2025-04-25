@@ -15,6 +15,8 @@ const AddBoard = () => {
   const [code, setCode] = useState('');
   const [content, setContent] = useState('');
   const [createAt, setCreateAt] = useState(new Date());
+  const [updateAt, setUpdateAt] = useState(new Date());
+
 
   const accessToken = useSelector((state) => state.user.accessToken);
 
@@ -23,8 +25,10 @@ const AddBoard = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ category, title, content });
+    setCreateAt(new Date());
+    setUpdateAt(new Date());
     // TODO: API 요청 처리
-    ApiClient.sendBoard(accessToken, title, category, content, code, createAt)
+    ApiClient.sendBoard(accessToken, title, category, content, code, createAt, updateAt)
     .then(() => {
       alert("게시글이 등록되었습니다. ");
       navigate('/');
