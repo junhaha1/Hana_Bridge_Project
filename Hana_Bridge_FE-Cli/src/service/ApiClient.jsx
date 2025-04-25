@@ -4,6 +4,8 @@ class ApiClient{
   //게시글
   static BOARD = "/board";
   static ASSEMBLE_BOARD = "/assemble";
+  //좋아요
+  static GOOD = "/good";
   //댓글
   static BOARD_COMMENT = "/board/comment";
   //사용자
@@ -20,7 +22,6 @@ class ApiClient{
         "Authorization": `Bearer ${accessToken}`
       },
       body: JSON.stringify({
-        userId: userId,
         title: title,
         category: category,
         content: content,
@@ -42,12 +43,13 @@ class ApiClient{
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + boardId);
   }
   //Board 수정
-  static updateBoard(boardId, title, content, code, updateAt){
+  static updateBoard(boardId, accessToken, title, content, code, updateAt){
     console.log("Update Boards By boardId: " + boardId);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       },
       body: JSON.stringify({
         title: title,
@@ -58,12 +60,13 @@ class ApiClient{
     }); 
   }
   //Board 삭제 
-  static deleteBoard(boardId){
+  static deleteBoard(boardId, accessToken){
     console.log("Delete Board By boardId ");
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId, {
       method: "DELETE", 
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       }
     });
   }
@@ -81,12 +84,13 @@ class ApiClient{
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId);
   }
   //Assemble 삭제 
-  static deleteAssembleBoard(assembleBoardId){
+  static deleteAssembleBoard(assembleBoardId, accessToken){
     console.log("Delete AssembleBoard By boardId ");
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId, {
       method: "DELETE", 
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       }
     });
   }
@@ -96,9 +100,9 @@ class ApiClient{
   static userLogin(email, password){
     console.log("login by Email: " + email + ", Password: " + password);
     return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/login', {
-      method: "POST",
+      method: "POST",credentials: "include", 
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json",        
       },
       body: JSON.stringify({
         email: email,
@@ -109,10 +113,10 @@ class ApiClient{
   //사용자 로그아웃
   static userLogout(){
     console.log("logout ");
-    return fetch(ApiClient.SERVER_URL + ApiClient.USER , {
-      method: "DELETE", 
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/logout' , {
+      method: "DELETE", credentials: "include",
       headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
       }
     });
   }  
@@ -136,12 +140,13 @@ class ApiClient{
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + boardId);
   }
   //comment 등록 /board/comment/{board_id}
-  static sendComment(boardId, content, createAt){
+  static sendComment(boardId, accessToken, content, createAt){
     console.log("POST Comment By boardId: " + boardId);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOABOARD_COMMENTRD + '/' + boardId, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`        
       },
       body: JSON.stringify({
         content: content,
@@ -150,12 +155,13 @@ class ApiClient{
     });
   }
   //comment 수정 /board/comment/{comment_id}
-  static updateComment(commentId, content, createAt){
+  static updateComment(commentId, accessToken, content, createAt){
     console.log("Update Comment By commentId: " + commentId);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOABOARD_COMMENTRD + '/' + commentId, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       },
       body: JSON.stringify({
         content: content,
@@ -164,14 +170,81 @@ class ApiClient{
     });
   }
   //comment 삭제 /board/comment/{comment_id}
-  static deleteComment(commentId){
-    console.log("Delete Comment By commentId ");
+  static deleteComment(commentId, accessToken){
+    console.log("Delete Comment By commentId: " + commentId);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + commentId, {
       method: "DELETE", 
       headers: {
-          "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       }
     });
   }   
+
+
+  //Board Good
+  //Good 삭제 /board/good/{board_id}
+  static deleteBoardGood(boardId, accessToken){
+    console.log("Delete BoardGood By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+      method: "DELETE", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  }   
+  //Good 등록 /board/good/{board_id}
+  static sendBoardGood(boardId, accessToken){
+    console.log("POST BoardGood By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+        
+      },
+      body: JSON.stringify({        
+      }),
+    });
+  }   
+  //Good 조회 /board/good/{board_id}
+  static getBoardGood(boardId){
+    console.log("Get BoardGood By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' +  ApiClient.GOOD + '/' + boardId);
+  }
+
+
+  //Assemble Good
+  //Good 삭제 /assemble/good/{assembleboard_id}
+  static deleteAssembleGood(boardId, accessToken){
+    console.log("Delete Assemble BoardGood By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+      method: "DELETE", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  }   
+  //Good 등록 /assemble/good/{assembleboard_id}
+  static sendAssembleGood(boardId, accessToken){
+    console.log("POST Assemble BoardGood By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+        
+      },
+      body: JSON.stringify({        
+      }),
+    });
+  }   
+  //Good 조회 /assemble/good/{assembleboard_id}
+  static getAssembleGood(boardId){
+    console.log("Get Assembel BoardGood By boardId: " + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' +  ApiClient.GOOD + '/' + boardId);
+  }
 }
 export default ApiClient;

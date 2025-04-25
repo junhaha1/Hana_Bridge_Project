@@ -9,29 +9,90 @@ import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
 const DetailBoard = () => {
-  const email = useSelector((state) => state.user.email) || 'guest';
-  const nickName = useSelector((state) => state.user.nickName) || 'guest';
+  const email = useSelector((state) => state.user.email);
+  const nickName = useSelector((state) => state.user.nickName);
+  const role = useSelector((state) => state.user.role);
+  const accessToken = useSelector((state) => state.user.accessToken);
 
   const { boardId } = useParams(); 
+
   const [board, setBoard] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const [title, setTitle] = useState('');
+  const [code, setCode] = useState('');
+  const [content, setContent] = useState('');
+  const [createAt, setCreateAt] = useState(new Date());
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const category = location.state?.category || "code";
 
   useEffect(() => {
-    ApiClient.getBoard(boardId)
-    .then((res) => {
-      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-      return res.json();
-    })
-    .then((data) => {
-      console.log(data);
-      setBoard(data);
-    })
-    .catch((err) => console.error("API 요청 실패:", err));
+    if(category === 'assemble'){
+      console.log(boardId);
+      ApiClient.getAssembleBoard(boardId)
+      .then((res) => {
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setBoard(data);
+      })
+      .catch((err) => console.error("API 요청 실패:", err));
+    }else{
+      ApiClient.getBoard(boardId)
+      .then((res) => {
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setBoard(data);
+      })
+      .catch((err) => console.error("API 요청 실패:", err));
+    }    
   }, [boardId]);
 
-  //if (userId.trim() === "guest") return <div>⛔로그인 유저만 가능한 서비스 입니다.⛔</div>;
+  useEffect(() => {
+    if (isEdit && board) {
+      setTitle(board.title);
+      setContent(board.content);
+      setCode(board.code); 
+    }
+  }, [isEdit, board]);
+
   if (!board) return <div>로딩 중...</div>;
+
+  //삭제 버튼
+  const boardDeleteButton = (boardId) => {
+    ApiClient.deleteBoard(boardId, accessToken)
+    .then(res => {
+      if (!res.ok) {
+          throw new Error(`서버 오류: ${res.status}`);
+      }
+      console.log("게시글 삭제 완료!");
+      navigate('/');
+    })
+    .catch(error => {
+        console.error("게시글 삭제 중 오류 발생:", error);
+    });
+  }
+
+  //수정 저장 버튼
+  const saveBoard = (boardId) => {
+    setIsEdit(false);
+
+    ApiClient.sendBoard(boardId, accessToken, code, content, createAt)
+    .then(() => {
+      console.log("게시글 수정 완료 ! ");
+      navigate(`/detailBoard/${boardId}`, {state: {category: category}});
+    })
+    .catch((err) => console.error("API 요청 실패:", err));
+    
+  }
 
   return (
     <>
@@ -39,25 +100,83 @@ const DetailBoard = () => {
     
     <Container className="mt-4">
       <div className="container mt-4">
-        {/* 게시글 카드 */}
-        <div className="card mb-4">
-          <div className="card-body">
-            <div className="text-muted mb-2">자유 게시판 &lt; 상세글</div>
-            <h5 className="card-title fw-bold">{board.title}</h5>
-            <p className="text-secondary">작성자 {board.nickName}</p>
-            <p>{board.content}</p>
-            <div className="d-flex justify-content-between mt-3">
-              <div>
-                <span className="me-3">👍 {board.likeCount}</span>
-                <span>💬 {board.commentsCount}</span>
-              </div>
-              <div>
-                <a href="#" className="me-2 text-decoration-none">수정하기</a>
-                <a href="#" className="text-decoration-none text-danger">삭제하기</a>
+        { isEdit === true ? (
+          <>
+          {/* 게시글 수정 */}
+          <div className="card mb-4">
+            <div className="card-body">
+              <div className="text-muted mb-2">자유 게시판 &lt; 상세글</div>
+                <input 
+                  type="text" 
+                  className="card-title fw-bold"
+                  placeholder="제목을 입력해주세요"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)} 
+                />
+                <p className="text-secondary">작성자 {board.nickName}</p>
+                <textarea 
+                  className="form-control"
+                  placeholder="코드나 에러사항을 입력해주세요"
+                  value={code}
+                  onChange={e => setCode(e.target.value)}
+                />
+                <textarea 
+                  className="form-control"
+                  placeholder="내용을 입력해주세요"
+                  value={content}
+                  onChange={e => setContent(e.target.value)}
+                />
+              <div className="d-flex justify-content-between mt-3">
+                <div>
+                  <span className="me-3">👍 {board.likeCount}</span>
+                  <span>💬 {board.commentsCount}</span>
+                </div>   
+                <div className="d-flex justify-content-end gap-2">
+                  <button className="btn btn-success" onClick={() => saveBoard(boardId)}>저장</button>
+                  <button className="btn btn-danger" onClick={() => setIsEdit(false)}>취소</button>
+                </div>             
               </div>
             </div>
           </div>
-        </div>
+          </>
+        ):(
+          <>
+          {/* 게시글 카드 */}
+          <div className="card mb-4">
+            <div className="card-body">
+              <div className="text-muted mb-2">자유 게시판 &lt; 상세글</div>
+                <h5 className="card-title fw-bold">{board.title}</h5>
+                <p className="text-secondary">작성자 {board.nickName}</p>
+                <p>{board.code}</p>
+                <p>{board.content}</p>
+              <div className="d-flex justify-content-between mt-3">
+                <div>
+                  <span className="me-3">👍 {board.likeCount}</span>
+                  <span>💬 {board.commentsCount}</span>
+                </div>
+                <div>
+                {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}
+                {(nickName === board.nickName || role === "admin") && (
+                  category === "code" ? (
+                    <>
+                      <Link className="me-2 text-decoration-none" onClick={() => setIsEdit(true)}>수정하기</Link>
+                      <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(boardId)}>삭제하기</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(boardId)}>삭제하기</Link>
+                    </>
+                  )
+                )}                  
+                </div>
+              </div>
+            </div>
+          </div>
+          </>
+        )
+
+        }
+        
         <Comments boardId={boardId} />
       </div>
     </Container>

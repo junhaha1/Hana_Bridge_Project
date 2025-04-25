@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../store/userSlice';
 
+import ApiClient from "../service/ApiClient";
+
 /* 
   페이지 헤더
   메인 로고 => BoardListView(메인화면) 이동
@@ -21,15 +23,34 @@ const BoardHeader = () => {
   //유저 로그아웃
   const dispatch = useDispatch();
   //유저 로그인 정보 유지
-  const userId = useSelector((state) => state.user.userId) || 'guest';
-  const nickName = useSelector((state) => state.user.nickName) || 'guest';
+  const email = useSelector((state) => state.user.email);
+  const nickName = useSelector((state) => state.user.nickName);
+
+  const navigate = useNavigate();
+
+  const logoutButton = () =>{
+    dispatch(clearUser());
+
+    ApiClient.userLogout()
+    .then(res =>{
+      if(!res.ok){
+        throw new Error(`서버 오류: ${res.status}`);
+      }
+      console.log("로그아웃 완료!");
+    })
+    .catch(err =>{
+      console.error("로그아웃 중 오류 발생:", err);
+    })
+
+    navigate("/");
+  }
   
   return (
     <Navbar expand="lg" bg="light" variant="light" className="shadow-sm">
       <Container fluid>
         {/* 로고 */}
-        <Navbar.Brand as={Link} to="/" state={{ userId }}>
-          <strong>OUT-Project</strong>
+        <Navbar.Brand as={Link} to="/">
+          <strong>SW Board</strong>
         </Navbar.Brand>
 
         {/* 토글 버튼 (메뉴 접기용) */}
@@ -42,20 +63,22 @@ const BoardHeader = () => {
             <Nav.Link as={Link} to="/write">글 작성</Nav.Link>
           </Nav>
 
-          {/* 로그인 / 로그아웃 */}
+          {/* 로그인 & 회원가입  / 로그아웃 */}
           <Nav className="ms-auto">
-            {userId === "guest" ? (
-              <Button as={Link} to="/login" variant="outline-primary" className="me-2">
-                로그인
-              </Button>
+            {email === "guest@email.com" ? (
+              <>
+                <Button as={Link} to="/login" variant="outline-primary" className="me-2">
+                  로그인
+                </Button>
+                <Button as={Link} to="/signup" variant="outline-primary" className="me-2">
+                  회원가입
+                </Button>
+              </>
             ) : (
               <>
                 <NavDropdown title={`${nickName}님`} id="user-dropdown" align="end">
                   <NavDropdown.Item
-                    onClick={() => {
-                      dispatch(clearUser());
-                      navigate("/");
-                    }}
+                    onClick={() => logoutButton()}
                   >
                     로그아웃
                   </NavDropdown.Item>

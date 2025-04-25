@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
  
  const initialState = {
-   email: null,
+   email: 'guest@email.com',
    name: 'guest',
-   nickName: 'guest@email.com',
+   nickName: 'guest',
    accessToken: null,
+   role: null,
  };
  
  const userSlice = createSlice({
@@ -16,12 +17,14 @@ import { createSlice } from '@reduxjs/toolkit';
        state.name = action.payload.name;
        state.nickName = action.payload.nickName;
        state.accessToken = action.payload.accessToken;
+       state.role = action.payload.role;
      },
      clearUser: (state) => {
-       state.email = null;
+       state.email = 'guest@email.com';
        state.name = 'guest';
-       state.nickName = 'guest@email.com';
+       state.nickName = 'guest';
        state.accessToken = null;
+       state.role = null;
      },
    },
  });
