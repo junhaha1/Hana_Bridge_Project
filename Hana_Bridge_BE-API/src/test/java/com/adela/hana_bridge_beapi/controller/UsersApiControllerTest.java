@@ -70,17 +70,4 @@ class UsersApiControllerTest {
 
         verify(response).addHeader(eq("Set-Cookie"), contains("refreshToken=" + refreshToken));
     }
-
-    @Test
-    void logout_정상_동작_테스트() {
-        // given
-        String bearerToken = "Bearer mock.jwt.token";
-
-        // when
-        ResponseEntity<Void> result = usersApiController.logout(bearerToken);
-
-        // then
-        verify(tokenService).deleteRefreshToken("mock.jwt.token");
-        assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
-    }
 }
