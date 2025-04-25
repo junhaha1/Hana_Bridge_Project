@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
+import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,10 +28,15 @@ public class AssembleBoardService {
     }
 
     //게시글 ID를 통한 삭제
-    public void deleteAssembleBoardById(Long assembleBoardId) {
-        if (!assembleRepository.existsById(assembleBoardId)) {
-            throw new IllegalArgumentException("게시글이 존재하지 않습니다: " + assembleBoardId);
+    @Transactional
+    public void deleteAssembleBoardById(String Email, Long assembleBoardId) {
+        AssembleBoard assembleBoard = assembleRepository.findById(assembleBoardId)
+                .orElseThrow(() -> new IllegalArgumentException("not found assembleBoard : " + assembleBoardId));
+
+        if (!assembleBoard.getUsers().getEmail().equals(Email)) {
+            throw new IllegalArgumentException("Board doesn't belong to email : " + Email + ", " + assembleBoardId);
         }
+
         assembleRepository.deleteById(assembleBoardId);
     }
 }
