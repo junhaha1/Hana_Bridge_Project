@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import ApiClient from '../../service/ApiClient';
+import Header from '../Header';
 import { Container, Form, Button, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
 const AddBoard = () => {
+  const email = useSelector((state) => state.user.email) || 'guest';
+  const nickName = useSelector((state) => state.user.nickName) || 'guest';
+
   const [category, setCategory] = useState('code');
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
@@ -18,7 +22,7 @@ const AddBoard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ boardType, title, content });
+    console.log({ category, title, content });
     // TODO: API 요청 처리
     ApiClient.sendBoard(accessToken, title, category, content, code, createAt)
     .then(() => {
@@ -29,6 +33,9 @@ const AddBoard = () => {
   };
 
   return (
+    <>
+    <Header />
+
     <Container className="mt-5" style={{ maxWidth: '700px' }}>
       <h4 className="fw-bold mb-4">글 작성하기</h4>
 
@@ -66,8 +73,7 @@ const AddBoard = () => {
             type="text"
             placeholder="게시글 제목을 적어 주세요"
             value={title}
-            onChange={e => setTitle(e.target.value)}
-          />
+            onChange={e => setTitle(e.target.value)} />
         </Form.Group>
 
         <Form.Group className="mb-4">
@@ -75,9 +81,8 @@ const AddBoard = () => {
             as="textarea"
             rows={10}
             placeholder="작성할 코드/에러를 적어 주세요"
-            value={content}
-            onChange={e => setCode(e.target.value)}
-          />
+            value={code}
+            onChange={e => setCode(e.target.value)} />
         </Form.Group>
 
         <Form.Group className="mb-4">
@@ -86,8 +91,7 @@ const AddBoard = () => {
             rows={10}
             placeholder="작성할 글을 적어 주세요"
             value={content}
-            onChange={e => setContent(e.target.value)}
-          />
+            onChange={e => setContent(e.target.value)} />
         </Form.Group>
 
         <div className="text-center">
@@ -97,6 +101,7 @@ const AddBoard = () => {
         </div>
       </Form>
     </Container>
+    </>
   );
 };
 

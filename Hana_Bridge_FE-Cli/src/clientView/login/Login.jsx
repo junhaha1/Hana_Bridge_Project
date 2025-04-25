@@ -7,9 +7,8 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/userSlice';
 
 function Login() {
-  const [email, setEmail] = useState();
-  const [pwd, setPwd] = useState();
-  const [userInformation, setUserInformation] = useState(null);
+  const [email, setEmail] = useState('');
+  const [pwd, setPwd] = useState('');
 
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
@@ -24,8 +23,7 @@ function Login() {
       })
       .then((data) =>{
         console.log(data);
-        setUserInformation(data);
-        dispatch(setUser({email: data.email, name: data.name, nickName: data.nickName, accessToken: data.accessToken}));
+        dispatch(setUser({email: data.email, name: data.name, nickName: data.nickname, accessToken: data.accessToken, role: data.role}));
         navigate('/');
       })
       .catch((error) => {
@@ -40,7 +38,7 @@ function Login() {
       <Container className="mt-4">
         <Link to="/" style={{ textDecoration: 'none' }}>
           <h1 className="fw-bold text-dark" style={{ cursor: 'pointer' }}>
-            ourproject
+            SW Board
           </h1>
         </Link>
       </Container>
