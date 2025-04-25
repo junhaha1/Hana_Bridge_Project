@@ -15,7 +15,7 @@ class ApiClient{
   //Board 등록 
   static sendBoard(accessToken, title, category, content, code, createAt, updateAt){
     console.log("POST Board");
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/aricle', {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
