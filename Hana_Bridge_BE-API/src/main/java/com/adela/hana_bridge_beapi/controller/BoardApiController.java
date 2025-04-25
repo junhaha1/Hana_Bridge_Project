@@ -1,5 +1,6 @@
 package com.adela.hana_bridge_beapi.controller;
 
+import com.adela.hana_bridge_beapi.config.jwt.TokenProvider;
 import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.dto.board.BoardUpdateRequest;
@@ -10,9 +11,7 @@ import com.adela.hana_bridge_beapi.dto.comment.CommentUpdateRequest;
 import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.entity.Comment;
 import com.adela.hana_bridge_beapi.repository.UsersRepository;
-import com.adela.hana_bridge_beapi.service.BoardService;
-import com.adela.hana_bridge_beapi.service.CommentService;
-import com.adela.hana_bridge_beapi.service.GoodService;
+import com.adela.hana_bridge_beapi.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,21 +27,27 @@ import java.util.stream.Collectors;
 @Tag(name = "ApiV1BoardController", description = "공지, 코드 게시판에 접근할 경우")
 public class BoardApiController {
     private final BoardService boardService;
-    private final UsersRepository usersRepository;
+    private final TokenService tokenService;
+    private final UsersService usersService;
     private final CommentService commentService;
     private final GoodService goodService;
 
     //글 등록
     @PostMapping("/article")
-    public ResponseEntity<Board> addBoard(@RequestBody BoardAddRequest request) {
-        //userId 하드코딩,,, userId를 저장해야되서,,,,
-        //추후에 user == null 경우 예외 처리
-        Long userId = 2L;
-        request.connectionUserEntity(usersRepository.findById(userId).get());
-        Board savedBoard = boardService.save(request);
+    public ResponseEntity<Board> addBoard(@RequestHeader("Authorization") String authHeader,
+                                          @RequestBody BoardAddRequest request) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        String role = tokenService.findRoleByToken(accessToken);
+        String email = tokenService.findEmailByToken(accessToken);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(savedBoard);
+        if (request.getCategory().equals("notice") && !role.equals("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            request.connectionUserEntity(usersService.findByEmail(email));
+            Board savedBoard = boardService.save(request);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(savedBoard);
+        }
     }
 
     //카데고리별 글 전체 조회
@@ -65,41 +70,47 @@ public class BoardApiController {
 
     //글 삭제
     @DeleteMapping("/article/{boardId}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable("boardId") long boardId){
-        boardService.delete(boardId);
+    public ResponseEntity<Void> deleteBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId){
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+        boardService.delete(email, boardId);
         return ResponseEntity.ok()
                 .build();
     }
 
     //글 수정
     @PutMapping("/article/{boardId}")
-    public ResponseEntity<Board> updateBoard(@PathVariable("boardId") long boardId, @RequestBody BoardUpdateRequest request){
-        Board updateBoard = boardService.update(boardId, request);
+    public ResponseEntity<Board> updateBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId, @RequestBody BoardUpdateRequest request){
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+
+        Board updateBoard = boardService.update(email, boardId, request);
         return ResponseEntity.ok()
                 .body(updateBoard);
     }
 
 
-
     //--------------------댓글---------------------------
     //댓글 추가
     @PostMapping("/comment/{boardId}")
-    public ResponseEntity<Comment> addComment(@PathVariable Long boardId, @RequestBody CommentAddRequest request) {
-        request.connectionArticle(boardService.findById(boardId));
+    public ResponseEntity<Comment> addComment(@RequestHeader("Authorization") String authHeader, @PathVariable Long boardId, @RequestBody CommentAddRequest request) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+        request.connectionUserEntity(usersService.findByEmail(email));
 
-        //추후에 user == null 경우 예외 처리
-        //userId 하드코딩,,, userId를 저장해야되서,,,,
-        Long userId = 2L;
-        request.connectionUserEntity(usersRepository.findById(userId).get());
         Comment savedComment = commentService.save(request);
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(savedComment);
     }
 
     //댓글 삭제
     @DeleteMapping("/comment/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("commentId") long commentId){
-        commentService.delete(commentId);
+    public ResponseEntity<Void> deleteComment(@RequestHeader("Authorization") String authHeader, @PathVariable("commentId") long commentId){
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+
+        commentService.delete(email, commentId);
         return ResponseEntity.ok()
                 .build();
     }
@@ -116,18 +127,23 @@ public class BoardApiController {
 
     //댓글 수정
     @PutMapping("/comment/{commentId}")
-    public ResponseEntity<String> updateComment(@PathVariable("commentId") long commentId, @RequestBody CommentUpdateRequest request){
-        Comment updateComment = commentService.update(commentId, request);
+    public ResponseEntity<String> updateComment(@RequestHeader("Authorization") String authHeader, @PathVariable("commentId") long commentId, @RequestBody CommentUpdateRequest request){
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+
+        Comment updateComment = commentService.update(email, commentId, request);
         return ResponseEntity.ok("댓글이 수정되었습니다.");
     }
 
 
     //--------------------code  게시판 좋아요 ---------------------------
     //좋아요 생성
-    @PostMapping("/good/{boardId}")
-    public ResponseEntity<String> GoodSave(@PathVariable Long boardId, @RequestBody GoodAddRequest request){
-        //JWT사용
-        //goodService.goodSave(request);
+    @PostMapping("/good")
+    public ResponseEntity<String> GoodSave(@RequestHeader("Authorization") String authHeader, @RequestBody GoodAddRequest request){
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+        request.setUserId(userId);
+        goodService.goodSave(request);
         return ResponseEntity.ok().build();
     }
     //좋아요 조회
@@ -138,9 +154,11 @@ public class BoardApiController {
     }
     //좋아요 삭제
     @DeleteMapping("/good/{boardId}")
-    public ResponseEntity<String> GoodRemove(@PathVariable Long boardId, @PathVariable Long userId){
-        //JWT사용
-        //goodService.goodRemove(boardId, userId);
+    public ResponseEntity<String> GoodRemove(@RequestHeader("Authorization") String authHeader, @PathVariable Long boardId){
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
+        goodService.goodRemove(boardId, userId);
         return ResponseEntity.ok().build();
     }
 }

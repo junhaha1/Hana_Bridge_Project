@@ -23,9 +23,11 @@ public class CommentService {
     }
 
     //댓글 삭제
-    public void delete(long commentId){
-        if(!commentRepository.existsById(commentId)){
-            throw new IllegalArgumentException("Not Founded commentIdL " + commentId);
+    public void delete(String email, long commentId){
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("not found commentId: " + commentId));
+        if (!comment.getBoard().getUsers().getEmail().equals(email)) {
+            throw new IllegalArgumentException("Board doesn't belong to email : " + email + ", " + commentId);
         }
         commentRepository.deleteById(commentId);
     }
@@ -40,12 +42,15 @@ public class CommentService {
 
     //댓글 수정
     @Transactional
-    public Comment update(long commentId, CommentUpdateRequest request){
+    public Comment update(String email, long commentId, CommentUpdateRequest request){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("not found commentId: " + commentId));
 
-        comment.update(request.getContent(), request.getCreateAt());
+        if (!comment.getBoard().getUsers().getEmail().equals(email)) {
+            throw new IllegalArgumentException("Board doesn't belong to email : " + email + ", " + commentId);
+        }
 
+        comment.update(request.getContent(), request.getCreateAt());
         return comment;
     }
 }

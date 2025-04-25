@@ -6,18 +6,23 @@ import com.adela.hana_bridge_beapi.entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class GoodAddRequest {
     private Long boardId;
-    private String userId;
+    private Long userId;
 
     public Good toEntity(Board board, Users users){
         return Good.builder()
                 .users(users)
                 .board(board)
+                .createAt(LocalDate.now())
                 .build();
     }
 }

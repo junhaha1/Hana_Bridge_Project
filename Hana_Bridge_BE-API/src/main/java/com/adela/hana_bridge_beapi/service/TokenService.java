@@ -35,6 +35,11 @@ public class TokenService {
         return tokenProvider.getEmail(token);
     }
 
+    //Token에서 Role 추출
+    public String findRoleByToken(String token) {
+        return tokenProvider.getRole(token);
+    }
+
     //-------------AccessToken 기능--------------
     //AccessToken 로그인 시에 처음 발급
     public String createFirstAccessToken(String email, String role) {
