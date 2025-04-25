@@ -23,10 +23,16 @@ public class TokenService {
     private final long EXPIRATION_REFRESH_TIME = 1000 * 60 * 60 * 24;
 
     //-------------Token 공통 기능--------------
+    //Token에서 Users
     public Long findUsersIdByToken(String token) {
         String email = tokenProvider.getEmail(token);
         Users users = usersService.findByEmail(email);
         return users.getId();
+    }
+
+    //Token에서 Email 추출
+    public String findEmailByToken(String token) {
+        return tokenProvider.getEmail(token);
     }
 
     //-------------AccessToken 기능--------------

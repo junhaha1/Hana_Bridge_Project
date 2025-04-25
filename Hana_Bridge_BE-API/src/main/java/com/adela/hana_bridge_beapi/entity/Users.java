@@ -35,7 +35,7 @@ public class Users implements UserDetails {
     @Column(name = "oauth_provider", nullable = true)
     private String oauthProvider;
 
-    @Column(name = "oauth_id", nullable = false)
+    @Column(name = "oauth_id", nullable = true)
     private String oauthId;
 
     @Column(name = "role", nullable = false)
@@ -86,6 +86,13 @@ public class Users implements UserDetails {
         this.oauthId = oauthId;
         this.role = role;
         this.createdAt = LocalDateTime.now();
+    }
+
+    //사용자 정보 갱신 시에 해당 필드 값만 변경
+    public void updateUsers(String email, String password, String nickName) {
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
     }
 
 

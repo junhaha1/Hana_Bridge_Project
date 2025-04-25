@@ -1,12 +1,16 @@
 package com.adela.hana_bridge_beapi.controller;
 
 import com.adela.hana_bridge_beapi.dto.user.LoginRequest;
+import com.adela.hana_bridge_beapi.dto.user.UserRequest;
 import com.adela.hana_bridge_beapi.dto.user.UserResponse;
+import com.adela.hana_bridge_beapi.dto.user.UsersRegistRequest;
+import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.service.TokenService;
 import com.adela.hana_bridge_beapi.service.UsersService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -21,9 +25,61 @@ public class UsersApiController {
     private final TokenService tokenService;
 
     //회원가입 API 호출 -> 구현 예정
+    @PostMapping("/user")
+    public ResponseEntity<Void> createUser(@Valid @RequestBody UsersRegistRequest usersRegistRequest) {
+        usersService.registerUser(usersRegistRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    //사용자 정보 조회
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getUser(@RequestHeader("Authorization") String authHeader) {
+        String email = getEmailFromHeader(authHeader);
+        Users users = usersService.findByEmail(email);
+        return ResponseEntity.ok().body(UserResponse
+                .builder()
+                .email(email)
+                .name(users.getName())
+                .nickname(users.getNickName())
+                .role(users.getRole())
+                .build()
+        );
+    }
+    //사용자 정보 수정 API
+    @PutMapping("/user")
+    public ResponseEntity<UserResponse> updateUser(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody UserRequest userRequest) {
+        Long userId = getUserIdFromHeader(authHeader);
+        UserResponse userResponse = usersService.updateUser(userId, userRequest);
+
+        return ResponseEntity.ok().body(userResponse);
+    }
+
+    //사용자 탈퇴
+    @DeleteMapping("/user")
+    public ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String authHeader) {
+        Long userId = getUserIdFromHeader(authHeader);
+        //userId를 이용하여 삭제
+        usersService.deleteUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    //Header에 있는 accessToken에서 Email 추출
+    private String getEmailFromHeader(String authHeader) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        return tokenService.findEmailByToken(accessToken);
+    }
+
+    //Header에 있는 accessToken에서 UserId 추출
+    private Long getUserIdFromHeader(String authHeader) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        return tokenService.findUsersIdByToken(accessToken);
+    }
+
+
+
     //로그인 API 호출
     @PostMapping("/user/login")
-    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         UserResponse userResponse = usersService.login(loginRequest.getEmail(), loginRequest.getPassword());
 
         String accessToken = tokenService.createFirstAccessToken(userResponse.getEmail(), userResponse.getRole());
