@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,18 +29,18 @@ public class Comment {
     private String content;
 
     @Column(name = "create_at", nullable = false)
-    private LocalDate createAt;
+    private LocalDateTime createAt;
 
 
     @Builder
-    public Comment(Board board, Users users, String content, LocalDate createAt) {
+    public Comment(Board board, Users users, String content, LocalDateTime createAt) {
         this.board = board;
         this.users = users;
         this.content = content;
         this.createAt = createAt;
     }
 
-    public void update(String content, LocalDate createAt) {
+    public void update(String content, LocalDateTime createAt) {
         this.content = content;
         this.createAt = createAt;
     }

@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class CommentUpdateRequest {
     private String content;
-    private LocalDate createAt;
+    private LocalDateTime createAt;
 }

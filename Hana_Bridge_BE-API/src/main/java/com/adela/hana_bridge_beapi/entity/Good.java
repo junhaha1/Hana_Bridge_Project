@@ -5,8 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -26,10 +25,10 @@ public class Good {
     private Board board;
 
     @Column(name = "create_at", nullable = false)
-    private LocalDate createAt;
+    private LocalDateTime createAt;
 
     @Builder
-    public Good(Users users, Board board, LocalDate createAt) {
+    public Good(Users users, Board board, LocalDateTime createAt) {
         this.users = users;
         this.board = board;
         this.createAt = createAt;
