@@ -70,9 +70,7 @@ class ApiClient{
       }
     });
   }
-
-
-    
+      
   //Assemble 전체 조회
   static getAssembleBoards(){
     console.log("Get AssembleBoard");
