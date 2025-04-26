@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
 const DetailBoard = () => {
-  const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -27,33 +26,19 @@ const DetailBoard = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const category = location.state?.category || "code";
+  const category = location.state?.category;
 
   useEffect(() => {
-    if(category === 'assemble'){
-      console.log(boardId);
-      ApiClient.getAssembleBoard(boardId)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setBoard(data);
-      })
-      .catch((err) => console.error("API 요청 실패:", err));
-    }else{
-      ApiClient.getBoard(boardId)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setBoard(data);
-      })
-      .catch((err) => console.error("API 요청 실패:", err));
-    }    
+    ApiClient.getBoard(boardId)
+    .then((res) => {
+      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+      setBoard(data);
+    })
+    .catch((err) => console.error("API 요청 실패:", err)); 
   }, [boardId]);
 
   useEffect(() => {
@@ -91,7 +76,6 @@ const DetailBoard = () => {
       navigate(`/detailBoard/${boardId}`, {state: {category: category}});
     })
     .catch((err) => console.error("API 요청 실패:", err));
-    
   }
 
   return (
@@ -105,7 +89,11 @@ const DetailBoard = () => {
           {/* 게시글 수정 */}
           <div className="card mb-4">
             <div className="card-body">
-              <div className="text-muted mb-2">자유 게시판 &lt; 상세글</div>
+              {category === "code" ? (
+                <><div className="text-muted mb-2">CODE 게시판 &lt; 상세글</div></>
+              ):(
+                <><div className="text-muted mb-2">공지 게시판 &lt; 상세글</div></>
+              )}              
                 <input 
                   type="text" 
                   className="card-title fw-bold"
@@ -144,7 +132,11 @@ const DetailBoard = () => {
           {/* 게시글 카드 */}
           <div className="card mb-4">
             <div className="card-body">
-              <div className="text-muted mb-2">자유 게시판 &lt; 상세글</div>
+            {category === "code" ? (
+                <><div className="text-muted mb-2">CODE 게시판 &lt; 상세글</div></>
+              ):(
+                <><div className="text-muted mb-2">공지 게시판 &lt; 상세글</div></>
+              )}    
                 <h5 className="card-title fw-bold">{board.title}</h5>
                 <p className="text-secondary">작성자 {board.nickName}</p>
                 <p>{board.code}</p>
@@ -156,26 +148,21 @@ const DetailBoard = () => {
                 </div>
                 <div>
                 {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}
-                {(nickName === board.nickName || role === "admin") && (
-                  category === "code" ? (
+                {nickName === board.nickName || role === "admin" ? (
                     <>
                       <Link className="me-2 text-decoration-none" onClick={() => setIsEdit(true)}>수정하기</Link>
                       <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(boardId)}>삭제하기</Link>
                     </>
                   ) : (
                     <>
-                      <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(boardId)}>삭제하기</Link>
                     </>
-                  )
-                )}                  
+                )}
                 </div>
               </div>
             </div>
           </div>
           </>
-        )
-
-        }
+        )}
         
         <Comments boardId={boardId} />
       </div>
