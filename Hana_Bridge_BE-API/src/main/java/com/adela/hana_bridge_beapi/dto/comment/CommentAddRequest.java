@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class CommentAddRequest {
     private String content;
     private Board board;
     private Users users;
-    private LocalDate createAt;
+    private LocalDateTime createAt;
 
     public void connectionArticle(Board board){
         this.board = board;

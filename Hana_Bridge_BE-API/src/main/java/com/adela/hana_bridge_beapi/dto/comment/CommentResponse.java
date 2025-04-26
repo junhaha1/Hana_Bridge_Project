@@ -2,14 +2,14 @@ package com.adela.hana_bridge_beapi.dto.comment;
 
 import lombok.Getter;
 import com.adela.hana_bridge_beapi.entity.Comment;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 public class CommentResponse {
     private Long commentId;
     private String content;
     private String nickName;
-    private LocalDate createAt;
+    private LocalDateTime createAt;
 
     public CommentResponse(Comment comment) {
         this.commentId = comment.getCommentId();
