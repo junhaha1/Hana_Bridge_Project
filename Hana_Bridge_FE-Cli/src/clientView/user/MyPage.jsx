@@ -72,26 +72,50 @@ const MyPage = () => {
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>이름<span className="text-danger">*</span></Form.Label>
-                  <Form.Control type="text" value={user.name} readOnly/>
+                  <Form.Control type="text" value={user.name} readOnly style={{backgroundColor: "#e9ecef"}}/>
                 </Form.Group>
 
                 <Form.Group className="mb-2">
                   <Form.Label>이메일<span className="text-danger">*</span></Form.Label>
-                  <Form.Control type="email" value={user.email} readOnly/>
+                  <Form.Control type="email" value={user.email} readOnly={!isEdit}
+                  style={{
+                    backgroundColor: isEdit ? "white" : "#e9ecef",
+                    cursor: isEdit ? "text" : "default"
+                  }}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>닉네임<span className="text-danger">*</span></Form.Label>
-                  <Form.Control type="text" value={user.nickName} readOnly/>
+                  <Form.Control type="text" value={user.nickName} readOnly={!isEdit}
+                  style={{
+                    backgroundColor: isEdit ? "white" : "#e9ecef",
+                    cursor: isEdit ? "text" : "default"
+                  }}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>권한<span className="text-danger">*</span></Form.Label>
-                  <Form.Control type="text" value={user.role} readOnly/>
+                  <Form.Control type="text" value={user.role} readOnly style={{backgroundColor: "#e9ecef"}}/>
                 </Form.Group>
               </Form>
-              <button className="btn btn-primary me-2">정보 수정</button>
-              <button className="btn btn-danger">회원 탈퇴</button>
+                {isEdit ? (
+                  <>
+                  <button className="btn btn-success me-2" onClick={() => setIsEdit(false)}>
+                    수정 완료
+                  </button>
+                  <button className="btn btn-success me-2" onClick={() => setIsEdit(false)}>
+                    정보 수정 취소
+                  </button>
+                  </>
+                ) : (
+                  <>
+                  <button className="btn btn-primary me-2" onClick={() => setIsEdit(true)}>
+                    정보 수정
+                  </button>
+
+                  <button className="btn btn-danger">회원 탈퇴</button>
+                  </>
+                )}
             </Card.Body>
           </Card>
         </div>
