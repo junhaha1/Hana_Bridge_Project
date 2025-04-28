@@ -13,7 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -29,6 +31,12 @@ public class WebSecurityConfig {
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception -> exception
+                        // 로그인 하지 않거나 Accesstoken 만료 시에 인증 실패 (401)
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        // 로그인 했지만 권한이 없을 경우 인가 실패 (403)
+                        .accessDeniedHandler(accessDeniedHandler())
+                )
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -55,6 +63,26 @@ public class WebSecurityConfig {
         authProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return new ProviderManager(authProvider);
     }
+    /*Spring Security 예외 처리*/
+    //401 로그인하지 않고 접근 시에
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(401);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"error\": \"로그인이 필요합니다.\"}");
+        };
+    }
+    //403 로그인 했지만 권한이 없을 시에
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(403);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"error\": \"접근 권한이 없습니다.\"}");
+        };
+    }
+
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
