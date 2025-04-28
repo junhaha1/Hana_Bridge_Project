@@ -3,7 +3,7 @@ import ApiClient from '../../service/ApiClient';
 import Header from '../Header';
 import { Container, Form, Button, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
 const AddBoard = () => {
@@ -102,6 +102,9 @@ const AddBoard = () => {
           <Button type="submit" variant="primary" className="px-5">
             작성하기
           </Button>
+          <Link className="btn btn-success btn-sm me-2" to="/">
+            처음으로 
+          </Link>
         </div>
       </Form>
     </Container>
