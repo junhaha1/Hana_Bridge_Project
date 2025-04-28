@@ -43,8 +43,11 @@ public class WebSecurityConfig {
                         //로그인하지 않아도 공지, 코드, assemble 게시판은 사용가능
                         .requestMatchers(HttpMethod.GET, "/board/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/assemble/**").permitAll()
+                        //로그인 접속
                         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
 
+                        //글 등록, 수정, 삭제, ChatBot 이용은 ROLE_USER, ROLE_ADMIN만 접근 가능(ROLE_GUEST는 불가능)
+                        //공지 글 접근권한 제한은 Controller에서 제한
                         .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
