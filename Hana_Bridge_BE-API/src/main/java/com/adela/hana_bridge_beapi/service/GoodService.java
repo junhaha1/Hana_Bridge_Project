@@ -26,6 +26,10 @@ public class GoodService {
         return (long) goodRepository.countByBoard_BoardId(boardId);
     }
 
+    public boolean goodCheck(Long boardId, Long userId){
+        return goodRepository.existsByBoard_BoardIdAndUsers_Id(boardId, userId);
+    }
+
     @Transactional
     public void goodSave(GoodAddRequest request){
         //중복인 경우 예외처리
