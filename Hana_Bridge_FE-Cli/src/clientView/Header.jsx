@@ -36,6 +36,7 @@ const BoardHeader = () => {
       }
       dispatch(clearUser());
       console.log("로그아웃 완료!");
+      dispatch(clearUser());
     })
     .catch(err =>{
       console.error("로그아웃 중 오류 발생:", err);
