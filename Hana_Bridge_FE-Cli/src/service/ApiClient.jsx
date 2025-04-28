@@ -43,7 +43,7 @@ class ApiClient{
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + boardId);
   }
   //Board 수정
-  static updateBoard(boardId, accessToken, title, content, code, updateAt){
+  static updateBoard(boardId, accessToken, category, title, content, code, updateAt){
     console.log("Update Boards By boardId: " + boardId);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId, {
       method: "PUT",
@@ -53,6 +53,7 @@ class ApiClient{
       },
       body: JSON.stringify({
         title: title,
+        category: category,
         content: content,
         code: code,
         updateAt: updateAt
@@ -60,14 +61,14 @@ class ApiClient{
     }); 
   }
   //Board 삭제 
-  static deleteBoard(boardId, accessToken){
+  static deleteBoard(boardId, accessToken, category){
     console.log("Delete Board By boardId ");
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId + '/' + category, {
       method: "DELETE", 
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${accessToken}`
-      }
+      },
     });
   }
       
@@ -140,7 +141,7 @@ class ApiClient{
   //comment 등록 /board/comment/{board_id}
   static sendComment(boardId, accessToken, content, createAt){
     console.log("POST Comment By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOABOARD_COMMENTRD + '/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + boardId, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -155,7 +156,7 @@ class ApiClient{
   //comment 수정 /board/comment/{comment_id}
   static updateComment(commentId, accessToken, content, createAt){
     console.log("Update Comment By commentId: " + commentId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOABOARD_COMMENTRD + '/' + commentId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + commentId, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
