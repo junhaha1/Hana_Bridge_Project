@@ -19,6 +19,7 @@ public class UsersService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //회원가입 메서드
+    @Transactional
     public void registerUser(UsersRegistRequest usersRegistRequest) {
         //비밀번호 암호화
         usersRegistRequest.setPassword(bCryptPasswordEncoder.encode(usersRegistRequest.getPassword()));
@@ -56,6 +57,7 @@ public class UsersService {
     }
 
     //사용자 탈퇴
+    @Transactional
     public void deleteUser(Long userId) {
         usersRepository.deleteById(userId);
     }

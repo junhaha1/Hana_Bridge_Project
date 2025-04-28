@@ -24,6 +24,7 @@ public class GoodService {
         return (long) goodRepository.countByBoard_BoardId(boardId);
     }
 
+    @Transactional
     public void goodSave(GoodAddRequest request){
         //중복인 경우 예외처리
         if(goodRepository.existsByBoard_BoardIdAndUsers_Id(request.getBoardId(), request.getUserId())){

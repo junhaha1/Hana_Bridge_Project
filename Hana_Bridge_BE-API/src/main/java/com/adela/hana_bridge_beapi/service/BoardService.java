@@ -18,6 +18,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     //글 저장
+    @Transactional
     public Board save(BoardAddRequest request){
         return boardRepository.save(request.toEntity());
     }

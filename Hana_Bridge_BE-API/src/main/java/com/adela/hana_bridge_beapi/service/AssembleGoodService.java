@@ -23,6 +23,7 @@ public class AssembleGoodService {
     }
 
     //해당 게시글의 좋아요 등록
+    @Transactional
     public void registAssembleBoardGood(AssembleGoodRequest request) {
         if (!assembleGoodRepository.existsByAssembleBoard_AssembleBoardIdAndUsers_Id(request.getAssembleBoardId(), request.getUserId())) {
 

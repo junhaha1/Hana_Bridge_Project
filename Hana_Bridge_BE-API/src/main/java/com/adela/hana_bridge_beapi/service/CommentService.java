@@ -18,11 +18,13 @@ public class CommentService {
     private final BoardRepository boardRepository;
 
     //댓글 저장
+    @Transactional
     public Comment save(CommentAddRequest request) {
         return commentRepository.save(request.toEntity());
     }
 
     //댓글 삭제
+    @Transactional
     public void delete(String email, long commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("not found commentId: " + commentId));
