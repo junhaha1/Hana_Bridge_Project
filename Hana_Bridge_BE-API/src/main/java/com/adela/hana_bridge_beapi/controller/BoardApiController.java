@@ -69,24 +69,35 @@ public class BoardApiController {
     }
 
     //글 삭제
-    @DeleteMapping("/article/{boardId}")
-    public ResponseEntity<Void> deleteBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId){
+    @DeleteMapping("/article/{boardId}/{category}")
+    public ResponseEntity<Void> deleteBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId, @PathVariable("category") String category) {
         String accessToken = authHeader.replace("Bearer ", "");
+        String role = tokenService.findRoleByToken(accessToken);
         String email = tokenService.findEmailByToken(accessToken);
-        boardService.delete(email, boardId);
-        return ResponseEntity.ok()
-                .build();
+
+        if (category.equals("notice") && !role.equals("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            boardService.delete(email, boardId);
+            return ResponseEntity.ok()
+                    .build();
+        }
     }
 
     //글 수정
     @PutMapping("/article/{boardId}")
     public ResponseEntity<Board> updateBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId, @RequestBody BoardUpdateRequest request){
         String accessToken = authHeader.replace("Bearer ", "");
+        String role = tokenService.findRoleByToken(accessToken);
         String email = tokenService.findEmailByToken(accessToken);
 
-        Board updateBoard = boardService.update(email, boardId, request);
-        return ResponseEntity.ok()
-                .body(updateBoard);
+        if (request.getCategory().equals("notice") && !role.equals("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            Board updateBoard = boardService.update(email, boardId, request);
+            return ResponseEntity.ok()
+                    .body(updateBoard);
+        }
     }
 
 
