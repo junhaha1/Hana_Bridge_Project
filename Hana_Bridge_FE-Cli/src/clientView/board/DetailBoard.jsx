@@ -17,19 +17,22 @@ const DetailBoard = () => {
 
   const [board, setBoard] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [isLike, setIsLike] = useState(false);
 
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
   const [content, setContent] = useState('');
-  const [createAt, setCreateAt] = useState(new Date());
+  const [updateAt, setUpdateAt] = useState(new Date());
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const category = location.state?.category;
+  const [category, setCategory] = useState(location.state?.category);
+
+  // const category = location.state?.category;
 
   useEffect(() => {
-    ApiClient.getBoard(boardId)
+    ApiClient.getBoard(boardId, accessToken)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();
@@ -39,7 +42,7 @@ const DetailBoard = () => {
       setBoard(data);
     })
     .catch((err) => console.error("API 요청 실패:", err)); 
-  }, [boardId]);
+  }, [isEdit, boardId]);
 
   useEffect(() => {
     if (isEdit && board) {
@@ -68,15 +71,18 @@ const DetailBoard = () => {
 
   //수정 저장 버튼
   const saveBoard = (boardId) => {
-    setIsEdit(false);
-
-    //category 추가
-    ApiClient.sendBoard(boardId, accessToken, category, code, content, createAt)
+    ApiClient.updateBoard(boardId, accessToken, category, title, content, code, updateAt)
     .then(() => {
       console.log("게시글 수정 완료 ! ");
       navigate(`/detailBoard/${boardId}`, {state: {category: category}});
+      setIsEdit(false);
     })
     .catch((err) => console.error("API 요청 실패:", err));
+  }
+
+  //좋아요 추가 
+  const handleLike = (boardId) =>{
+
   }
 
   return (
@@ -90,7 +96,7 @@ const DetailBoard = () => {
           {/* 게시글 수정 */}
           <div className="card mb-4">
             <div className="card-body">
-              {category === "code" ? (
+              {category == "code" ? (
                 <><div className="text-muted mb-2">CODE 게시판 &lt; 상세글</div></>
               ):(
                 <><div className="text-muted mb-2">공지 게시판 &lt; 상세글</div></>
@@ -117,7 +123,9 @@ const DetailBoard = () => {
                 />
               <div className="d-flex justify-content-between mt-3">
                 <div>
-                  <span className="me-3">👍 {board.likeCount}</span>
+                  <span className="me-3" style={{ cursor: 'pointer' }} onClick={() => handleLike(boardId)}>
+                    👍 {board.likeCount}
+                  </span>
                   <span>💬 {board.commentsCount}</span>
                 </div>   
                 <div className="d-flex justify-content-end gap-2">

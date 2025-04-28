@@ -15,6 +15,7 @@ const Comments = (props) => {
   const [editCommentId, setEditCommentId] = useState(null); 
   // 수정 중인 댓글
   const [editContent, setEditContent] = useState(''); 
+  const [editCreateAt, setEditCreateAt] = useState(new Date());
   //새로운 댓글 Flag
   const [newCommentFlag, setNewCommentFlag] = useState(false);
 
@@ -22,6 +23,7 @@ const Comments = (props) => {
     loadComments();
   }, [props.boardId, newCommentFlag]);
 
+  //전체 댓글
   const loadComments = () => {
     ApiClient.getComments(props.boardId)
       .then((res) => {
@@ -34,21 +36,24 @@ const Comments = (props) => {
       .catch((err) => console.error("API 요청 실패:", err));
   };
 
+  //댓글 삭제
   const handleDeleteComment = (commentId) => {
     ApiClient.deleteComment(commentId, accessToken)
       .then(() => loadComments())
       .catch((err) => console.error('댓글 삭제 실패:', err));
   };
 
+  //댓글 수정
   const handleEditComment = (commentId, currentContent) => {
     setEditCommentId(commentId);
     setEditContent(currentContent);
   };
 
+  //수정 댓글 저장
   const handleUpdateComment = (commentId) => {
     if (!editContent.trim()) return;
     //commentId, accessToken, content, createAt
-    ApiClient.updateComment(commentId, accessToken, editContent.content, editContent.createAt)
+    ApiClient.updateComment(commentId, accessToken, editContent, editCreateAt)
       .then(() => {
         setEditCommentId(null);
         setEditContent('');

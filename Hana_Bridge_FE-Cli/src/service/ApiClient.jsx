@@ -37,14 +37,21 @@ class ApiClient{
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category);
   }
   //Board 상세 조회
-  static getBoard(boardId){
+  static getBoard(boardId, accessToken){
     console.log("Get Article By boardId: " + boardId);
     console.log(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + boardId, {
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
   }
   //Board 수정
   static updateBoard(boardId, accessToken, category, title, content, code, updateAt){
     console.log("Update Boards By boardId: " + boardId);
+    console.log(updateAt);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article/' + boardId, {
       method: "PUT",
       headers: {
@@ -78,9 +85,15 @@ class ApiClient{
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD);
   }
   //Assemble 상세 조회
-  static getAssembleBoard(assembleBoardId){
+  static getAssembleBoard(assembleBoardId, accessToken){
     console.log("Get AssembleBoard By assembleBoardId: " + assembleBoardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + assembleBoardId, {
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
   }
   //Assemble 삭제 
   static deleteAssembleBoard(assembleBoardId, accessToken){
@@ -120,13 +133,47 @@ class ApiClient{
     });
   }  
   //사용자 등록
-  static sendUser(){
+  static sendUser(email, password, name, nickName, createAt){
+    console.log("signup: ");
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",  
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        name: name,
+        nickName: nickName,
+        createAt: createAt
+      }),
+    });
   }
   //사용자 조회 (로그인 & 회원 페이지)
-  static getUser(){
+  static getUser(accessToken){
+    console.log("get user");
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me', {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
   }
   //사용자 정보 수정
-  static updateUser(){
+  static updateUser(accessToken, email, password, name, nickName){
+    console.log("Update user: ");
+    console.log(content);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + commentId, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        content: content,
+        createAt: createAt,
+      }),
+    });
   }
   //사용자 삭제(탈퇴)
   static deleteUser(){
@@ -156,6 +203,7 @@ class ApiClient{
   //comment 수정 /board/comment/{comment_id}
   static updateComment(commentId, accessToken, content, createAt){
     console.log("Update Comment By commentId: " + commentId);
+    console.log(content);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + commentId, {
       method: "PUT",
       headers: {

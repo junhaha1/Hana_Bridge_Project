@@ -16,6 +16,7 @@ const DetailAssemble = () => {
   console.log(assembleBoardId);
 
   const [board, setBoard] = useState(null);
+  const [likeCount, setLikeCount] = useState(0);
 
 
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const DetailAssemble = () => {
   const category = location.state?.category;
 
   useEffect(() => {
-    ApiClient.getAssembleBoard(assembleBoardId)
+    ApiClient.getAssembleBoard(assembleBoardId, accessToken)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();
@@ -32,6 +33,7 @@ const DetailAssemble = () => {
     .then((data) => {
       console.log(data);
       setBoard(data);
+      setLikeCount(data.likeCount);
     })
     .catch((err) => console.error("API 요청 실패:", err));    
   }, [assembleBoardId]);
@@ -68,7 +70,7 @@ const DetailAssemble = () => {
                 <p>{board.content}</p>
               <div className="d-flex justify-content-between mt-3">
                 <div>
-                  <span className="me-3">👍 {board.likeCount}</span>
+                  <span className="me-3">👍 {likeCount}</span>
                   <span>💬 {board.commentsCount}</span>
                 </div>
                 <div>
