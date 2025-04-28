@@ -107,6 +107,8 @@ public class BoardApiController {
     public ResponseEntity<Comment> addComment(@RequestHeader("Authorization") String authHeader, @PathVariable Long boardId, @RequestBody CommentAddRequest request) {
         String accessToken = authHeader.replace("Bearer ", "");
         String email = tokenService.findEmailByToken(accessToken);
+
+        request.connectionArticle(boardService.findById(boardId));
         request.connectionUserEntity(usersService.findByEmail(email));
 
         Comment savedComment = commentService.save(request);
@@ -153,8 +155,10 @@ public class BoardApiController {
     public ResponseEntity<String> GoodSave(@RequestHeader("Authorization") String authHeader, @RequestBody GoodAddRequest request){
         String accessToken = authHeader.replace("Bearer ", "");
         Long userId = tokenService.findUsersIdByToken(accessToken);
+
         request.setUserId(userId);
         goodService.goodSave(request);
+
         return ResponseEntity.ok().build();
     }
     //좋아요 조회
