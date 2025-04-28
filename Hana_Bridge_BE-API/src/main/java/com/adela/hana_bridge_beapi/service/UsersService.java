@@ -4,6 +4,8 @@ import com.adela.hana_bridge_beapi.dto.user.UserRequest;
 import com.adela.hana_bridge_beapi.dto.user.UserResponse;
 import com.adela.hana_bridge_beapi.dto.user.UsersRegistRequest;
 import com.adela.hana_bridge_beapi.entity.Users;
+import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
+import com.adela.hana_bridge_beapi.errorhandler.error.UserIdNotFoundException;
 import com.adela.hana_bridge_beapi.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class UsersService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //회원가입 메서드
+    @Transactional
     public void registerUser(UsersRegistRequest usersRegistRequest) {
         //비밀번호 암호화
         usersRegistRequest.setPassword(bCryptPasswordEncoder.encode(usersRegistRequest.getPassword()));
@@ -29,14 +32,14 @@ public class UsersService {
     //email 기반 회원정보 조회
     public Users findByEmail(String email) {
         return usersRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("Email not found : " + email));
+                .orElseThrow(()-> new UserEmailNotFoundException(email));
     }
 
     //사용자 정보 수정
     @Transactional
     public UserResponse updateUser(Long userId, UserRequest userRequest) {
         Users users = usersRepository.findById(userId)
-                .orElseThrow(()-> new IllegalArgumentException("User not found : " + userId));
+                .orElseThrow(()-> new UserIdNotFoundException(userId));
 
         //비밀번호 암호화
         userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
@@ -56,6 +59,7 @@ public class UsersService {
     }
 
     //사용자 탈퇴
+    @Transactional
     public void deleteUser(Long userId) {
         usersRepository.deleteById(userId);
     }
@@ -63,7 +67,7 @@ public class UsersService {
     //로그인 인증
     public UserResponse login (String email, String password){
         Users users = usersRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("Email not found : " + email));
+                .orElseThrow(()-> new UserEmailNotFoundException(email));
         if (bCryptPasswordEncoder.matches(password,users.getPassword())){
             return UserResponse.builder()
                     .email(users.getEmail())

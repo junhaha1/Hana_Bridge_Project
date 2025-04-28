@@ -3,8 +3,10 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.config.jwt.TokenProvider;
 import com.adela.hana_bridge_beapi.entity.RefreshToken;
 import com.adela.hana_bridge_beapi.entity.Users;
+import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.RefreshTokenRepository;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +65,7 @@ public class TokenService {
 
     //-------------RefreshToken 기능-------------
     //RefreshToken 발급
+    @Transactional
     public String createRefreshToken(String email, String role) {
         String refreshToken = tokenProvider.createToken(email, role, EXPIRATION_REFRESH_TIME);
         refreshTokenRepository.save(new RefreshToken(email, refreshToken));
@@ -71,9 +74,10 @@ public class TokenService {
     //RefreshToken 조회
     public RefreshToken findByRefreshToken(String email) {
         return refreshTokenRepository.findById(email)
-                .orElseThrow(()->new IllegalArgumentException("Unexpected token your email: " + email));
+                .orElseThrow(()->new UserEmailNotFoundException(email));
     }
     //RefreshToken 삭제
+    @Transactional
     public void deleteRefreshToken(String token) {
         String email = tokenProvider.getEmail(token);
         refreshTokenRepository.deleteById(email);

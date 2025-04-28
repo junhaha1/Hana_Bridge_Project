@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.dto.comment.CommentAddRequest;
 import com.adela.hana_bridge_beapi.dto.comment.CommentUpdateRequest;
 import com.adela.hana_bridge_beapi.entity.Comment;
+import com.adela.hana_bridge_beapi.errorhandler.error.BoardNotFoundException;
 import com.adela.hana_bridge_beapi.repository.BoardRepository;
 import com.adela.hana_bridge_beapi.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,13 @@ public class CommentService {
     private final BoardRepository boardRepository;
 
     //댓글 저장
+    @Transactional
     public Comment save(CommentAddRequest request) {
         return commentRepository.save(request.toEntity());
     }
 
     //댓글 삭제
+    @Transactional
     public void delete(String email, long commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("not found commentId: " + commentId));
@@ -35,7 +38,7 @@ public class CommentService {
     //댓글 전체 조회
     public List<Comment> findComment(long boardId) {
         if(!boardRepository.existsById(boardId)){
-            throw new IllegalArgumentException("Not Founded boardId " + boardId);
+            throw new BoardNotFoundException(boardId);
         }
         return commentRepository.findByBoard_BoardId(boardId);
     }

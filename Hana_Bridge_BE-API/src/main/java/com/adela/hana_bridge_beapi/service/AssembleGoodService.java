@@ -3,6 +3,8 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodRequest;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.entity.Users;
+import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
+import com.adela.hana_bridge_beapi.errorhandler.error.UserIdNotFoundException;
 import com.adela.hana_bridge_beapi.repository.AssembleGoodRepository;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
 import com.adela.hana_bridge_beapi.repository.UsersRepository;
@@ -23,14 +25,15 @@ public class AssembleGoodService {
     }
 
     //해당 게시글의 좋아요 등록
+    @Transactional
     public void registAssembleBoardGood(AssembleGoodRequest request) {
         if (!assembleGoodRepository.existsByAssembleBoard_AssembleBoardIdAndUsers_Id(request.getAssembleBoardId(), request.getUserId())) {
 
             AssembleBoard assembleBoard = assembleRepository.findById(request.getAssembleBoardId())
-                            .orElseThrow(() -> new IllegalArgumentException("Assemble Board Not Found : " + request.getAssembleBoardId()));
+                            .orElseThrow(() -> new AssembleBoardNotFoundException(request.getAssembleBoardId()));
 
             Users users = usersRepository.findById(request.getUserId())
-                            .orElseThrow(() -> new IllegalArgumentException("User Not Found : " + request.getUserId()));
+                            .orElseThrow(() -> new UserIdNotFoundException(request.getUserId()));
 
             assembleGoodRepository.save(request.toEntity(assembleBoard, users));
         } else {
