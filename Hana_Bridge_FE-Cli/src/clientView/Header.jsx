@@ -34,6 +34,7 @@ const BoardHeader = () => {
       if(!res.ok){
         throw new Error(`서버 오류: ${res.status}`);
       }
+      dispatch(clearUser());
       console.log("로그아웃 완료!");
       dispatch(clearUser());
     })
