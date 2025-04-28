@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 public class BoardUpdateRequest {
     private String title;
+    private String category;
     private String code;
     private String content;
     private LocalDateTime updateAt;
