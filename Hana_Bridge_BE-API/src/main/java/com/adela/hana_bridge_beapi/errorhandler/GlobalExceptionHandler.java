@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse("BAD_REQUEST", ex.getMessage()));
+    }
+
     @ExceptionHandler(AssembleBoardNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAssembleBoardNotFound(AssembleBoardNotFoundException ex) {
         return ResponseEntity.status(404)

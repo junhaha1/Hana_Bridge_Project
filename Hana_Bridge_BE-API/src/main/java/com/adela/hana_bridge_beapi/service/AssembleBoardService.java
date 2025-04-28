@@ -2,6 +2,8 @@ package com.adela.hana_bridge_beapi.service;
 
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
+import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
+import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
@@ -24,17 +26,17 @@ public class AssembleBoardService {
     //모든 assemble 게시글 상세 조회
     public AssembleBoard findAssembleBoardById(Long assembleBoardId) {
         return assembleRepository.findById(assembleBoardId)
-                .orElseThrow(() -> new IllegalArgumentException("not found: " + assembleBoardId));
+                .orElseThrow(() -> new AssembleBoardNotFoundException(assembleBoardId));
     }
 
     //게시글 ID를 통한 삭제
     @Transactional
     public void deleteAssembleBoardById(String Email, Long assembleBoardId) {
         AssembleBoard assembleBoard = assembleRepository.findById(assembleBoardId)
-                .orElseThrow(() -> new IllegalArgumentException("not found assembleBoard : " + assembleBoardId));
+                .orElseThrow(() -> new AssembleBoardNotFoundException(assembleBoardId));
 
         if (!assembleBoard.getUsers().getEmail().equals(Email)) {
-            throw new IllegalArgumentException("Board doesn't belong to email : " + Email + ", " + assembleBoardId);
+            throw new UserEmailNotFoundException(Email);
         }
 
         assembleRepository.deleteById(assembleBoardId);

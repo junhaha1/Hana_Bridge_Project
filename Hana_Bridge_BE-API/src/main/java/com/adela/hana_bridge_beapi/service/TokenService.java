@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.config.jwt.TokenProvider;
 import com.adela.hana_bridge_beapi.entity.RefreshToken;
 import com.adela.hana_bridge_beapi.entity.Users;
+import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.RefreshTokenRepository;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.transaction.Transactional;
@@ -73,7 +74,7 @@ public class TokenService {
     //RefreshToken 조회
     public RefreshToken findByRefreshToken(String email) {
         return refreshTokenRepository.findById(email)
-                .orElseThrow(()->new IllegalArgumentException("Unexpected token your email: " + email));
+                .orElseThrow(()->new UserEmailNotFoundException(email));
     }
     //RefreshToken 삭제
     @Transactional
