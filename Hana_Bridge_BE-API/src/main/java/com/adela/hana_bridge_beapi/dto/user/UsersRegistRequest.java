@@ -22,7 +22,7 @@ public class UsersRegistRequest {
     private String name;
 
     @NotBlank(message = "닉네임은 필수 입력값입니다.")
-    private String nickname;
+    private String nickName;
 
     @NotBlank(message = "비밀번호는 필수 입력값입니다.")
     private String password;
@@ -31,7 +31,7 @@ public class UsersRegistRequest {
         return Users.builder()
                 .email(this.email)
                 .name(this.name)
-                .nickName(this.nickname)
+                .nickName(this.nickName)
                 .role("ROLE_USER")
                 .password(this.password)
                 .build();
