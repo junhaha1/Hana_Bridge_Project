@@ -13,13 +13,18 @@ function SignUp() {
   const [nickName, setNickName] = useState('');
   const [createAt, setCreateAt] = useState(new Date());
 
+  const navigate = useNavigate();
+
   console.log("name: " + name + 
-    "email" + email +
-    "nickname:  " + nickName +
-    "password: " + password
+    "   email " + email +
+    "   nickname:  " + nickName +
+    "   password: " + password
   )
   
   const handleSignup = ()=>{
+    if(password !== checkPwd){
+      alert("비밀번호가 일치하지 않습니다. ");
+    }
     ApiClient.sendUser(email, password, name, nickName, createAt)
     .then(() => {
       alert("회원가입을 축하합니다. ");

@@ -134,8 +134,8 @@ class ApiClient{
   }  
   //사용자 등록
   static sendUser(email, password, name, nickName, createAt){
-    console.log("signup: ");
-    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me', {
+    console.log("signup: " + email + password + name + nickName + createAt);
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER , {
       method: "POST",
       headers: {
         "Content-Type": "application/json",  
