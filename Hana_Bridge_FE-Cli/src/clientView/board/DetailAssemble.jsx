@@ -83,9 +83,15 @@ const DetailAssemble = () => {
                   )}
                 </div>
               </div>
-            </div>
-          </div>        
+            </div>                       
+          </div>  
+          <div>
+            <Link className="btn btn-success btn-sm me-2" to="/">
+              처음으로 
+            </Link>
+          </div>       
       </div>
+      
     </Container>
     </>
   );

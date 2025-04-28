@@ -53,7 +53,7 @@ const DetailBoard = () => {
 
   //삭제 버튼
   const boardDeleteButton = (boardId) => {
-    ApiClient.deleteBoard(boardId, accessToken)
+    ApiClient.deleteBoard(boardId, accessToken, category)
     .then(res => {
       if (!res.ok) {
           throw new Error(`서버 오류: ${res.status}`);
@@ -70,7 +70,8 @@ const DetailBoard = () => {
   const saveBoard = (boardId) => {
     setIsEdit(false);
 
-    ApiClient.sendBoard(boardId, accessToken, code, content, createAt)
+    //category 추가
+    ApiClient.sendBoard(boardId, accessToken, category, code, content, createAt)
     .then(() => {
       console.log("게시글 수정 완료 ! ");
       navigate(`/detailBoard/${boardId}`, {state: {category: category}});
