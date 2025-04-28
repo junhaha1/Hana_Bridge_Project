@@ -17,7 +17,9 @@ const DetailBoard = () => {
 
   const [board, setBoard] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+
   const [isLike, setIsLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
@@ -40,6 +42,7 @@ const DetailBoard = () => {
     .then((data) => {
       console.log(data);
       setBoard(data);
+      setIsLike(data.checkGood);
     })
     .catch((err) => console.error("API 요청 실패:", err)); 
   }, [isEdit, boardId]);
@@ -80,10 +83,36 @@ const DetailBoard = () => {
     .catch((err) => console.error("API 요청 실패:", err));
   }
 
-  //좋아요 추가 
-  const handleLike = (boardId) =>{
-
+  //좋아요
+  const handleLike = (boardId) => {
+    ApiClient.sendBoardGood(boardId, accessToken)
+      .then((res) => {
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setIsLike(true);
+        setLikeCount(prev => prev + 1);  // 추가
+      })
+      .catch((err) => console.error("API 요청 실패:", err));    
   }
+  //좋아요 삭제
+  const handleCancelLike = (boardId) => {
+    ApiClient.deleteBoardGood(boardId, accessToken)
+      .then(res => {
+        if (!res.ok) {
+            throw new Error(`서버 오류: ${res.status}`);
+        }
+        console.log("좋아요 취소!");
+        setIsLike(false);
+        setLikeCount(prev => prev - 1);  // 추가
+      })
+      .catch(error => {
+          console.error("삭제 중 오류 발생:", error);
+      });
+  }
+  
 
   return (
     <>
@@ -123,9 +152,7 @@ const DetailBoard = () => {
                 />
               <div className="d-flex justify-content-between mt-3">
                 <div>
-                  <span className="me-3" style={{ cursor: 'pointer' }} onClick={() => handleLike(boardId)}>
-                    👍 {board.likeCount}
-                  </span>
+                <span className="me-3">👍 {board.likeCount}</span>
                   <span>💬 {board.commentsCount}</span>
                 </div>   
                 <div className="d-flex justify-content-end gap-2">
@@ -152,7 +179,17 @@ const DetailBoard = () => {
                 <p>{board.content}</p>
               <div className="d-flex justify-content-between mt-3">
                 <div>
-                  <span className="me-3">👍 {board.likeCount}</span>
+                {isLike === true ? (
+                    <>
+                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                        onClick={() => handleCancelLike(boardId)}>👍 {likeCount}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                        onClick={() => handleLike(boardId)}>👍🏻 {likeCount}</span>
+                    </>
+                  )}                  
                   <span>💬 {board.commentsCount}</span>
                 </div>
                 <div>

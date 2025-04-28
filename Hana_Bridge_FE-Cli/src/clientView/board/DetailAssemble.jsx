@@ -72,7 +72,7 @@ const DetailAssemble = () => {
       })
       .catch((err) => console.error("API 요청 실패:", err));    
   }
-  //좋아요 취소
+  //좋아요 삭제
   const handleCancelLike = (assembleBoardId) => {
     ApiClient.deleteAssembleGood(assembleBoardId, accessToken)
       .then(res => {

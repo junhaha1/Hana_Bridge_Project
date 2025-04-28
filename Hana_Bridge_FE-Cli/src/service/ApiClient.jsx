@@ -241,7 +241,7 @@ class ApiClient{
   //Good 삭제 /board/good/{board_id}
   static deleteBoardGood(boardId, accessToken){
     console.log("Delete BoardGood By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + ApiClient.GOOD + '/' + boardId, {
       method: "DELETE", 
       headers: {
         "Content-Type": "application/json",
@@ -252,7 +252,7 @@ class ApiClient{
   //Good 등록 /board/good/{board_id}
   static sendBoardGood(boardId, accessToken){
     console.log("POST BoardGood By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + ApiClient.GOOD , {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -260,6 +260,7 @@ class ApiClient{
         
       },
       body: JSON.stringify({        
+        boardId: boardId,
       }),
     });
   }   
@@ -299,7 +300,7 @@ class ApiClient{
   //Good 조회 /assemble/good/{assembleboard_id}
   static getAssembleGood(boardId){
     console.log("Get Assembel BoardGood By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' +  ApiClient.GOOD + '/' + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + ApiClient.GOOD + '/' + boardId);
   }
 }
 export default ApiClient;
