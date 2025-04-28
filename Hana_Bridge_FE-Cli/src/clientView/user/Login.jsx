@@ -23,7 +23,7 @@ function Login() {
       })
       .then((data) =>{
         console.log(data);
-        dispatch(setUser({email: data.email, name: data.name, nickName: data.nickname, accessToken: data.accessToken, role: data.role}));
+        dispatch(setUser({email: data.email, name: data.name, nickName: data.nickName, accessToken: data.accessToken, role: data.role}));
         navigate('/');
       })
       .catch((error) => {
