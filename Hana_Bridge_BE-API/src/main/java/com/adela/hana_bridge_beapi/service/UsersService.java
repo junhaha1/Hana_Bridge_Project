@@ -48,13 +48,13 @@ public class UsersService {
         users.updateUsers(
                 userRequest.getEmail(),
                 userRequest.getPassword(),
-                userRequest.getNickname()
+                userRequest.getNickName()
         );
 
         return UserResponse.builder()
                 .email(users.getEmail())
                 .name(users.getName())
-                .nickname(users.getNickName())
+                .nickName(users.getNickName())
                 .build();
     }
 
@@ -73,7 +73,7 @@ public class UsersService {
                     .email(users.getEmail())
                     .name(users.getName())
                     .role(users.getRole())
-                    .nickname(users.getNickName())
+                    .nickName(users.getNickName())
                     .build();
         } else{
             throw new IllegalArgumentException("Invalid Password Your Email : " + email);

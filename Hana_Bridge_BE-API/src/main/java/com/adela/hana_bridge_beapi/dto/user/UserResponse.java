@@ -9,15 +9,15 @@ import lombok.Setter;
 public class UserResponse {
     private String email;
     private String name;
-    private String nickname;
+    private String nickName;
     private String role;
     private String accessToken;
 
     @Builder
-    public UserResponse(String email, String name, String nickname, String role, String accessToken) {
+    public UserResponse(String email, String name, String nickName, String role, String accessToken) {
         this.email = email;
         this.name = name;
-        this.nickname = nickname;
+        this.nickName = nickName;
         this.role = role;
         this.accessToken = accessToken;
     }
