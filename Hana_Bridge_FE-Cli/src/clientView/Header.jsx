@@ -44,6 +44,10 @@ const BoardHeader = () => {
 
     navigate("/");
   }
+
+  const myPageButton = () =>{
+    navigate("/myPage");
+  }
   
   return (
     <Navbar expand="lg" bg="light" variant="light" className="shadow-sm">
@@ -78,10 +82,15 @@ const BoardHeader = () => {
               <>
                 <NavDropdown title={`${nickName}님`} id="user-dropdown" align="end">
                   <NavDropdown.Item
+                    onClick={() => myPageButton()}
+                  >
+                    My Page
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
                     onClick={() => logoutButton()}
                   >
                     로그아웃
-                  </NavDropdown.Item>
+                  </NavDropdown.Item>                 
                 </NavDropdown>
               </>
             )}

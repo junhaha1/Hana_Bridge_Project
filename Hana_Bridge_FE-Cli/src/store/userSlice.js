@@ -4,8 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
    email: 'guest@email.com',
    name: 'guest',
    nickName: 'guest',
-   accessToken: null,
-   role: null,
+   accessToken: 'guest',
+   role: 'guest',
  };
  
  const userSlice = createSlice({

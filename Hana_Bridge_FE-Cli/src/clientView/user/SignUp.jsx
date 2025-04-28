@@ -1,9 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, Form, Button, Row, Col } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
+import ApiClient from "../../service/ApiClient";
 
 
 function SignUp() {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [checkPwd, setCheckPwd] = useState('');
+  const [name, setName] = useState('');
+  const [nickName, setNickName] = useState('');
+  const [createAt, setCreateAt] = useState(new Date());
+
+  console.log("name: " + name + 
+    "email" + email +
+    "nickname:  " + nickName +
+    "password: " + password
+  )
+  
+  const handleSignup = ()=>{
+    ApiClient.sendUser(email, password, name, nickName, createAt)
+    .then(() => {
+      alert("회원가입을 축하합니다. ");
+      navigate('/');
+    })
+    .catch((err) => console.error("API 요청 실패:", err));
+  }
+
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
       {/* 상단 파란 배경 */}
@@ -37,14 +62,16 @@ function SignUp() {
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>이름<span className="text-danger">*</span></Form.Label>
-                <Form.Control type="text" placeholder="이름을 입력해 주세요" />
+                <Form.Control type="text" placeholder="이름을 입력해 주세요" 
+                value={name} onChange={e => setName(e.target.value)}/>
               </Form.Group>
 
               <Form.Group className="mb-2">
                 <Form.Label>이메일<span className="text-danger">*</span></Form.Label>
                 <Row>
                   <Col xs={8}>
-                    <Form.Control type="email" placeholder="이메일을 입력해 주세요" />
+                    <Form.Control type="email" placeholder="이메일을 입력해 주세요" 
+                    value={email} onChange={e => setEmail(e.target.value)}/>
                   </Col>
                   <Col xs={4}>
                     <Button variant="secondary" className="w-100">코드발송</Button>
@@ -64,21 +91,24 @@ function SignUp() {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>아이디<span className="text-danger">*</span></Form.Label>
-                <Form.Control type="text" placeholder="아이디를 입력해 주세요" />
+                <Form.Label>닉네임<span className="text-danger">*</span></Form.Label>
+                <Form.Control type="text" placeholder="닉네임을 입력해 주세요"
+                value={nickName} onChange={e => setNickName(e.target.value)} />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>비밀번호<span className="text-danger">*</span></Form.Label>
-                <Form.Control type="password" placeholder="비밀번호를 입력해 주세요" />
+                <Form.Control type="password" placeholder="비밀번호를 입력해 주세요"
+                value={password} onChange={e => setPassword(e.target.value)} />
               </Form.Group>
 
               <Form.Group className="mb-4">
                 <Form.Label>비밀번호 확인<span className="text-danger">*</span></Form.Label>
-                <Form.Control type="password" placeholder="비밀번호를 다시 입력해 주세요" />
+                <Form.Control type="password" placeholder="비밀번호를 다시 입력해 주세요" 
+                value={checkPwd} onChange={e => setCheckPwd(e.target.value)}/>
               </Form.Group>
 
-              <Button variant="primary" className="w-100" size="lg">가입하기</Button>
+              <Button variant="primary" className="w-100" size="lg" onClick={() => handleSignup()}>가입하기</Button>
             </Form>
           </Card.Body>
         </Card>
