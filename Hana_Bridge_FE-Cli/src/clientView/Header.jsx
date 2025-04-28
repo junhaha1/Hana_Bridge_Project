@@ -29,19 +29,17 @@ const BoardHeader = () => {
   const navigate = useNavigate();
 
   const logoutButton = () =>{
-    dispatch(clearUser());
-
     ApiClient.userLogout()
     .then(res =>{
       if(!res.ok){
         throw new Error(`서버 오류: ${res.status}`);
       }
       console.log("로그아웃 완료!");
+      dispatch(clearUser());
     })
     .catch(err =>{
       console.error("로그아웃 중 오류 발생:", err);
     })
-
     navigate("/");
   }
 

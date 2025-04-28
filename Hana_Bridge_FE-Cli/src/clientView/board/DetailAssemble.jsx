@@ -16,6 +16,8 @@ const DetailAssemble = () => {
   console.log(assembleBoardId);
 
   const [board, setBoard] = useState(null);
+
+  const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
 
 
@@ -34,6 +36,7 @@ const DetailAssemble = () => {
       console.log(data);
       setBoard(data);
       setLikeCount(data.likeCount);
+      setIsLike(data.checkGood);
     })
     .catch((err) => console.error("API 요청 실패:", err));    
   }, [assembleBoardId]);
@@ -55,6 +58,37 @@ const DetailAssemble = () => {
     });
   }
 
+  //좋아요
+  const handleLike = (assembleBoardId) => {
+    ApiClient.sendAssembleGood(assembleBoardId, accessToken)
+      .then((res) => {
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setIsLike(true);
+        setLikeCount(prev => prev + 1);  // 추가
+      })
+      .catch((err) => console.error("API 요청 실패:", err));    
+  }
+  //좋아요 취소
+  const handleCancelLike = (assembleBoardId) => {
+    ApiClient.deleteAssembleGood(assembleBoardId, accessToken)
+      .then(res => {
+        if (!res.ok) {
+            throw new Error(`서버 오류: ${res.status}`);
+        }
+        console.log("좋아요 취소!");
+        setIsLike(false);
+        setLikeCount(prev => prev - 1);  // 추가
+      })
+      .catch(error => {
+          console.error("삭제 중 오류 발생:", error);
+      });
+  }
+  
+
   return (
     <>
     <Header />
@@ -70,7 +104,18 @@ const DetailAssemble = () => {
                 <p>{board.content}</p>
               <div className="d-flex justify-content-between mt-3">
                 <div>
-                  <span className="me-3">👍 {likeCount}</span>
+                {isLike === true ? (
+                    <>
+                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                        onClick={() => handleCancelLike(assembleBoardId)}>👍 {likeCount}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                        onClick={() => handleLike(assembleBoardId)}>👍🏻 {likeCount}</span>
+                    </>
+                  )}
+                                
                   <span>💬 {board.commentsCount}</span>
                 </div>
                 <div>

@@ -163,7 +163,7 @@ class ApiClient{
   static updateUser(accessToken, email, password, name, nickName){
     console.log("Update user: ");
     console.log(content);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD_COMMENT + '/' + commentId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me' , {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -177,6 +177,14 @@ class ApiClient{
   }
   //사용자 삭제(탈퇴)
   static deleteUser(){
+    console.log("Delete Comment By commentId: " + commentId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me', {
+      method: "DELETE", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
   }
 
   
@@ -258,7 +266,7 @@ class ApiClient{
   //Good 조회 /board/good/{board_id}
   static getBoardGood(boardId){
     console.log("Get BoardGood By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/' +  ApiClient.GOOD + '/' + boardId);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + ApiClient.GOOD + '/' + boardId);
   }
 
 
@@ -266,7 +274,7 @@ class ApiClient{
   //Good 삭제 /assemble/good/{assembleboard_id}
   static deleteAssembleGood(boardId, accessToken){
     console.log("Delete Assemble BoardGood By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + ApiClient.GOOD + '/' + boardId, {
       method: "DELETE", 
       headers: {
         "Content-Type": "application/json",
@@ -277,7 +285,7 @@ class ApiClient{
   //Good 등록 /assemble/good/{assembleboard_id}
   static sendAssembleGood(boardId, accessToken){
     console.log("POST Assemble BoardGood By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/' + ApiClient.GOOD + '/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + ApiClient.GOOD + '/' + boardId, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
