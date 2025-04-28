@@ -2,10 +2,13 @@ package com.adela.hana_bridge_beapi.dto.board;
 
 import com.adela.hana_bridge_beapi.entity.Board;
 import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 public class BoardResponse {
     private final Long boardId;
     private final String nickName;
@@ -17,6 +20,7 @@ public class BoardResponse {
     private final LocalDateTime updateAt;
 
     private final Long likeCount;
+    private boolean goodCheck;
 
     public BoardResponse(Board board, Long likeCount) {
         this.boardId = board.getBoardId();
@@ -29,5 +33,6 @@ public class BoardResponse {
         this.updateAt = board.getUpdateAt();
 
         this.likeCount = likeCount;
+        this.goodCheck = false;
     }
 }

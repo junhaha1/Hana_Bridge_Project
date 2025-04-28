@@ -1,10 +1,7 @@
 package com.adela.hana_bridge_beapi.controller;
 
 import com.adela.hana_bridge_beapi.config.jwt.TokenProvider;
-import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
-import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
-import com.adela.hana_bridge_beapi.dto.board.BoardUpdateRequest;
-import com.adela.hana_bridge_beapi.dto.board.GoodAddRequest;
+import com.adela.hana_bridge_beapi.dto.board.*;
 import com.adela.hana_bridge_beapi.dto.comment.CommentAddRequest;
 import com.adela.hana_bridge_beapi.dto.comment.CommentResponse;
 import com.adela.hana_bridge_beapi.dto.comment.CommentUpdateRequest;
@@ -62,10 +59,20 @@ public class BoardApiController {
 
     //글 상세 조회
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardResponse> findArticle(@PathVariable("boardId") long boardId){
+    public ResponseEntity<BoardResponse> findArticle(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId){
+        String accessToken = authHeader.replace("Bearer ", "");
         Board board = boardService.findById(boardId);
         Long likeCount = goodService.goodCount(boardId);
-        return ResponseEntity.ok().body(new BoardResponse(board, likeCount));
+
+        BoardResponse detailBoard = new BoardResponse(board, likeCount);
+
+        //게스트가 아니라면 해당 게시글에 좋아요를 눌렀는지 안 눌렀는지 체크
+        if (!accessToken.equals("guest")){
+            Long usersId = tokenService.findUsersIdByToken(accessToken);
+            detailBoard.setGoodCheck(goodService.goodCheck(boardId, usersId));
+        }
+
+        return ResponseEntity.ok().body(detailBoard);
     }
 
     //글 삭제
@@ -152,14 +159,14 @@ public class BoardApiController {
     //--------------------code  게시판 좋아요 ---------------------------
     //좋아요 생성
     @PostMapping("/good")
-    public ResponseEntity<String> GoodSave(@RequestHeader("Authorization") String authHeader, @RequestBody GoodAddRequest request){
+    public ResponseEntity<GoodResponse> GoodSave(@RequestHeader("Authorization") String authHeader, @RequestBody GoodAddRequest request){
         String accessToken = authHeader.replace("Bearer ", "");
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
         request.setUserId(userId);
         goodService.goodSave(request);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new GoodResponse(goodService.goodCount(request.getBoardId()), true));
     }
     //좋아요 조회
     @GetMapping("/good/{boardId}")
@@ -169,11 +176,11 @@ public class BoardApiController {
     }
     //좋아요 삭제
     @DeleteMapping("/good/{boardId}")
-    public ResponseEntity<String> GoodRemove(@RequestHeader("Authorization") String authHeader, @PathVariable Long boardId){
+    public ResponseEntity<GoodResponse> GoodRemove(@RequestHeader("Authorization") String authHeader, @PathVariable Long boardId){
         String accessToken = authHeader.replace("Bearer ", "");
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
         goodService.goodRemove(boardId, userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new GoodResponse(goodService.goodCount(boardId), false));
     }
 }
