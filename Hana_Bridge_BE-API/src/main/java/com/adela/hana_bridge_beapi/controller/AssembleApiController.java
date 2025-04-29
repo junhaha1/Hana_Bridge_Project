@@ -3,7 +3,9 @@ package com.adela.hana_bridge_beapi.controller;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodResponse;
+import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
+import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
 import com.adela.hana_bridge_beapi.service.AssembleGoodService;
 import com.adela.hana_bridge_beapi.service.TokenService;
@@ -36,10 +38,21 @@ public class AssembleApiController {
 
     //게시글 상세 조회
     @GetMapping("/{assembleboard_id}")
-    public ResponseEntity<AssembleBoardResponse> findAssembleBoard(@PathVariable("assembleboard_id") Long assembleBoardId) {
+    public ResponseEntity<AssembleBoardResponse> findAssembleBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
+
+        String accessToken = authHeader.replace("Bearer ", "");
         AssembleBoard assembleBoard = assembleBoardService.findAssembleBoardById(assembleBoardId);
 
-        return ResponseEntity.ok().body(new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())));
+        Long likeCount = assembleGoodService.countAssembleBoardGood(assembleBoardId);
+
+        AssembleBoardResponse detailBoard = new AssembleBoardResponse(assembleBoard, likeCount);
+
+        //게스트가 아니라면 해당 게시글에 좋아요를 눌렀는지 안 눌렀는지 체크
+        if (!accessToken.equals("guest")){
+            Long usersId = tokenService.findUsersIdByToken(accessToken);
+            detailBoard.setGoodCheck(assembleGoodService.checkAssembleBoardGood(assembleBoardId, usersId));
+        }
+        return ResponseEntity.ok().body(detailBoard);
     }
 
     //게시글 삭제

@@ -21,10 +21,10 @@ public class AssembleBoardResponse {
     private String content;
     private LocalDateTime createdAt;
 
-    private Long goodCount;
+    private Long likeCount;
     private boolean goodCheck;
 
-    public AssembleBoardResponse(AssembleBoard assembleBoard, Long goodCount ) {
+    public AssembleBoardResponse(AssembleBoard assembleBoard, Long likeCount ) {
         this.assembleBoardId = assembleBoard.getAssembleBoardId();
         this.title = assembleBoard.getTitle();
         this.nickName = assembleBoard.getUsers().getNickName();
@@ -32,7 +32,7 @@ public class AssembleBoardResponse {
         this.content = assembleBoard.getContent();
         this.createdAt = assembleBoard.getCreatedAt();
 
-        this.goodCount = goodCount;
+        this.likeCount = likeCount;
         //초기값
         this.goodCheck = false;
     }
