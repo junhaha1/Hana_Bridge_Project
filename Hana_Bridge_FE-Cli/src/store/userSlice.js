@@ -19,6 +19,11 @@ import { createSlice } from '@reduxjs/toolkit';
        state.accessToken = action.payload.accessToken;
        state.role = action.payload.role;
      },
+     modifyUser: (state, action) => {
+      state.email = action.payload.email;
+      state.name = action.payload.name;
+      state.nickName = action.payload.nickName;
+    },
      clearUser: (state) => {
        state.email = 'guest@email.com';
        state.name = 'guest';
@@ -29,5 +34,5 @@ import { createSlice } from '@reduxjs/toolkit';
    },
  });
  
- export const { setUser, clearUser } = userSlice.actions;
+ export const { setUser, modifyUser, clearUser } = userSlice.actions;
  export default userSlice.reducer;

@@ -161,8 +161,7 @@ class ApiClient{
   }
   //사용자 정보 수정
   static updateUser(accessToken, email, password, name, nickName){
-    console.log("Update user: ");
-    console.log(content);
+    console.log("Update user: " + email + " password: " + password);
     return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me' , {
       method: "PUT",
       headers: {
@@ -170,14 +169,15 @@ class ApiClient{
         "Authorization": `Bearer ${accessToken}`
       },
       body: JSON.stringify({
-        content: content,
-        createAt: createAt,
+        email: email,
+        name: name,
+        nickName: nickName,
+        password: password,
       }),
     });
   }
   //사용자 삭제(탈퇴)
-  static deleteUser(){
-    console.log("Delete Comment By commentId: " + commentId);
+  static deleteUser(accessToken){
     return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me', {
       method: "DELETE", 
       headers: {
