@@ -1,6 +1,6 @@
 package com.adela.hana_bridge_beapi.service;
 
-import com.adela.hana_bridge_beapi.dto.user.UserRequest;
+import com.adela.hana_bridge_beapi.dto.user.UserUpdateRequest;
 import com.adela.hana_bridge_beapi.dto.user.UserResponse;
 import com.adela.hana_bridge_beapi.dto.user.UsersRegistRequest;
 import com.adela.hana_bridge_beapi.entity.Users;
@@ -48,7 +48,7 @@ public class UsersService {
 
     //사용자 정보 수정
     @Transactional
-    public UserResponse updateUser(Long userId, UserRequest userRequest) {
+    public UserResponse updateUser(Long userId, UserUpdateRequest userRequest) {
         Users users = usersRepository.findById(userId)
                 .orElseThrow(()-> new UserIdNotFoundException(userId));
 
