@@ -1,6 +1,5 @@
 package com.adela.hana_bridge_beapi.controller;
 
-import com.adela.hana_bridge_beapi.dto.error.ErrorResponse;
 import com.adela.hana_bridge_beapi.dto.user.*;
 import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.service.TokenService;
@@ -46,7 +45,7 @@ public class UsersApiController {
 
     //사용자 정보 수정 API
     @PutMapping("/user/me")
-    public ResponseEntity<UserResponse> updateUser(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserResponse> updateUser(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody UserUpdateRequest userRequest) {
         Long userId = getUserIdFromHeader(authHeader);
         UserResponse userResponse = usersService.updateUser(userId, userRequest);
 

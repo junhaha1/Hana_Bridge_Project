@@ -90,7 +90,7 @@ const MyPage = () => {
 
   //정보 수정
   const updateUser = () => {
-    ApiClient.updateUser(accessToken, tempEmail, tempPassword, name, tempNickName)
+    ApiClient.updateUser(accessToken, tempEmail, name, tempNickName)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류 [${res.status}]`);
       return res.json();
