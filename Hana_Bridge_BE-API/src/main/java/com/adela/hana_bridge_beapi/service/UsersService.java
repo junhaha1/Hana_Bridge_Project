@@ -42,12 +42,11 @@ public class UsersService {
                 .orElseThrow(()-> new UserIdNotFoundException(userId));
 
         //비밀번호 암호화
-        userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
+        //userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
 
         //영속성 이용하여 정보 갱신
         users.updateUsers(
                 userRequest.getEmail(),
-                userRequest.getPassword(),
                 userRequest.getNickName()
         );
 

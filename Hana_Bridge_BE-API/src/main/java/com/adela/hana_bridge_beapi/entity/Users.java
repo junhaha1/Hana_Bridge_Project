@@ -89,9 +89,8 @@ public class Users implements UserDetails {
     }
 
     //사용자 정보 갱신 시에 해당 필드 값만 변경
-    public void updateUsers(String email, String password, String nickName) {
+    public void updateUsers(String email, String nickName) {
         this.email = email;
-        this.password = password;
         this.nickName = nickName;
     }
 
