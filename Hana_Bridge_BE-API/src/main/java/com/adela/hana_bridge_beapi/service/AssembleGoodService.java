@@ -19,6 +19,11 @@ public class AssembleGoodService {
     private final AssembleRepository assembleRepository;
     private final UsersRepository usersRepository;
 
+    //좋아요 눌렀는지 판단
+    public boolean checkAssembleBoardGood(Long assembleBoardId, Long userId){
+        return assembleGoodRepository.existsByAssembleBoard_AssembleBoardIdAndUsers_Id(assembleBoardId, userId);
+    }
+
     //해당 게시글의 모든 좋아요 수 조회
     public Long countAssembleBoardGood(Long assembleBoardId) {
         return (long) assembleGoodRepository.countByAssembleBoard_AssembleBoardId(assembleBoardId);
