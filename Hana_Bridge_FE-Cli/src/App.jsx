@@ -1,35 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { Routes, Route } from 'react-router-dom';
+import MainBoard from './clientView/MainBoard';
+import Login from './clientView/user/Login';
+import DetailBoard from './clientView/board/DetailBoard';
+import AddBoard from './clientView/board/AddBoard';
+import SignUp from './clientView/user/SignUp';
+import DetailAssemble from './clientView/board/DetailAssemble';
+import MyPage from './clientView/user/MyPage';
+import AIChat from './clientView/AIchat/AIChat';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<MainBoard />} /> {/* 메인 화면 */}
+      <Route path="/login" element={<Login />} /> {/* Login 화면 */}
+      <Route path="/signup" element={<SignUp />} /> {/* Login 화면 */}
+      <Route path="/mypage" element={<MyPage/>} />  {/* 회원정보 화면 */}
+      <Route path="/detailBoard/:boardId" element={<DetailBoard/>} /> {/* 게시글 상세 화면 */}
+      <Route path="/detailAssemble/:assembleBoardId" element={<DetailAssemble/>} />{/* Assemble 게시글 상세 화면 */}
+      <Route path="/write" element={<AddBoard/>} />  {/* 게시글 작성 화면 */}
+      <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
+    </Routes>
+  );
 }
-
-export default App
+export default App;
