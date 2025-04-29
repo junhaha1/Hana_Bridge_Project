@@ -94,5 +94,7 @@ public class Users implements UserDetails {
         this.nickName = nickName;
     }
 
-
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

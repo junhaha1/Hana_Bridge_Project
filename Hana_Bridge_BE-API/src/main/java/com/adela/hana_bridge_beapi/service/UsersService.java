@@ -35,14 +35,22 @@ public class UsersService {
                 .orElseThrow(()-> new UserEmailNotFoundException(email));
     }
 
+    //비밀번호 변경
+    @Transactional
+    public void updatePassword(Long userId, String oldPassword, String newPassword) {
+        Users users = usersRepository.findById(userId)
+                .orElseThrow(()-> new UserIdNotFoundException(userId));
+        if (!bCryptPasswordEncoder.matches(oldPassword, users.getPassword())) {
+            throw new IllegalArgumentException("Invalid Your Current Password!");
+        }
+        users.updatePassword(bCryptPasswordEncoder.encode(newPassword));
+    }
+
     //사용자 정보 수정
     @Transactional
     public UserResponse updateUser(Long userId, UserRequest userRequest) {
         Users users = usersRepository.findById(userId)
                 .orElseThrow(()-> new UserIdNotFoundException(userId));
-
-        //비밀번호 암호화
-        //userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
 
         //영속성 이용하여 정보 갱신
         users.updateUsers(
