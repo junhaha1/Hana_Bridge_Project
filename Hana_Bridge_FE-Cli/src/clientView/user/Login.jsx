@@ -1,7 +1,7 @@
-import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import ApiClient from "../../service/ApiClient";
+import { Card, Form, Button, Row, Col, Container } from "react-bootstrap";
 
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/userSlice';
@@ -35,29 +35,65 @@ function Login() {
 
   return (
     <>
-      <Container className="mt-4">
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <h1 className="fw-bold text-dark" style={{ cursor: 'pointer' }}>
-            SW Board
-          </h1>
-        </Link>
-      </Container>
-      <div className="container mt-5">
-          <div className="card mx-auto" style={{ maxWidth: '400px' }}>
-            <div className="card-body">
-              <h2 className="card-title text-center">Login</h2>
-              <input className="form-control mb-3" type="text" placeholder="ID(EMAIL)" value={email} onChange={(e) => setEmail(e.target.value)} />
-              <input className="form-control mb-3" type="password" placeholder="PASSWORD" value={pwd} onChange={(e) => setPwd(e.target.value)} />
+      {/* 상단 파란 배경 */}
+            <div
+              style={{
+                width: "100vw",
+                height: "40vh",
+                background: "linear-gradient(to right, #000428, #004e92)",
+                position: "relative",
+                left: 0,
+                top: 0,
+              }}
+              className="d-flex align-items-start justify-content-center pt-4"
+            >
+              <Container className="mt-4">
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                  <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
+                    SW Board
+                  </h1>
+                </Link>
+              </Container>
+            </div>
+            
+
+      {/* 카드 영역 */}
+      <div className="d-flex justify-content-center" style={{ marginTop: "-120px" }}>
+        <Card
+          style={{ width: "100%", maxWidth: "450px" }}
+          className="p-4 shadow rounded-4 bg-white"
+        >
+          <Card.Body>
+            <Card.Title className="mb-4 fs-3 fw-bold text-center">Login</Card.Title>
+
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Control type="text" placeholder="ID(EMAIL)" 
+                value={email} onChange={e => setEmail(e.target.value)}/>
+              </Form.Group>
+
+              <Form.Group className="mb-4">
+                <Form.Control type="password" placeholder="PASSWORD" 
+                value={pwd} onChange={e => setPwd(e.target.value)}/>
+              </Form.Group>
+
               <div className="d-flex justify-content-between">
                 <Link to={'/'}>비밀번호 찾기 / 아이디 찾기</Link>
               </div>
+
+
               <div className="d-flex justify-content-between mt-3">
-                <button className="btn btn-primary" onClick={() => loginButton(email, pwd)}>로그인</button>
+                <Button className="btn btn-primary" onClick={() => loginButton(email, pwd)}>로그인</Button>
                 <Link className="btn btn-secondary" to={'/'}>처음으로</Link>
               </div>
-            </div>
-          </div>
-        </div>
+              
+            </Form>
+          </Card.Body>
+        </Card>
+      </div>
+
+
+
     </>
   );
 }

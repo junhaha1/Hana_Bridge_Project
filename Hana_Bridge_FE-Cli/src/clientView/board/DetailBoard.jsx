@@ -31,6 +31,8 @@ const DetailBoard = () => {
 
   const [category, setCategory] = useState(location.state?.category);
 
+  const [commentsCount, setCommentCount] = useState(0);
+
   // const category = location.state?.category;
 
   useEffect(() => {
@@ -43,7 +45,7 @@ const DetailBoard = () => {
       console.log(data);
       setBoard(data);
       setLikeCount(data.likeCount);
-      setIsLike(data.goodCheck);
+      setIsLike(data.goodCheck);      
     })
     .catch((err) => console.error("API 요청 실패:", err)); 
   }, [isEdit, boardId]);
@@ -156,8 +158,8 @@ const DetailBoard = () => {
                 />
               <div className="d-flex justify-content-between mt-3">
                 <div>
-                <span className="me-3">👍 {board.likeCount}</span>
-                  <span>💬 {board.commentsCount}</span>
+                <span className="me-3"><img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {board.likeCount}</span>
+                  <span><img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {board.commentsCount}</span>
                 </div>   
                 <div className="d-flex justify-content-end gap-2">
                   <button className="btn btn-success" onClick={() => saveBoard(boardId)}>저장</button>
@@ -186,15 +188,19 @@ const DetailBoard = () => {
                 {isLike === true ? (
                     <>
                       <span className="me-3" style={{ cursor: 'pointer' }} 
-                        onClick={() => handleCancelLike(boardId)}>👍 {likeCount}</span>
+                        onClick={() => handleCancelLike(boardId)}>
+                        <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
+                      </span>
                     </>
                   ) : (
                     <>
                       <span className="me-3" style={{ cursor: 'pointer' }} 
-                        onClick={() => handleLike(boardId)}>👍🏻 {likeCount}</span>
+                        onClick={() => handleLike(boardId)}>
+                        <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
+                      </span>
                     </>
                   )}                  
-                  <span>💬 {board.commentsCount}</span>
+                  <span><img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {commentsCount}</span>
                 </div>
                 <div>
                 {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}

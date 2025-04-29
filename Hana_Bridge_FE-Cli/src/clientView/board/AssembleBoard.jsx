@@ -67,8 +67,8 @@ const AssembleBoard = () => {
                     {post.content}
                   </Card.Text>
                   <div className="d-flex gap-3 mt-2">
-                    <span className="text-primary"><i className="bi bi-hand-thumbs-up"></i> 👍{post.likeCount}</span>
-                    <span className="text-secondary"><i className="bi bi-chat-dots"></i> 💬{post.comments}</span>
+                    <span className="text-primary"><i className="bi bi-hand-thumbs-up"></i> <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" />{post.likeCount}</span>
+                    <span className="text-secondary"><i className="bi bi-chat-dots"></i> <img src="/images/comment.png" alt="말풍선" width="20" className="me-1" />{post.comments}</span>
                   </div>
                 </Card.Body>
               </Card>
