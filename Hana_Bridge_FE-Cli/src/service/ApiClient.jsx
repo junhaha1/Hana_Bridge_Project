@@ -160,8 +160,7 @@ class ApiClient{
     });
   }
   //사용자 정보 수정
-  static updateUser(accessToken, email, password, name, nickName){
-    console.log("Update user: " + email + " password: " + password);
+  static updateUser(accessToken, email, name, nickName){
     return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me' , {
       method: "PUT",
       headers: {
@@ -172,7 +171,6 @@ class ApiClient{
         email: email,
         name: name,
         nickName: nickName,
-        password: password,
       }),
     });
   }
