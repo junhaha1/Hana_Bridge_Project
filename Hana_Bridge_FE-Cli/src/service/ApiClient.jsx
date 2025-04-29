@@ -176,6 +176,21 @@ class ApiClient{
       }),
     });
   }
+  //비밀번호 변경
+  static changePassword(accessToken, oldPassword, newPassword){
+    return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me/password' , {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      }),
+    });
+  }
+
   //사용자 삭제(탈퇴)
   static deleteUser(accessToken){
     return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/me', {

@@ -1,9 +1,7 @@
 package com.adela.hana_bridge_beapi.controller;
 
-import com.adela.hana_bridge_beapi.dto.user.LoginRequest;
-import com.adela.hana_bridge_beapi.dto.user.UserRequest;
-import com.adela.hana_bridge_beapi.dto.user.UserResponse;
-import com.adela.hana_bridge_beapi.dto.user.UsersRegistRequest;
+import com.adela.hana_bridge_beapi.dto.error.ErrorResponse;
+import com.adela.hana_bridge_beapi.dto.user.*;
 import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.service.TokenService;
 import com.adela.hana_bridge_beapi.service.UsersService;
@@ -45,6 +43,7 @@ public class UsersApiController {
                 .build()
         );
     }
+
     //사용자 정보 수정 API
     @PutMapping("/user/me")
     public ResponseEntity<UserResponse> updateUser(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody UserRequest userRequest) {
@@ -52,6 +51,14 @@ public class UsersApiController {
         UserResponse userResponse = usersService.updateUser(userId, userRequest);
 
         return ResponseEntity.ok().body(userResponse);
+    }
+
+    //사용자 비밀번호 변경
+    @PutMapping("/user/me/password")
+    public ResponseEntity<Void> updateUserPassword(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody NewPasswordRequest newPasswordRequest) {
+        Long userId = getUserIdFromHeader(authHeader);
+        usersService.updatePassword(userId, newPasswordRequest.getOldPassword(), newPasswordRequest.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 
     //사용자 탈퇴
