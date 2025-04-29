@@ -10,19 +10,29 @@ import { modifyUser, clearUser } from '../../store/userSlice';
 const MyPage = () => {
   const accessToken = useSelector((state) => state.user.accessToken);
   
+  //이메일 관련
   const email = useSelector((state) => state.user.email);
   const initialEmail = useRef(email);
 
+  //사용자 정보 관련
   const name = useSelector((state) => state.user.name);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
 
-  const [password, setPassword] = useState("");
-
+  //사용자 정보 수정용 temp 변수
   const [tempEmail, setTempEmail] = useState(email);
   const [tempNickName, setTempNickName] = useState(nickName);
-  const [tempPassword, setTempPassword] = useState("");
 
+  //수정용 토글 변수
+  const [isEdit, setIsEdit] = useState(false); 
+
+  //비밀번호 변경
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState(""); 
+  const [newCheckPassword, setNewCheckPassword] = useState("");
+
+  //비밀번호 변경용 토글 변수
+  const[isChangePassword, setIsChangePassword] = useState(false);
 
   //회원 탈퇴용 모달
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -30,19 +40,53 @@ const MyPage = () => {
   const openDeleteModal = () => setShowDeleteModal(true);
   const closeDeleteModal = () => setShowDeleteModal(false);
 
-  //redux 수정용
+  //redux 변경 및 이동 관련
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //수정용 토글 변수
-  const [isEdit, setIsEdit] = useState(false); 
 
   //수정 취소할 시에 원래 값으로 복원
   const resetEdit = () => {
     setIsEdit(false);
+    setIsChangePassword(false);
+
     setTempEmail(email);
     setTempNickName(nickName);
-    setTempPassword(password);
   };
+
+  //비밀번호 취소
+  const cancleChangePassword = () => {
+    setIsChangePassword(false);
+    setIsEdit(false);
+
+    setOldPassword("");
+    setNewPassword("");
+    setNewCheckPassword("");
+  }
+  //비밀번호 확인 체크
+  const checkNewPassword = () => {
+    return newPassword && newCheckPassword && newPassword === newCheckPassword;
+  };
+
+  //비밀번호 변경
+  const changePassword = () => {
+    ApiClient.changePassword(accessToken, oldPassword, newPassword)
+    .then(async (res) => {
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message); // 여기서 message 꺼내서 에러로 던짐
+      }
+      alert("비밀번호 변경 완료!");
+      setIsChangePassword(false);
+      setIsEdit(false)
+    })
+    .catch((error) => {
+      console.log("에러 객체:", error);
+      if (error.message === "Invalid Your Current Password!")
+        alert(`입력하신 '변경할 비밀번호'가 틀렸습니다.\n다시 시도 해주십시오.`);
+      else
+        alert("비밀번호 변경 실패하였습니다.\n다시 시도해주십시오.");
+    });
+  }
 
   //정보 수정
   const updateUser = () => {
@@ -153,32 +197,83 @@ const MyPage = () => {
                   onChange={e => setTempNickName(e.target.value)}
                   />
                 </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>권한<span className="text-danger">*</span></Form.Label>
-                  <Form.Control type="text" value={role} readOnly style={{backgroundColor: "#e9ecef"}}/>
-                </Form.Group>
-              </Form>
-                {isEdit ? (
+                {isChangePassword ? (
                   <>
-                  <button className="btn btn-success me-2" onClick={() => updateUser()}>
-                    수정 완료
-                  </button>
-                  <button className="btn btn-success me-2" onClick={() => resetEdit()}>
-                    정보 수정 취소
-                  </button>
+                    <Form.Group className="mb-3">
+                      <Form.Label>변경할 비밀번호<span className="text-danger">*</span></Form.Label>
+                      <Form.Control type="password" value={oldPassword} style={{backgroundColor: "#e9ecef"}}
+                      onChange={e => setOldPassword(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>새 비밀번호<span className="text-danger">*</span></Form.Label>
+                      <Form.Control type="password" value={newPassword}  style={{backgroundColor: "#e9ecef"}}
+                      onChange={e => setNewPassword(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                    <Form.Label>새 비밀번호 확인<span className="text-danger">*</span></Form.Label>
+                      <Form.Control
+                        type="password"
+                        value={newCheckPassword}
+                        style={{ backgroundColor: "#e9ecef" }}
+                        onChange={(e) => setNewCheckPassword(e.target.value)}
+                        isInvalid={newCheckPassword && newPassword !== newCheckPassword}
+                      />
+                      {newCheckPassword && newPassword !== newCheckPassword && (
+                        <Form.Text className="text-danger">
+                          새 비밀번호가 일치하지 않습니다.
+                        </Form.Text>
+                      )}
+                      {newCheckPassword && newPassword === newCheckPassword && (
+                        <Form.Text className="text-success">
+                          비밀번호가 일치합니다.
+                        </Form.Text>
+                      )}
+                    </Form.Group>
+                    <button
+                      type="button"
+                      className="btn btn-danger me-2"
+                      disabled={!checkNewPassword()}
+                      onClick={() => changePassword()}
+                    >
+                        비밀번호 변경
+                    </button>
+                    <button type="button" className="btn btn-primary me-2" onClick={() => cancleChangePassword()}>
+                      비밀번호 변경 취소
+                    </button>
                   </>
-                ) : (
-                  <>
-                  <button className="btn btn-primary me-2" onClick={() => setIsEdit(true)}>
-                    정보 수정
-                  </button>
-
-                  <button className="btn btn-danger" onClick={() => openDeleteModal()}>
-                    회원 탈퇴
-                  </button>
-                  </>
-                )}
+                  ):(
+                    <>
+                    <Form.Group className="mb-3">
+                      <Form.Label>권한<span className="text-danger">*</span></Form.Label>
+                      <Form.Control type="text" value={role} readOnly style={{backgroundColor: "#e9ecef"}}/>
+                    </Form.Group>
+                    {isEdit ? (
+                      <>
+                      <button type="button" className="btn btn-success me-2" onClick={() => updateUser()}>
+                        수정 완료
+                      </button>
+                      <button type="button" className="btn btn-success me-2" onClick={() => resetEdit()}>
+                        정보 수정 취소
+                      </button>
+                      </>
+                    ) : (
+                      <>
+                      <button type="button" className="btn btn-primary me-2" onClick={() => setIsEdit(true)}>
+                        정보 수정
+                      </button>
+                      <button type="button" className="btn btn-danger me-2" onClick={() => setIsChangePassword(true)}>
+                        비밀번호 변경
+                      </button>
+                      <button type="button" className="btn btn-danger" onClick={() => openDeleteModal()}>
+                        회원 탈퇴
+                      </button>
+                      </>
+                    )}
+                    </>
+                  )}
+                </Form>
             </Card.Body>
             <Modal show={showDeleteModal} onHide={closeDeleteModal} centered>
               <Modal.Header closeButton>
@@ -189,10 +284,10 @@ const MyPage = () => {
                 탈퇴하면 모든 정보가 삭제됩니다.
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={closeDeleteModal}>
+                <Button type="button" variant="secondary" onClick={closeDeleteModal}>
                   취소
                 </Button>
-                <Button variant="danger" onClick={confirmDeleteUser}>
+                <Button type="button" variant="danger" onClick={confirmDeleteUser}>
                   탈퇴하기
                 </Button>
               </Modal.Footer>
