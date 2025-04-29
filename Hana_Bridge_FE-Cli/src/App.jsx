@@ -9,6 +9,7 @@ import AddBoard from './clientView/board/AddBoard';
 import SignUp from './clientView/user/SignUp';
 import DetailAssemble from './clientView/board/DetailAssemble';
 import MyPage from './clientView/user/MyPage';
+import AIChat from './clientView/AIchat/AIChat';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/detailBoard/:boardId" element={<DetailBoard/>} /> {/* 게시글 상세 화면 */}
       <Route path="/detailAssemble/:assembleBoardId" element={<DetailAssemble/>} />{/* Assemble 게시글 상세 화면 */}
       <Route path="/write" element={<AddBoard/>} />  {/* 게시글 작성 화면 */}
+      <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
     </Routes>
   );
 }

@@ -111,16 +111,20 @@ const DetailAssemble = () => {
                 {isLike === true ? (
                     <>
                       <span className="me-3" style={{ cursor: 'pointer' }} 
-                        onClick={() => handleCancelLike(assembleBoardId)}>👍 {likeCount}</span>
+                        onClick={() => handleCancelLike(assembleBoardId)}>
+                        <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
+                      </span>
                     </>
                   ) : (
                     <>
                       <span className="me-3" style={{ cursor: 'pointer' }} 
-                        onClick={() => handleLike(assembleBoardId)}>👍🏻 {likeCount}</span>
+                        onClick={() => handleLike(assembleBoardId)}>
+                        <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
+                      </span>
                     </>
                   )}
                                 
-                  <span>💬 {board.commentsCount}</span>
+                  <span><img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {board.commentsCount}</span>
                 </div>
                 <div>
                   {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}

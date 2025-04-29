@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Form, Button, Row, Col } from "react-bootstrap";
+import { Card, Form, Button, Row, Col, Container } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 
@@ -48,11 +48,14 @@ function SignUp() {
         }}
         className="d-flex align-items-start justify-content-center pt-4"
       >
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
-            SW Board
-          </h1>
-        </Link>
+        <Container className="mt-4">
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
+              SW Board
+            </h1>
+          </Link>
+        </Container>
+        
       </div>
 
       {/* 카드 영역 */}

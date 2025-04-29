@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 
 const CodeHelper = () => {
+  const navigate = useNavigate(); 
+
   return (
     <div
       style={{
@@ -11,7 +14,7 @@ const CodeHelper = () => {
       }}
     >
       <button
-        onClick={() => alert("도움이 필요하신가요?")} // 원하는 기능 연결
+        onClick={() =>  navigate(`/aiChat`)} // 원하는 기능 연결
         style={{
           background: "none",
           border: "none",
