@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:file:.env
   jpa:
     properties:
       hibernate:
@@ -6,15 +8,19 @@ spring:
         show_sql: true
     database: mysql
   datasource:
-    url: jdbc:mysql://localhost:3306/test_hb?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowMultiQueries=true
-    username: test_user
-    password : test0701
+    url: jdbc:mysql://localhost:3306/${DATABASE_DB}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowMultiQueries=true
+    username: ${DATABASE_USERNAME}
+    password : ${DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
       host: localhost
       port: 6379
+openai:
+  api-key: ${OPENAI_API_KEY}
+  model: ${OPENAI_API_MODEL}
+  url: ${OPENAI_API_URL}
 
 jwt:
-  issuer: adela@gmail.com
-  secret_key: project-springboot
+  issuer: ${JWT_ISSUER}
+  secret_key: ${JWT_SECRETKEY}
