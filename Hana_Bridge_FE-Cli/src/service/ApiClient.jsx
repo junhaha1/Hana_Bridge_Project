@@ -286,14 +286,15 @@ class ApiClient{
   //Good 등록 /assemble/good/{assembleboard_id}
   static sendAssembleGood(boardId, accessToken){
     console.log("POST Assemble BoardGood By boardId: " + boardId);
-    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + ApiClient.GOOD + '/' + boardId, {
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + ApiClient.GOOD, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${accessToken}`
         
       },
-      body: JSON.stringify({        
+      body: JSON.stringify({   
+      assembleBoardId: boardId,     
       }),
     });
   }   
