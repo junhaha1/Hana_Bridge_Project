@@ -15,27 +15,35 @@ const NoticeBoard = () => {
   useEffect(() => {
     ApiClient.getBoards(category)
       .then((res) => {
+         // 게시글이 없는 경우로 처리
+        if (res.status === 404) {
+          console.log("게시글 없음 (404)");
+          setBoards(null);  
+          return null;
+        }
         if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
         return res.json();
       })
       .then((data) => {
-        console.log(data);        
-        setBoards(data);
+        if (data === null || (Array.isArray(data) && data.length === 0)) {
+          console.log("게시글이 없습니다.");
+          setBoards(null);
+        } else {
+          setBoards(data);
+        }
       })
-      .catch((err) => console.error("API 요청 실패:", err));    
-  }, []);
-
-
-  //게시글이 없을 경우 
-  if(boards == null){
+      .catch((err) => console.error("API 요청 실패:", err));
+  }, [category]); // 의존성 배열에 category 추가 추천
+  
+  if (boards === null) {
     return (
       <div>
         <h3>게시글이 없습니다.</h3>
-        <h2>첫 게시글을 작성해보세요.😊</h2> 
+        <h2>첫 게시글을 작성해보세요.😊</h2>
       </div>
-    )
+    );
   }
-
+  
 
   //상세 화면으로 
   const boardClick = (boardId) =>{

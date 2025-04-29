@@ -15,12 +15,24 @@ const CodeBoard = () => {
   useEffect(() => {
     ApiClient.getBoards(category)
       .then((res) => {
+        // 게시글이 없는 경우로 처리
+        if (res.status === 404) {
+          console.log("게시글 없음 (404)");
+          setBoards(null);   
+          return null;
+        }
+
         if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
         return res.json();
       })
       .then((data) => {
         console.log(data);        
-        setBoards(data);
+        if (data === null || (Array.isArray(data) && data.length === 0)) {
+          console.log("게시글이 없습니다.");
+          setBoards(null);
+        } else {
+          setBoards(data);
+        }
       })
       .catch((err) => console.error("API 요청 실패:", err));    
   }, []);

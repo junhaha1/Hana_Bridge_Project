@@ -42,7 +42,8 @@ const DetailBoard = () => {
     .then((data) => {
       console.log(data);
       setBoard(data);
-      setIsLike(data.checkGood);
+      setLikeCount(data.likeCount);
+      setIsLike(data.goodCheck);
     })
     .catch((err) => console.error("API 요청 실패:", err)); 
   }, [isEdit, boardId]);
@@ -92,8 +93,8 @@ const DetailBoard = () => {
       })
       .then((data) => {
         console.log(data);
-        setIsLike(true);
-        setLikeCount(prev => prev + 1);  // 추가
+        setIsLike(data.goodCheck);
+        setLikeCount(data.likeCount);  // 추가
       })
       .catch((err) => console.error("API 요청 실패:", err));    
   }
@@ -104,9 +105,12 @@ const DetailBoard = () => {
         if (!res.ok) {
             throw new Error(`서버 오류: ${res.status}`);
         }
+        return res.json();
+      })
+      .then((data) =>{
         console.log("좋아요 취소!");
-        setIsLike(false);
-        setLikeCount(prev => prev - 1);  // 추가
+        setIsLike(data.goodCheck);
+        setLikeCount(data.likeCount);  // 추가
       })
       .catch(error => {
           console.error("삭제 중 오류 발생:", error);
