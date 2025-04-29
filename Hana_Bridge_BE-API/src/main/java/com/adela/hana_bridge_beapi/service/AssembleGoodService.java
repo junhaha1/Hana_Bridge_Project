@@ -1,6 +1,6 @@
 package com.adela.hana_bridge_beapi.service;
 
-import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodRequest;
+import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodAddRequest;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
@@ -20,13 +20,13 @@ public class AssembleGoodService {
     private final UsersRepository usersRepository;
 
     //해당 게시글의 모든 좋아요 수 조회
-    public Long findAssembleBoardGood(Long assembleBoardId) {
+    public Long countAssembleBoardGood(Long assembleBoardId) {
         return (long) assembleGoodRepository.countByAssembleBoard_AssembleBoardId(assembleBoardId);
     }
 
     //해당 게시글의 좋아요 등록
     @Transactional
-    public void registAssembleBoardGood(AssembleGoodRequest request) {
+    public void registAssembleBoardGood(AssembleGoodAddRequest request) {
         if (!assembleGoodRepository.existsByAssembleBoard_AssembleBoardIdAndUsers_Id(request.getAssembleBoardId(), request.getUserId())) {
 
             AssembleBoard assembleBoard = assembleRepository.findById(request.getAssembleBoardId())
@@ -43,7 +43,7 @@ public class AssembleGoodService {
 
     //해당 게시글의 좋아요 삭제
     @Transactional
-    public void deleteAssembleBoardGood(AssembleGoodRequest request) {
-        assembleGoodRepository.deleteByAssembleBoard_AssembleBoardIdAndUsers_Id(request.getAssembleBoardId(), request.getUserId());
+    public void deleteAssembleBoardGood(Long assembleBoardId, Long userId) {
+        assembleGoodRepository.deleteByAssembleBoard_AssembleBoardIdAndUsers_Id(assembleBoardId, userId);
     }
 }

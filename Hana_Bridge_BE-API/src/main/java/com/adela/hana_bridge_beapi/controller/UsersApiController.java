@@ -32,7 +32,7 @@ public class UsersApiController {
     }
 
     //사용자 정보 조회
-    @GetMapping("/user/me")
+    @GetMapping("/user")
     public ResponseEntity<UserResponse> getUser(@RequestHeader("Authorization") String authHeader) {
         String email = getEmailFromHeader(authHeader);
         Users users = usersService.findByEmail(email);
@@ -40,13 +40,13 @@ public class UsersApiController {
                 .builder()
                 .email(email)
                 .name(users.getName())
-                .nickname(users.getNickName())
+                .nickName(users.getNickName())
                 .role(users.getRole())
                 .build()
         );
     }
     //사용자 정보 수정 API
-    @PutMapping("/user/me")
+    @PutMapping("/user")
     public ResponseEntity<UserResponse> updateUser(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody UserRequest userRequest) {
         Long userId = getUserIdFromHeader(authHeader);
         UserResponse userResponse = usersService.updateUser(userId, userRequest);
@@ -55,7 +55,7 @@ public class UsersApiController {
     }
 
     //사용자 탈퇴
-    @DeleteMapping("/user/me")
+    @DeleteMapping("/user")
     public ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String authHeader) {
         Long userId = getUserIdFromHeader(authHeader);
         //userId를 이용하여 삭제

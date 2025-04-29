@@ -7,10 +7,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 public class AssembleBoardResponse {
     private Long assembleBoardId;
     private String nickName;
@@ -20,6 +22,7 @@ public class AssembleBoardResponse {
     private LocalDateTime createdAt;
 
     private Long goodCount;
+    private boolean goodCheck;
 
     public AssembleBoardResponse(AssembleBoard assembleBoard, Long goodCount ) {
         this.assembleBoardId = assembleBoard.getAssembleBoardId();
@@ -30,5 +33,7 @@ public class AssembleBoardResponse {
         this.createdAt = assembleBoard.getCreatedAt();
 
         this.goodCount = goodCount;
+        //초기값
+        this.goodCheck = false;
     }
 }

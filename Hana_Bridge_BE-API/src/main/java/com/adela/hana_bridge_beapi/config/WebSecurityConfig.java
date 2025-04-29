@@ -45,6 +45,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/assemble/**").permitAll()
                         //로그인 접속
                         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
+                        //로그아웃 접속
+                        .requestMatchers(HttpMethod.DELETE, "/user/logout").permitAll()
                         //회원 가입
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
 
