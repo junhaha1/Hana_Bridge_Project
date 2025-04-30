@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Card, Form, Button, Row, Col } from 'react-bootstrap';
 import Header from '../Header';
+import "./loading.css";
 
 function AIChat() {
   const [messages, setMessages] = useState([
-    { role: 'ai', content: '안녕하세요! 무엇을 도와드릴까요?' },
+    { role: 'ai', content: '에러 코드를 사용중인 언어와 함께 보내주세요!' },
   ]);
   const [input, setInput] = useState('');
   //채팅의 마지막을 가르킴
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
+
+  const [promptLevel, setPromptLevel] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   //메시지가 추가될 때마다 거기로 스크롤 이동
   useEffect(() => {
@@ -37,11 +41,20 @@ function AIChat() {
       textRef.current.style.height = 'auto';
     }
 
+    setIsLoading(true); 
+    // ApiClient.sendGPT()
+    // .then(() => {
+    //   alert("게시글이 등록되었습니다. ");
+    //   navigate('/');
+    // })
+    // .catch((err) => console.error("API 요청 실패:", err));
+
     // 가짜 AI 응답
     setTimeout(() => {
       const aiResponse = { role: 'ai', content: `“${input}”에 대한 답변입니다.` };
       setMessages((prev) => [...prev, aiResponse]);
-    }, 800);
+      setIsLoading(false);
+    }, 3800);
 
     console.log("input: " + input);
   };
@@ -52,6 +65,11 @@ function AIChat() {
       e.preventDefault();  // 새로고침 방지
       sendMessage();
     } 
+  };
+
+  //답변 채택을 눌렀을때 Assemble Board만들기
+  const makeAssemble = () =>{
+
   };
 
 
@@ -66,9 +84,9 @@ function AIChat() {
     >
 
       <Card style={{ width: '70%', minHeight: '600px' }} className="p-3 shadow-sm">
-        {messages.map((msg, idx) => (
+      {messages.map((msg, idx) => (
+        <React.Fragment key={idx}>
           <div
-            key={idx}
             className={`d-flex ${msg.role === 'ai' ? 'justify-content-start' : 'justify-content-end'} my-2`}
           >
             <Card
@@ -76,15 +94,41 @@ function AIChat() {
               text="dark"
               bg="light"
               className="px-3 py-2"
-              style={{
-                maxWidth: '75%',
-                borderRadius: '15px',
-              }}
+              style={{ maxWidth: '75%', borderRadius: '15px' }}
             >
               <div>{msg.content}</div>
             </Card>
           </div>
-        ))}
+
+          {msg.role === 'ai' && (
+            msg.content === '에러 코드를 사용중인 언어와 함께 보내주세요!' ? (
+              <div className='d-flex justify-content-start'>
+                <Button variant="outline-dark" size="sm" onClick={() => setPromptLevel(0)}>
+                  초보자
+                </Button>
+                <Button variant="outline-dark" size="sm" style={{ marginLeft: '1rem' }} onClick={() => setPromptLevel(1)}>
+                  전문자
+                </Button>
+              </div>
+            ) : (
+              <div className='d-flex justify-content-start'>
+                <Button variant="dark" size="sm" onClick={() => makeAssemble()}>
+                  답변 채택
+                </Button>
+              </div>
+            )
+          )}
+        </React.Fragment>
+      ))}
+
+      {/* ✅ 메시지 목록 아래에 로딩 애니메이션만 따로 출력 */}
+      {isLoading && (
+        <div className="d-flex justify-content-start my-2">
+          <div className="loader"></div>
+        </div>
+      )}
+
+
         <div ref={messagesEndRef} />
       </Card>
 
