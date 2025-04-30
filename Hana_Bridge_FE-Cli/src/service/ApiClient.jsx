@@ -10,8 +10,26 @@ class ApiClient{
   static BOARD_COMMENT = "/board/comment";
   //사용자
   static USER = "/user";
+  //Open AI
+  static AIChat = "/chat"
 
 
+  //OpenAi 
+  static sendMessage(accessToken, promptLevel, question){
+    console.log("send Message to AI: " + question);
+    return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        promptLevel: promptLevel,
+        question: question,
+      }),
+    });
+  }
+  
   //Board 등록 
   static sendBoard(accessToken, title, category, content, code, createAt, updateAt){
     console.log("POST Board");
