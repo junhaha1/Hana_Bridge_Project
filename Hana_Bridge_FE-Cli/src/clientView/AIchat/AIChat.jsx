@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Card, Form, Button, Row, Col } from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Header from '../Header';
 import ApiClient from '../../service/ApiClient';
 import "./loading.css";
@@ -54,6 +57,7 @@ function AIChat() {
       return res.json();
     })
     .then((data) =>{
+      console.log(data.answer);
       const aiResponse = { role: 'ai', content: data.answer };
       setMessages((prev) => [...prev, aiResponse]);
       setIsLoading(false);
@@ -97,10 +101,33 @@ function AIChat() {
               border="primary"
               text="dark"
               bg="light"
-              className="px-3 py-2"
+              className="px-3 py-2 text-start"
               style={{ maxWidth: '75%', borderRadius: '15px' }}
             >
-              <div><ReactMarkdown>{msg.content}</ReactMarkdown></div>
+              <div>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline && match ? (
+                      // !inline && match 조건에 맞으면 하이라이팅
+                      <SyntaxHighlighter {...props} style={prism} language={match[1]} PreTag="div">
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      // 안 맞다면 문자열 형태로 반환
+                      <code {...props} className={className}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
+                {msg.content}
+              </ReactMarkdown>
+
+              </div>
             </Card>
           </div>
 
