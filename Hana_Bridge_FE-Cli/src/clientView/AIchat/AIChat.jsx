@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Container, Card, Form, Button, Row, Col } from 'react-bootstrap';
+import { Container, Card, Form, Button, Row, Col, Modal } from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -22,6 +22,12 @@ function AIChat() {
   const [isLoading, setIsLoading] = useState(false);
 
   const accessToken = useSelector((state) => state.user.accessToken);
+
+  //게시판 게시문의 모달
+  const [showModal, setShowModal] = useState(false);
+
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
 
   //메시지가 추가될 때마다 거기로 스크롤 이동
   useEffect(() => {
@@ -75,9 +81,9 @@ function AIChat() {
     } 
   };
 
-  //답변 채택을 눌렀을때 Assemble Board만들기
-  const makeAssemble = () =>{
-
+  //Assemble Board만들기
+  const postAssemble = () =>{
+    closeModal();
   };
 
 
@@ -136,7 +142,7 @@ function AIChat() {
               <></>
             ) : (
               <div className='d-flex justify-content-start'>
-                <Button variant="dark" size="sm" onClick={() => makeAssemble()}>
+                <Button variant="dark" size="sm" onClick={openModal}>
                   답변 채택
                 </Button>
               </div>
@@ -189,6 +195,23 @@ function AIChat() {
           </Col>
         </Row>
       </Form>
+      <Modal show={showModal} onHide={closeModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>답변 채택</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          해당 질문과 답변을 채택 하시겠습니까?<br />
+          채택하시면 질문과 내용이 요약되어 게시됩니다. 
+        </Modal.Body>
+        <Modal.Footer>
+          <Button type="button" variant="secondary" onClick={closeModal}>
+            취소
+          </Button>
+          <Button type="button" variant="primary" onClick={postAssemble}>
+            확인
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container></>
   );
 }
