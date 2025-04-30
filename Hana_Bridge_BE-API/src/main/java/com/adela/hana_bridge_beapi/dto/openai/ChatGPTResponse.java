@@ -1,4 +1,4 @@
-package com.adela.hana_bridge_beapi.dto.openAi;
+package com.adela.hana_bridge_beapi.dto.openai;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
