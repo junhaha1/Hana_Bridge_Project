@@ -41,9 +41,9 @@ public class BoardApiController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
             request.connectionUserEntity(usersService.findByEmail(email));
-            Board savedBoard = boardService.save(request);
+            boardService.save(request);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(savedBoard);
+                    .build();
         }
     }
 
@@ -59,7 +59,7 @@ public class BoardApiController {
 
     //글 상세 조회
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardResponse> findArticle(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId){
+    public ResponseEntity<BoardResponse> findBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId){
         String accessToken = authHeader.replace("Bearer ", "");
         Board board = boardService.findById(boardId);
         Long likeCount = goodService.goodCount(boardId);
@@ -101,9 +101,9 @@ public class BoardApiController {
         if (request.getCategory().equals("notice") && !role.equals("ROLE_ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
-            Board updateBoard = boardService.update(email, boardId, request);
+            boardService.update(email, boardId, request);
             return ResponseEntity.ok()
-                    .body(updateBoard);
+                    .build();
         }
     }
 
@@ -118,10 +118,10 @@ public class BoardApiController {
         request.connectionArticle(boardService.findById(boardId));
         request.connectionUserEntity(usersService.findByEmail(email));
 
-        Comment savedComment = commentService.save(request);
+        commentService.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(savedComment);
+                .build();
     }
 
     //댓글 삭제
@@ -151,7 +151,7 @@ public class BoardApiController {
         String accessToken = authHeader.replace("Bearer ", "");
         String email = tokenService.findEmailByToken(accessToken);
 
-        Comment updateComment = commentService.update(email, commentId, request);
+        commentService.update(email, commentId, request);
         return ResponseEntity.ok("댓글이 수정되었습니다.");
     }
 
