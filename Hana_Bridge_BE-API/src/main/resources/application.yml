@@ -1,28 +1,50 @@
 spring:
   config:
     import: optional:file:.env
+
   jpa:
     properties:
       hibernate:
         format_sql: true
         show_sql: true
     database: mysql
+
   datasource:
     url: jdbc:mysql://localhost:3306/${DATABASE_DB}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowMultiQueries=true
     username: ${DATABASE_USERNAME}
-    password : ${DATABASE_PASSWORD}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   data:
     redis:
       host: localhost
       port: 6379
+
 openai:
   api-key: ${OPENAI_API_KEY}
   model: ${OPENAI_API_MODEL}
   url: ${OPENAI_API_URL}
+  prompt-common: ${OPENAI_PROMPT_COMMON}
   prompts:
     0: ${OPENAI_PROMPT0}
     1: ${OPENAI_PROMPT1}
+  keyword-prompts-list:
+    - key: 왜
+      value: 단계적으로 설명해줘.
+    - key: 원인
+      value: 단계적으로 설명해줘.
+    - key: 코드
+      value: 필요한 코드만 마크다운 형식으로 보내줘.
+    - key: 차이
+      value: 비교하여 표 형태로 보내줘.
+    - key: 에러
+      value: 영문일 경우 한글로 번역하고 원인과 해결책을 알려줘.
+    - key: 오류
+      value: 영문일 경우 한글로 번역하고 원인과 해결책을 알려줘.
+    - key: 해결
+      value: 쉽게 따라할 수 있도록 설명해줘.
+    - key: 방법
+      value: 쉽게 따라할 수 있도록 설명해줘.
 
 jwt:
   issuer: ${JWT_ISSUER}

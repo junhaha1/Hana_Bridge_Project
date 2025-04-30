@@ -15,6 +15,8 @@ public class ChatGPTRequest {
     private List<Message> messages;
     @JsonProperty("max_tokens")
     private int maxTokens;
+    @JsonProperty("temperature")
+    private double temperature;
 
     @Getter
     @Setter
