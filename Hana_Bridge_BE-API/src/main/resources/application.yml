@@ -20,6 +20,9 @@ openai:
   api-key: ${OPENAI_API_KEY}
   model: ${OPENAI_API_MODEL}
   url: ${OPENAI_API_URL}
+  prompts:
+    0: ${OPENAI_PROMPT0}
+    1: ${OPENAI_PROMPT1}
 
 jwt:
   issuer: ${JWT_ISSUER}
