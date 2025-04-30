@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Card, Form, Button, Row, Col } from 'react-bootstrap';
+import ReactMarkdown from "react-markdown";
 import Header from '../Header';
+import ApiClient from '../../service/ApiClient';
 import "./loading.css";
+import { useSelector } from 'react-redux';
 
 function AIChat() {
   const [messages, setMessages] = useState([
@@ -14,6 +17,8 @@ function AIChat() {
 
   const [promptLevel, setPromptLevel] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+
+  const accessToken = useSelector((state) => state.user.accessToken);
 
   //메시지가 추가될 때마다 거기로 스크롤 이동
   useEffect(() => {
@@ -41,20 +46,19 @@ function AIChat() {
       textRef.current.style.height = 'auto';
     }
 
+    console.log("promptLevel: " + promptLevel + "message: " + input );
     setIsLoading(true); 
-    // ApiClient.sendGPT()
-    // .then(() => {
-    //   alert("게시글이 등록되었습니다. ");
-    //   navigate('/');
-    // })
-    // .catch((err) => console.error("API 요청 실패:", err));
-
-    // 가짜 AI 응답
-    setTimeout(() => {
-      const aiResponse = { role: 'ai', content: `“${input}”에 대한 답변입니다.` };
+    ApiClient.sendMessage(accessToken, promptLevel, input)
+    .then((res) => {
+      console.log("loading");
+      return res.json();
+    })
+    .then((data) =>{
+      const aiResponse = { role: 'ai', content: data.answer };
       setMessages((prev) => [...prev, aiResponse]);
       setIsLoading(false);
-    }, 3800);
+    })
+    .catch((err) => console.error("API 요청 실패:", err));
 
     console.log("input: " + input);
   };
@@ -96,20 +100,13 @@ function AIChat() {
               className="px-3 py-2"
               style={{ maxWidth: '75%', borderRadius: '15px' }}
             >
-              <div>{msg.content}</div>
+              <div><ReactMarkdown>{msg.content}</ReactMarkdown></div>
             </Card>
           </div>
 
           {msg.role === 'ai' && (
             msg.content === '에러 코드를 사용중인 언어와 함께 보내주세요!' ? (
-              <div className='d-flex justify-content-start'>
-                <Button variant="outline-dark" size="sm" onClick={() => setPromptLevel(0)}>
-                  초보자
-                </Button>
-                <Button variant="outline-dark" size="sm" style={{ marginLeft: '1rem' }} onClick={() => setPromptLevel(1)}>
-                  전문자
-                </Button>
-              </div>
+              <></>
             ) : (
               <div className='d-flex justify-content-start'>
                 <Button variant="dark" size="sm" onClick={() => makeAssemble()}>
@@ -127,12 +124,23 @@ function AIChat() {
           <div className="loader"></div>
         </div>
       )}
-
-
         <div ref={messagesEndRef} />
       </Card>
 
-      <Form className="mt-3" style={{ width: '70%' }}>
+      <Row className="align-items-center">
+        <Col>
+          <Button variant={promptLevel===0?"dark":"outline-dark"} size="sm" onClick={() => setPromptLevel(0)}>
+            초보자
+          </Button>
+        </Col>
+        <Col>
+          <Button variant={promptLevel===1?"dark":"outline-dark"} size="sm" onClick={() => setPromptLevel(1)}>
+            전문가
+          </Button>
+        </Col>
+      </Row>
+      <Form className="mt-3" style={{ width: '70%' }}>    
+
         <Row className="align-items-center">
           <Col xs={10}>
             <Form.Control
