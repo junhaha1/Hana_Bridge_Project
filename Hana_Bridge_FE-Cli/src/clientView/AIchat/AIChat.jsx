@@ -46,15 +46,14 @@ function AIChat() {
     }
   
     setShowChatModel(false);
-  };
-
-  
+  }; 
 
   //메시지가 추가될 때마다 거기로 스크롤 이동
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  //이전 내용 가져오기 함수 
   const bringMessage = () => {
     if (prevMessage && prevMessage.length > 1) {
       setMessages(prevMessage);
@@ -68,7 +67,7 @@ function AIChat() {
   };
   
 
-
+  //사용자 입력창 크기 조절절
   const handleResizeHeight = () => {
     const element = textRef.current;
 		textRef.current.style.height = 'auto';  //backspace 눌렀을 때에도 높이 자동 조절
@@ -77,6 +76,7 @@ function AIChat() {
     
   };
 
+  //사용자 질문 보내기 
   const sendMessage = () => {
     if (!input.trim()) return;
     const newMessage = { role: 'user', content: input };
