@@ -8,6 +8,9 @@ import Header from '../Header';
 import ApiClient from '../../service/ApiClient';
 import "./loading.css";
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { setAiChat, clearAiChat } from '../../store/userSlice';
+
 
 function AIChat() {
   const [messages, setMessages] = useState([
@@ -18,21 +21,52 @@ function AIChat() {
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
 
+  const dispatch = useDispatch();
+
   const [promptLevel, setPromptLevel] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const accessToken = useSelector((state) => state.user.accessToken);
+  const prevMessage = useSelector((state) => state.user.chatMessages);
 
-  //게시판 게시문의 모달
+  //게시판 게시 문의 모달
   const [showModal, setShowModal] = useState(false);
+  const openPostModal = () => setShowModal(true);
+  const closePostModal = () => setShowModal(false);
+  //이전 내용 불러오기 모달
+  const [showChatModel, setShowChatModel] = useState(true);
+  const closeChatModal = () => {
+    dispatch(clearAiChat()); // 메시지만 Redux에서 초기화
+  
+    // 기존 userState 가져오기
+    const existingState = JSON.parse(localStorage.getItem('userState'));
+    if (existingState) {
+      existingState.chatMessages = []; // 메시지만 삭제
+      localStorage.setItem('userState', JSON.stringify(existingState)); // 다시 저장
+    }
+  
+    setShowChatModel(false);
+  };
 
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
+  
 
   //메시지가 추가될 때마다 거기로 스크롤 이동
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const bringMessage = () => {
+    if (prevMessage && prevMessage.length > 1) {
+      setMessages(prevMessage);
+    } else {
+      const saved = JSON.parse(localStorage.getItem('userState'));
+      if (saved?.chatMessages && saved.chatMessages.length > 1) {
+        setMessages(saved.chatMessages);
+      }
+    }
+    setShowChatModel(false);
+  };
+  
 
 
   const handleResizeHeight = () => {
@@ -43,35 +77,32 @@ function AIChat() {
     
   };
 
-
   const sendMessage = () => {
     if (!input.trim()) return;
     const newMessage = { role: 'user', content: input };
-    setMessages((prev) => [...prev, newMessage]);
+    const updatedMessages = [...messages, newMessage]; // 사용자 메시지까지 포함한 배열
+  
+    setMessages(updatedMessages);
     setInput('');
-
-    // 입력창 높이 초기화
+  
     if (textRef.current) {
       textRef.current.style.height = 'auto';
     }
-
-    console.log("promptLevel: " + promptLevel + "message: " + input );
+  
     setIsLoading(true); 
     ApiClient.sendMessage(accessToken, promptLevel, input)
-    .then((res) => {
-      console.log("loading");
-      return res.json();
-    })
-    .then((data) =>{
-      console.log(data.answer);
-      const aiResponse = { role: 'ai', content: data.answer };
-      setMessages((prev) => [...prev, aiResponse]);
-      setIsLoading(false);
-    })
-    .catch((err) => console.error("API 요청 실패:", err));
-
-    console.log("input: " + input);
+      .then((res) => res.json())
+      .then((data) => {
+        const aiResponse = { role: 'ai', content: data.answer };
+        const finalMessages = [...updatedMessages, aiResponse]; // 사용자 + AI 메시지 모두 포함
+  
+        setMessages(finalMessages);
+        dispatch(setAiChat({ chatMessages: finalMessages }));
+        setIsLoading(false);
+      })
+      .catch((err) => console.error("API 요청 실패:", err));
   };
+  
 
   //enter로 전송
   const handleKeyDown = (e) => {
@@ -83,7 +114,7 @@ function AIChat() {
 
   //Assemble Board만들기
   const postAssemble = () =>{
-    closeModal();
+    closePostModal();
   };
 
 
@@ -142,7 +173,7 @@ function AIChat() {
               <></>
             ) : (
               <div className='d-flex justify-content-start'>
-                <Button variant="dark" size="sm" onClick={openModal}>
+                <Button variant="dark" size="sm" onClick={openPostModal}>
                   답변 채택
                 </Button>
               </div>
@@ -195,7 +226,7 @@ function AIChat() {
           </Col>
         </Row>
       </Form>
-      <Modal show={showModal} onHide={closeModal} centered>
+      <Modal show={showModal} onHide={closePostModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>답변 채택</Modal.Title>
         </Modal.Header>
@@ -204,11 +235,29 @@ function AIChat() {
           채택하시면 질문과 내용이 요약되어 게시됩니다. 
         </Modal.Body>
         <Modal.Footer>
-          <Button type="button" variant="secondary" onClick={closeModal}>
+          <Button type="button" variant="secondary" onClick={closePostModal}>
             취소
           </Button>
           <Button type="button" variant="primary" onClick={postAssemble}>
             확인
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showChatModel} onHide={closeChatModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>AI Chat 내용 가져오기 </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          지난 대화 내용을 불러오시겠습니까? <br />
+          취소하시면 지난 대화 내용이 삭제 됩니다. 
+        </Modal.Body>
+        <Modal.Footer>
+          <Button type="button" variant="secondary" onClick={closeChatModal}>
+            취소
+          </Button>
+          <Button type="button" variant="primary" onClick={() => bringMessage()}>
+            불러오기
           </Button>
         </Modal.Footer>
       </Modal>

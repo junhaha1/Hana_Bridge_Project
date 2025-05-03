@@ -80,6 +80,7 @@ const AddBoard = () => {
             onChange={e => setTitle(e.target.value)} />
         </Form.Group>
 
+        {category === 'code' ? (
         <Form.Group className="mb-4">
           <Form.Control
             as="textarea"
@@ -88,7 +89,9 @@ const AddBoard = () => {
             value={code}
             onChange={e => setCode(e.target.value)} />
         </Form.Group>
-
+      ):(
+        <></>
+      )}     
         <Form.Group className="mb-4">
           <Form.Control
             as="textarea"
