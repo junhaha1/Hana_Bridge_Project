@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 //store action함수 
 import { useDispatch } from 'react-redux';
-import { clearUser } from '../store/userSlice';
+import { clearUser, clearAiChat } from '../store/userSlice';
 
 import ApiClient from "../service/ApiClient";
 
@@ -37,6 +37,8 @@ const BoardHeader = () => {
       dispatch(clearUser());
       console.log("로그아웃 완료!");
       dispatch(clearUser());
+      dispatch(clearAiChat()); 
+      localStorage.removeItem('userState'); //localStorage 비움
     })
     .catch(err =>{
       console.error("로그아웃 중 오류 발생:", err);

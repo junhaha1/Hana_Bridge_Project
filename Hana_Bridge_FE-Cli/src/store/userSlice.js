@@ -6,6 +6,7 @@ import { createSlice } from '@reduxjs/toolkit';
    nickName: 'guest',
    accessToken: 'guest',
    role: 'guest',
+   chatMessages: [],
  };
  
  const userSlice = createSlice({
@@ -31,8 +32,19 @@ import { createSlice } from '@reduxjs/toolkit';
        state.accessToken = null;
        state.role = null;
      },
+     setAiChat: (state, action) => {
+        state.chatMessages = action.payload.chatMessages;
+        console.log(state.chatMessages);
+     },
+     clearAiChat: (state) =>{
+      state.chatMessages = [];
+     },
+     // 전체 상태 초기화
+     resetAll: (state) => {
+      Object.assign(state, initialState); 
+    }    
    },
  });
  
- export const { setUser, modifyUser, clearUser } = userSlice.actions;
+ export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat } = userSlice.actions;
  export default userSlice.reducer;

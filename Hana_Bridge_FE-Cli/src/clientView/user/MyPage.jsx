@@ -5,7 +5,7 @@ import { Form, Card, Modal, Button} from 'react-bootstrap';
 import { useEffect, useState, useRef} from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from "react-router-dom";
-import { modifyUser, clearUser } from '../../store/userSlice';
+import { modifyUser, clearUser, clearAiChat } from '../../store/userSlice';
 
 const MyPage = () => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -119,6 +119,8 @@ const MyPage = () => {
       alert("정상적으로 탈퇴되었습니다.");
       ApiClient.userLogout();
       dispatch(clearUser());
+      dispatch(clearAiChat());
+      localStorage.removeItem('userState');
       navigate('/');
     })
     .catch((err) => console.error("API 요청 실패:", err));
