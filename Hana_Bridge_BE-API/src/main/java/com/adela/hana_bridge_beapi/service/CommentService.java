@@ -43,6 +43,14 @@ public class CommentService {
         return commentRepository.findByBoard_BoardId(boardId);
     }
 
+    //댓글 갯수 조회
+    public Long countComment(long boardId) {
+        if(!boardRepository.existsById(boardId)){
+            throw new BoardNotFoundException(boardId);
+        }
+        return commentRepository.countByBoard_BoardId(boardId);
+    }
+
     //댓글 수정
     @Transactional
     public Comment update(String email, long commentId, CommentUpdateRequest request){

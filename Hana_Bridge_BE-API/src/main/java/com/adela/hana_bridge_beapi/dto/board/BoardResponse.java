@@ -20,9 +20,11 @@ public class BoardResponse {
     private final LocalDateTime updateAt;
 
     private final Long likeCount;
+    private final Long commentCount;
+
     private boolean goodCheck;
 
-    public BoardResponse(Board board, Long likeCount) {
+    public BoardResponse(Board board, Long likeCount, Long commentCount) {
         this.boardId = board.getBoardId();
         this.nickName = board.getUsers().getNickName();
         this.title = board.getTitle();
@@ -33,6 +35,7 @@ public class BoardResponse {
         this.updateAt = board.getUpdateAt();
 
         this.likeCount = likeCount;
+        this.commentCount = commentCount;
         this.goodCheck = false;
     }
 }
