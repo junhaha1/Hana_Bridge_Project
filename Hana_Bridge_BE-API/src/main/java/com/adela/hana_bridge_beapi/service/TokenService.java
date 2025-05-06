@@ -58,9 +58,15 @@ public class TokenService {
         }
 
         String email = decoded.getSubject();
+
+        String redisRefreshToken = refreshTokenRepository.findById(email).get().getRefreshToken();
+        if (redisRefreshToken == null || !redisRefreshToken.equals(refreshToken)) {
+            throw new IllegalArgumentException("Invalid refresh token");
+        }
+
         Users users = usersService.findByEmail(email);
 
-        return tokenProvider.createToken(users.getEmail(), users.getRole(), EXPIRATION_REFRESH_TIME);
+        return tokenProvider.createToken(users.getEmail(), users.getRole(), EXPIRATION_ACCESS_TIME);
     }
 
     //-------------RefreshToken 기능-------------
