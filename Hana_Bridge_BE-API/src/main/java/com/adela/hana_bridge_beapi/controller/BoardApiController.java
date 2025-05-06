@@ -11,6 +11,7 @@ import com.adela.hana_bridge_beapi.repository.UsersRepository;
 import com.adela.hana_bridge_beapi.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class BoardApiController {
     public ResponseEntity<List<BoardResponse>> findAllBoard(@PathVariable("category") String category) {
         List<BoardResponse> boards = boardService.findByCategory(category)
                 .stream()
-                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId())))
+                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
                 .toList();
         return ResponseEntity.ok().body(boards);
     }
@@ -63,8 +64,9 @@ public class BoardApiController {
         String accessToken = authHeader.replace("Bearer ", "");
         Board board = boardService.findById(boardId);
         Long likeCount = goodService.goodCount(boardId);
+        Long commentCount = commentService.countComment(board.getBoardId());
 
-        BoardResponse detailBoard = new BoardResponse(board, likeCount);
+        BoardResponse detailBoard = new BoardResponse(board, likeCount, commentCount);
 
         //게스트가 아니라면 해당 게시글에 좋아요를 눌렀는지 안 눌렀는지 체크
         if (!accessToken.equals("guest")){
@@ -143,6 +145,11 @@ public class BoardApiController {
                 .map(comment -> new CommentResponse(comment))
                 .toList();
         return ResponseEntity.ok().body(comments);
+    }
+    //댓글 갯수 조회
+    @GetMapping("/comment/{boardId}/summary")
+    public ResponseEntity<Long> countCommentsByBoardId(@PathVariable("boardId") long boardId) {
+        return ResponseEntity.ok().body(commentService.countComment(boardId));
     }
 
     //댓글 수정
