@@ -1,6 +1,7 @@
 package com.adela.hana_bridge_beapi.controller;
 
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
+import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
 import com.adela.hana_bridge_beapi.dto.openai.ClientRequest;
 import com.adela.hana_bridge_beapi.dto.openai.ClientResponse;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
@@ -30,7 +31,7 @@ public class OpenAiApiController {
     }
 
     @PostMapping("/summary")
-    public ResponseEntity<AssembleAddRequest> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientRequest clientRequest){
+    public ResponseEntity<AssembleSummaryResponse> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientRequest clientRequest){
         String accessToken = authHeader.replace("Bearer ", "");
         String email = tokenService.findEmailByToken(accessToken);
 
@@ -51,7 +52,7 @@ public class OpenAiApiController {
                 .category("assemble")
                 .createdAt(LocalDateTime.now())
                 .build();
-        assembleBoardService.save(assembleAddRequest);
-        return ResponseEntity.ok().body(assembleAddRequest);
+        AssembleSummaryResponse assembleSummaryResponse =  assembleBoardService.save(assembleAddRequest);
+        return ResponseEntity.ok().body(assembleSummaryResponse);
     }
 }
