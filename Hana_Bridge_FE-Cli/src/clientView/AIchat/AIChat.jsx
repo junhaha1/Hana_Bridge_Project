@@ -15,7 +15,7 @@ import { setAiChat, clearAiChat } from '../../store/userSlice';
 
 function AIChat() {
   const [messages, setMessages] = useState([
-    { role: 'ai', content: '에러 코드를 사용중인 언어와 함께 보내주세요!' },
+    { role: '답변', content: '에러 코드를 사용중인 언어와 함께 보내주세요!' },
   ]);
   const [input, setInput] = useState('');
   //채팅의 마지막을 가르킴
@@ -27,16 +27,20 @@ function AIChat() {
 
   const [promptLevel, setPromptLevel] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [coreContent, setCoreContent] = useState('');
 
   const accessToken = useSelector((state) => state.user.accessToken);
   const prevMessage = useSelector((state) => state.user.chatMessages);
 
   //게시판 게시 문의 모달
   const [showModal, setShowModal] = useState(false);
-  const openPostModal = () => setShowModal(true);
+  const openPostModal = (content) => {
+    setCoreContent(content);    
+    setShowModal(true);
+  }
   const closePostModal = () => setShowModal(false);
   //이전 내용 불러오기 모달
-  const [showChatModel, setShowChatModel] = useState(true);
+  const [showChatModel, setShowChatModel] = useState(false);
   const closeChatModal = () => {
     dispatch(clearAiChat()); // 메시지만 Redux에서 초기화
   
@@ -49,6 +53,16 @@ function AIChat() {
   
     setShowChatModel(false);
   }; 
+
+  //초기에 이전 내용이 없다면 "이전내용 불러오기" 모달이 뜨지 안도록 설정
+  useEffect(() => {
+    if (prevMessage.length === 1 && prevMessage[0]?.content === '에러 코드를 사용중인 언어와 함께 보내주세요!') {
+      setShowChatModel(false);
+    } else if (prevMessage.length > 0) {
+      setShowChatModel(true);
+    }
+  }, []);
+  
 
   //메시지가 추가될 때마다 거기로 스크롤 이동
   useEffect(() => {
@@ -81,7 +95,7 @@ function AIChat() {
   //사용자 질문 보내기 
   const sendMessage = () => {
     if (!input.trim()) return;
-    const newMessage = { role: 'user', content: input };
+    const newMessage = { role: '질문', content: input };
     const updatedMessages = [...messages, newMessage]; // 사용자 메시지까지 포함한 배열
   
     setMessages(updatedMessages);
@@ -95,7 +109,7 @@ function AIChat() {
     ApiClient.sendMessage(accessToken, promptLevel, input)
       .then((res) => res.json())
       .then((data) => {
-        const aiResponse = { role: 'ai', content: data.answer };
+        const aiResponse = { role: '답변', content: data.answer };
         const finalMessages = [...updatedMessages, aiResponse]; // 사용자 + AI 메시지 모두 포함
   
         setMessages(finalMessages);
@@ -116,12 +130,24 @@ function AIChat() {
 
   //Assemble Board만들기
   const postAssemble = () =>{
-    closePostModal();
-    console.log(messages);
-    const result = messages.slice(1).map(msg => msg.content).join('');
-    console.log(result);
 
-    ApiClient.postAssemble(accessToken, promptLevel, result)
+    console.log(coreContent);
+    
+    //redux, localstorage 비우기 
+    dispatch(clearAiChat()); // 메시지만 Redux에서 초기화
+    const existingState = JSON.parse(localStorage.getItem('userState'));
+    if (existingState) {
+      existingState.chatMessages = []; // 메시지만 삭제
+      localStorage.setItem('userState', JSON.stringify(existingState)); // 다시 저장
+    }
+
+    closePostModal();
+    //console.log(messages);   
+
+    const result = messages.slice(1).map(msg => msg.role + ": " + msg.content).join('\n');
+    // console.log(result);
+
+    ApiClient.postAssemble(accessToken, promptLevel, result, coreContent)
     .then((res) => res.json())
     .then((data) => {      
       const assembleboardId  = data.assembleBoardId;
@@ -145,7 +171,7 @@ function AIChat() {
       {messages.map((msg, idx) => (
         <React.Fragment key={idx}>
           <div
-            className={`d-flex ${msg.role === 'ai' ? 'justify-content-start' : 'justify-content-end'} my-2`}
+            className={`d-flex ${msg.role === '답변' ? 'justify-content-start' : 'justify-content-end'} my-2`}
           >
             <Card
               border="primary"
@@ -181,12 +207,12 @@ function AIChat() {
             </Card>
           </div>
 
-          {msg.role === 'ai' && (
+          {msg.role === '답변' && (
             msg.content === '에러 코드를 사용중인 언어와 함께 보내주세요!' ? (
               <></>
             ) : (
               <div className='d-flex justify-content-start'>
-                <Button variant="dark" size="sm" onClick={openPostModal}>
+                <Button variant="dark" size="sm" onClick={() => openPostModal(msg.content)}>
                   답변 채택
                 </Button>
               </div>
