@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import java.util.List;
 
 @Service
@@ -34,6 +33,56 @@ public class OpenAiService {
                 new ChatGPTRequest.Message("user", clientRequest.getQuestion())
         ),
             promptResult.getMaxTokens(),
+                0.4
+        );
+
+        long start = System.currentTimeMillis();
+        ChatGPTResponse chatGPTResponse = openAiWebClient.post()
+                .uri(apiUrl)
+                .bodyValue(chatGPTRequest)
+                .retrieve()
+                .bodyToMono(ChatGPTResponse.class)
+                .block();
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("GPT 응답 시간: " + elapsed + "ms");
+
+        return chatGPTResponse.getChoices().get(0).getMessage().getContent();
+    }
+
+    public String summaryChatGPT(ClientRequest clientRequest) {
+        PromptResult promptResult = promptFactory.createSummaryPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
+
+        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(model, List.of(
+                new ChatGPTRequest.Message("system", promptResult.getPrompt()),
+                new ChatGPTRequest.Message("user", clientRequest.getQuestion())
+        ),
+                promptResult.getMaxTokens(),
+                0.4
+        );
+
+        long start = System.currentTimeMillis();
+        ChatGPTResponse chatGPTResponse = openAiWebClient.post()
+                .uri(apiUrl)
+                .bodyValue(chatGPTRequest)
+                .retrieve()
+                .bodyToMono(ChatGPTResponse.class)
+                .block();
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("GPT 응답 시간: " + elapsed + "ms");
+
+        return chatGPTResponse.getChoices().get(0).getMessage().getContent();
+    }
+
+    public String titleChatGPT(String summary) {
+        PromptResult promptResult = promptFactory.createTitlePromptResult(summary);
+
+        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(model, List.of(
+                new ChatGPTRequest.Message("system", promptResult.getPrompt()),
+                new ChatGPTRequest.Message("user", summary)
+        ),
+                promptResult.getMaxTokens(),
                 0.4
         );
 
