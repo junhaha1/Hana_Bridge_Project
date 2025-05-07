@@ -30,6 +30,7 @@ public class OpenAiService {
 
         List<ChatGPTRequest.Message> messages = new ArrayList<>();
         messages.add(new ChatGPTRequest.Message("system", promptResult.getPrompt()));
+        messages.add(new ChatGPTRequest.Message("assistant", clientRequest.getPreContent()));
         messages.add(new ChatGPTRequest.Message("user", clientRequest.getQuestion()));
 
         StringBuilder fullAnswer = new StringBuilder();
