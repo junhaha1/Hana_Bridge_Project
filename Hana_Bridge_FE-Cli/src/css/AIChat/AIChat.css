@@ -1,0 +1,31 @@
+/* src/css/AIChat/AIChatComponent.css */
+
+/* 전체 컨테이너 스타일 */
+.ai-chat-container {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+/* 채팅 카드 스타일 */
+.ai-chat-card {
+  width: 70%;
+  min-height: 600px;
+}
+
+/* 채팅 메시지 카드 내부 */
+.ai-chat-message-card {
+  max-width: 75%;
+  border-radius: 15px;
+}
+
+/* 입력창 자동 조절 스타일 */
+.ai-chat-input {
+  resize: none;
+  overflow: auto;
+  max-height: 120px;
+}
+
+/* 전송 버튼 스타일 (부트스트랩 활용) */
+.ai-chat-send-button {
+  white-space: nowrap;
+}

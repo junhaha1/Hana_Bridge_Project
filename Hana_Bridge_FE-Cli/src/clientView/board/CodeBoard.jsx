@@ -5,6 +5,8 @@ import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 
+import '../../css/Board/CommonBoard.css';
+
 const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
   const [category, setCategory] = useState('code');
@@ -56,26 +58,32 @@ const CodeBoard = () => {
     <div>
       {/* 카드 게시물 리스트 */}
       <Row className="g-3">
-          {boards.map((post) => (
-            <Col xs={12} key={post.boardId}>
-              <Card className="shadow-sm">
-                <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Card.Title className="mb-2 fw-bold" style={{ cursor: 'pointer' }} onClick={() => boardClick(post.boardId)}>{post.title}</Card.Title>
-                    <small className="text-muted">{post.userId}</small>
-                  </div>
-                  <Card.Text className="text-muted" style={{ fontSize: '0.9rem' }}>
-                    {post.content}
-                  </Card.Text>
-                  <div className="d-flex gap-3 mt-2">
-                    <span className="text-primary"><i className="bi bi-hand-thumbs-up"></i> <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" />{post.likeCount}</span>
-                    <span className="text-secondary"><i className="bi bi-chat-dots"></i> <img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {post.comments}</span>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+        {boards.map((post) => (
+          <Col xs={12} key={post.boardId}>
+            <Card className="shadow-sm board-card">
+              <Card.Body>
+                <div className="d-flex justify-content-between align-items-center">
+                  <Card.Title className="mb-2 board-title" onClick={() => boardClick(post.boardId)}>
+                    {post.title}
+                  </Card.Title>
+                  <small className="text-muted">{post.userId}</small>
+                </div>
+                <Card.Text className="board-text">{post.content}</Card.Text>
+                <div className="d-flex gap-3 mt-2">
+                  <span className="text-primary">
+                    <img src="/images/blueGood.png" alt="좋아요" className="board-icon" />
+                    {post.likeCount}
+                  </span>
+                  <span className="text-secondary">
+                    <img src="/images/comment.png" alt="댓글" className="board-icon" />
+                    {post.comments}
+                  </span>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 };

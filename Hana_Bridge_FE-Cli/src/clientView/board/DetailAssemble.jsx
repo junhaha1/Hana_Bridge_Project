@@ -12,6 +12,8 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+import '../../css/Board/DetailAssemble.css';
+
 const DetailAssemble = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
@@ -135,14 +137,14 @@ const DetailAssemble = () => {
                 <div>
                 {isLike === true ? (
                     <>
-                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                      <span className="me-3"
                         onClick={() => handleCancelLike(assembleBoardId)}>
                         <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
                       </span>
                     </>
                   ) : (
                     <>
-                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                      <span className="me-3" 
                         onClick={() => handleLike(assembleBoardId)}>
                         <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
                       </span>
@@ -154,13 +156,8 @@ const DetailAssemble = () => {
                 <div>
                   {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}
                   {nickName === board.nickName || role === "admin" ? (
-                      <>
-                        <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(assembleBoardId)}>삭제하기</Link>
-                      </>
-                    ) : (
-                      <>
-                      </>
-                  )}
+                    <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(assembleBoardId)}>삭제하기</Link>
+                  ) : null}
                 </div>
               </div>
             </div>                       

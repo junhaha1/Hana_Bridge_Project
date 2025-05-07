@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
 
+import '../../css/Board/AddComment.css';
+
 const AddComment = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
   const nickName = useSelector((state) => state.user.nickName);

@@ -8,6 +8,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
+import '../../css/Board/DetailBoard.css'
+
 const DetailBoard = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
@@ -187,14 +189,14 @@ const DetailBoard = () => {
                 <div>
                 {isLike === true ? (
                     <>
-                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                      <span className="me-3" 
                         onClick={() => handleCancelLike(boardId)}>
                         <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
                       </span>
                     </>
                   ) : (
                     <>
-                      <span className="me-3" style={{ cursor: 'pointer' }} 
+                      <span className="me-3"
                         onClick={() => handleLike(boardId)}>
                         <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
                       </span>
