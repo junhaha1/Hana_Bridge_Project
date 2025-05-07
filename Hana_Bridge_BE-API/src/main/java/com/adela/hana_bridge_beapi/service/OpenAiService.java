@@ -2,14 +2,12 @@ package com.adela.hana_bridge_beapi.service;
 
 import com.adela.hana_bridge_beapi.config.openai.PromptFactory;
 import com.adela.hana_bridge_beapi.config.openai.PromptProperties;
-import com.adela.hana_bridge_beapi.dto.openai.ChatGPTRequest;
-import com.adela.hana_bridge_beapi.dto.openai.ChatGPTResponse;
-import com.adela.hana_bridge_beapi.dto.openai.ClientRequest;
-import com.adela.hana_bridge_beapi.dto.openai.PromptResult;
+import com.adela.hana_bridge_beapi.dto.openai.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,12 +71,15 @@ public class OpenAiService {
         return fullAnswer.toString();
     }
 
-    public String summaryChatGPT(ClientRequest clientRequest) {
-        PromptResult promptResult = promptFactory.createSummaryPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
+    public String summaryChatGPT(ClientSummaryRequest clientSummaryRequest) {
+        PromptResult promptResult = promptFactory.createSummaryPromptResult(clientSummaryRequest.getPromptLevel(), clientSummaryRequest.getCoreContent());
+        String total = "[total : " + clientSummaryRequest.getTotalContent() + "]";
+        String core = "[core : " + clientSummaryRequest.getCoreContent() + "]";
+        String content = total + core;
 
         List<ChatGPTRequest.Message> messages = new ArrayList<>();
-        messages.add(new ChatGPTRequest.Message("system", promptResult.getPrompt()));
-        messages.add(new ChatGPTRequest.Message("user", clientRequest.getQuestion()));
+        messages.add(new ChatGPTRequest.Message("system", "[total] 내용에서 [core]내용과 관련있는 내용들만 요약해줘. "+ promptResult.getPrompt()));
+        messages.add(new ChatGPTRequest.Message("user", content));
 
         StringBuilder fullAnswer = new StringBuilder();
         boolean isFinished = false;

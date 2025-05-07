@@ -4,13 +4,16 @@ import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
 import com.adela.hana_bridge_beapi.dto.openai.ClientRequest;
 import com.adela.hana_bridge_beapi.dto.openai.ClientResponse;
+import com.adela.hana_bridge_beapi.dto.openai.ClientSummaryRequest;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
 import com.adela.hana_bridge_beapi.service.OpenAiService;
 import com.adela.hana_bridge_beapi.service.TokenService;
 import com.adela.hana_bridge_beapi.service.UsersService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 
@@ -31,12 +34,12 @@ public class OpenAiApiController {
     }
 
     @PostMapping("/summary")
-    public ResponseEntity<AssembleSummaryResponse> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientRequest clientRequest){
+    public ResponseEntity<AssembleSummaryResponse> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientSummaryRequest clientSummaryRequest){
         String accessToken = authHeader.replace("Bearer ", "");
         String email = tokenService.findEmailByToken(accessToken);
 
         //질문과 답변들을 이용하여 요약본 생성
-        String summary = openAiService.summaryChatGPT(clientRequest);
+        String summary = openAiService.summaryChatGPT(clientSummaryRequest);
         //요약본을 바탕으로 제목 생성
         String title = openAiService.titleChatGPT(summary);
 
