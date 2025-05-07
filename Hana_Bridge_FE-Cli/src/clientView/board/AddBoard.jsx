@@ -7,8 +7,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
 const AddBoard = () => {
-  const email = useSelector((state) => state.user.email) || 'guest';
-  const nickName = useSelector((state) => state.user.nickName) || 'guest';
+  const accessToken = useSelector((state) => state.user.accessToken);
+  const role = useSelector((state) => state.user.role);
 
   const [category, setCategory] = useState('code');
   const [title, setTitle] = useState('');
@@ -18,7 +18,7 @@ const AddBoard = () => {
   const [updateAt, setUpdateAt] = useState(new Date());
 
 
-  const accessToken = useSelector((state) => state.user.accessToken);
+  
 
   const navigate = useNavigate();
 
@@ -45,21 +45,37 @@ const AddBoard = () => {
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold">게시판 선택<span className="text-danger">*</span></Form.Label>
-          <div>
-            <ToggleButtonGroup
-              type="radio"
-              name="board"
-              value={category}
-              onChange={val => setCategory(val)}
-            >
-              <ToggleButton
-                id="notice-board"
-                variant={category === 'notice' ? 'primary' : 'outline-secondary'}
-                value="notice"
+          {role === "admin" ? (
+            <>
+            <Form.Label className="fw-semibold">게시판 선택<span className="text-danger">*</span></Form.Label>
+            <div>
+              <ToggleButtonGroup
+                type="radio"
+                name="board"
+                value={category}
+                onChange={val => setCategory(val)}
               >
-                NOTICE 게시판
-              </ToggleButton>
+                <ToggleButton
+                  id="notice-board"
+                  variant={category === 'notice' ? 'primary' : 'outline-secondary'}
+                  value="notice"
+                >
+                  NOTICE 게시판
+                </ToggleButton>
+                <ToggleButton
+                  id="code-board"
+                  variant={category === 'code' ? 'primary' : 'outline-secondary'}
+                  value="code"
+                >
+                  CODE 게시판
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+            </>
+          ):(
+            <>
+            <Form.Label className="fw-semibold">게시판 카테고리<span className="text-danger">*</span></Form.Label>
+            <div>
               <ToggleButton
                 id="code-board"
                 variant={category === 'code' ? 'primary' : 'outline-secondary'}
@@ -67,8 +83,10 @@ const AddBoard = () => {
               >
                 CODE 게시판
               </ToggleButton>
-            </ToggleButtonGroup>
-          </div>
+            </div>
+
+            </>
+          )}          
         </Form.Group>
 
         <Form.Group className="mb-3">

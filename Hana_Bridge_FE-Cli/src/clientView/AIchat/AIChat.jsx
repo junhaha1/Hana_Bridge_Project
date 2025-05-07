@@ -17,7 +17,8 @@ function AIChat() {
   const [messages, setMessages] = useState([
     { role: '답변', content: '에러 코드를 사용중인 언어와 함께 보내주세요!' },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState('');  //질문 1개 
+  const [question, setQuestion] = useState(''); //질문들의 모음
   //채팅의 마지막을 가르킴
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
@@ -95,7 +96,8 @@ function AIChat() {
   //사용자 질문 보내기 
   const sendMessage = () => {
     if (!input.trim()) return;
-    const newMessage = { role: '질문', content: input };
+
+    const newMessage = { role: '질문', content: input};    
     const updatedMessages = [...messages, newMessage]; // 사용자 메시지까지 포함한 배열
   
     setMessages(updatedMessages);
@@ -104,9 +106,11 @@ function AIChat() {
     if (textRef.current) {
       textRef.current.style.height = 'auto';
     }
+
+    const result = updatedMessages.map(msg => msg.role + ": " + msg.content).join('\n');
   
     setIsLoading(true); 
-    ApiClient.sendMessage(accessToken, promptLevel, input)
+    ApiClient.sendMessage(accessToken, promptLevel, result, input)
       .then((res) => res.json())
       .then((data) => {
         const aiResponse = { role: '답변', content: data.answer };
@@ -130,7 +134,6 @@ function AIChat() {
 
   //Assemble Board만들기
   const postAssemble = () =>{
-
     console.log(coreContent);
     
     //redux, localstorage 비우기 
@@ -140,12 +143,8 @@ function AIChat() {
       existingState.chatMessages = []; // 메시지만 삭제
       localStorage.setItem('userState', JSON.stringify(existingState)); // 다시 저장
     }
-
     closePostModal();
-    //console.log(messages);   
-
-    const result = messages.slice(1).map(msg => msg.role + ": " + msg.content).join('\n');
-    // console.log(result);
+    const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
     ApiClient.postAssemble(accessToken, promptLevel, result, coreContent)
     .then((res) => res.json())
