@@ -1,6 +1,7 @@
 package com.adela.hana_bridge_beapi.service;
 
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
+import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
@@ -28,8 +29,13 @@ public class AssembleBoardService {
     }
     //게시글 등록
     @Transactional
-    public AssembleBoard save(AssembleAddRequest request){
-        return assembleRepository.save(request.toEntity());
+    public AssembleSummaryResponse save(AssembleAddRequest request){
+        AssembleBoard assembleBoard =  assembleRepository.save(request.toEntity());
+        AssembleSummaryResponse assembleSummaryResponse = AssembleSummaryResponse.builder()
+                .assembleBoardId(assembleBoard.getAssembleBoardId())
+                .title(assembleBoard.getTitle())
+                .build();
+        return assembleSummaryResponse;
     }
 
     //게시글 ID를 통한 삭제
