@@ -15,7 +15,7 @@ class ApiClient{
 
 
   //OpenAi chat
-  static sendMessage(accessToken, promptLevel, question){
+  static sendMessage(accessToken, promptLevel, preContent, question){
     console.log("send Message to AI: " + question);
     return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer',{
       method: "POST",
@@ -25,6 +25,7 @@ class ApiClient{
       },
       body: JSON.stringify({
         promptLevel: promptLevel,
+        preContent: preContent,
         question: question,
       }),
     });
