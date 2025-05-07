@@ -36,25 +36,25 @@ function Login() {
   return (
     <>
       {/* 상단 파란 배경 */}
-            <div
-              style={{
-                width: "100vw",
-                height: "40vh",
-                background: "linear-gradient(to right, #000428, #004e92)",
-                position: "relative",
-                left: 0,
-                top: 0,
-              }}
-              className="d-flex align-items-start justify-content-center pt-4"
-            >
-              <Container className="mt-4">
-                <Link to="/" style={{ textDecoration: 'none' }}>
-                  <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
-                    SW Board
-                  </h1>
-                </Link>
-              </Container>
-            </div>
+      <div
+        style={{
+          width: "100vw",
+          height: "40vh",
+          background: "linear-gradient(to right, #000428, #004e92)",
+          position: "relative",
+          left: 0,
+          top: 0,
+        }}
+        className="d-flex align-items-start justify-content-center pt-4"
+      >
+        <Container className="mt-4">
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
+              SW Board
+            </h1>
+          </Link>
+        </Container>
+      </div>
             
 
       {/* 카드 영역 */}
@@ -91,9 +91,6 @@ function Login() {
           </Card.Body>
         </Card>
       </div>
-
-
-
     </>
   );
 }

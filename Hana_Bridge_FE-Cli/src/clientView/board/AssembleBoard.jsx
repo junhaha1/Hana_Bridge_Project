@@ -48,7 +48,7 @@ const AssembleBoard = () => {
   //상세 화면으로 
   const boardClick = (assembleboardId) =>{
     console.log(assembleboardId);
-    navigate(`/detailAssemble/${assembleboardId}`, {state: {category: category}});
+    navigate(`/detailAssemble/${assembleboardId}`);
   }
 
   return (

@@ -10,15 +10,6 @@ import { clearUser, clearAiChat } from '../store/userSlice';
 
 import ApiClient from "../service/ApiClient";
 
-/* 
-  페이지 헤더
-  메인 로고 => BoardListView(메인화면) 이동
-
-  게시판 & 글 작성 네비게이션 바 
-
-  로그인 버튼 => Login.jsx 이동
-  로그아웃 버튼 => userId 삭제 후 BoardListView(메인화면) 이동
-*/
 const BoardHeader = () => {
   //유저 로그아웃
   const dispatch = useDispatch();

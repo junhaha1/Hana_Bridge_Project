@@ -10,11 +10,13 @@ import SignUp from './clientView/user/SignUp';
 import DetailAssemble from './clientView/board/DetailAssemble';
 import MyPage from './clientView/user/MyPage';
 import AIChat from './clientView/AIchat/AIChat';
+import Home from './clientView/Home';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<MainBoard />} /> {/* 메인 화면 */}
+      <Route path="/" element={<Home />} /> {/* 홈 화면 */}
+      <Route path="/board/:category" element={<MainBoard />} /> {/* board 화면 */} 
       <Route path="/login" element={<Login />} /> {/* Login 화면 */}
       <Route path="/signup" element={<SignUp />} /> {/* Login 화면 */}
       <Route path="/mypage" element={<MyPage/>} />  {/* 회원정보 화면 */}
