@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../Header';
 import ApiClient from "../../service/ApiClient";
+import '../../css/user/MyPage.css';
 import { Form, Card, Modal, Button} from 'react-bootstrap';
 import { useEffect, useState, useRef} from "react";
 import { useSelector, useDispatch } from 'react-redux';
@@ -143,59 +144,42 @@ const MyPage = () => {
   return (
     <div>
       <Header />
-      <div style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
-        
+      <div className='mypage-wrapper'>
         {/* 상단 파란 배경 */}
-        <div
-          style={{
-            width: "100vw",
-            height: "40vh",
-            background: "linear-gradient(to right, #000428, #004e92)",
-            position: "relative",
-            left: 0,
-            top: 0,
-          }}
-          className="d-flex align-items-start justify-content-center pt-4"
-        >
+        <div className="mypage-banner d-flex align-items-start justify-content-center pt-4">
           <Link to="/" style={{ textDecoration: 'none' }}>
-            <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
+            <h1 className="mypage-title text-white fw-bold">
               SW Board
             </h1>
           </Link>
         </div>
 
         {/* 카드 영역 */}
-        <div className="d-flex justify-content-center" style={{ marginTop: "-120px" }}>
-          <Card
-            style={{ width: "100%", maxWidth: "450px" }}
-            className="p-4 shadow rounded-4 bg-white"
-          >
+        <div className="mypage-card-container d-flex justify-content-center">
+          <Card className="mypage-card p-4 shadow rounded-4 bg-white">
             <Card.Body>
               <Card.Title className="mb-4 fs-3 fw-bold text-center">사용자 정보 조회</Card.Title>
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>이름<span className="text-danger">*</span></Form.Label>
-                  <Form.Control type="text" value={name} readOnly style={{backgroundColor: "#e9ecef"}}/>
+                  <Form.Control type="text" value={name} readOnly className="input-readonly"/>
                 </Form.Group>
 
                 <Form.Group className="mb-2">
                   <Form.Label>이메일<span className="text-danger">*</span></Form.Label>
-                  <Form.Control type="email" value={tempEmail} readOnly={!isEdit}
-                  style={{
-                    backgroundColor: isEdit ? "white" : "#e9ecef",
-                    cursor: isEdit ? "text" : "default"
-                  }}
-                  onChange={e => setTempEmail(e.target.value)}
+                  <Form.Control 
+                    type="email" 
+                    value={tempEmail} 
+                    readOnly={!isEdit}
+                    className={isEdit ? 'input-editable' : 'input-readonly'}
+                    onChange={e => setTempEmail(e.target.value)}
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>닉네임<span className="text-danger">*</span></Form.Label>
                   <Form.Control type="text" value={tempNickName} readOnly={!isEdit}
-                  style={{
-                    backgroundColor: isEdit ? "white" : "#e9ecef",
-                    cursor: isEdit ? "text" : "default"
-                  }}
+                  className={isEdit ? 'input-editable' : 'input-readonly'}
                   onChange={e => setTempNickName(e.target.value)}
                   />
                 </Form.Group>
@@ -203,14 +187,20 @@ const MyPage = () => {
                   <>
                     <Form.Group className="mb-3">
                       <Form.Label>변경할 비밀번호<span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="password" value={oldPassword} style={{backgroundColor: "#e9ecef"}}
-                      onChange={e => setOldPassword(e.target.value)}
+                      <Form.Control 
+                        type="password" 
+                        value={oldPassword} 
+                        className='input_readonly'
+                        onChange={e => setOldPassword(e.target.value)}
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label>새 비밀번호<span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="password" value={newPassword}  style={{backgroundColor: "#e9ecef"}}
-                      onChange={e => setNewPassword(e.target.value)}
+                      <Form.Control 
+                        type="password" 
+                        value={newPassword}  
+                        className='input_readonly'
+                        onChange={e => setNewPassword(e.target.value)}
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -218,7 +208,7 @@ const MyPage = () => {
                       <Form.Control
                         type="password"
                         value={newCheckPassword}
-                        style={{ backgroundColor: "#e9ecef" }}
+                        className='input_readonly'
                         onChange={(e) => setNewCheckPassword(e.target.value)}
                         isInvalid={newCheckPassword && newPassword !== newCheckPassword}
                       />
@@ -249,7 +239,12 @@ const MyPage = () => {
                     <>
                     <Form.Group className="mb-3">
                       <Form.Label>권한<span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="text" value={role} readOnly style={{backgroundColor: "#e9ecef"}}/>
+                      <Form.Control 
+                        type="text" 
+                        value={role} 
+                        readOnly 
+                        className="input-readonly"
+                      />
                     </Form.Group>
                     {isEdit ? (
                       <>

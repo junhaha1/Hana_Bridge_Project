@@ -1,7 +1,8 @@
 import { useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import '../../css/user/Login.css';
 import ApiClient from "../../service/ApiClient";
-import { Card, Form, Button, Row, Col, Container } from "react-bootstrap";
+import { Card, Form, Button, Container } from "react-bootstrap";
 
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/userSlice';
@@ -31,38 +32,23 @@ function Login() {
         alert("아이디를 확인해주세요"); 
       });
   }
-  
 
   return (
     <>
       {/* 상단 파란 배경 */}
-      <div
-        style={{
-          width: "100vw",
-          height: "40vh",
-          background: "linear-gradient(to right, #000428, #004e92)",
-          position: "relative",
-          left: 0,
-          top: 0,
-        }}
-        className="d-flex align-items-start justify-content-center pt-4"
-      >
+      <div className="login-banner d-flex align-items-start justify-content-center pt-4">
         <Container className="mt-4">
           <Link to="/" style={{ textDecoration: 'none' }}>
-            <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
+            <h1 className="login-title text-white fw-bold">
               SW Board
             </h1>
           </Link>
         </Container>
       </div>
-            
 
       {/* 카드 영역 */}
-      <div className="d-flex justify-content-center" style={{ marginTop: "-120px" }}>
-        <Card
-          style={{ width: "100%", maxWidth: "450px" }}
-          className="p-4 shadow rounded-4 bg-white"
-        >
+      <div className="login-card-container d-flex justify-content-center">
+        <Card className="login-card p-4 shadow rounded-4 bg-white">
           <Card.Body>
             <Card.Title className="mb-4 fs-3 fw-bold text-center">Login</Card.Title>
 
@@ -81,12 +67,10 @@ function Login() {
                 <Link to={'/'}>비밀번호 찾기 / 아이디 찾기</Link>
               </div>
 
-
               <div className="d-flex justify-content-between mt-3">
                 <Button className="btn btn-primary" onClick={() => loginButton(email, pwd)}>로그인</Button>
                 <Link className="btn btn-secondary" to={'/'}>처음으로</Link>
               </div>
-              
             </Form>
           </Card.Body>
         </Card>

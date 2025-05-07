@@ -1,0 +1,35 @@
+/* 상단 배너 */
+.home-banner {
+  width: 100vw;
+  height: 40vh;
+  background: linear-gradient(to right, #000428, #004e92);
+  position: relative;
+  left: 0;
+  top: 0;
+}
+
+/* 배너 안 텍스트 */
+.home-title {
+  cursor: pointer;
+}
+
+/* 카드 컨테이너 마진 */
+.card-container {
+  margin-top: -120px;
+}
+
+.card-shape {
+  width: 100%;
+  max-width: 450px; 
+}
+
+/* 게시판 아이콘 공통 스타일 */
+.board-icon {
+  height: 130px;
+}
+
+/* 텍스트 링크 스타일 */
+.link-no-style {
+  text-decoration: none;
+  color: black;
+}

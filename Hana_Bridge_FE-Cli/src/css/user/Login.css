@@ -1,0 +1,27 @@
+/* Login.css */
+
+/* 상단 배경 */
+.login-banner {
+  width: 100vw;
+  height: 40vh;
+  background: linear-gradient(to right, #000428, #004e92);
+  position: relative;
+  left: 0;
+  top: 0;
+}
+
+/* 상단 텍스트 */
+.login-title {
+  cursor: pointer;
+}
+
+/* 카드 위치 조정 */
+.login-card-container {
+  margin-top: -120px;
+}
+
+/* 카드 박스 크기 */
+.login-card {
+  width: 100%;
+  max-width: 450px;
+}
