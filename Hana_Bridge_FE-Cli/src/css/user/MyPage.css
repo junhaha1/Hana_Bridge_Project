@@ -1,0 +1,44 @@
+/* MyPage.css */
+
+/* 전체 배경 */
+.mypage-wrapper {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* 상단 파란 배경 */
+.mypage-banner {
+  width: 100vw;
+  height: 40vh;
+  background: linear-gradient(to right, #000428, #004e92);
+  position: relative;
+  left: 0;
+  top: 0;
+}
+
+/* 타이틀 텍스트 */
+.mypage-title {
+  cursor: pointer;
+}
+
+/* 카드 위치 조정 */
+.mypage-card-container {
+  margin-top: -120px;
+}
+
+/* 카드 크기 제한 */
+.mypage-card {
+  width: 100%;
+  max-width: 450px;
+}
+
+/* 읽기 전용 input 배경 */
+.input-readonly {
+  background-color: #e9ecef;
+}
+
+/* 편집 가능 input */
+.input-editable {
+  background-color: white;
+  cursor: text;
+}

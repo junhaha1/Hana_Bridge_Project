@@ -1,0 +1,37 @@
+/* SignUp.css */
+
+/* 전체 배경 */
+.signup-wrapper {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* 상단 배너 */
+.signup-banner {
+  width: 100vw;
+  height: 40vh;
+  background: linear-gradient(to right, #000428, #004e92);
+  position: relative;
+  left: 0;
+  top: 0;
+}
+
+.link-no-deco{ 
+  text-decoration: 'none' ;
+}
+
+/* 타이틀 커서 스타일 */
+.signup-title {
+  cursor: pointer;
+}
+
+/* 카드 컨테이너 위치 */
+.signup-card-container {
+  margin-top: -120px;
+}
+
+/* 카드 크기 제한 */
+.signup-card {
+  width: 100%;
+  max-width: 450px;
+}

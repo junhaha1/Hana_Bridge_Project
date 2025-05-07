@@ -1,30 +1,17 @@
 import React from "react";
+import '../css/main/CodeHelper.css';
 import { useNavigate } from 'react-router-dom';
 
 const CodeHelper = () => {
   const navigate = useNavigate(); 
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: "20px",
-        right: "20px",
-        zIndex: 9999,
-      }}
-    >
-      <button
-        onClick={() =>  navigate(`/aiChat`)} // 원하는 기능 연결
-        style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
+    <div className="code-helper-container">
+      <button className="code-helper-button" onClick={() =>  navigate(`/aiChat`)}>
         <img
           src="../images/CodeHelper.svg" // public 폴더 기준 경로
           alt="Code Helper"
-          style={{ width: "142px", height: "52px" }}
+          className="code-helper-image"
         />
       </button>
     </div>

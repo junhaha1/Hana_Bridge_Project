@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Form, Button, Row, Col, Container } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
+import '../../css/user/SignUp.css';
 
 
 function SignUp() {
@@ -35,35 +36,21 @@ function SignUp() {
 
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+    <div className="signup-wrapper">
       {/* 상단 파란 배경 */}
-      <div
-        style={{
-          width: "100vw",
-          height: "40vh",
-          background: "linear-gradient(to right, #000428, #004e92)",
-          position: "relative",
-          left: 0,
-          top: 0,
-        }}
-        className="d-flex align-items-start justify-content-center pt-4"
-      >
+      <div className="signup-banner d-flex align-items-start justify-content-center pt-4">
         <Container className="mt-4">
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <h1 className="text-white fw-bold" style={{ cursor: 'pointer' }}>
+          <Link to="/" className="link-no-deco">
+            <h1 className="signup-title text-white fw-bold">
               SW Board
             </h1>
           </Link>
         </Container>
-        
       </div>
 
       {/* 카드 영역 */}
-      <div className="d-flex justify-content-center" style={{ marginTop: "-120px" }}>
-        <Card
-          style={{ width: "100%", maxWidth: "450px" }}
-          className="p-4 shadow rounded-4 bg-white"
-        >
+      <div className="signup-card-container d-flex justify-content-center">
+        <Card className="signup-card p-4 shadow rounded-4 bg-white">
           <Card.Body>
             <Card.Title className="mb-4 fs-3 fw-bold text-center">회원가입</Card.Title>
 
