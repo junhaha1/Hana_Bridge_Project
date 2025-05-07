@@ -1,14 +1,12 @@
 package com.adela.hana_bridge_beapi.service;
 
-import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
+import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +25,11 @@ public class AssembleBoardService {
     public AssembleBoard findAssembleBoardById(Long assembleBoardId) {
         return assembleRepository.findById(assembleBoardId)
                 .orElseThrow(() -> new AssembleBoardNotFoundException(assembleBoardId));
+    }
+    //게시글 등록
+    @Transactional
+    public AssembleBoard save(AssembleAddRequest request){
+        return assembleRepository.save(request.toEntity());
     }
 
     //게시글 ID를 통한 삭제
