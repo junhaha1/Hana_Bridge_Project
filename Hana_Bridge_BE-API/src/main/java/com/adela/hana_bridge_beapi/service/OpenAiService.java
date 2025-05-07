@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,51 +30,93 @@ public class OpenAiService {
     public String askChatGPT(ClientRequest clientRequest){
         PromptResult promptResult = promptFactory.createPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
 
-        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(model, List.of(
-                new ChatGPTRequest.Message("system", promptResult.getPrompt()),
-                new ChatGPTRequest.Message("user", clientRequest.getQuestion())
-        ),
-            promptResult.getMaxTokens(),
-                0.4
-        );
+        List<ChatGPTRequest.Message> messages = new ArrayList<>();
+        messages.add(new ChatGPTRequest.Message("system", promptResult.getPrompt()));
+        messages.add(new ChatGPTRequest.Message("user", clientRequest.getQuestion()));
 
-        long start = System.currentTimeMillis();
-        ChatGPTResponse chatGPTResponse = openAiWebClient.post()
-                .uri(apiUrl)
-                .bodyValue(chatGPTRequest)
-                .retrieve()
-                .bodyToMono(ChatGPTResponse.class)
-                .block();
+        StringBuilder fullAnswer = new StringBuilder();
+        boolean isFinished = false;
 
-        long elapsed = System.currentTimeMillis() - start;
-        System.out.println("GPT 응답 시간: " + elapsed + "ms");
+        while(!isFinished){
+            ChatGPTRequest chatGPTRequest = new ChatGPTRequest(
+                    model,
+                    messages,
+                    promptResult.getMaxTokens(),
+                    0.4
+            );
 
-        return chatGPTResponse.getChoices().get(0).getMessage().getContent();
+            long start = System.currentTimeMillis();
+            ChatGPTResponse chatGPTResponse = openAiWebClient.post()
+                    .uri(apiUrl)
+                    .bodyValue(chatGPTRequest)
+                    .retrieve()
+                    .bodyToMono(ChatGPTResponse.class)
+                    .block();
+
+            long elapsed = System.currentTimeMillis() - start;
+            System.out.println("GPT 응답 시간: " + elapsed + "ms");
+
+            String answer = chatGPTResponse.getChoices().get(0).getMessage().getContent();
+            // "length", "stop", 등
+            String finishReason = chatGPTResponse.getChoices().get(0).getFinishReason();
+
+            fullAnswer.append(answer);
+
+            if ("length".equals(finishReason)) {
+                // 응답이 잘린 경우 → assistant 응답을 messages에 다시 추가하여 연속 요청
+                messages.add(new ChatGPTRequest.Message("assistant", answer));
+            } else {
+                isFinished = true; // 다 온 경우 반복 종료
+            }
+        }
+
+        return fullAnswer.toString();
     }
 
     public String summaryChatGPT(ClientRequest clientRequest) {
         PromptResult promptResult = promptFactory.createSummaryPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
 
-        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(model, List.of(
-                new ChatGPTRequest.Message("system", promptResult.getPrompt()),
-                new ChatGPTRequest.Message("user", clientRequest.getQuestion())
-        ),
-                promptResult.getMaxTokens(),
-                0.4
-        );
+        List<ChatGPTRequest.Message> messages = new ArrayList<>();
+        messages.add(new ChatGPTRequest.Message("system", promptResult.getPrompt()));
+        messages.add(new ChatGPTRequest.Message("user", clientRequest.getQuestion()));
 
-        long start = System.currentTimeMillis();
-        ChatGPTResponse chatGPTResponse = openAiWebClient.post()
-                .uri(apiUrl)
-                .bodyValue(chatGPTRequest)
-                .retrieve()
-                .bodyToMono(ChatGPTResponse.class)
-                .block();
+        StringBuilder fullAnswer = new StringBuilder();
+        boolean isFinished = false;
 
-        long elapsed = System.currentTimeMillis() - start;
-        System.out.println("GPT 응답 시간: " + elapsed + "ms");
+        while(!isFinished){
+            ChatGPTRequest chatGPTRequest = new ChatGPTRequest(
+                    model,
+                    messages,
+                    promptResult.getMaxTokens(),
+                    0.4
+            );
 
-        return chatGPTResponse.getChoices().get(0).getMessage().getContent();
+            long start = System.currentTimeMillis();
+            ChatGPTResponse chatGPTResponse = openAiWebClient.post()
+                    .uri(apiUrl)
+                    .bodyValue(chatGPTRequest)
+                    .retrieve()
+                    .bodyToMono(ChatGPTResponse.class)
+                    .block();
+
+            long elapsed = System.currentTimeMillis() - start;
+            System.out.println("GPT 응답 시간: " + elapsed + "ms");
+
+            String answer = chatGPTResponse.getChoices().get(0).getMessage().getContent();
+            // "length", "stop", 등
+            String finishReason = chatGPTResponse.getChoices().get(0).getFinishReason();
+
+            fullAnswer.append(answer);
+
+            if ("length".equals(finishReason)) {
+                // 응답이 잘린 경우 → assistant 응답을 messages에 다시 추가하여 연속 요청
+                messages.add(new ChatGPTRequest.Message("assistant", answer));
+            } else {
+                isFinished = true; // 다 온 경우 반복 종료
+            }
+        }
+
+        return fullAnswer.toString();
     }
 
     public String titleChatGPT(String summary) {
