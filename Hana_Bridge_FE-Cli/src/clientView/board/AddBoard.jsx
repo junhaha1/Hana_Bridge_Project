@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
+import '../../css/Board/AddBoard.css'
+
 const AddBoard = () => {
   const accessToken = useSelector((state) => state.user.accessToken);
   const role = useSelector((state) => state.user.role);
@@ -15,10 +17,7 @@ const AddBoard = () => {
   const [code, setCode] = useState('');
   const [content, setContent] = useState('');
   const [createAt, setCreateAt] = useState(new Date());
-  const [updateAt, setUpdateAt] = useState(new Date());
-
-
-  
+  const [updateAt, setUpdateAt] = useState(new Date());  
 
   const navigate = useNavigate();
 
@@ -40,7 +39,7 @@ const AddBoard = () => {
     <>
     <Header />
 
-    <Container className="mt-5" style={{ maxWidth: '700px' }}>
+    <Container className="add-board-container">
       <h4 className="fw-bold mb-4">글 작성하기</h4>
 
       <Form onSubmit={handleSubmit}>

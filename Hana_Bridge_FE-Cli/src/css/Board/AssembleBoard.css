@@ -1,0 +1,17 @@
+.board-card {
+  cursor: pointer;
+}
+
+.board-title {
+  font-weight: bold;
+}
+
+.board-text {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.board-icon {
+  width: 20px;
+  margin-right: 5px;
+}

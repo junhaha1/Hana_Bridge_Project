@@ -4,6 +4,8 @@ import ApiClient from '../../service/ApiClient';
 import AddComment from './AddComment';
 import {Link} from 'react-router-dom';
 
+import '../../css/Board/Comments.css';
+
 const Comments = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
   const nickName = useSelector((state) => state.user.nickName);
@@ -64,7 +66,6 @@ const Comments = (props) => {
 
   return (
     <div>
-
       {/* 댓글 리스트 */}
       {comments.map(comment => (
         <div className="card mb-2" key={comment.commentId}>
@@ -104,10 +105,7 @@ const Comments = (props) => {
                   </button>
                 </div>
                 </>
-              ):(
-              <></>
-              )}
-                
+              ):null}                
               </>
             )}
           </div>
