@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Card, Form, Button, Row, Col, Modal } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -22,6 +23,7 @@ function AIChat() {
   const textRef = useRef(null);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [promptLevel, setPromptLevel] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,6 +117,17 @@ function AIChat() {
   //Assemble Board만들기
   const postAssemble = () =>{
     closePostModal();
+    console.log(messages);
+    const result = messages.slice(1).map(msg => msg.content).join('');
+    console.log(result);
+
+    ApiClient.postAssemble(accessToken, promptLevel, result)
+    .then((res) => res.json())
+    .then((data) => {      
+      const assembleboardId  = data.assembleBoardId;
+      console.log(assembleboardId);
+      navigate(`/detailAssemble/${assembleboardId}`);
+    })
   };
 
 

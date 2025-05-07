@@ -14,7 +14,7 @@ class ApiClient{
   static AIChat = "/chat"
 
 
-  //OpenAi 
+  //OpenAi chat
   static sendMessage(accessToken, promptLevel, question){
     console.log("send Message to AI: " + question);
     return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer',{
@@ -28,6 +28,22 @@ class ApiClient{
         question: question,
       }),
     });
+  }
+
+  //assemble게시글 등록(AI)
+  static postAssemble(accessToken, promptLevel, messages){
+    console.log("make Assemble board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/summary',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        promptLevel: promptLevel,
+        question: messages,
+      })
+    })
   }
   
   //Board 등록 

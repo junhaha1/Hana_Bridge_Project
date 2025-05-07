@@ -116,6 +116,8 @@ function SignUp() {
                 value={checkPwd} onChange={e => setCheckPwd(e.target.value)}/>
               </Form.Group>
 
+              <Link to={'/login'}>이미 회원이신가요?</Link>
+              
               <Button variant="primary" className="w-100" size="lg" onClick={() => handleSignup()}>가입하기</Button>
             </Form>
           </Card.Body>

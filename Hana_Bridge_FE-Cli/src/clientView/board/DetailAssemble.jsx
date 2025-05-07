@@ -7,6 +7,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 const DetailAssemble = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
@@ -24,7 +29,7 @@ const DetailAssemble = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const category = location.state?.category;
+  //const category = location.state?.category;
 
   useEffect(() => {
     ApiClient.getAssembleBoard(assembleBoardId, accessToken)
@@ -105,7 +110,27 @@ const DetailAssemble = () => {
               <div className="text-muted mb-2">ASSEMBLE 게시판 &lt; 상세글</div>
                 <h5 className="card-title fw-bold">{board.title}</h5>
                 <p className="text-secondary">작성자 {board.nickName}</p>
-                <p>{board.content}</p>
+                <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline && match ? (
+                      // !inline && match 조건에 맞으면 하이라이팅
+                      <SyntaxHighlighter {...props} style={prism} language={match[1]} PreTag="div">
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      // 안 맞다면 문자열 형태로 반환
+                      <code {...props} className={className}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
+                {board.content}
+              </ReactMarkdown>
               <div className="d-flex justify-content-between mt-3">
                 <div>
                 {isLike === true ? (
