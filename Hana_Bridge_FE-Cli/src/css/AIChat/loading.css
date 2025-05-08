@@ -1,0 +1,36 @@
+
+/* Assemble 게시판 만들때 뜨는 로딩 화면 CSS */
+.loading {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.8); /* 반투명 배경 */
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading_text {
+  font-size: 2rem;
+  color: #000;
+}
+
+.loading_text_words {
+  display: inline-block;
+  margin: 0 5px;
+  animation: blur 1.5s infinite linear alternate;
+}
+
+.loading_text_words:nth-child(1) { animation-delay: 100ms; }
+.loading_text_words:nth-child(2) { animation-delay: 300ms; }
+.loading_text_words:nth-child(3) { animation-delay: 500ms; }
+.loading_text_words:nth-child(4) { animation-delay: 700ms; }
+.loading_text_words:nth-child(5) { animation-delay: 900ms; }
+.loading_text_words:nth-child(6) { animation-delay: 1100ms; }
+.loading_text_words:nth-child(7) { animation-delay: 1300ms; }
+
+@keyframes blur {
+  0% { filter: blur(0px); }
+  100% { filter: blur(4px); }
+}

@@ -9,6 +9,7 @@ import Header from '../Header';
 import ApiClient from '../../service/ApiClient';
 
 import "../../css/AIChat/AIChat.css"
+import "../../css/AIChat/loading.css";
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat } from '../../store/userSlice';
@@ -29,7 +30,10 @@ function AIChat() {
   const navigate = useNavigate();
 
   const [promptLevel, setPromptLevel] = useState(0);
+  //ai chat 답변 로딩
   const [isLoading, setIsLoading] = useState(false);
+  //ai 게시판 만들기 로딩
+  const [isPostLoading, setIsPostLoading] = useState(false);
   const [coreContent, setCoreContent] = useState('');
 
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -137,6 +141,8 @@ function AIChat() {
   //Assemble Board만들기
   const postAssemble = () =>{
     console.log(coreContent);
+
+    setIsPostLoading(true);
     
     //redux, localstorage 비우기 
     dispatch(clearAiChat()); // 메시지만 Redux에서 초기화
@@ -153,6 +159,7 @@ function AIChat() {
     .then((data) => {      
       const assembleboardId  = data.assembleBoardId;
       console.log(assembleboardId);
+      setIsPostLoading(false);
       navigate(`/detailAssemble/${assembleboardId}`);
     })
   };
@@ -258,6 +265,20 @@ function AIChat() {
             </Col>
           </Row>
         </Form>
+
+        {isPostLoading === true?(
+          <div className="loading">
+          <div className="loading_text">
+            <span className="loading_text_words">L</span>
+            <span className="loading_text_words">O</span>
+            <span className="loading_text_words">A</span>
+            <span className="loading_text_words">D</span>
+            <span className="loading_text_words">I</span>
+            <span className="loading_text_words">N</span>
+            <span className="loading_text_words">G</span>
+          </div>
+        </div>
+        ):null}
   
         <Modal show={showModal} onHide={closePostModal} centered>
           <Modal.Header closeButton>
