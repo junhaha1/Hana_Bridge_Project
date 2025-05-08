@@ -6,7 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
-import '../../css/Board/AddBoard.css'
+import '../../css/Board/AddBoard.css';
+import '../../css/Common.css';
 
 const AddBoard = () => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -39,23 +40,24 @@ const AddBoard = () => {
     <>
     <Header />
 
-    <Container className="add-board-container">
-      <h4 className="fw-bold mb-4">글 작성하기</h4>
+    <Container className="add-board-container text-start">
+      <h4 className="fw-bold mb-4 text-start">글 작성하기</h4>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
-          {role === "admin" ? (
+          {role === "ROLE_ADMIN" ? (
             <>
-            <Form.Label className="fw-semibold">게시판 선택<span className="text-danger">*</span></Form.Label>
+            <Form.Label className="fw-semibold text-start">게시판 선택<span className="text-danger">*</span></Form.Label>
             <div>
               <ToggleButtonGroup
                 type="radio"
+                className="custom-toggle-group"
                 name="board"
                 value={category}
                 onChange={val => setCategory(val)}
               >
                 <ToggleButton
-                  id="notice-board"
+                  id="notice-board"                  
                   variant={category === 'notice' ? 'primary' : 'outline-secondary'}
                   value="notice"
                 >
@@ -73,15 +75,23 @@ const AddBoard = () => {
             </>
           ):(
             <>
-            <Form.Label className="fw-semibold">게시판 카테고리<span className="text-danger">*</span></Form.Label>
+            <Form.Label className="fw-semibold text-start">게시판 카테고리<span className="text-danger">*</span></Form.Label>
             <div>
-              <ToggleButton
-                id="code-board"
-                variant={category === 'code' ? 'primary' : 'outline-secondary'}
-                value="code"
-              >
-                CODE 게시판
-              </ToggleButton>
+              <ToggleButtonGroup
+                type="radio"
+                className="custom-toggle-group"
+                name="board"
+                value={category}
+                onChange={val => setCategory(val)}
+              > 
+                <ToggleButton
+                  id="code-board"
+                  variant={category === 'code' ? 'primary' : 'outline-secondary'}
+                  value="code"
+                >
+                  CODE 게시판
+                </ToggleButton>
+              </ToggleButtonGroup>              
             </div>
 
             </>
@@ -89,16 +99,17 @@ const AddBoard = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold">제목<span className="text-danger">*</span></Form.Label>
+          <Form.Label className="fw-semibold text-start">제목<span className="text-danger">*</span></Form.Label>
           <Form.Control
             type="text"
+            className='custom-input'
             placeholder="게시글 제목을 적어 주세요"
             value={title}
             onChange={e => setTitle(e.target.value)} />
         </Form.Group>
 
         {category === 'code' ? (
-        <Form.Group className="mb-4">
+        <Form.Group className="mb-3">
           <Form.Control
             as="textarea"
             rows={10}
@@ -106,9 +117,8 @@ const AddBoard = () => {
             value={code}
             onChange={e => setCode(e.target.value)} />
         </Form.Group>
-      ):(
-        <></>
-      )}     
+      ):null}
+
         <Form.Group className="mb-4">
           <Form.Control
             as="textarea"

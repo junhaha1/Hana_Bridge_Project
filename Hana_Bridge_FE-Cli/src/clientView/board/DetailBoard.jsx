@@ -33,7 +33,7 @@ const DetailBoard = () => {
 
   const [category, setCategory] = useState(location.state?.category);
 
-  const [commentsCount, setCommentCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
 
   // const category = location.state?.category;
 
@@ -48,6 +48,7 @@ const DetailBoard = () => {
       setBoard(data);
       setLikeCount(data.likeCount);
       setIsLike(data.goodCheck);      
+      setCommentCount(data.commentCount);
     })
     .catch((err) => console.error("API 요청 실패:", err)); 
   }, [isEdit, boardId]);
@@ -126,7 +127,7 @@ const DetailBoard = () => {
     <>
     <Header />
     
-    <Container className="mt-4">
+    <Container className="mt-5">
       <div className="container mt-4">
         { isEdit === true ? (
           <>
@@ -177,7 +178,7 @@ const DetailBoard = () => {
           {/* 게시글 보기 */}
           <div className="mb-4">
             <div>
-              <div className="text-muted mb-4 text-start">
+              <div className="text-muted mb-2 text-start">
                 {category === "code" ? "CODE 게시판 < 상세글" : "공지 게시판 < 상세글"}
               </div>
               <h5 className="fw-bold text-start">{board.title}</h5>
@@ -197,7 +198,7 @@ const DetailBoard = () => {
                     </span>
                   )}
                   <span>
-                    <img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {commentsCount}
+                    <img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {commentCount}
                   </span>
                 </div>
 

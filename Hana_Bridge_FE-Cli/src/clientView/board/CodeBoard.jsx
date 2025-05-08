@@ -84,7 +84,7 @@ const CodeBoard = () => {
                   </span>
                   <span className="text-secondary d-flex align-items-center">
                     <img src="/images/comment.png" alt="댓글" width="18" className="me-1" />
-                    {post.comments}
+                    {post.commentCount}
                   </span>
                 </div>
               </Card.Body>
