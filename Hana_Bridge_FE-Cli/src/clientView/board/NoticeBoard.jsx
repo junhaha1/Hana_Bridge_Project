@@ -64,16 +64,20 @@ const NoticeBoard = () => {
                   <Card.Title className="mb-2 board-title" onClick={() => boardClick(post.boardId)}>
                     {post.title}
                   </Card.Title>
-                  <small className="text-muted">{post.userId}</small>
+                  <small className="text-muted">{post.nickName}</small>
                 </div>
-                <Card.Text className="board-text">{post.content}</Card.Text>
-                <div className="d-flex gap-3 mt-2">
+                <Card.Text className="board-text">
+                  {post.content.length > 80
+                  ? post.content.slice(0, 80) + '...'
+                  : post.content}
+                </Card.Text>
+                <div className="d-flex justify-content-end gap-4">
                   <span className="text-primary">
-                    <img src="/images/blueGood.png" alt="좋아요" className="board-icon" />
+                    <img src="/images/blueGood.png" alt="좋아요"  width="18" className="me-1" />
                     {post.likeCount}
                   </span>
                   <span className="text-secondary">
-                    <img src="/images/comment.png" alt="댓글" className="board-icon" />
+                    <img src="/images/comment.png" alt="댓글"  width="18" className="me-1" />
                     {post.comments}
                   </span>
                 </div>

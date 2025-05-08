@@ -33,3 +33,12 @@
   justify-content: end;
   gap: 0.5rem;
 } */
+
+
+.board-title {
+  width: '100%';
+}
+
+.board-div {
+  border-bottom: 3px solid #ddd;
+}

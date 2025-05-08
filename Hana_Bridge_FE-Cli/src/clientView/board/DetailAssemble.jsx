@@ -109,30 +109,33 @@ const DetailAssemble = () => {
           {/* 게시글 카드 */}
           <div className="card mb-4">
             <div className="card-body">
-              <div className="text-muted mb-2">ASSEMBLE 게시판 &lt; 상세글</div>
-                <h5 className="card-title fw-bold">{board.title}</h5>
-                <p className="text-secondary">작성자 {board.nickName}</p>
-                <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  code({ node, inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    return !inline && match ? (
-                      // !inline && match 조건에 맞으면 하이라이팅
-                      <SyntaxHighlighter {...props} style={prism} language={match[1]} PreTag="div">
-                        {String(children).replace(/\n$/, '')}
-                      </SyntaxHighlighter>
-                    ) : (
-                      // 안 맞다면 문자열 형태로 반환
-                      <code {...props} className={className}>
-                        {children}
-                      </code>
-                    );
-                  },
-                }}
-              >
-                {board.content}
-              </ReactMarkdown>
+              <div className="text-muted mb-2 text-start">ASSEMBLE 게시판 &lt; 상세글</div>
+                <h5 className="card-title fw-bold text-start">{board.title}</h5>
+                <p className="text-secondary text-start">작성자 {board.nickName}</p>
+                <div className='text-start'>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                          // !inline && match 조건에 맞으면 하이라이팅
+                          <SyntaxHighlighter {...props} style={prism} language={match[1]} PreTag="div">
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          // 안 맞다면 문자열 형태로 반환
+                          <code {...props} className={className}>
+                            {children}
+                          </code>
+                        );
+                      },
+                    }}
+                  >
+                    {board.content}
+                  </ReactMarkdown>
+                </div>
+                
               <div className="d-flex justify-content-between mt-3">
                 <div>
                 {isLike === true ? (
@@ -163,7 +166,7 @@ const DetailAssemble = () => {
             </div>                       
           </div>  
           <div>
-            <Link className="btn btn-success btn-sm me-2" to="/">
+            <Link className="btn btn-success btn-sm me-2" to="/board/assemble">
               처음으로 
             </Link>
           </div>       

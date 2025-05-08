@@ -134,26 +134,26 @@ const DetailBoard = () => {
           <div className="card mb-4">
             <div className="card-body">
               {category == "code" ? (
-                <><div className="text-muted mb-2">CODE 게시판 &lt; 상세글</div></>
+                <><div className="text-muted mb-2 text-start">CODE 게시판 &lt; 상세글</div></>
               ):(
-                <><div className="text-muted mb-2">공지 게시판 &lt; 상세글</div></>
+                <><div className="text-muted mb-2 text-start">공지 게시판 &lt; 상세글</div></>
               )}              
                 <input 
                   type="text" 
-                  className="card-title fw-bold"
+                  className="board-title form-control fw-bold text-start mb-3"
                   placeholder="제목을 입력해주세요"
                   value={title}
                   onChange={e => setTitle(e.target.value)} 
                 />
-                <p className="text-secondary">작성자 {board.nickName}</p>
+                <p className="text-secondary text-start">작성자 {board.nickName}</p>
                 <textarea 
-                  className="form-control"
+                  className="form-control text-start"
                   placeholder="코드나 에러사항을 입력해주세요"
                   value={code}
                   onChange={e => setCode(e.target.value)}
                 />
                 <textarea 
-                  className="form-control"
+                  className="form-control text-start"
                   placeholder="내용을 입력해주세요"
                   value={content}
                   onChange={e => setContent(e.target.value)}
@@ -174,55 +174,48 @@ const DetailBoard = () => {
         ):(
           <>
           {/* 게시글 카드 */}
-          <div className="card mb-4">
-            <div className="card-body">
-            {category === "code" ? (
-                <><div className="text-muted mb-2">CODE 게시판 &lt; 상세글</div></>
-              ):(
-                <><div className="text-muted mb-2">공지 게시판 &lt; 상세글</div></>
-              )}    
-                <h5 className="card-title fw-bold">{board.title}</h5>
-                <p className="text-secondary">작성자 {board.nickName}</p>
-                <p>{board.code}</p>
-                <p>{board.content}</p>
+          {/* 게시글 보기 */}
+          <div className="mb-4">
+            <div>
+              <div className="text-muted mb-4 text-start">
+                {category === "code" ? "CODE 게시판 < 상세글" : "공지 게시판 < 상세글"}
+              </div>
+              <h5 className="fw-bold text-start">{board.title}</h5>
+              <p className="text-secondary text-start">작성자 {board.nickName}</p>
+              <p className="text-start">{board.code}</p>
+              <p className="text-start">{board.content}</p>
+
               <div className="d-flex justify-content-between mt-3">
                 <div>
-                {isLike === true ? (
-                    <>
-                      <span className="me-3" 
-                        onClick={() => handleCancelLike(boardId)}>
-                        <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                      </span>
-                    </>
+                  {isLike ? (
+                    <span className="me-3" onClick={() => handleCancelLike(boardId)}>
+                      <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
+                    </span>
                   ) : (
-                    <>
-                      <span className="me-3"
-                        onClick={() => handleLike(boardId)}>
-                        <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                      </span>
-                    </>
-                  )}                  
-                  <span><img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {commentsCount}</span>
+                    <span className="me-3" onClick={() => handleLike(boardId)}>
+                      <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
+                    </span>
+                  )}
+                  <span>
+                    <img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {commentsCount}
+                  </span>
                 </div>
-                <div>
-                {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}
-                {nickName === board.nickName || role === "admin" ? (
-                    <>
-                      <Link className="me-2 text-decoration-none" onClick={() => setIsEdit(true)}>수정하기</Link>
-                      <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(boardId)}>삭제하기</Link>
-                    </>
-                  ) : (
-                    <>
-                    </>
+
+                {/* 작성자 or 관리자만 수정/삭제 가능 */}
+                {(nickName === board.nickName || role === "admin") && (
+                  <div>
+                    <Link className="me-2 text-decoration-none" onClick={() => setIsEdit(true)}>수정하기</Link>
+                    <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(boardId)}>삭제하기</Link>
+                  </div>
                 )}
-                </div>
               </div>
             </div>
           </div>
+          <div className='board-div mb-3'></div>
           </>
         )}
         
-        <Comments boardId={boardId} />
+        <Comments boardId={boardId} category={category} />
       </div>
     </Container>
     </>
