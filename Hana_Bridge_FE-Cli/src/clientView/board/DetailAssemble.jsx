@@ -104,10 +104,10 @@ const DetailAssemble = () => {
     <>
     <Header />
     
-    <Container className="mt-4">
+    <Container className="mt-5">
       <div className="container mt-4">
           {/* 게시글 카드 */}
-          <div className="card mb-4">
+          <div className='mb-4'>
             <div className="card-body">
               <div className="text-muted mb-2 text-start">ASSEMBLE 게시판 &lt; 상세글</div>
                 <h5 className="card-title fw-bold text-start">{board.title}</h5>
@@ -165,9 +165,10 @@ const DetailAssemble = () => {
               </div>
             </div>                       
           </div>  
+          <div className='board-div mb-3'></div>
           <div>
             <Link className="btn btn-success btn-sm me-2" to="/board/assemble">
-              처음으로 
+              이전
             </Link>
           </div>       
       </div>
