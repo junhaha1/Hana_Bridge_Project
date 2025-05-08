@@ -1,35 +1,45 @@
-/* 상단 배너 */
-.home-banner {
-  width: 100vw;
-  height: 40vh;
-  background: linear-gradient(to right, #000428, #004e92);
-  position: relative;
-  left: 0;
-  top: 0;
-}
-
 /* 배너 안 텍스트 */
 .home-title {
   cursor: pointer;
 }
 
-/* 카드 컨테이너 마진 */
-.card-container {
-  margin-top: -120px;
+.board-row {
+  flex-direction: row;  /* 가로 정렬 */
+  gap: 30px;             /* 아이콘 사이 여백 */
 }
 
+/* 카드 컨테이너 마진 */
+.home-card-container {
+  margin-top: -5%;
+}
+
+/* 카드 수정 */
 .card-shape {
   width: 100%;
-  max-width: 450px; 
+  max-width: 70%;
 }
 
-/* 게시판 아이콘 공통 스타일 */
+/* 게시판 아이콘 공간 여유 */
 .board-icon {
-  height: 130px;
+  height: 150px;
+  width: 130px;
 }
 
-/* 텍스트 링크 스타일 */
-.link-no-style {
-  text-decoration: none;
-  color: black;
+/*게시판 아이콘 문자열 가로 정렬*/
+.board-icon p {
+  white-space: nowrap;
+}
+
+/*아이콘 이미지*/
+.home-code-helper-img {
+  margin-top: 20px;
+  width: 170px;
+  height: 50px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.home-code-helper-img:hover {
+  transform: scale(1.05);
 }
