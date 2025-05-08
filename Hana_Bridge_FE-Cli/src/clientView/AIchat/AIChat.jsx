@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Container, Card, Form, Button, Row, Col, Modal } from 'react-bootstrap';
+import { Container, Card, Form, Button, ButtonGroup, Row, Col, Modal } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
@@ -7,7 +7,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Header from '../Header';
 import ApiClient from '../../service/ApiClient';
-import "../../css/AIChat/loading.css";
+
 import "../../css/AIChat/AIChat.css"
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
@@ -16,7 +16,8 @@ import { setAiChat, clearAiChat } from '../../store/userSlice';
 
 function AIChat() {
   const [messages, setMessages] = useState([
-    { role: '답변', content: '에러 코드를 사용중인 언어와 함께 보내주세요!' },
+    { role: '답변', content: `🤖 CodeHelper에 오신 걸 환영합니다!  
+      에러 코드와 사용 언어를 입력해보세요.` },
   ]);
   const [input, setInput] = useState('');  //질문 1개 
   const [question, setQuestion] = useState(''); //질문들의 모음
@@ -160,24 +161,18 @@ function AIChat() {
   return (
     <>
       <Header />
-      
       <Container
         fluid
         className="d-flex flex-column align-items-center justify-content-center mt-3 ai-chat-container"
       >
+        <h1>AI Code Helper</h1>
         <Card className="p-3 shadow-sm ai-chat-card">
           {messages.map((msg, idx) => (
             <React.Fragment key={idx}>
               <div
                 className={`d-flex ${msg.role === '답변' ? 'justify-content-start' : 'justify-content-end'} my-2`}
               >
-                <Card
-                  border="primary"
-                  text="dark"
-                  bg="light"
-                  className="px-3 py-2 text-start ai-chat-message-card"
-                >
-                  <div>
+                 <div className={`ai-chat-message-card ${msg.role === '답변' ? 'ai' : 'user'}`}>
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={{
@@ -198,7 +193,6 @@ function AIChat() {
                       {msg.content}
                     </ReactMarkdown>
                   </div>
-                </Card>
               </div>
   
               {msg.role === '답변' && msg.content !== '에러 코드를 사용중인 언어와 함께 보내주세요!' && (
@@ -219,22 +213,27 @@ function AIChat() {
           <div ref={messagesEndRef} />
         </Card>
   
-        <Row className="align-items-center">
-          <Col>
-            <Button variant={promptLevel === 0 ? "dark" : "outline-dark"} size="sm" onClick={() => setPromptLevel(0)}>
-              초보자
-            </Button>
-          </Col>
-          <Col>
-            <Button variant={promptLevel === 1 ? "dark" : "outline-dark"} size="sm" onClick={() => setPromptLevel(1)}>
-              전문가
-            </Button>
-          </Col>
-        </Row>
-  
         <Form className="mt-3" style={{ width: '70%' }}>
           <Row className="align-items-center">
-            <Col xs={10}>
+            <Col xs={2} className="d-flex justify-content-end align-items-center">
+              <ButtonGroup>
+                <Button
+                  variant={promptLevel === 0 ? 'dark' : 'outline-dark'}
+                  size="sm"
+                  onClick={() => setPromptLevel(0)}
+                >
+                  초보자
+                </Button>
+                <Button
+                  variant={promptLevel === 1 ? 'dark' : 'outline-dark'}
+                  size="sm"
+                  onClick={() => setPromptLevel(1)}
+                >
+                  전문가
+                </Button>
+              </ButtonGroup>
+            </Col>
+            <Col xs={8}>
               <Form.Control
                 as="textarea"
                 rows={1}

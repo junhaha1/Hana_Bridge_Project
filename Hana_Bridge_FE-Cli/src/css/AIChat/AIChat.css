@@ -2,30 +2,84 @@
 
 /* 전체 컨테이너 스타일 */
 .ai-chat-container {
+  font-family: 'Pretendard', sans-serif;
   min-height: 100vh;
   background-color: #fff;
+  padding: 2rem;
+  overflow-y: auto;
+  align-items: center;
+  align-content: center;
 }
 
 /* 채팅 카드 스타일 */
 .ai-chat-card {
-  width: 70%;
+  width: 100%;
+  max-width: 800px; /* 중앙 정렬은 하지 않아도 너비만 제한 */
+  margin: 0 auto; /* 화면이 너무 넓을 때 가운데 정렬됨 */
   min-height: 600px;
+  border: none;
 }
 
 /* 채팅 메시지 카드 내부 */
 .ai-chat-message-card {
-  max-width: 75%;
-  border-radius: 15px;
+  word-wrap: break-word;
+  max-width: 70%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  line-height: 1.4;
+  position: relative;
+  border-radius: 20px;
+  border: none;
+}
+
+/* AI 응답 메시지 스타일 */
+.ai-chat-message-card.ai {
+  background-color: #f0f5d7;
+  text-align: start;
+}
+
+/* 사용자 메시지 스타일 */
+.ai-chat-message-card.user {
+  background-color: #DCF8C6;
+  text-align: start;
 }
 
 /* 입력창 자동 조절 스타일 */
 .ai-chat-input {
+  flex: 1;
   resize: none;
-  overflow: auto;
-  max-height: 120px;
+  border: none;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 12px;
+  background-color: #f1f3f4;
+  margin-right: 8px;
+  line-height: 1.4;
+  max-height: 300px;
+  outline: none;
 }
 
 /* 전송 버튼 스타일 (부트스트랩 활용) */
 .ai-chat-send-button {
-  white-space: nowrap;
+  width: 100px;
+  border-radius: 20px;
+  padding: 8px 16px;
 }
+
+/*로딩 화면*/
+.loader {
+  width: 40px;
+  height: 40px;
+  border:5px solid #ddd;
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

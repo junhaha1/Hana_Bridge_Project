@@ -2,6 +2,7 @@ import React from 'react';
 import Header from '../Header';
 import ApiClient from "../../service/ApiClient";
 import '../../css/user/MyPage.css';
+import '../../css/Common.css';
 import { Form, Card, Modal, Button} from 'react-bootstrap';
 import { useEffect, useState, useRef} from "react";
 import { useSelector, useDispatch } from 'react-redux';
@@ -146,19 +147,19 @@ const MyPage = () => {
       <Header />
       <div className='mypage-wrapper'>
         {/* 상단 파란 배경 */}
-        <div className="mypage-banner d-flex align-items-start justify-content-center pt-4">
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <h1 className="mypage-title text-white fw-bold">
+        <div className="banner d-flex align-items-start justify-content-center pt-4">
+          <Link to="/" className='link-no-deco'>
+            <h1 className="top-title text-white fw-bold">
               SW Board
             </h1>
           </Link>
         </div>
 
         {/* 카드 영역 */}
-        <div className="mypage-card-container d-flex justify-content-center">
+        <div className="card-container d-flex justify-content-center">
           <Card className="mypage-card p-4 shadow rounded-4 bg-white">
             <Card.Body>
-              <Card.Title className="mb-4 fs-3 fw-bold text-center">사용자 정보 조회</Card.Title>
+              <Card.Title className="mb-4 fs-3 fw-bold text-center">사용자 정보</Card.Title>
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>이름<span className="text-danger">*</span></Form.Label>
