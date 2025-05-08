@@ -62,20 +62,28 @@ const CodeBoard = () => {
           <Col xs={12} key={post.boardId}>
             <Card className="shadow-sm board-card">
               <Card.Body>
-                <div className="d-flex justify-content-between align-items-center">
-                  <Card.Title className="mb-2 board-title" onClick={() => boardClick(post.boardId)}>
+                {/* 제목 + 작성자 */}
+                <div className="d-flex justify-content-between align-items-start">
+                  <Card.Title
+                    className="mb-2 board-title cursor-pointer"
+                    onClick={() => boardClick(post.boardId)}
+                  >
                     {post.title}
                   </Card.Title>
-                  <small className="text-muted">{post.userId}</small>
+                  <div className="text-primary text-end small">{post.nickName}</div>
                 </div>
-                <Card.Text className="board-text">{post.content}</Card.Text>
-                <div className="d-flex gap-3 mt-2">
-                  <span className="text-primary">
-                    <img src="/images/blueGood.png" alt="좋아요" className="board-icon" />
+
+                {/* 내용 */}
+                <Card.Text className="board-text text-muted mb-4">{post.content}</Card.Text>
+
+                {/* 좋아요 & 댓글 아이콘 정렬 */}
+                <div className="d-flex justify-content-end gap-4">
+                  <span className="text-primary d-flex align-items-center">
+                    <img src="/images/blueGood.png" alt="좋아요" width="18" className="me-1" />
                     {post.likeCount}
                   </span>
-                  <span className="text-secondary">
-                    <img src="/images/comment.png" alt="댓글" className="board-icon" />
+                  <span className="text-secondary d-flex align-items-center">
+                    <img src="/images/comment.png" alt="댓글" width="18" className="me-1" />
                     {post.comments}
                   </span>
                 </div>
@@ -84,6 +92,7 @@ const CodeBoard = () => {
           </Col>
         ))}
       </Row>
+
     </div>
   );
 };

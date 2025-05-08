@@ -68,44 +68,45 @@ const Comments = (props) => {
     <div>
       {/* 댓글 리스트 */}
       {comments.map(comment => (
-        <div className="card mb-2" key={comment.commentId}>
-          <div className="card-body">
-            {/* 수정 중일 때 */}
+        <div className="mb-4 px-2 comments-div" key={comment.commentId} >
+          <div className="text-start">
+            {/* 댓글 수정 */}
             {editCommentId === comment.commentId ? (
               <>
-                <textarea 
+                <textarea
                   className="form-control mb-2"
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   rows="2"
+                  style={{ resize: 'none', border: 'none', backgroundColor: '#f9f9f9' }}
                 />
-                <button className="btn btn-success btn-sm me-2" onClick={() => handleUpdateComment(comment.commentId)}>
-                  저장
-                </button>
-                <button className="btn btn-secondary btn-sm" onClick={() => setEditCommentId(null)}>
-                  취소
-                </button>
+                <div className="mb-2">
+                  <button className="btn btn-outline-success btn-sm me-2" onClick={() => handleUpdateComment(comment.commentId)}>
+                    저장
+                  </button>
+                  <button className="btn btn-outline-secondary btn-sm" onClick={() => setEditCommentId(null)}>
+                    취소
+                  </button>
+                </div>
               </>
             ) : (
               <>
-                <p className="mb-1"><strong>{comment.nickName}</strong></p>
+                <p className="mb-1 fw-bold">{comment.nickName}</p>
                 <p className="mb-1">{comment.content}</p>
-                <div className="text-muted small">
+                <div className="text-muted small mb-2">
                   {comment.createAt} · 👍 {comment.likes} ·{' '}
                   <a href="#" className="text-decoration-none">신고</a>
                 </div>
                 {nickName === comment.nickName || role === "admin" ? (
-                  <>
-                  <div className="mt-2">
-                  <button className="btn btn-outline-primary btn-sm me-2" onClick={() => handleEditComment(comment.commentId, comment.content)}>
-                    수정
-                  </button>
-                  <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteComment(comment.commentId)}>
-                    삭제
-                  </button>
-                </div>
-                </>
-              ):null}                
+                  <div className="mb-2 text-end">
+                    <button className="btn btn-outline-primary btn-sm me-2" onClick={() => handleEditComment(comment.commentId, comment.content)}>
+                      수정
+                    </button>
+                    <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteComment(comment.commentId)}>
+                      삭제
+                    </button>
+                  </div>
+                ) : null}
               </>
             )}
           </div>
@@ -113,20 +114,27 @@ const Comments = (props) => {
       ))}
 
       <div>
-        {newCommentFlag == true ?(
-          <><AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} /></>
-        ):(
-          <>
+        {props.category === "code" && newCommentFlag ? (
+          <AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} />
+        ) : null}
+
+        {props.category === "code" && !newCommentFlag ? (
           <button className="btn btn-success btn-sm me-2" onClick={() => setNewCommentFlag(true)}>
             댓글 작성
           </button>
-          </>
-        )}
-        <Link className="btn btn-success btn-sm me-2" to="/">
-          처음으로 
-        </Link>
-      </div>    
+        ) : null}
 
+        {props.category === "code" ? (
+          <Link className="btn btn-success btn-sm me-2" to="/board/code">
+            이전
+          </Link>
+        ) : props.category === "notice" ? (
+          <Link className="btn btn-success btn-sm me-2" to="/board/notice">
+            이전
+          </Link>
+        ) : null}
+      </div>
+   
     </div>
   );
 };

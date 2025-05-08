@@ -6,6 +6,7 @@ import AssembleBoard from "./board/AssembleBoard";
 import { Container, Button } from 'react-bootstrap';
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import '../css/main/MainBoard.css';
 
 const MainBoard = () => {
   const { category } = useParams(); 
@@ -16,10 +17,17 @@ const MainBoard = () => {
     <div>
       <Header />
       <Container className="mt-4">
+        <div className="mb-4">
+          <img src="/images/boardImage.png" 
+            alt="게시판 이미지 " 
+            className="mt-1 board-image" />
+        </div>
+
         {/* 글 모아보기 탭 */}
-        <div className="mb-3 d-flex gap-2">
-          <strong>글 모아보기</strong>
-        </div>        
+        <div className="mb-3 d-flex gap-2 align-items-center">
+          <strong className="fs-4">글 모아보기</strong>
+        </div>
+        
         <div className="mb-3 d-flex gap-2">
           <Button
             variant={category === 'code' ? 'primary' : 'light'}

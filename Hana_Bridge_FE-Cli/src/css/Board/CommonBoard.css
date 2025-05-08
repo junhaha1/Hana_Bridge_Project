@@ -9,9 +9,10 @@
 .board-text {
   font-size: 0.9rem;
   color: #6c757d;
+  text-align:left;
 }
 
-.board-icon {
+/* .board-icon {
   width: 20px;
   margin-right: 5px;
-}
+} */

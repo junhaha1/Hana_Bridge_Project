@@ -34,7 +34,7 @@ const AddComment = (props) => {
             onChange={(e) => setContent(e.target.value)}
             placeholder="댓글을 입력하세요."
           />
-          <button className="btn btn-primary btn-sm" onClick={() => handleAddComment()}>
+          <button className="btn btn-primary btn-sm" variant="dark" onClick={() => handleAddComment()}>
             댓글 등록
           </button>
           <button className="btn btn-danger btn-sm" onClick={() => props.setNewCommentFlag(false)}>취소</button>
