@@ -1,5 +1,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css' 
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import { Routes, Route } from 'react-router-dom';
 import MainBoard from './clientView/MainBoard';
