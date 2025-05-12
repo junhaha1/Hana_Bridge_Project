@@ -1,90 +1,117 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { clearUser, clearAiChat } from "../store/userSlice";
 import Lottie from "lottie-react";
 import logo from "../../public/animations/logo.json";
 import ApiClient from "../service/ApiClient";
+import LoginModal from "./user/LoginModal.jsx";
+import SignUpModal from "./user/SignUpModal.jsx";
+import ConfirmLogoutModal from "./user/ConfirmLogoutModal.jsx"; // ⬅️ 커스텀 로그아웃 모달 추가
 
 const BoardHeader = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
-  const navigate = useNavigate();
 
-  const logoutButton = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("login");
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
+
+  const openModal = (type) => {
+    setModalType(type);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleLogout = () => {
     ApiClient.userLogout()
       .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-        }
-        console.log("Logged out successfully!");
+        if (!res.ok) throw new Error("서버 오류");
         dispatch(clearUser());
         dispatch(clearAiChat());
         localStorage.removeItem("userState");
         navigate("/");
       })
-      .catch((err) => {
-        console.error("Logout error:", err);
-      });
+      .catch((err) => console.error("Logout error:", err));
   };
 
-  const myPageButton = () => {
-    navigate("/myPage");
-  };
+  const lottieRef = useRef();
 
   return (
-    <header className="bg-white shadow-sm w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-        {/* Logo + Title */}
-        <Link to="/" className="flex items-center space-x-4 no-underline">
-          <div className="w-[100px] h-[100px]">
-            <Lottie animationData={logo} loop={true} />
+    <>
+      <div className="fixed top-0 left-0 w-full px-6 py-4 flex items-center justify-between bg-transparent text-white z-50">
+        {/* 로고 + 제목 */}
+        <div
+          className="flex items-center space-x-4 no-underline cursor-pointer"
+          onClick={() => navigate("/")}
+          onMouseEnter={() => lottieRef.current?.goToAndPlay(0, true)}
+          onMouseLeave={() => lottieRef.current?.stop()}
+        >
+          <div className="w-[80px] h-[80px]">
+            <Lottie
+              lottieRef={lottieRef}
+              animationData={logo}
+              loop={false}
+              autoplay={false}
+            />
           </div>
-          <strong className="text-[50px]  text-black font-bold leading-[55px] no-underline">AIssue</strong>
-        </Link>
+          <strong className="text-[40px] text-white font-bold leading-[45px] no-underline">
+            AIssue
+          </strong>
+        </div>
 
-        {/* Right-side navigation */}
-        <div className="flex items-center space-x-1">
+        {/* 로그인 / 회원가입 or 로그아웃 */}
+        <div className="flex items-center space-x-2">
           {email === "guest@email.com" ? (
             <>
-              <Link
-                to="/login"
-                className="px-4 py-2  text-black hover:text-blue-800 rounded no-underline text-[20px]"
+              <button
+                onClick={() => openModal("login")}
+                className="px-4 py-2 text-white hover:text-blue-300 rounded no-underline text-lg"
               >
                 로그인
-              </Link>
-              <Link
-                to="/signup"
-                className="px-4 py-2  text-black hover:text-blue-800 rounded no-underline text-[20px]"
+              </button>
+              <button
+                onClick={() => openModal("signup")}
+                className="px-4 py-2 text-white hover:text-blue-300 rounded no-underline text-lg"
               >
                 회원가입
-              </Link>
+              </button>
             </>
           ) : (
-            <div className="relative group">
-              <button className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
-                {nickName}님 ▾
-              </button>
-              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md hidden group-hover:block z-10">
-                <button
-                  onClick={myPageButton}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
-                  My Page
-                </button>
-                <button
-                  onClick={logoutButton}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
-                  로그아웃
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={() => setConfirmLogoutOpen(true)}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              로그아웃
+            </button>
           )}
         </div>
       </div>
-    </header>
+
+      {/* 로그인/회원가입 모달 */}
+      {modalOpen && modalType === "login" && (
+        <LoginModal onClose={closeModal} onSwitch={openModal} />
+      )}
+      {modalOpen && modalType === "signup" && (
+        <SignUpModal onClose={closeModal} onSwitch={openModal} />
+      )}
+
+      {/* 로그아웃 확인 모달 */}
+      {confirmLogoutOpen && (
+        <ConfirmLogoutModal
+          onConfirm={() => {
+            handleLogout();
+            setConfirmLogoutOpen(false);
+          }}
+          onCancel={() => setConfirmLogoutOpen(false)}
+        />
+      )}
+    </>
   );
 };
 

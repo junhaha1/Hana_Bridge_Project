@@ -1,74 +1,77 @@
 import React from 'react';
-import Header from './Header';
-import { Card, Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Lottie from "lottie-react";
+import Header from "./Header.jsx";
 
-import '../css/main/Home.css';
-import '../css/Common.css';
+import codeHelper from "../../public/animations/codehelper.json";
+import codeHome from "../../public/animations/codehome.json";
+import assembleHome from "../../public/animations/assemblehome.json";
 
 const Home = () => {
   const nickName = useSelector((state) => state.user.nickName);
 
   return (
-    <div>
-      <Header/>
+    <>
+    <Header/>
+    <div className="w-screen h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
+      {/* 첫 번째 섹션 */}
+      <section className="w-screen h-screen snap-start flex flex-col md:flex-row items-center justify-center gap-12 bg-gradient-to-r from-indigo-900 to-purple-900 text-white px-6">
+        <div className="flex flex-col items-center justify-center text-center max-w-2xl transform transition-transform duration-500 ease-in-out origin-center">
+          <h2 className="text-5xl font-extrabold mb-8 leading-tight">"Ask. Review. Improve."</h2>
+          <p className="text-xl mb-8 leading-relaxed">
+            Post your code and get instant AI-powered feedback.
+          </p>
+          <a
+            href="/aiChat"
+            className="no-underline bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full text-lg"
+          >
+            Code Helper
+          </a>
+        </div>
+        <div className="w-[440px] h-[440px] transform transition-transform duration-500 ease-in-out origin-center">
+          <Lottie animationData={codeHelper} loop={true} />
+        </div>
+      </section>
 
-      {/* 상단 파란 배경 */}
-      <div className="banner d-flex align-items-start justify-content-center pt-4">
-        <Container fluid className="mt-4 text-center">
-          <h1 className="text-white fw-bold home-title">
-            Welcome Hana Bridge Community!!
-          </h1>
-          <div className='d-flex justify-content-center'>
-            <Link to={nickName === "guest" ? "/login" : "/aiChat"} className="text-decoration-none">
-              <img 
-                src="/images/homeCodeHelper.png" 
-                alt="AI Code Helper" 
-                className="home-code-helper-img" 
-              />
-            </Link>
-          </div>
-        </Container>
-      </div>
-            
-      {/* 카드 영역 */}
-      <div className="d-flex justify-content-center home-card-container">
-        <Card className="p-4 shadow rounded-4 bg-white card-shape">
-          <Card.Body>
-            <div className="d-flex justify-content-around align-items-center text-center board-row">
-              {/* 공지 */}
-              <Link to="/board/notice" className='link-no-deco'>
-                <div className="d-flex flex-column align-items-center board-icon">
-                  <img src="/images/noticeIcon.png" alt="notice" width="90" height="90" className="mb-2" />
-                  <p className="fw-semibold mb-0">공지 게시판</p>
-                </div>
-              </Link>
+      {/* 두 번째 섹션 */}
+      <section className="w-screen h-screen snap-start flex flex-col md:flex-row items-center justify-center gap-12 bg-gradient-to-r from-indigo-900 to-purple-900 text-white px-6">
+        <div className="w-[440px] h-[440px] transform transition-transform duration-500 ease-in-out origin-center">
+          <Lottie animationData={codeHome} loop={true} />
+        </div>
+        <div className="flex flex-col items-center justify-center text-center max-w-2xl transform transition-transform duration-500 ease-in-out origin-center">
+          <h2 className="text-5xl font-extrabold mb-8 leading-tight">"Discuss. Share. Improve – Together."</h2>
+          <p className="text-xl mb-8 leading-relaxed">
+            Post your code, share your thoughts, and collaborate with fellow developers.
+          </p>
+          <a
+            href="/board/code"
+            className="no-underline bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full text-lg"
+          >
+            Code Board
+          </a>
+        </div>
+      </section>
 
-              {/* 코드 */}
-              <Link to="/board/code" className='link-no-deco'>
-                <div className="d-flex flex-column align-items-center board-icon">
-                  <img src="/images/codeIcon.png" alt="code" width="90" height="80" className="mb-2" />
-                  <p className="fw-semibold mb-0">
-                    <span className="fw-bold">code</span> 게시판
-                  </p>
-                </div>
-              </Link>
-
-              {/* 어셈블 */}
-              <Link to="/board/assemble" className='link-no-deco'>
-                <div className="d-flex flex-column align-items-center board-icon">
-                  <img src="/images/assembleIcon.png" alt="assemble" width="90" height="85" className="mb-2" />
-                  <p className="fw-semibold mb-0">
-                    <em>assemble</em> 게시판
-                  </p>
-                </div>
-              </Link>
-            </div>
-          </Card.Body>
-        </Card>
-      </div>
+      {/* 세 번째 섹션 */}
+      <section className="w-screen h-screen snap-start flex flex-col md:flex-row items-center justify-center gap-12 bg-gradient-to-r from-indigo-900 to-purple-900 text-white px-6">
+        <div className="flex flex-col items-center justify-center text-center max-w-2xl transform transition-transform duration-500 ease-in-out origin-center">
+          <h2 className="text-5xl font-extrabold mb-8 leading-tight">"Ask AI. Learn Together."</h2>
+          <p className="text-xl mb-8 leading-relaxed">
+            Browse questions answered by AI and gain insights from others' coding challenges.
+          </p>
+          <a
+            href="/board/assemble"
+            className="no-underline bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full text-lg"
+          >
+            Assemble Board
+          </a>
+        </div>
+        <div className="w-[440px] h-[440px] transform transition-transform duration-500 ease-in-out origin-center">
+          <Lottie animationData={assembleHome} loop={true} />
+        </div>
+      </section>
     </div>
+    </>
   );
 };
 
