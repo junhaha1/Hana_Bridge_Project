@@ -1,94 +1,90 @@
 import React from "react";
-import { Container, Navbar, Nav, Button, NavDropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-//유저 아이디 가져오기기
-import { useSelector } from 'react-redux'; 
-
-//store action함수 
-import { useDispatch } from 'react-redux';
-import { clearUser, clearAiChat } from '../store/userSlice';
-
+import { useSelector, useDispatch } from "react-redux";
+import { clearUser, clearAiChat } from "../store/userSlice";
+import Lottie from "lottie-react";
+import logo from "../../public/animations/logo.json";
 import ApiClient from "../service/ApiClient";
 
 const BoardHeader = () => {
-  //유저 로그아웃
   const dispatch = useDispatch();
-  //유저 로그인 정보 유지
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
-
   const navigate = useNavigate();
 
-  const logoutButton = () =>{
+  const logoutButton = () => {
     ApiClient.userLogout()
-    .then(res =>{
-      if(!res.ok){
-        throw new Error(`서버 오류: ${res.status}`);
-      }
-      console.log("로그아웃 완료!");
-      dispatch(clearUser());
-      dispatch(clearAiChat()); 
-      localStorage.removeItem('userState'); //localStorage 비움
-    })
-    .catch(err =>{
-      console.error("로그아웃 중 오류 발생:", err);
-    })
-    navigate("/");
-  }
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+        console.log("Logged out successfully!");
+        dispatch(clearUser());
+        dispatch(clearAiChat());
+        localStorage.removeItem("userState");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Logout error:", err);
+      });
+  };
 
-  const myPageButton = () =>{
+  const myPageButton = () => {
     navigate("/myPage");
-  }
-  
+  };
+
   return (
-    <Navbar expand="lg" bg="light" variant="light" className="shadow-sm">
-      <Container fluid>
-        {/* 로고 */}
-        <Navbar.Brand as={Link} to="/">
-          <strong>SW Board</strong>
-        </Navbar.Brand>
+    <header className="bg-white shadow-sm w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        {/* Logo + Title */}
+        <Link to="/" className="flex items-center space-x-4 no-underline">
+          <div className="w-[100px] h-[100px]">
+            <Lottie animationData={logo} loop={true} />
+          </div>
+          <strong className="text-[50px]  text-black font-bold leading-[55px] no-underline">AIssue</strong>
+        </Link>
 
-        {/* 토글 버튼 (메뉴 접기용) */}
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-
-        {/* 메뉴들 */}
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mx-auto">
-            <Nav.Link as={Link} to="/">게시판</Nav.Link>
-            <Nav.Link as={Link} to="/write">글 작성</Nav.Link>
-          </Nav>
-
-          {/* 로그인 & 회원가입  / 로그아웃 */}
-          <Nav className="ms-auto">
-            {email === "guest@email.com" ? (
-              <>
-                <Button as={Link} to="/login" variant="outline-primary" className="me-2">
-                  로그인
-                </Button>
-                <Button as={Link} to="/signup" variant="outline-primary" className="me-2">
-                  회원가입
-                </Button>
-              </>
-            ) : (
-              <>
-                <NavDropdown title={`${nickName}님`} id="user-dropdown" align="end">
-                  <NavDropdown.Item
-                    onClick={() => myPageButton()}
-                  >
-                    My Page
-                  </NavDropdown.Item>
-                  <NavDropdown.Item
-                    onClick={() => logoutButton()}
-                  >
-                    로그아웃
-                  </NavDropdown.Item>                 
-                </NavDropdown>
-              </>
-            )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+        {/* Right-side navigation */}
+        <div className="flex items-center space-x-1">
+          {email === "guest@email.com" ? (
+            <>
+              <Link
+                to="/login"
+                className="px-4 py-2  text-black hover:text-blue-800 rounded no-underline text-[20px]"
+              >
+                로그인
+              </Link>
+              <Link
+                to="/signup"
+                className="px-4 py-2  text-black hover:text-blue-800 rounded no-underline text-[20px]"
+              >
+                회원가입
+              </Link>
+            </>
+          ) : (
+            <div className="relative group">
+              <button className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
+                {nickName}님 ▾
+              </button>
+              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md hidden group-hover:block z-10">
+                <button
+                  onClick={myPageButton}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  My Page
+                </button>
+                <button
+                  onClick={logoutButton}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  로그아웃
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
   );
 };
 
