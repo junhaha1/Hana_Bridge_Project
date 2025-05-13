@@ -10,7 +10,7 @@ import DetailAssemble from './clientView/board/DetailAssemble';
 import MyPage from './clientView/user/MyPage';
 import AIChat from './clientView/AIchat/AIChat';
 import Home from './clientView/Home';
-import DashBoard from './clientView/board/DashBoard';
+import DashBoard from './clientView/dashboard/DashBoard';
 
 function App() {
   return (
