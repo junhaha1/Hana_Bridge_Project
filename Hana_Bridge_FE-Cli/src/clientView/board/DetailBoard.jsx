@@ -8,7 +8,9 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
-import '../../css/Board/DetailBoard.css'
+import '../../css/Board/DetailBoard.css';
+import LeftHeader from '../header/LeftHeader';
+import RightHeader from '../header/RightHeader';
 
 const DetailBoard = () => {
   const nickName = useSelector((state) => state.user.nickName);
@@ -124,102 +126,160 @@ const DetailBoard = () => {
   
 
   return (
-    <>
-    <Header />
-    
-    <Container className="mt-5">
-      <div className="container mt-4">
-        { isEdit === true ? (
-          <>
-          {/* 게시글 수정 */}
-          <div className="card mb-4">
-            <div className="card-body">
-              {category == "code" ? (
-                <><div className="text-muted mb-2 text-start">CODE 게시판 &lt; 상세글</div></>
-              ):(
-                <><div className="text-muted mb-2 text-start">공지 게시판 &lt; 상세글</div></>
-              )}              
-                <input 
-                  type="text" 
-                  className="board-title form-control fw-bold text-start mb-3"
-                  placeholder="제목을 입력해주세요"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)} 
-                />
-                <p className="text-secondary text-start">작성자 {board.nickName}</p>
-                <textarea 
-                  className="form-control text-start"
-                  placeholder="코드나 에러사항을 입력해주세요"
-                  value={code}
-                  onChange={e => setCode(e.target.value)}
-                />
-                <textarea 
-                  className="form-control text-start"
-                  placeholder="내용을 입력해주세요"
-                  value={content}
-                  onChange={e => setContent(e.target.value)}
-                />
-              <div className="d-flex justify-content-between mt-3">
-                <div>
-                <span className="me-3"><img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {board.likeCount}</span>
-                  <span><img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {board.commentsCount}</span>
-                </div>   
-                <div className="d-flex justify-content-end gap-2">
-                  <button className="btn btn-success" onClick={() => saveBoard(boardId)}>저장</button>
-                  <button className="btn btn-danger" onClick={() => setIsEdit(false)}>취소</button>
-                </div>             
-              </div>
-            </div>
-          </div>
-          </>
-        ):(
-          <>
-          {/* 게시글 카드 */}
-          {/* 게시글 보기 */}
-          <div className="mb-4">
-            <div>
-              <div className="text-muted mb-2 text-start">
-                {category === "code" ? "CODE 게시판 < 상세글" : "공지 게시판 < 상세글"}
-              </div>
-              <h5 className="fw-bold text-start">{board.title}</h5>
-              <p className="text-secondary text-start">작성자 {board.nickName}</p>
-              <p className="text-start">{board.code}</p>
-              <p className="text-start">{board.content}</p>
+    <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 w-full flex flex-col">
+      <Header />
 
-              <div className="d-flex justify-content-between mt-3">
-                <div>
-                  {isLike ? (
-                    <span className="me-3" onClick={() => handleCancelLike(boardId)}>
-                      <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                    </span>
-                  ) : (
-                    <span className="me-3" onClick={() => handleLike(boardId)}>
-                      <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                    </span>
-                  )}
-                  <span>
-                    <img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {commentCount}
-                  </span>
-                </div>
+      <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
+        {/* 좌측 사이드바 */}
+        <div className="w-full lg:w-1/5">
+          <LeftHeader />
+        </div>
 
-                {/* 작성자 or 관리자만 수정/삭제 가능 */}
-                {(nickName === board.nickName || role === "admin") && (
-                  <div>
-                    <Link className="me-2 text-decoration-none" onClick={() => setIsEdit(true)}>수정하기</Link>
-                    <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(boardId)}>삭제하기</Link>
+        {/* 메인 콘텐츠 */}
+        <div className="w-full lg:w-3/5">
+          <div className="w-full max-w-3xl mx-auto px-4">
+            {isEdit ? (
+              <>
+                {/* 게시글 수정 폼 */}
+                <div className="mb-6 text-white">
+                  <div className="text-sm text-white/60 mb-2 text-left">
+                    {category === "code"
+                      ? "CODE 게시판 < 상세글"
+                      : "공지 게시판 < 상세글"}
                   </div>
-                )}
-              </div>
+
+                  <input
+                    type="text"
+                    className="w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white font-bold placeholder-white/50"
+                    placeholder="제목을 입력해주세요"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+
+                  <p className="text-sm text-white/60 text-left mb-2">
+                    작성자 {board.nickName}
+                  </p>
+
+                  <textarea
+                    className="w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"
+                    placeholder="코드나 에러사항을 입력해주세요"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                  />
+
+                  <textarea
+                    className="w-full p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"
+                    placeholder="내용을 입력해주세요"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                  />
+
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="flex items-center space-x-6">
+                      <span className="flex items-center">
+                        <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                        {board.likeCount}
+                      </span>
+                      <span className="flex items-center">
+                        <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
+                        {board.commentsCount}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                        onClick={() => saveBoard(boardId)}
+                      >
+                        저장
+                      </button>
+                      <button
+                        className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+                        onClick={() => setIsEdit(false)}
+                      >
+                        취소
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* 게시글 보기 (테두리 없이 투명 배경) */}
+                <div className="mb-6 text-white">
+                  <div className="text-sm text-white/60 mb-2 text-left">
+                    {category === "code"
+                      ? "CODE 게시판 < 상세글"
+                      : "공지 게시판 < 상세글"}
+                  </div>
+
+                  <h2 className="text-2xl font-bold text-left mb-1">{board.title}</h2>
+                  <p className="text-sm text-white/60 text-left mb-2">
+                    작성자 {board.nickName}
+                  </p>
+
+                  <pre className="text-left whitespace-pre-wrap text-white mb-3">{board.code}</pre>
+                  <p className="text-left whitespace-pre-wrap">{board.content}</p>
+
+                  <div className="flex justify-between items-center mt-6">
+                    <div className="flex items-center space-x-6">
+                      {isLike ? (
+                        <span
+                          className="cursor-pointer flex items-center"
+                          onClick={() => handleCancelLike(boardId)}
+                        >
+                          <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                          {likeCount}
+                        </span>
+                      ) : (
+                        <span
+                          className="cursor-pointer flex items-center"
+                          onClick={() => handleLike(boardId)}
+                        >
+                          <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                          {likeCount}
+                        </span>
+                      )}
+
+                      <span className="flex items-center">
+                        <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
+                        {commentCount}
+                      </span>
+                    </div>
+
+                    {(nickName === board.nickName || role === "admin") && (
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setIsEdit(true)}
+                          className="text-sm text-white hover:underline"
+                        >
+                          수정하기
+                        </button>
+                        <button
+                          onClick={() => boardDeleteButton(boardId)}
+                          className="text-sm text-red-400 hover:underline"
+                        >
+                          삭제하기
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 댓글 위 흰 줄 */}
+            <div className="border-t-2 border-white/70 mt-10 pt-4">
+              <Comments boardId={boardId} category={category} />
             </div>
           </div>
-          <div className='board-div mb-3'></div>
-          </>
-        )}
-        
-        <Comments boardId={boardId} category={category} />
+        </div>
+
+        {/* 우측 사이드바 */}
+        <div className="w-full lg:w-1/5">
+          <RightHeader />
+        </div>
       </div>
-    </Container>
-    </>
+    </div>
   );
 };
 

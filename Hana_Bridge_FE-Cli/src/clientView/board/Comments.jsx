@@ -67,76 +67,101 @@ const Comments = (props) => {
   return (
     <div>
       {/* 댓글 리스트 */}
-      {comments.map(comment => (
-        <div className="mb-4 px-2 comments-div" key={comment.commentId} >
-          <div className="text-start">
-            {/* 댓글 수정 */}
+      {comments.map((comment) => (
+        <div key={comment.commentId} className="mb-6 px-2">
+          <div className="text-left text-white">
             {editCommentId === comment.commentId ? (
               <>
                 <textarea
-                  className="form-control mb-2"
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
-                  rows="2"
-                  style={{ resize: 'none', border: 'none', backgroundColor: '#f9f9f9' }}
+                  rows={2}
+                  className="w-full p-2 mb-2 rounded bg-gray-800 text-white placeholder-white/70 border border-white/30 resize-none"
+                  placeholder="댓글을 수정하세요"
                 />
-                <div className="mb-2">
-                  <button className="btn btn-outline-success btn-sm me-2" onClick={() => handleUpdateComment(comment.commentId)}>
+                <div className="mb-2 flex gap-2">
+                  <button
+                    className="px-3 py-1 bg-green-600 hover:bg-green-700 text-sm text-white rounded"
+                    onClick={() => handleUpdateComment(comment.commentId)}
+                  >
                     저장
                   </button>
-                  <button className="btn btn-outline-secondary btn-sm" onClick={() => setEditCommentId(null)}>
+                  <button
+                    className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-sm text-white rounded"
+                    onClick={() => setEditCommentId(null)}
+                  >
                     취소
                   </button>
                 </div>
               </>
             ) : (
               <>
-                <p className="mb-1 fw-bold">{comment.nickName}</p>
+                <p className="mb-1 font-semibold">{comment.nickName}</p>
                 <p className="mb-1">{comment.content}</p>
-                <div className="text-muted small mb-2">
-                  {comment.createAt} · 👍 {comment.likes} ·{' '}
-                  <a href="#" className="text-decoration-none">신고</a>
+                <div className="text-sm text-white/60 mb-2">
+                  {comment.createAt} · 👍 {comment.likes} ·{" "}
+                  <button className="hover:underline">신고</button>
                 </div>
-                {nickName === comment.nickName || role === "admin" ? (
-                  <div className="mb-2 text-end">
-                    <button className="btn btn-outline-primary btn-sm me-2" onClick={() => handleEditComment(comment.commentId, comment.content)}>
+                {(nickName === comment.nickName || role === "admin") && (
+                  <div className="mb-2 text-right flex gap-2 justify-end">
+                    <button
+                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-sm text-white rounded"
+                      onClick={() => handleEditComment(comment.commentId, comment.content)}
+                    >
                       수정
                     </button>
-                    <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteComment(comment.commentId)}>
+                    <button
+                      className="px-3 py-1 bg-red-600 hover:bg-red-700 text-sm text-white rounded"
+                      onClick={() => handleDeleteComment(comment.commentId)}
+                    >
                       삭제
                     </button>
                   </div>
-                ) : null}
+                )}
+                {/* 구분선 */}
+                <div className="border-t border-white/40 my-8" />
               </>
             )}
           </div>
         </div>
       ))}
 
-      <div>
+      {/* 댓글 작성 or 작성 버튼 */}
+      <div className="mt-6 flex gap-2">
         {props.category === "code" && newCommentFlag ? (
           <AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} />
         ) : null}
 
-        {props.category === "code" && !newCommentFlag ? (
-          <button className="btn btn-success btn-sm me-2" onClick={() => setNewCommentFlag(true)}>
+        {props.category === "code" && !newCommentFlag && role !== 'guest' && (
+          <button
+            className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded"
+            onClick={() => setNewCommentFlag(true)}
+          >
             댓글 작성
           </button>
-        ) : null}
+        )}
 
-        {props.category === "code" ? (
-          <Link className="btn btn-success btn-sm me-2" to="/board/code">
+        {props.category === "code" && (
+          <Link
+            to="/board/code"
+            className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded"
+          >
             이전
           </Link>
-        ) : props.category === "notice" ? (
-          <Link className="btn btn-success btn-sm me-2" to="/board/notice">
+        )}
+
+        {props.category === "notice" && (
+          <Link
+            to="/board/notice"
+            className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded"
+          >
             이전
           </Link>
-        ) : null}
+        )}
       </div>
-   
     </div>
   );
+
 };
 
 export default Comments;

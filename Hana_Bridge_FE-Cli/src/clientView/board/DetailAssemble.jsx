@@ -12,7 +12,8 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import '../../css/Board/DetailAssemble.css';
+import LeftHeader from "../header/LeftHeader";
+import RightHeader from "../header/RightHeader";
 
 const DetailAssemble = () => {
   const nickName = useSelector((state) => state.user.nickName);
@@ -27,9 +28,7 @@ const DetailAssemble = () => {
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
 
-
   const navigate = useNavigate();
-  const location = useLocation();
 
   //const category = location.state?.category;
 
@@ -99,83 +98,132 @@ const DetailAssemble = () => {
     });
   }
   
-
   return (
-    <>
-    <Header />
-    
-    <Container className="mt-5">
-      <div className="container mt-4">
-          {/* 게시글 카드 */}
-          <div className='mb-4'>
-            <div className="card-body">
-              <div className="text-muted mb-2 text-start">ASSEMBLE 게시판 &lt; 상세글</div>
-                <h5 className="card-title fw-bold text-start">{board.title}</h5>
-                <p className="text-secondary text-start">작성자 {board.nickName}</p>
-                <div className='text-start'>
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      code({ node, inline, className, children, ...props }) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        return !inline && match ? (
-                          // !inline && match 조건에 맞으면 하이라이팅
-                          <SyntaxHighlighter {...props} style={prism} language={match[1]} PreTag="div">
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          // 안 맞다면 문자열 형태로 반환
-                          <code {...props} className={className}>
-                            {children}
-                          </code>
-                        );
-                      },
-                    }}
-                  >
-                    {board.content}
-                  </ReactMarkdown>
-                </div>
-                
-              <div className="d-flex justify-content-between mt-3">
-                <div>
-                {isLike === true ? (
-                    <>
-                      <span className="me-3"
-                        onClick={() => handleCancelLike(assembleBoardId)}>
-                        <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="me-3" 
-                        onClick={() => handleLike(assembleBoardId)}>
-                        <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                      </span>
-                    </>
-                  )}
-                                
-                  <span><img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {board.commentsCount}</span>
-                </div>
-                <div>
-                  {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}
-                  {nickName === board.nickName || role === "admin" ? (
-                    <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(assembleBoardId)}>삭제하기</Link>
-                  ) : null}
-                </div>
+    <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 flex flex-col lg:flex-row">
+      {/* 왼쪽 사이드바 */}
+      <div className="w-full lg:w-1/5">
+        <LeftHeader />
+      </div>
+
+      {/* 메인 콘텐츠 */}
+      <div className="flex-1 flex flex-col w-full">
+        <Header />
+
+        <div className="mt-20 max-w-screen-lg mx-auto px-4">
+          {/* 게시글 카드 (테두리 제거) */}
+          <div className="mb-6">
+            <div className="p-6 rounded-lg bg-transparent text-white">
+              {/* 경로 표시 */}
+              <div className="text-sm text-white/60 mb-2 text-left">
+                ASSEMBLE 게시판 &lt; 상세글
               </div>
-            </div>                       
-          </div>  
-          <div className='board-div mb-3'></div>
-          <div>
-            <Link className="btn btn-success btn-sm me-2" to="/board/assemble">
+
+              {/* 제목 */}
+              <h2 className="text-2xl font-bold text-left mb-1">{board.title}</h2>
+
+              {/* 작성자 */}
+              <p className="text-sm text-white/60 text-left mb-4">
+                작성자 {board.nickName}
+              </p>
+
+              {/* 내용 */}
+              <div className="text-left">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline && match ? (
+                        <SyntaxHighlighter
+                          {...props}
+                          style={prism}
+                          language={match[1]}
+                          PreTag="div"
+                          className="rounded-md overflow-x-auto"
+                        >
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <code
+                          {...props}
+                          className={`${className} bg-gray-800 text-white px-1 rounded`}
+                        >
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {board.content}
+                </ReactMarkdown>
+              </div>
+
+              {/* 좋아요 / 댓글 / 삭제 */}
+              <div className="flex justify-between items-center mt-6">
+                {/* 좋아요 & 댓글 */}
+                <div className="flex items-center space-x-6 text-white">
+                  {isLike ? (
+                    <span
+                      className="cursor-pointer flex items-center"
+                      onClick={() => handleCancelLike(assembleBoardId)}
+                    >
+                      <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                      {likeCount}
+                    </span>
+                  ) : (
+                    <span
+                      className="cursor-pointer flex items-center"
+                      onClick={() => handleLike(assembleBoardId)}
+                    >
+                      <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                      {likeCount}
+                    </span>
+                  )}
+
+                  <span className="flex items-center">
+                    <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
+                    {board.commentsCount}
+                  </span>
+                </div>
+
+                {/* 삭제 */}
+                {(nickName === board.nickName || role === "admin") && (
+                  <button
+                    className="text-red-400 text-sm hover:underline"
+                    onClick={() => boardDeleteButton(assembleBoardId)}
+                  >
+                    삭제하기
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 구분선 */}
+          <div className="border-t-4 border-white/70 my-8" />
+
+
+          {/* 이전 버튼 */}
+          <div className="mt-8">
+            <Link
+              to="/board/assemble"
+              className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700"
+            >
               이전
             </Link>
-          </div>       
+          </div>
+        </div>
       </div>
-      
-    </Container>
-    </>
+
+      {/* 오른쪽 사이드바 */}
+      <div className="w-full lg:w-1/5">
+        <RightHeader />
+      </div>
+    </div>
   );
+
+
+  
 };
 
 export default DetailAssemble;

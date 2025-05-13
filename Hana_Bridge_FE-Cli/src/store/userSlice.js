@@ -31,7 +31,7 @@ import { createSlice } from '@reduxjs/toolkit';
        state.name = 'guest';
        state.nickName = 'guest';
        state.accessToken = 'guest';
-       state.role = null;
+       state.role = 'guest';
        state.category = 'code';
      },
      setAiChat: (state, action) => {
