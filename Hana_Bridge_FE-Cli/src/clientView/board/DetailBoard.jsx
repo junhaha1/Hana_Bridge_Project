@@ -12,6 +12,7 @@ import '../../css/Board/DetailBoard.css';
 import LeftHeader from '../header/LeftHeader';
 import RightHeader from '../header/RightHeader';
 
+//상세 게시글 보드
 const DetailBoard = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
