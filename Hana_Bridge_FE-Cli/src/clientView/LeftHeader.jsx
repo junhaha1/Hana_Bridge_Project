@@ -9,7 +9,7 @@ const boards = [
 ];
 
 export default function LeftHeader() {
-  const dispatch = useDispatch(); // ✅ dispatch 정의!
+  const dispatch = useDispatch();
   const category = useSelector((state) => state.user.category);
 
   const postBoard = (id) => {

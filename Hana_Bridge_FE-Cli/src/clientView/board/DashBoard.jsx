@@ -5,9 +5,9 @@ import RightSidebar from "./RightSideBar.jsx";
 import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
 import DashboardCards from "./DashBoardCards.jsx";
+import LeftHeader from "../LeftHeader.jsx";
 
 const DashBoard = () => {
-  const nickName = useSelector((state) => state.user.nickName);
   const [fadeOut, setFadeOut] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
   const lottieRef = useRef();
@@ -53,7 +53,11 @@ const DashBoard = () => {
       {/* 대시보드 본문은 애니메이션이 끝난 후에만 표시 */}
       {animationDone && (
         <div className="flex flex-col md:flex-row w-full">
-          {/* 왼쪽 본문 */}
+          {/*왼쪽 사이드바*/}
+          <div className="w-60">
+            <LeftHeader />
+          </div>
+          {/* 가운데 본문 */}
           <div className="flex-1 flex flex-col items-center justify-start gap-6 px-4 relative">
             {/* 상단 제목 + 검색 */}
             <div className="w-full max-w-5xl mt-20 md:mt-32 px-6">

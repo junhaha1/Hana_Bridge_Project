@@ -1,10 +1,6 @@
 import React from 'react';
-<<<<<<< HEAD
-=======
-import { useSelector } from "react-redux";
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import { setCategory } from '../store/userSlice';
->>>>>>> 2e845fa13a32ec047fbe865085840663501cbf6f
 import Lottie from "lottie-react";
 import Header from "./Header.jsx";
 
@@ -13,12 +9,8 @@ import codeHome from "../../public/animations/codehome.json";
 import assembleHome from "../../public/animations/assemblehome.json";
 
 const Home = () => {
-<<<<<<< HEAD
-=======
   const nickName = useSelector((state) => state.user.nickName);
   const dispatch = useDispatch();
-
->>>>>>> 2e845fa13a32ec047fbe865085840663501cbf6f
   return (
     <>
     <Header/>

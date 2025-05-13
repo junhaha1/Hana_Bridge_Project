@@ -30,7 +30,7 @@ import { createSlice } from '@reduxjs/toolkit';
        state.email = 'guest@email.com';
        state.name = 'guest';
        state.nickName = 'guest';
-       state.accessToken = null;
+       state.accessToken = 'guest';
        state.role = null;
        state.category = 'code';
      },
