@@ -29,7 +29,7 @@ public class CommentService {
     public void delete(String email, long commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("not found commentId: " + commentId));
-        if (!comment.getBoard().getUsers().getEmail().equals(email)) {
+        if (!comment.getUsers().getEmail().equals(email)) {
             throw new IllegalArgumentException("Board doesn't belong to email : " + email + ", " + commentId);
         }
         commentRepository.deleteById(commentId);
