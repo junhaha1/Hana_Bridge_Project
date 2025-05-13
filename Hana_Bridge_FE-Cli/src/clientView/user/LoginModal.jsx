@@ -27,8 +27,8 @@ const LoginModal = ({ onClose, onSwitch }) => {
             role: data.role,
           })
         );
-        onClose(); // 모달 닫기
-        navigate("/board/code");
+        onClose(); //모달 닫기
+        navigate("/dashBoard"); //대쉬보드로 이동
       })
       .catch((error) => {
         console.error("Login error:", error);
