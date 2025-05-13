@@ -44,7 +44,7 @@ const BoardHeader = () => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full px-6 py-4 flex items-center justify-between bg-transparent text-white z-50">
+      <div className="fixed top-0 left-0 w-full px-6 py-2 flex items-center justify-between bg-transparent text-white z-50">
         {/* 로고 + 제목 */}
         <div
           className="flex items-center space-x-4 no-underline cursor-pointer"
@@ -91,7 +91,7 @@ const BoardHeader = () => {
           ) : (
             <button
               onClick={() => setConfirmLogoutOpen(true)}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              className="block w-full text-left px-4 py-2 rounded hover:bg-[#C5BCFF]"
             >
               로그아웃
             </button>
