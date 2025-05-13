@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from "react-redux";
 import Lottie from "lottie-react";
 import Header from "./Header.jsx";
 
@@ -8,8 +7,6 @@ import codeHome from "../../public/animations/codehome.json";
 import assembleHome from "../../public/animations/assemblehome.json";
 
 const Home = () => {
-  const nickName = useSelector((state) => state.user.nickName);
-
   return (
     <>
     <Header/>

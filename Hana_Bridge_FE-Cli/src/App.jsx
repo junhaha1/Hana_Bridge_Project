@@ -13,11 +13,13 @@ import DetailAssemble from './clientView/board/DetailAssemble';
 import MyPage from './clientView/user/MyPage';
 import AIChat from './clientView/AIchat/AIChat';
 import Home from './clientView/Home';
+import DashBoard from './clientView/board/DashBoard';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} /> {/* 홈 화면 */}
+      <Route path="/dashBoard" element={<DashBoard />} /> {/* 홈 화면 */}
       <Route path="/board/:category" element={<MainBoard />} /> {/* board 화면 */} 
       <Route path="/login" element={<Login />} /> {/* Login 화면 */}
       <Route path="/signup" element={<SignUp />} /> {/* Login 화면 */}
