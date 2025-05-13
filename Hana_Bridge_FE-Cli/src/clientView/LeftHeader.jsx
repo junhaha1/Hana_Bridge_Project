@@ -5,15 +5,15 @@ import { useState } from 'react';
 const boards = [
   { id: 'code', label: 'Code 게시판' },
   { id: 'assemble', label: 'Assemble 게시판' },
-  { id: 'notion', label: 'Notion 게시판' },
+  { id: 'notice', label: 'Notice 게시판' },
 ];
 
 export default function LeftHeader() {
-  const dispatch = useDispatch(); // ✅ dispatch 정의!
+  const dispatch = useDispatch();
   const category = useSelector((state) => state.user.category);
 
   const postBoard = (id) => {
-    dispatch(setCategory({ category: id })); // Redux 상태 변경
+    dispatch(setCategory({ category: id })); 
   };
 
   return (
