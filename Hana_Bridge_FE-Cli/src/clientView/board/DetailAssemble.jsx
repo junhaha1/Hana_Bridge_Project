@@ -15,6 +15,7 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import LeftHeader from "../header/LeftHeader";
 import RightHeader from "../header/RightHeader";
 
+//어셈블 상세 게시글 보드
 const DetailAssemble = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);

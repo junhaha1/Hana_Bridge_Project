@@ -17,6 +17,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} /> {/* 홈 화면 */}
       <Route path="/dashBoard" element={<DashBoard />} /> {/* 홈 화면 */}
+      <Route path="/dashBoard/:page" element={<DashBoard/>} />
       <Route path="/board/:category" element={<MainBoard />} /> {/* board 화면 */} 
       <Route path="/mypage" element={<MyPage/>} />  {/* 회원정보 화면 */}
       <Route path="/detailBoard/:boardId" element={<DetailBoard/>} /> {/* 게시글 상세 화면 */}

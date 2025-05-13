@@ -9,6 +9,7 @@ import HelloWorld from "../../../public/animations/helloworld.json";
 
 import DashboardCards from "./DashBoardCards.jsx";
 
+//대쉬보드
 const DashBoard = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
