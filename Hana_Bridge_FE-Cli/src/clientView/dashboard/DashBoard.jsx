@@ -8,6 +8,7 @@ import LeftHeader from "../header/LeftHeader.jsx";
 import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
 
+import MyPage from "./MyPage.jsx";
 import DashboardCards from "./DashBoardCards.jsx";
 
 //대쉬보드
@@ -22,21 +23,10 @@ const DashBoard = () => {
   //page값에 따른 조건부 렌더링
   switch (page) {
     case "home":
-      RenderContent = 
-      <>
-      <div className="relative mb-8">
-        <input
-          type="text"
-          placeholder="Search Your Board"
-          className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
-        <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
-      </div>
-      <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
-      <DashboardCards />
-      </>;
+      RenderContent = <DashboardCards />;
       break;
     case "mypage":
-      RenderContent = <div>내 정보</div>;
+      RenderContent = <MyPage />;
       break;
     case "myposts":
       RenderContent = <div>내 글 모음</div>;
@@ -107,6 +97,14 @@ const DashBoard = () => {
             {/* Main Content */}
             <div className="w-full lg:w-3/5">
               <div className="max-w-3xl mx-auto px-4 sm:px-6">
+                <div className="relative mb-8">
+                  <input
+                    type="text"
+                    placeholder="Search Your Board"
+                    className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
+                  <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
+                </div>
+                <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
                 {RenderContent}
               </div>
             </div>
