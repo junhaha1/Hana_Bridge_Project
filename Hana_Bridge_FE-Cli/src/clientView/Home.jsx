@@ -1,4 +1,10 @@
 import React from 'react';
+<<<<<<< HEAD
+=======
+import { useSelector } from "react-redux";
+import { useDispatch } from 'react-redux';
+import { setCategory } from '../store/userSlice';
+>>>>>>> 2e845fa13a32ec047fbe865085840663501cbf6f
 import Lottie from "lottie-react";
 import Header from "./Header.jsx";
 
@@ -7,6 +13,12 @@ import codeHome from "../../public/animations/codehome.json";
 import assembleHome from "../../public/animations/assemblehome.json";
 
 const Home = () => {
+<<<<<<< HEAD
+=======
+  const nickName = useSelector((state) => state.user.nickName);
+  const dispatch = useDispatch();
+
+>>>>>>> 2e845fa13a32ec047fbe865085840663501cbf6f
   return (
     <>
     <Header/>
@@ -42,6 +54,7 @@ const Home = () => {
           </p>
           <a
             href="/board/code"
+            onClick={() => dispatch(setCategory({category: 'code'}))}
             className="no-underline bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full text-lg"
           >
             Code Board
@@ -58,6 +71,7 @@ const Home = () => {
           </p>
           <a
             href="/board/assemble"
+            onClick={() => dispatch(setCategory({category: 'assemble'}))}
             className="no-underline bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full text-lg"
           >
             Assemble Board
