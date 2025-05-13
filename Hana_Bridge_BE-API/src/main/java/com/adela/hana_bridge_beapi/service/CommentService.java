@@ -57,7 +57,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("not found commentId: " + commentId));
 
-        if (!comment.getBoard().getUsers().getEmail().equals(email)) {
+        if (!comment.getUsers().getEmail().equals(email)) {
             throw new IllegalArgumentException("Board doesn't belong to email : " + email + ", " + commentId);
         }
 
