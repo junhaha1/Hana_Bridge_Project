@@ -6,6 +6,8 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Header from '../header/Header';
+import LeftHeader from '../header/LeftHeader';
+import RightHeader from '../header/RightHeader';
 import ApiClient from '../../service/ApiClient';
 
 import "../../css/AIChat/AIChat.css"
@@ -17,8 +19,7 @@ import { setAiChat, clearAiChat } from '../../store/userSlice';
 
 function AIChat() {
   const [messages, setMessages] = useState([
-    { role: '답변', content: `🤖 CodeHelper에 오신 걸 환영합니다!  
-      에러 코드와 사용 언어를 입력해보세요.` },
+    { role: '답변', content: `🤖 CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` },
   ]);
   const [input, setInput] = useState('');  //질문 1개 
   const [question, setQuestion] = useState(''); //질문들의 모음
@@ -166,157 +167,161 @@ function AIChat() {
 
 
   return (
-    <>
+    <div className="w-screen min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 text-white overflow-auto relative">
       <Header />
-      <Container
-        fluid
-        className="d-flex flex-column align-items-center justify-content-center mt-3 ai-chat-container"
-      >
-        <h1>AI Code Helper</h1>
-        <Card className="p-3 shadow-sm ai-chat-card">
-          {messages.map((msg, idx) => (
-            <React.Fragment key={idx}>
-              <div
-                className={`d-flex ${msg.role === '답변' ? 'justify-content-start' : 'justify-content-end'} my-2`}
-              >
-                 <div className={`ai-chat-message-card ${msg.role === '답변' ? 'ai' : 'user'}`}>
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code({ node, inline, className, children, ...props }) {
-                          const match = /language-(\w+)/.exec(className || '');
-                          return !inline && match ? (
-                            <SyntaxHighlighter {...props} style={prism} language={match[1]} PreTag="div">
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            <code {...props} className={className}>
-                              {children}
-                            </code>
-                          );
-                        },
-                      }}
-                    >
-                      {msg.content}
-                    </ReactMarkdown>
-                  </div>
-              </div>
-  
-              {msg.role === '답변' && msg.content !== '에러 코드를 사용중인 언어와 함께 보내주세요!' && (
-                <div className='d-flex justify-content-start'>
-                  <Button variant="dark" size="sm" onClick={() => openPostModal(msg.content)}>
-                    답변 채택
-                  </Button>
-                </div>
-              )}
-            </React.Fragment>
-          ))}
-  
-          {isLoading && (
-            <div className="d-flex justify-content-start my-2">
-              <div className="loader"></div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </Card>
-  
-        <Form className="mt-3" style={{ width: '70%' }}>
-          <Row className="align-items-center">
-            <Col xs={2} className="d-flex justify-content-end align-items-center">
-              <ButtonGroup>
-                <Button
-                  variant={promptLevel === 0 ? 'dark' : 'outline-dark'}
-                  size="sm"
-                  onClick={() => setPromptLevel(0)}
-                >
-                  초보자
-                </Button>
-                <Button
-                  variant={promptLevel === 1 ? 'dark' : 'outline-dark'}
-                  size="sm"
-                  onClick={() => setPromptLevel(1)}
-                >
-                  전문가
-                </Button>
-              </ButtonGroup>
-            </Col>
-            <Col xs={8}>
-              <Form.Control
-                as="textarea"
-                rows={1}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onInput={handleResizeHeight}
-                onKeyDown={handleKeyDown}
-                placeholder="메시지를 입력하세요..."
-                ref={textRef}
-                className="ai-chat-input"
-              />
-            </Col>
-            <Col xs={2} className="d-flex justify-content-end">
-              <Button
-                variant="dark"
-                type="button"
-                className="ai-chat-send-button"
-                onClick={() => sendMessage()}
-              >
-                전송
-              </Button>
-            </Col>
-          </Row>
-        </Form>
 
-        {isPostLoading === true?(
-          <div className="loading">
-          <div className="loading_text">
-            <span className="loading_text_words">L</span>
-            <span className="loading_text_words">O</span>
-            <span className="loading_text_words">A</span>
-            <span className="loading_text_words">D</span>
-            <span className="loading_text_words">I</span>
-            <span className="loading_text_words">N</span>
-            <span className="loading_text_words">G</span>
+      <div className="w-full flex flex-col mt-24">
+        <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6">
+          <div className="w-full lg:w-1/5">
+            <LeftHeader />
+          </div>
+
+          <div className="w-full lg:w-3/5">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6">
+              <h1 className="text-3xl font-bold mb-6 text-center">AI Code Helper</h1>
+
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md shadow-md">
+                {messages.map((msg, idx) => (
+                  <React.Fragment key={idx}>
+                    <div
+                      className={`flex ${msg.role === '답변' ? 'justify-start' : 'justify-end'} my-2`}
+                    >
+                      <div
+                        className={`max-w-[80%] p-3 rounded-lg text-sm whitespace-pre-wrap ${
+                          msg.role === '답변'
+                            ? 'bg-transparent text-white border border-white/40'
+                            : 'bg-[#322776] text-white'
+                        }`}
+                      >
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            code({ node, inline, className, children, ...props }) {
+                              const match = /language-(\w+)/.exec(className || '');
+                              return !inline && match ? (
+                                <SyntaxHighlighter
+                                  {...props}
+                                  style={prism}
+                                  language={match[1]}
+                                  PreTag="div"
+                                >
+                                  {String(children).replace(/\n$/, '')}
+                                </SyntaxHighlighter>
+                              ) : (
+                                <code {...props} className={className}>
+                                  {children}
+                                </code>
+                              );
+                            },
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+
+                    {msg.role === '답변' && !isPostLoading && msg.content !== `🤖 CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` && (
+                      <div className="flex justify-start">
+                        <button
+                          className="text-sm bg-gray-800 text-white px-3 py-1 rounded-md"
+                          onClick={() => openPostModal(msg.content)}
+                        >
+                          답변 채택
+                        </button>
+                      </div>
+                    )}                    
+                  </React.Fragment>
+                ))}
+
+                {isLoading && (
+                  <div className="flex justify-start my-2">
+                    <div className="loader w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+                {isPostLoading && (
+                  <div className="text-center text-white mt-4 animate-pulse text-lg">LOADING...</div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="mt-4">
+                <div className="flex justify-end mb-2 pr-2 flex gap-2 whitespace-nowrap">
+                  <button
+                    onClick={() => setPromptLevel(0)}
+                    className={`px-2 py-0.5 rounded-full text-xs ${
+                      promptLevel === 0 ? 'bg-white text-black' : 'border border-white text-white'
+                    }`}
+                  >
+                    초보자
+                  </button>
+                  <button
+                    onClick={() => setPromptLevel(1)}
+                    className={`px-2 py-0.5 rounded-full text-xs ${
+                      promptLevel === 1 ? 'bg-white text-black' : 'border border-white text-white'
+                    }`}
+                  >
+                    전문가
+                  </button>
+                </div>                            
+
+                <div className="w-full flex justify-center px-4 pb-6 mt-2">
+                  <div className="w-full max-w-4xl flex items-center gap-2 bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10">
+                    <textarea
+                      rows={1}
+                      className="flex-1 resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none"
+                      placeholder="메시지를 입력하세요..."
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onInput={handleResizeHeight}
+                      onKeyDown={handleKeyDown}
+                      ref={textRef}
+                    />
+                    <button
+                      onClick={sendMessage}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 hover:opacity-80"
+                    >
+                      <img src="/images/send.png" alt="보내기" width="25" />
+                    </button>
+                  </div>
+                </div>
+              </div>              
+            </div>
+          </div>
+
+          <div className="w-full lg:w-1/5">
+            <RightHeader />
           </div>
         </div>
-        ):null}
-  
-        <Modal show={showModal} onHide={closePostModal} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>답변 채택</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            해당 질문과 답변을 채택 하시겠습니까?<br />
-            채택하시면 질문과 내용이 요약되어 게시됩니다.
-          </Modal.Body>
-          <Modal.Footer>
-            <Button type="button" variant="secondary" onClick={closePostModal}>
-              취소
-            </Button>
-            <Button type="button" variant="primary" onClick={postAssemble}>
-              확인
-            </Button>
-          </Modal.Footer>
-        </Modal>
-  
-        <Modal show={showChatModel} onHide={closeChatModal} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>AI Chat 내용 가져오기 </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            지난 대화 내용을 불러오시겠습니까? <br />
-            취소하시면 지난 대화 내용이 삭제 됩니다.
-          </Modal.Body>
-          <Modal.Footer>
-            <Button type="button" variant="secondary" onClick={closeChatModal}>
-              취소
-            </Button>
-            <Button type="button" variant="primary" onClick={() => bringMessage()}>
-              불러오기
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
-    </>
+      </div>
+
+      {/* 모달: 답변 채택 */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white text-black rounded-md p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">답변 채택</h2>
+            <p className="mb-4">해당 질문과 답변을 채택 하시겠습니까?<br />채택하시면 질문과 내용이 요약되어 게시됩니다.</p>
+            <div className="flex justify-end gap-2">
+              <button className="bg-gray-300 px-4 py-1 rounded" onClick={closePostModal}>취소</button>
+              <button className="bg-indigo-600 text-white px-4 py-1 rounded" onClick={postAssemble}>확인</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 모달: 지난 대화 불러오기 */}
+      {showChatModel && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white text-black rounded-md p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">AI Chat 내용 가져오기</h2>
+            <p className="mb-4">지난 대화 내용을 불러오시겠습니까?<br />취소하시면 지난 대화 내용이 삭제 됩니다.</p>
+            <div className="flex justify-end gap-2">
+              <button className="bg-gray-300 px-4 py-1 rounded" onClick={closeChatModal}>취소</button>
+              <button className="bg-indigo-600 text-white px-4 py-1 rounded" onClick={bringMessage}>불러오기</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
   
 }
