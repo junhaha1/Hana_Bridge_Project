@@ -17,28 +17,36 @@ const MainBoard = () => {
   const category = useSelector((state) => state.user.category);
 
   return (
+
+
     <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 flex">
-      {/* 왼쪽 사이드바 */}
-      <div className="w-60">
-        <LeftHeader />
-      </div>
-
-      {/* 오른쪽 메인 콘텐츠 */}
-      <div className="flex-1">
-        <Header />
-
-        <div className="container mx-auto mt-6 px-4">
-
-          {/* 게시판 분기 렌더링 */}
-          {category === "code" && <CodeBoard />}
-          {category === "assemble" && <AssembleBoard />}
-          {category === "notice" && <NoticeBoard />}
+      <Header />
+      {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
+      <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
+        {/* Left Sidebar */}
+        <div className="w-full lg:w-1/5">
+          <LeftHeader />
         </div>
 
-        {/* 게스트는 CodeHelper 안 보임 */}
-        {email !== "guest@email.com" && <CodeHelper />}
+        {/* Main Content */}
+        <div className="w-full lg:w-3/5">
+          <div className="container mx-auto mt-6 px-4">
+
+            {/* 게시판 분기 렌더링 */}
+            {category === "code" && <CodeBoard />}
+            {category === "assemble" && <AssembleBoard />}
+            {category === "notice" && <NoticeBoard />}
+          </div>
+
+          {/* 게스트는 CodeHelper 안 보임 */}
+          {email !== "guest@email.com" && <CodeHelper />}
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="w-full lg:w-1/5">
+          <RightHeader />
+        </div>
       </div>
-      <RightHeader />
     </div>
   );
 
