@@ -8,6 +8,7 @@ import { createSlice } from '@reduxjs/toolkit';
    role: 'guest',
    chatMessages: [],
    category: 'code',
+   page: 'home',
  };
  
  const userSlice = createSlice({
@@ -33,6 +34,7 @@ import { createSlice } from '@reduxjs/toolkit';
        state.accessToken = 'guest';
        state.role = 'guest';
        state.category = 'code';
+       state.page = 'home';
      },
      setAiChat: (state, action) => {
         state.chatMessages = action.payload.chatMessages;
@@ -47,9 +49,12 @@ import { createSlice } from '@reduxjs/toolkit';
     },
     setCategory: (state, action) => {
       state.category = action.payload.category;
-    }   
+    },
+    setPage: (state, action) =>{
+      state.page = action.payload.page;
+    }
    },
  });
  
- export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory } = userSlice.actions;
+ export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage } = userSlice.actions;
  export default userSlice.reducer;
