@@ -1,6 +1,5 @@
 import React from 'react';
-import { useSelector } from "react-redux";
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import { setCategory } from '../store/userSlice';
 import Lottie from "lottie-react";
 import Header from "./Header.jsx";
@@ -12,7 +11,6 @@ import assembleHome from "../../public/animations/assemblehome.json";
 const Home = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const dispatch = useDispatch();
-
   return (
     <>
     <Header/>

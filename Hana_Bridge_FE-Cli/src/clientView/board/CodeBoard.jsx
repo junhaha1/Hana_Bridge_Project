@@ -60,7 +60,11 @@ const CodeBoard = () => {
             <span className="text-sm text-purple-300">{post.nickName}</span>
           </div>
 
-          <p className="text-sm text-gray-200 mt-2 mb-4">{post.content}</p>
+          <p className="text-sm text-gray-200 mt-2 mb-4">
+            {post.content.length > 80
+              ? post.content.slice(0, 80) + '...'
+              : post.content}
+          </p>
 
           <div className="flex justify-end gap-4">
             <span className="text-indigo-300 flex items-center text-sm">

@@ -6,6 +6,7 @@ import AssembleBoard from "./board/AssembleBoard";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LeftHeader from "./LeftHeader";
+import RightSidebar from "./board/RightSideBar";
 
 const MainBoard = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const MainBoard = () => {
         {/* 게스트는 CodeHelper 안 보임 */}
         {email !== "guest@email.com" && <CodeHelper />}
       </div>
+      <RightSidebar />
     </div>
   );
 

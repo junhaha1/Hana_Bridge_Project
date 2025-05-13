@@ -48,7 +48,13 @@ const BoardHeader = () => {
         {/* 로고 + 제목 */}
         <div
           className="flex items-center space-x-4 no-underline cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => {
+            if (email && email !== "guest@email.com") {
+              navigate("/dashboard");
+            } else {
+              navigate("/");
+            }
+          }}
           onMouseEnter={() => lottieRef.current?.goToAndPlay(0, true)}
           onMouseLeave={() => lottieRef.current?.stop()}
         >

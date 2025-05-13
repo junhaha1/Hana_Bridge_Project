@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategory } from '../store/userSlice';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 const boards = [
   { id: 'code', label: 'Code 게시판' },
@@ -9,11 +11,13 @@ const boards = [
 ];
 
 export default function LeftHeader() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const category = useSelector((state) => state.user.category);
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id })); 
+    navigate('/board');
   };
 
   return (

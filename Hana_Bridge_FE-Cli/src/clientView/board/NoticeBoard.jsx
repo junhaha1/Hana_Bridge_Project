@@ -9,7 +9,7 @@ import '../../css/Board/CommonBoard.css';
 
 const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
-  const [category, setCategory] = useState('notice');
+  const category = useSelector((state) => state.user.category);
 
   const navigate = useNavigate(); 
 
@@ -53,39 +53,50 @@ const NoticeBoard = () => {
   }
 
   return (
-    <div>
-      {/* 카드 게시물 리스트 */}
-      <Row className="g-3">
-        {boards.map((post) => (
-          <Col xs={12} key={post.boardId}>
-            <Card className="shadow-sm board-card">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-center">
-                  <Card.Title className="mb-2 board-title" onClick={() => boardClick(post.boardId)}>
-                    {post.title}
-                  </Card.Title>
-                  <small className="text-muted">{post.nickName}</small>
-                </div>
-                <Card.Text className="board-text">
-                  {post.content.length > 80
-                  ? post.content.slice(0, 80) + '...'
-                  : post.content}
-                </Card.Text>
-                <div className="d-flex justify-content-end gap-4">
-                  <span className="text-primary">
-                    <img src="/images/blueGood.png" alt="좋아요"  width="18" className="me-1" />
-                    {post.likeCount}
-                  </span>
-                  <span className="text-secondary">
-                    <img src="/images/comment.png" alt="댓글"  width="18" className="me-1" />
-                    {post.comments}
-                  </span>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+    <div className="grid gap-6">
+      {boards.map((post) => (
+        <div
+          key={post.boardId}
+          className="border border-white/30 bg-white/5 backdrop-blur-sm rounded-md p-4 shadow-md hover:shadow-lg transition duration-200"
+        >
+          <div className="flex justify-between items-start">
+            <h3
+              onClick={() => boardClick(post.boardId)}
+              className="text-white text-lg font-semibold cursor-pointer hover:underline"
+            >
+              {post.title}
+            </h3>
+            <span className="text-sm text-purple-300">{post.nickName}</span>
+          </div>
+
+          <p className="text-sm text-gray-200 mt-2 mb-4">
+            {post.content.length > 80
+              ? post.content.slice(0, 80) + '...'
+              : post.content}
+          </p>
+
+          <div className="flex justify-end gap-4">
+            <span className="text-indigo-300 flex items-center text-sm">
+              <img
+                src="/images/blueGood.png"
+                alt="좋아요"
+                width="18"
+                className="mr-1"
+              />
+              {post.likeCount}
+            </span>
+            <span className="text-gray-300 flex items-center text-sm">
+              <img
+                src="/images/comment.png"
+                alt="댓글"
+                width="18"
+                className="mr-1"
+              />
+              {post.commentCount}
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
