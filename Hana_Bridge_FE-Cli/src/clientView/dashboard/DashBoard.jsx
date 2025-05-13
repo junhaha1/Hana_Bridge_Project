@@ -54,9 +54,7 @@ const DashBoard = () => {
 
       {/* 대시보드 본문 */}
       {animationDone && (
-        <div className="w-full flex flex-col">
-          <Header />
-
+        <div className="w-full flex flex-col ">
           {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
           <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
             {/* Left Sidebar */}
