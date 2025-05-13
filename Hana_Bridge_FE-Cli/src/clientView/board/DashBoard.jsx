@@ -5,7 +5,7 @@ import RightSidebar from "./RightSideBar.jsx";
 import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
 import DashboardCards from "./DashBoardCards.jsx";
-import LeftHeader from "../LeftHeader.jsx";
+import LeftHeader from "../2.jsx";
 
 const DashBoard = () => {
   const [fadeOut, setFadeOut] = useState(false);

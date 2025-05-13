@@ -49,27 +49,26 @@ const AddComment = (props) => {
 
 
   return (
-    <div ref={wrapperRef} className="card mb-3">
-      <div className="p-3">
-        <p className="mb-2 text-start"><strong>{nickName}</strong></p>
+    <div ref={wrapperRef} className="mb-4">
+      <p className="mb-2 text-start text-white font-semibold">{nickName}</p>
+
+      <div className="relative">
+        <textarea
+          rows="2"
+          ref={textRef}
+          value={content}
+          onInput={handleResizeHeight}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="댓글을 입력하세요."
+          className="w-full resize-none p-3 pr-10 bg-transparent text-white placeholder-white/60 rounded-md border border-white/30"
+        />
         
-        <div className="d-flex align-items-start">
-          <textarea
-            className="form-control me-2 custom-input"
-            rows="2"
-            value={content}
-            onInput={handleResizeHeight}
-            ref={textRef}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="댓글을 입력하세요."
-            style={{ flex: 1, resize: 'none' }}
-          />
-          <div className="d-flex flex-column">
-            <span onClick={() => handleAddComment()} style={{ cursor: 'pointer' }}>
-              <img src="/images/send.png" alt="보내기" width="20" className="mb-1" />
-            </span>
-          </div>
-        </div>
+        <button
+          onClick={handleAddComment}
+          className="absolute right-2 top-1/2 -translate-y-1/2 hover:opacity-80"
+        >
+          <img src="/images/send.png" alt="보내기" width="20" />
+        </button>
       </div>
     </div>
   );

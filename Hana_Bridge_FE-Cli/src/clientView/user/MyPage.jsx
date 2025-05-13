@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../Header';
+import Header from '../header/Header';
 import ApiClient from "../../service/ApiClient";
 import '../../css/user/MyPage.css';
 import '../../css/Common.css';

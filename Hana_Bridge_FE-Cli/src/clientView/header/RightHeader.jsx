@@ -1,6 +1,6 @@
-const RightSidebar = () => {
+const RightHeader = () => {
   return (
-    <div className="w-full md:w-60 flex flex-col px-4 md:px-0 mt-20 md:mt-32 z-20">
+    <div className="w-full lg:w-full px-4 py-4">
       {/* BEST POST */}
       <div className="bg-[#2d197c] rounded-xl shadow-lg p-4 text-white w-full mb-6">
         <h3 className="text-xs font-bold mb-2 text-gray-300">BEST POST</h3>
@@ -12,7 +12,7 @@ const RightSidebar = () => {
         </div>
       </div>
 
-      {/* 버튼 - 콘텐츠 아래쪽에 자연스럽게 위치 */}
+      {/* 버튼 */}
       <div className="mt-auto mb-6 w-full">
         <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-full shadow-md">
           ✨ Code Helper
@@ -22,4 +22,4 @@ const RightSidebar = () => {
   );
 };
 
-export default RightSidebar;
+export default RightHeader;

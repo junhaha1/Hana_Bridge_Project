@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { setCategory } from '../store/userSlice';
 import Lottie from "lottie-react";
-import Header from "./Header.jsx";
+import Header from "./header/Header.jsx";
 
 import codeHelper from "../../public/animations/codehelper.json";
 import codeHome from "../../public/animations/codehome.json";

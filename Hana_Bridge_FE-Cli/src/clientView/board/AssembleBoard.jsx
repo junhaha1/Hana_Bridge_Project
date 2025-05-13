@@ -57,7 +57,7 @@ const AssembleBoard = () => {
     <div className="grid gap-6">
       {boards.map((post) => (
         <div
-          key={post.boardId}
+          key={post.assembleBoardId}
           className="border border-white/30 bg-white/5 backdrop-blur-sm rounded-md p-4 shadow-md hover:shadow-lg transition duration-200"
         >
           <div className="flex justify-between items-start">

@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { clearUser, clearAiChat } from "../store/userSlice";
+import { clearUser, clearAiChat } from "../../store/userSlice.js";
 import Lottie from "lottie-react";
-import logo from "../../public/animations/logo.json";
-import ApiClient from "../service/ApiClient";
-import LoginModal from "./user/LoginModal.jsx";
-import SignUpModal from "./user/SignUpModal.jsx";
-import ConfirmLogoutModal from "./user/ConfirmLogoutModal.jsx"; // ⬅️ 커스텀 로그아웃 모달 추가
+import logo from "../../../public/animations/logo.json";
+import ApiClient from "../../service/ApiClient.jsx";
+import LoginModal from "../user/LoginModal.jsx";
+import SignUpModal from "../user/SignUpModal.jsx";
+import ConfirmLogoutModal from "../user/ConfirmLogoutModal.jsx"; // ⬅️ 커스텀 로그아웃 모달 추가
 
 const BoardHeader = () => {
   const dispatch = useDispatch();

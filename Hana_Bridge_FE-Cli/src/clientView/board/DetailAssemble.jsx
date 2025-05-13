@@ -1,6 +1,6 @@
 import React from 'react';
 import ApiClient from "../../service/ApiClient";
-import Header from '../Header';
+import Header from '../header/Header';
 import { useSelector } from 'react-redux';
 import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";
@@ -12,8 +12,8 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import LeftHeader from '../LeftHeader';
-import RightSidebar from './RightSideBar';
+import LeftHeader from "../header/LeftHeader";
+import RightHeader from "../header/RightHeader";
 
 const DetailAssemble = () => {
   const nickName = useSelector((state) => state.user.nickName);
@@ -98,30 +98,28 @@ const DetailAssemble = () => {
     });
   }
   
-
   return (
-   <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 flex">
+    <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 flex flex-col lg:flex-row">
       {/* 왼쪽 사이드바 */}
-      <div className="w-60">
+      <div className="w-full lg:w-1/5">
         <LeftHeader />
       </div>
 
-      {/* 오른쪽 메인 콘텐츠 */}
-      <div className="flex-1">
+      {/* 메인 콘텐츠 */}
+      <div className="flex-1 flex flex-col w-full">
         <Header />
+
         <div className="mt-20 max-w-screen-lg mx-auto px-4">
-          {/* 게시글 카드 */}
+          {/* 게시글 카드 (테두리 제거) */}
           <div className="mb-6">
-            <div className="p-6 border border-white/30 rounded-lg bg-transparent shadow-md">
+            <div className="p-6 rounded-lg bg-transparent text-white">
               {/* 경로 표시 */}
               <div className="text-sm text-white/60 mb-2 text-left">
                 ASSEMBLE 게시판 &lt; 상세글
               </div>
 
               {/* 제목 */}
-              <h2 className="text-2xl font-bold text-white text-left mb-1">
-                {board.title}
-              </h2>
+              <h2 className="text-2xl font-bold text-left mb-1">{board.title}</h2>
 
               {/* 작성자 */}
               <p className="text-sm text-white/60 text-left mb-4">
@@ -129,7 +127,7 @@ const DetailAssemble = () => {
               </p>
 
               {/* 내용 */}
-              <div className="text-white text-left">
+              <div className="text-left">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -162,9 +160,9 @@ const DetailAssemble = () => {
 
               {/* 좋아요 / 댓글 / 삭제 */}
               <div className="flex justify-between items-center mt-6">
-                {/* 좋아요 / 댓글 */}
+                {/* 좋아요 & 댓글 */}
                 <div className="flex items-center space-x-6 text-white">
-                  {isLike === true ? (
+                  {isLike ? (
                     <span
                       className="cursor-pointer flex items-center"
                       onClick={() => handleCancelLike(assembleBoardId)}
@@ -189,20 +187,24 @@ const DetailAssemble = () => {
                 </div>
 
                 {/* 삭제 */}
-                {nickName === board.nickName || role === "admin" ? (
+                {(nickName === board.nickName || role === "admin") && (
                   <button
                     className="text-red-400 text-sm hover:underline"
                     onClick={() => boardDeleteButton(assembleBoardId)}
                   >
                     삭제하기
                   </button>
-                ) : null}
+                )}
               </div>
             </div>
           </div>
 
+          {/* 구분선 */}
+          <div className="border-t-4 border-white/70 my-8" />
+
+
           {/* 이전 버튼 */}
-          <div>
+          <div className="mt-8">
             <Link
               to="/board/assemble"
               className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700"
@@ -212,9 +214,16 @@ const DetailAssemble = () => {
           </div>
         </div>
       </div>
-      <RightSidebar />
+
+      {/* 오른쪽 사이드바 */}
+      <div className="w-full lg:w-1/5">
+        <RightHeader />
+      </div>
     </div>
   );
+
+
+  
 };
 
 export default DetailAssemble;
