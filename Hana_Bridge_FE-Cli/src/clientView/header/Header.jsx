@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { setCategory, setPage } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 import { clearUser, clearAiChat } from "../../store/userSlice.js";
 import Lottie from "lottie-react";
@@ -50,7 +51,9 @@ const BoardHeader = () => {
           className="flex items-center space-x-4 no-underline cursor-pointer"
           onClick={() => {
             if (email && email !== "guest@email.com") {
-              navigate("/dashboard");
+              dispatch(setPage({page:'home'}));
+              dispatch(setCategory({category:''}));
+              navigate("/dashboard/home");
             } else {
               navigate("/");
             }

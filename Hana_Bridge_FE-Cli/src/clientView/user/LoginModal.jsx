@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/userSlice";
+import { setUser, setCategory, setPage } from "../../store/userSlice";
 
 const LoginModal = ({ onClose, onSwitch }) => {
   const [email, setEmail] = useState("");
@@ -28,7 +28,8 @@ const LoginModal = ({ onClose, onSwitch }) => {
           })
         );
         onClose(); //모달 닫기
-        navigate("/dashBoard"); //대쉬보드로 이동
+        dispatch(setPage({page: 'home'}));
+        navigate("/dashBoard/home"); //대쉬보드로 이동
       })
       .catch((error) => {
         console.error("Login error:", error);

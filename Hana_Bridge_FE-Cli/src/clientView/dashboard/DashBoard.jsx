@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 import Header from "../header/Header.jsx";
 import RightHeader from "../header/RightHeader.jsx";
@@ -14,6 +15,46 @@ const DashBoard = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
   const lottieRef = useRef();
+
+  const page = useSelector((state) => state.user.page);
+  let RenderContent;
+
+  //page값에 따른 조건부 렌더링
+  switch (page) {
+    case "home":
+      RenderContent = 
+      <>
+      <div className="relative mb-8">
+        <input
+          type="text"
+          placeholder="Search Your Board"
+          className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
+        <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
+      </div>
+      <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
+      <DashboardCards />
+      </>;
+      break;
+    case "mypage":
+      RenderContent = <div>내 정보</div>;
+      break;
+    case "myposts":
+      RenderContent = <div>내 글 모음</div>;
+      break;
+    default:
+      RenderContent = 
+      <>
+      <div className="relative mb-8">
+        <input
+          type="text"
+          placeholder="Search Your Board"
+          className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
+        <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
+      </div>
+      <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
+      <DashboardCards />
+      </>;
+  }
 
   useEffect(() => {
     if (lottieRef.current) {
@@ -66,16 +107,7 @@ const DashBoard = () => {
             {/* Main Content */}
             <div className="w-full lg:w-3/5">
               <div className="max-w-3xl mx-auto px-4 sm:px-6">
-                <div className="relative mb-8">
-                  <input
-                    type="text"
-                    placeholder="Search Your Board"
-                    className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow"
-                  />
-                  <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
-                </div>
-                <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
-                <DashboardCards />
+                {RenderContent}
               </div>
             </div>
 

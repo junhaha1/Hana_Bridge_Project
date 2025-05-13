@@ -7,8 +7,8 @@ import { createSlice } from '@reduxjs/toolkit';
    accessToken: 'guest',
    role: 'guest',
    chatMessages: [],
-   category: 'code',
-   page: 'home',
+   category: '',
+   page: '',
  };
  
  const userSlice = createSlice({
@@ -33,8 +33,8 @@ import { createSlice } from '@reduxjs/toolkit';
        state.nickName = 'guest';
        state.accessToken = 'guest';
        state.role = 'guest';
-       state.category = 'code';
-       state.page = 'home';
+       state.category = '';
+       state.page = '';
      },
      setAiChat: (state, action) => {
         state.chatMessages = action.payload.chatMessages;
