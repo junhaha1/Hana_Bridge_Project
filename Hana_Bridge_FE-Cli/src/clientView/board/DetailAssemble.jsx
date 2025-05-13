@@ -100,14 +100,14 @@ const DetailAssemble = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 flex flex-col lg:flex-row">
+      <Header />
       {/* 왼쪽 사이드바 */}
       <div className="w-full lg:w-1/5">
         <LeftHeader />
       </div>
 
       {/* 메인 콘텐츠 */}
-      <div className="flex-1 flex flex-col w-full">
-        <Header />
+      <div className="w-full lg:w-3/5">       
 
         <div className="mt-20 max-w-screen-lg mx-auto px-4">
           {/* 게시글 카드 (테두리 제거) */}
@@ -200,7 +200,7 @@ const DetailAssemble = () => {
           </div>
 
           {/* 구분선 */}
-          <div className="border-t-4 border-white/70 my-8" />
+          <div className="border-t-2 border-white/70 my-8" />
 
 
           {/* 이전 버튼 */}

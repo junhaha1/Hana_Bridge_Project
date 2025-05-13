@@ -54,52 +54,51 @@ const AssembleBoard = () => {
   }
 
   return (
-      <div className="w-full flex flex-col">
-        {/* 반응형 3열 레이아웃 */}
-        <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
-          {/* Main Content - Assemble 게시판 */}
-          <div className="w-full lg:w-3/5">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl font-bold mb-4">Assemble 게시판</h2>
-              <div className="grid gap-6">
-                {boards.map((post) => (
-                  <div
-                    key={post.assembleBoardId}
-                    className="border border-white/30 bg-white/5 backdrop-blur-sm rounded-md p-4 shadow-md hover:shadow-lg transition duration-200"
-                  >
-                    <div className="flex justify-between items-start">
-                      <h3
-                        onClick={() => boardClick(post.assembleBoardId)}
-                        className="text-white text-lg font-semibold cursor-pointer hover:underline"
-                      >
-                        {post.title}
-                      </h3>
-                      <span className="text-sm text-purple-300">{post.nickName}</span>
-                    </div>
+    <div className="grid gap-6">
+      {boards.map((post) => (
+        <div
+          key={post.assembleBoardId}
+          className="border border-white/30 bg-white/5 backdrop-blur-sm rounded-md p-4 shadow-md hover:shadow-lg transition duration-200"
+        >
+          <div className="flex justify-between items-start">
+            <h3
+              onClick={() => boardClick(post.assembleBoardId)}
+              className="text-white text-lg font-semibold cursor-pointer hover:underline"
+            >
+              {post.title}
+            </h3>
+            <span className="text-sm text-purple-300">{post.nickName}</span>
+          </div>
 
-                    <p className="text-sm text-gray-200 mt-2 mb-4">
-                      {post.content.length > 80
-                        ? post.content.slice(0, 80) + '...'
-                        : post.content}
-                    </p>
+          <p className="text-sm text-gray-200 mt-2 mb-4">
+            {post.content.length > 80
+              ? post.content.slice(0, 80) + '...'
+              : post.content}
+          </p>
 
-                    <div className="flex justify-end gap-4">
-                      <span className="text-indigo-300 flex items-center text-sm">
-                        <img src="/images/blueGood.png" alt="좋아요" width="18" className="mr-1" />
-                        {post.likeCount}
-                      </span>
-                      <span className="text-gray-300 flex items-center text-sm">
-                        <img src="/images/comment.png" alt="댓글" width="18" className="mr-1" />
-                        {post.commentCount}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div className="flex justify-end gap-4">
+            <span className="text-indigo-300 flex items-center text-sm">
+              <img
+                src="/images/blueGood.png"
+                alt="좋아요"
+                width="18"
+                className="mr-1"
+              />
+              {post.likeCount}
+            </span>
+            <span className="text-gray-300 flex items-center text-sm">
+              <img
+                src="/images/comment.png"
+                alt="댓글"
+                width="18"
+                className="mr-1"
+              />
+              {post.commentCount}
+            </span>
           </div>
         </div>
-      </div>
+      ))}
+    </div>
   );
 
 };
