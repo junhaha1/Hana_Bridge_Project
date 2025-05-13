@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import Header from '../Header';
+import Header from '../header/Header';
 import ApiClient from '../../service/ApiClient';
 
 import "../../css/AIChat/AIChat.css"

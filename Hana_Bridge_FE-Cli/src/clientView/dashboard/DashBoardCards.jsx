@@ -8,7 +8,7 @@ const DashboardCards = () => {
   "no-underline bg-white text-black px-8 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-transform duration-300 h-32 flex flex-col justify-center";
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 w-full max-w-5xl">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6 w-full max-w-3xl mx-auto">
       <Link to="/mypage" className={cardClass}>
         <h3 className="text-xl font-semibold">My Page</h3>
       </Link>
