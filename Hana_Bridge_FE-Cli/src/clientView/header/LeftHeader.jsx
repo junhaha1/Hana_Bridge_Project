@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { setCategory } from '../store/userSlice';
+import { setCategory } from '../../store/userSlice';
 import { useState } from 'react';
 
 const boards = [

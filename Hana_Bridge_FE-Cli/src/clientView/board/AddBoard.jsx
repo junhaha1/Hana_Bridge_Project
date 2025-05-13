@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ApiClient from '../../service/ApiClient';
-import Header from '../Header';
+import Header from '../header/Header';
 import { Container, Form, Button, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, Link } from "react-router-dom";

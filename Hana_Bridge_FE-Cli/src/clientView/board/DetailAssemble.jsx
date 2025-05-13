@@ -1,6 +1,6 @@
 import React from 'react';
 import ApiClient from "../../service/ApiClient";
-import Header from '../Header';
+import Header from '../header/Header';
 import { useSelector } from 'react-redux';
 import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";

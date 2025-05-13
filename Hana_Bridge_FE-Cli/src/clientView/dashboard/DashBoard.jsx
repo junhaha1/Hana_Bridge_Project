@@ -1,11 +1,14 @@
-import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import Header from "../Header.jsx";
-import RightSidebar from "./RightSideBar.jsx";
+
+import Header from "../header/Header.jsx";
+import RightSidebar from "../header/RightHeader.jsx";
+import LeftHeader from "../header/LeftHeader.jsx";
+
 import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
+
+
 import DashboardCards from "./DashBoardCards.jsx";
-import LeftHeader from "../LeftHeader.jsx";
 
 const DashBoard = () => {
   const [fadeOut, setFadeOut] = useState(false);
