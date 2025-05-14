@@ -65,7 +65,7 @@ public class BoardApiController {
 
     //글 등록
     @PostMapping("/article")
-    public ResponseEntity<Board> addBoard(@RequestHeader("Authorization") String authHeader,
+    public ResponseEntity<Long> addBoard(@RequestHeader("Authorization") String authHeader,
                                           @RequestBody BoardAddRequest request) {
         String accessToken = authHeader.replace("Bearer ", "");
         String role = tokenService.findRoleByToken(accessToken);
@@ -75,9 +75,8 @@ public class BoardApiController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
             request.connectionUserEntity(usersService.findByEmail(email));
-            boardService.save(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .build();
+            Long boardId = boardService.save(request).getBoardId();
+            return ResponseEntity.ok().body(boardId);
         }
     }
 
