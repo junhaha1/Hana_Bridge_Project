@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setPlayFlag } from "../../store/userSlice.js";
 
 import Header from "../header/Header.jsx";
 import RightHeader from "../header/RightHeader.jsx";
@@ -14,9 +15,10 @@ import DashboardCards from "./DashBoardCards.jsx";
 //대쉬보드
 const DashBoard = () => {
   const [fadeOut, setFadeOut] = useState(false);
-  const [animationDone, setAnimationDone] = useState(false);
   const lottieRef = useRef();
+  const playFlag = useSelector((state) => state.user.playFlag);
 
+  const dispatch = useDispatch();
   const page = useSelector((state) => state.user.page);
   let RenderContent;
 
@@ -57,8 +59,9 @@ const DashBoard = () => {
   }, []);
 
   const handleComplete = () => {
+    console.log("before playFlag: " + playFlag);
     setFadeOut(true);
-    setTimeout(() => setAnimationDone(true), 700);
+    setTimeout(dispatch(setPlayFlag({playFlag: false})), 700);
   };
 
   return (
@@ -67,7 +70,7 @@ const DashBoard = () => {
       <Header />
 
       {/* 로딩 애니메이션 */}
-      {!animationDone && (
+      {playFlag && (
         <div
           className={`fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-r from-indigo-900 to-purple-900
           transition-opacity duration-700 ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
@@ -85,7 +88,7 @@ const DashBoard = () => {
       )}
 
       {/* 대시보드 본문 */}
-      {animationDone && (
+      {!playFlag &&(
         <div className="w-full flex flex-col ">
           {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
           <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
