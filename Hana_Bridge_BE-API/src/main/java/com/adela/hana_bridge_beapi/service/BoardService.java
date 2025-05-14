@@ -25,6 +25,10 @@ public class BoardService {
         return boardRepository.save(request.toEntity());
     }
 
+    public List<Board> findByUserId(Long userId){
+        List<Board> boards = boardRepository.findByUsers_Id(userId);
+        return boards;
+    }
     //글 전체 조회
     public List<Board> findByCategory(String category) {
         List<Board> boards = boardRepository.findByCategory(category);
