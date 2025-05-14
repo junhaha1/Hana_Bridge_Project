@@ -11,13 +11,6 @@ const RightHeader = () => {
           </div>
         </div>
       </div>
-
-      {/* 버튼 */}
-      <div className="mt-auto mb-6 w-full">
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-full shadow-md">
-          ✨ Code Helper
-        </button>
-      </div>
     </div>
   );
 };

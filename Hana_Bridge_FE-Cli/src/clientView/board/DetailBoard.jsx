@@ -1,8 +1,6 @@
-import React from 'react';
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import { useSelector } from 'react-redux';
-import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
@@ -11,9 +9,11 @@ import Comments from './Comments';
 import '../../css/Board/DetailBoard.css';
 import LeftHeader from '../header/LeftHeader';
 import RightHeader from '../header/RightHeader';
+import CodeHelper from '../CodeHelper';
 
 //상세 게시글 보드
 const DetailBoard = () => {
+  const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -35,7 +35,6 @@ const DetailBoard = () => {
   const location = useLocation();
 
   const [category, setCategory] = useState(location.state?.category);
-
   const [commentCount, setCommentCount] = useState(0);
 
   // const category = location.state?.category;
@@ -282,6 +281,7 @@ const DetailBoard = () => {
           <RightHeader />
         </div>
       </div>
+      {email !== "guest@email.com" && <CodeHelper />}
     </div>
   );
 };
