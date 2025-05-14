@@ -8,7 +8,7 @@ import Header from "./header/Header.jsx";
 import LoginModal from './user/LoginModal.jsx';
 import SignUpModal from "./user/SignUpModal.jsx";
 
-import codeHelper from "../../public/animations/codehelper.json";
+import homeCodeHelper from "../../public/animations/homecodehelper.json";
 import codeHome from "../../public/animations/codehome.json";
 import assembleHome from "../../public/animations/assemblehome.json";
 
@@ -85,7 +85,7 @@ const Home = () => {
           </a>
         </div>
         <div className="w-[440px] h-[440px] transform transition-transform duration-500 ease-in-out origin-center">
-          <Lottie animationData={codeHelper} loop={true} />
+          <Lottie animationData={homeCodeHelper} loop={true} />
         </div>
       </section>
 

@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Container, Card, Form, Button, ButtonGroup, Row, Col, Modal } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
@@ -11,8 +10,7 @@ import RightHeader from '../header/RightHeader';
 import ApiClient from '../../service/ApiClient';
 
 import "../../css/Scroll.css";
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat } from '../../store/userSlice';
 
 

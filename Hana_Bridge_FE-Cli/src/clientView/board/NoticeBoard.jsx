@@ -1,9 +1,7 @@
-import React from 'react';
 import ApiClient from '../../service/ApiClient';
 import { useSelector } from 'react-redux';
-import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 import '../../css/Board/CommonBoard.css';
 

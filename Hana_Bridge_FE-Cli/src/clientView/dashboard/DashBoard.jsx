@@ -11,6 +11,7 @@ import HelloWorld from "../../../public/animations/helloworld.json";
 
 import MyPage from "./MyPage.jsx";
 import DashboardCards from "./DashBoardCards.jsx";
+import CodeHelper from "../CodeHelper.jsx";
 
 //대쉬보드
 const DashBoard = () => {
@@ -89,6 +90,7 @@ const DashBoard = () => {
 
       {/* 대시보드 본문 */}
       {!playFlag &&(
+        <>
         <div className="w-full flex flex-col ">
           {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
           <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
@@ -118,6 +120,8 @@ const DashBoard = () => {
             </div>
           </div>
         </div>
+        <CodeHelper/>
+        </>
       )}
     </div>
   );

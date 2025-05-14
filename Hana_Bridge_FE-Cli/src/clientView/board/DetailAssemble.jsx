@@ -1,10 +1,8 @@
-import React from 'react';
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import { useSelector } from 'react-redux';
-import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 
 import ReactMarkdown from "react-markdown";
@@ -14,9 +12,11 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import LeftHeader from "../header/LeftHeader";
 import RightHeader from "../header/RightHeader";
+import CodeHelper from '../CodeHelper';
 
 //어셈블 상세 게시글 보드
 const DetailAssemble = () => {
+  const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -220,6 +220,7 @@ const DetailAssemble = () => {
       <div className="w-full lg:w-1/5">
         <RightHeader />
       </div>
+      {email !== "guest@email.com" && <CodeHelper />}
     </div>
   );
 
