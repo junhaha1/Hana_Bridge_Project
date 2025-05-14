@@ -1,10 +1,9 @@
 import React from 'react';
 import ApiClient from '../../service/ApiClient';
-import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
 import '../../css/Board/AssembleBoard.css';
+import { useSelector } from 'react-redux';
 
 
 const AssembleBoard = () => {
@@ -12,6 +11,7 @@ const AssembleBoard = () => {
   const [category, setCategory] = useState('assemble');
 
   const navigate = useNavigate(); 
+  const nickName = useSelector((state) => state.user.nickName);
 
   useEffect(() => {
     ApiClient.getAssembleBoards()
@@ -64,14 +64,17 @@ const AssembleBoard = () => {
           좋아요 | 최신 날짜
         </span>
         
-        <span
-          className="text-sm text-white/75 hover:underline cursor-pointer"
-          onClick={() => {
-            navigate('/write');
-          }}
-        >
-          글 작성
-        </span>
+        {nickName === 'guest' ? null 
+        : <span
+            className="text-sm text-white/75 hover:underline cursor-pointer"
+            onClick={() => { 
+              navigate('/write');
+            }}
+          >
+            글 작성
+          </span>
+        }
+        
       </div>
       {boards.map((post) => (
         <div

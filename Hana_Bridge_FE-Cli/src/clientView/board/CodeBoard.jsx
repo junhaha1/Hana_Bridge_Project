@@ -7,6 +7,7 @@ const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
   const navigate = useNavigate();
   const category = useSelector((state) => state.user.category);
+  const nickName = useSelector((state) => state.user.nickName);
 
   useEffect(() => {
     ApiClient.getBoards(category)
@@ -53,15 +54,17 @@ const CodeBoard = () => {
         >
           좋아요 | 최신 날짜
         </span>
-        
-        <span
-          className="text-sm text-white/75 hover:underline cursor-pointer"
-          onClick={() => {
-            navigate('/write');
-          }}
-        >
-          글 작성
-        </span>
+
+        {nickName === 'guest' ? null 
+        : <span
+            className="text-sm text-white/75 hover:underline cursor-pointer"
+            onClick={() => { 
+              navigate('/write');
+            }}
+          >
+            글 작성
+          </span>
+        }
       </div>
       {boards.map((post) => (
         <div
