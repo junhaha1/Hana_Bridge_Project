@@ -12,6 +12,7 @@ import ApiClient from '../../service/ApiClient';
 
 import "../../css/AIChat/AIChat.css"
 import "../../css/AIChat/loading.css";
+import "../../css/AIChat/AIScroll.css";
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat } from '../../store/userSlice';
@@ -180,7 +181,7 @@ function AIChat() {
             <div className="max-w-3xl mx-auto px-4 sm:px-6">
               <h1 className="text-3xl font-bold mb-6 text-center">AI Code Helper</h1>
 
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md shadow-md">
+              <div className="custom-scroll bg-white/10 backdrop-blur-sm p-4 rounded-md shadow-md h-[60vh] overflow-y-auto">
                 {messages.map((msg, idx) => (
                   <React.Fragment key={idx}>
                     <div
