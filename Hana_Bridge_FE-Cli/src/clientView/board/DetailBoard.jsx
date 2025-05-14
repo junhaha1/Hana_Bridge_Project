@@ -41,8 +41,12 @@ const DetailBoard = () => {
 
   useEffect(() => {
     ApiClient.getBoard(boardId, accessToken)
-    .then((res) => {
-      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+    .then(async (res) => {
+      if (!res.ok) {
+        const errorData = await res.json(); // JSON으로 파싱
+        alert("errorData: " + errorData.code + " : " + errorData.message);   
+        throw new Error(errorData.message || `서버 오류: ${res.status}`); // message 필드 추출             
+        }
       return res.json();
     })
     .then((data) => {

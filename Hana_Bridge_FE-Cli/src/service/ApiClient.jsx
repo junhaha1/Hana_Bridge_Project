@@ -25,14 +25,45 @@ class ApiClient{
       }
     })
   }
+  //좋아요 갯수 상위 5개 게시글 조회 (CodeBoard, NoticeBoard)
+  static getBestBoard(){
+    console.log("get Best Board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/top',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+  }
   //사용자 본인 게시글 조회 (AssembleBoard)
   static getMyAssemble(accessToken){
-    console.log("get myBoard");
+    console.log("get myAssemble");
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/me',{
       method: "GET", 
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  }
+  //가장 최근 작성한 게시글 5개 조회 (AssembleBoard)
+  static getRecentAssemble(){
+    console.log("get My Recent Assemble Board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/me/recent',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      }
+    })
+  }
+  //좋아요 갯수 상위 5개 게시글 조회 (AssembleBoard)
+  static getBestAssemble(){
+    console.log("get Best Board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/top',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
       }
     })
   }

@@ -12,14 +12,18 @@ const CodeBoard = () => {
 
   useEffect(() => {
     ApiClient.getBoards(category)
-      .then((res) => {
+      .then(async  (res) => {
         if (res.status === 404) {
           console.log("게시글 없음 (404)");
           setBoards(null);
           return null;
         }
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-        return res.json();
+        if (!res.ok) {
+        const errorData = await res.json(); // JSON으로 파싱
+        alert("errorData: " + errorData.code + " : " + errorData.message);   
+        throw new Error(errorData.message || `서버 오류: ${res.status}`); // message 필드 추출             
+        }
+      return res.json();
       })
       .then((data) => {
         if (data === null || (Array.isArray(data) && data.length === 0)) {
