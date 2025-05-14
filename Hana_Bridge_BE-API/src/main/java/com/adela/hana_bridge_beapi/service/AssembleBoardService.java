@@ -3,11 +3,13 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
+import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AssembleBoardService {
     private final AssembleRepository assembleRepository;
+
+    //해당 BoardId 값들에 해당하는 board 가져오기
+    public List<AssembleBoard> findByBoardIds(List<Long> assembleBoardIds) {
+        List<AssembleBoard> assembleBoards = assembleRepository.findByAssembleBoardIdIn(assembleBoardIds);
+        return assembleBoards;
+    }
+
+    //현재 사용자의 글 조회
+    public List<AssembleBoard> findByUserId(Long userId){
+        List<AssembleBoard> assembleBoards = assembleRepository.findByUsers_Id(userId);
+        return assembleBoards;
+    }
+    //현재 사용자의 최근 게시글 5개 조회
+    public List<AssembleBoard> findRecentByUserId(Long userId){
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        List<AssembleBoard> assembleBoards = assembleRepository.findByUsers_IdOrderByCreatedAtDesc(userId, pageRequest);
+        return assembleBoards;
+    }
 
     //모든 assemble 게시글 조회
     public List<AssembleBoard> findAllAssembleBoards() {
