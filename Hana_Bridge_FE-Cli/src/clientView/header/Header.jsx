@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCategory, setPage } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,6 @@ const BoardHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const email = useSelector((state) => state.user.email);
-  const nickName = useSelector((state) => state.user.nickName);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("login");
@@ -28,6 +27,10 @@ const BoardHeader = () => {
   const closeModal = () => {
     setModalOpen(false);
   };
+
+  const moveDashBoard = () => {
+    navigate('/dashBoard/home');
+  }
 
   const handleLogout = () => {
     ApiClient.userLogout()
@@ -104,7 +107,7 @@ const BoardHeader = () => {
 
       {/* 로그인/회원가입 모달 */}
       {modalOpen && modalType === "login" && (
-        <LoginModal onClose={closeModal} onSwitch={openModal} />
+        <LoginModal onClose={closeModal} onSwitch={openModal} onSuccess={moveDashBoard}/>
       )}
       {modalOpen && modalType === "signup" && (
         <SignUpModal onClose={closeModal} onSwitch={openModal} />
