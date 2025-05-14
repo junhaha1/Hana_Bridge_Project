@@ -14,6 +14,29 @@ class ApiClient{
   static AIChat = "/chat"
 
 
+  //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
+  static getMyBoard(accessToken){
+    console.log("get myBoard");
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/me',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  }
+  //사용자 본인 게시글 조회 (AssembleBoard)
+  static getMyAssemble(accessToken){
+    console.log("get myBoard");
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/me',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  }
+
   //OpenAi chat
   static sendMessage(accessToken, promptLevel, preContent, question){
     console.log("send Message to AI: " + question);
