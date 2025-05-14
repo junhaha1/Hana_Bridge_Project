@@ -10,6 +10,7 @@ import LeftHeader from "./header/LeftHeader";
 import RightHeader from "./header/RightHeader";
 
 
+
 //게시판 보드
 const MainBoard = () => {
   const navigate = useNavigate();
