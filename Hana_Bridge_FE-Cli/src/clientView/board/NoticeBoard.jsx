@@ -53,8 +53,21 @@ const NoticeBoard = () => {
   if (boards === null) {
     return (
       <div className="flex flex-col items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 mx-4 text-center">
-        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
-        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
+        <h3 className="text-2xl font-bold mb-2">공지사항이 없습니다.</h3>
+        {/* 나중에 관리자만 글 작성 버튼 보이게 수정 */}
+        {nickName === 'guest' ? null 
+        : <div> 
+          <button
+            type="button"
+            onClick={() => { 
+              navigate('/write');
+            }}
+            className={` font-bold hover:underline cursor-pointer px-4 py-2 rounded-full text-sm bg-white text-indigo-900 font-bold`}
+          >
+            글 작성
+          </button>
+          </div>
+        }
       </div>
     );
   }

@@ -115,7 +115,10 @@ function AIChat() {
   
     setIsLoading(true); 
     ApiClient.sendMessage(accessToken, promptLevel, result, input)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         const aiResponse = { role: '답변', content: data.answer };
         const finalMessages = [...updatedMessages, aiResponse]; // 사용자 + AI 메시지 모두 포함
@@ -153,13 +156,17 @@ function AIChat() {
     const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
     ApiClient.postAssemble(accessToken, promptLevel, result, coreContent)
-    .then((res) => res.json())
+    .then((res) => {
+      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+      return res.json();
+    })
     .then((data) => {      
       const assembleboardId  = data.assembleBoardId;
       console.log(assembleboardId);
       setIsPostLoading(false);
       navigate(`/detailAssemble/${assembleboardId}`);
     })
+    .catch((err) => console.error("API 요청 실패:", err));
   };
 
 

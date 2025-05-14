@@ -13,8 +13,17 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
 
   const loginButton = (email, pw) => {
     ApiClient.userLogin(email, pw)
-      .then((res) => {
-        if (!res.ok) throw new Error("User not found");
+      .then(async  (res) => {
+        if (!res.ok) {
+          //error handler 받음 
+          const errorData = await res.json(); // JSON으로 파싱
+          console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+          // 👇 error 객체에 code를 추가해 던짐
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;   
+        }
         return res.json();
       })
       .then((data) => {
