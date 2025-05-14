@@ -9,6 +9,7 @@ import { createSlice } from '@reduxjs/toolkit';
    chatMessages: [],
    category: '',
    page: '',
+   playFlag: true,
  };
  
  const userSlice = createSlice({
@@ -35,6 +36,7 @@ import { createSlice } from '@reduxjs/toolkit';
        state.role = 'guest';
        state.category = '';
        state.page = '';
+       state.playFlag = true;
      },
      setAiChat: (state, action) => {
         state.chatMessages = action.payload.chatMessages;
@@ -52,9 +54,12 @@ import { createSlice } from '@reduxjs/toolkit';
     },
     setPage: (state, action) =>{
       state.page = action.payload.page;
+    },
+    setPlayFlag: (state, action) => {
+      state.playFlag = action.payload.playFlag;
     }
    },
  });
  
- export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage } = userSlice.actions;
+ export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, setPlayFlag } = userSlice.actions;
  export default userSlice.reducer;
