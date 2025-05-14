@@ -200,7 +200,7 @@ class ApiClient{
 
   //사용자 로그인
   static userLogin(email, password){
-    console.log("login by Email: " + email + ", Password: " + password);
+    console.log("login by Email: " + email);
     return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/login', {
       method: "POST",credentials: "include", 
       headers: {
