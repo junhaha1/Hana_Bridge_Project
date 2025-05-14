@@ -54,6 +54,24 @@ const NoticeBoard = () => {
 
   return (
     <div className="grid gap-6">
+      <div className="flex gap-3 justify-end">
+        <span
+          className="text-sm text-white/75 hover:underline cursor-pointer"
+          onClick={() => {
+          }}
+        >
+          좋아요 | 최신 날짜
+        </span>
+        
+        <span
+          className="text-sm text-white/75 hover:underline cursor-pointer"
+          onClick={() => {
+            navigate('/write');
+          }}
+        >
+          글 작성
+        </span>
+      </div>
       {boards.map((post) => (
         <div
           key={post.boardId}
