@@ -43,10 +43,15 @@ const DetailBoard = () => {
     ApiClient.getBoard(boardId, accessToken)
     .then(async (res) => {
       if (!res.ok) {
+        //error handler 받음 
         const errorData = await res.json(); // JSON으로 파싱
-        alert("errorData: " + errorData.code + " : " + errorData.message);   
-        throw new Error(errorData.message || `서버 오류: ${res.status}`); // message 필드 추출             
-        }
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
       return res.json();
     })
     .then((data) => {
@@ -56,7 +61,13 @@ const DetailBoard = () => {
       setIsLike(data.goodCheck);      
       setCommentCount(data.commentCount);
     })
-    .catch((err) => console.error("API 요청 실패:", err)); 
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    }); 
   }, [isEdit, boardId]);
 
   useEffect(() => {
@@ -72,34 +83,70 @@ const DetailBoard = () => {
   //삭제 버튼
   const boardDeleteButton = (boardId) => {
     ApiClient.deleteBoard(boardId, accessToken, category)
-    .then(res => {
+    .then(async (res) => {
       if (!res.ok) {
-          throw new Error(`서버 오류: ${res.status}`);
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
       }
       console.log("게시글 삭제 완료!");
       navigate('/');
     })
-    .catch(error => {
-        console.error("게시글 삭제 중 오류 발생:", error);
-    });
+    .catch((err) => {
+      console.error("API 요청 실패(게시글 삭제 중 오류):", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    }); 
   }
 
   //수정 저장 버튼
   const saveBoard = (boardId) => {
     ApiClient.updateBoard(boardId, accessToken, category, title, content, code, updateAt)
-    .then(() => {
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
       console.log("게시글 수정 완료 ! ");
       navigate(`/detailBoard/${boardId}`, {state: {category: category}});
       setIsEdit(false);
     })
-    .catch((err) => console.error("API 요청 실패:", err));
+    .catch((err) => {
+      console.error("API 요청 실패(게시글 수정 중 오류):", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    }); 
   }
 
-  //좋아요
+  //좋아요 추가 
   const handleLike = (boardId) => {
     ApiClient.sendBoardGood(boardId, accessToken)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+      .then(async(res) => {
+        if (!res.ok) {
+          //error handler 받음 
+          const errorData = await res.json(); // JSON으로 파싱
+          console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+          // 👇 error 객체에 code를 추가해 던짐
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;  
+        }
         return res.json();
       })
       .then((data) => {
@@ -107,25 +154,42 @@ const DetailBoard = () => {
         setIsLike(data.goodCheck);
         setLikeCount(data.likeCount);  // 추가
       })
-      .catch((err) => console.error("API 요청 실패:", err));    
+      .catch((err) => {
+        console.error("API 요청 실패(좋아요 추가 중 오류):", err);
+        // 404일 때 에러 페이지로 이동
+        if (err.code && err.code.includes('NOT_FOUND')) {
+          navigate("/error");
+        }
+    });  
   }
   //좋아요 삭제
   const handleCancelLike = (boardId) => {
     ApiClient.deleteBoardGood(boardId, accessToken)
-      .then(res => {
-        if (!res.ok) {
-            throw new Error(`서버 오류: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) =>{
-        console.log("좋아요 취소!");
-        setIsLike(data.goodCheck);
-        setLikeCount(data.likeCount);  // 추가
-      })
-      .catch(error => {
-          console.error("삭제 중 오류 발생:", error);
-      });
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
+      return res.json();
+    })
+    .then((data) =>{
+      console.log("좋아요 취소!");
+      setIsLike(data.goodCheck);
+      setLikeCount(data.likeCount);  // 추가
+    })
+    .catch((err) => {
+      console.error("API 요청 실패(좋아요 취소 중 오류):", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    });  
   }
   
 

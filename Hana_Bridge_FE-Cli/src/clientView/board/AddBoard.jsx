@@ -28,7 +28,17 @@ const AddBoard = () => {
     setUpdateAt(new Date());
     // TODO: API 요청 처리
     ApiClient.sendBoard(accessToken, title, category, content, code, createAt, updateAt)
-    .then(() => {
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
       alert("게시글이 등록되었습니다. ");
       navigate('/');
     })

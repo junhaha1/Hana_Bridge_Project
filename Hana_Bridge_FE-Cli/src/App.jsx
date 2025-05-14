@@ -10,6 +10,7 @@ import DetailAssemble from './clientView/board/DetailAssemble';
 import AIChat from './clientView/AIchat/AIChat';
 import Home from './clientView/Home';
 import DashBoard from './clientView/dashboard/DashBoard';
+import NotFound from './clientView/error/NotFound';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Route path="/detailAssemble/:assembleBoardId" element={<DetailAssemble/>} />{/* Assemble 게시글 상세 화면 */}
       <Route path="/write" element={<AddBoard/>} />  {/* 게시글 작성 화면 */}
       <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
+      <Route path="/error" element={<NotFound/>} /> {/* 404 화면 */}
     </Routes>
   );
 }
