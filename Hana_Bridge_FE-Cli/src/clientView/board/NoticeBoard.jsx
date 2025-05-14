@@ -8,6 +8,7 @@ import '../../css/Board/CommonBoard.css';
 const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
   const category = useSelector((state) => state.user.category);
+  const nickName = useSelector((state) => state.user.nickName);
 
   const navigate = useNavigate(); 
 
@@ -52,6 +53,26 @@ const NoticeBoard = () => {
 
   return (
     <div className="grid gap-6">
+      <div className="flex gap-3 justify-end">
+        <span
+          className="text-sm text-white/75 hover:underline cursor-pointer"
+          onClick={() => {
+          }}
+        >
+          좋아요 | 최신 날짜
+        </span>
+        
+        {nickName === 'guest' ? null 
+        : <span
+            className="text-sm text-white/75 hover:underline cursor-pointer"
+            onClick={() => { 
+              navigate('/write');
+            }}
+          >
+            글 작성
+          </span>
+        }
+      </div>
       {boards.map((post) => (
         <div
           key={post.boardId}
