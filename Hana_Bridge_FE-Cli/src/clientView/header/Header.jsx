@@ -35,7 +35,7 @@ const BoardHeader = () => {
   const handleLogout = () => {
     ApiClient.userLogout()
       .then((res) => {
-        if (!res.ok) throw new Error("서버 오류");
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
         dispatch(clearUser());
         dispatch(clearAiChat());
         localStorage.removeItem("userState");

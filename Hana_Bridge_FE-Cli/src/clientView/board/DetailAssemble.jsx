@@ -232,7 +232,7 @@ const DetailAssemble = () => {
                 </div>
 
                 {/* 삭제 */}
-                {(nickName === board.nickName || role === "admin") && (
+                {(nickName === board.nickName || role === "ROLE_ADMIN") && (
                   <button
                     className="text-red-400 text-sm hover:underline"
                     onClick={() => boardDeleteButton(assembleBoardId)}
