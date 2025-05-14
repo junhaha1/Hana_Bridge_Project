@@ -12,7 +12,7 @@ import ApiClient from '../../service/ApiClient';
 
 import "../../css/AIChat/AIChat.css"
 import "../../css/AIChat/loading.css";
-import "../../css/AIChat/AIScroll.css";
+import "../../css/Scroll.css";
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat } from '../../store/userSlice';
@@ -266,10 +266,11 @@ function AIChat() {
                 </div>                            
 
                 <div className="w-full flex justify-center px-4 pb-6 mt-2">
-                  <div className="w-full max-w-4xl flex items-center gap-2 bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10">
+                  <div className="relative w-full max-w-4xl bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10">
+                    {/* textarea + 버튼 */}
                     <textarea
                       rows={1}
-                      className="flex-1 resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none"
+                      className="custom-scroll w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none pr-10"
                       placeholder="메시지를 입력하세요..."
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
@@ -279,12 +280,13 @@ function AIChat() {
                     />
                     <button
                       onClick={sendMessage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 hover:opacity-80"
+                      className="absolute right-10 top-3/4 -translate-y-1/2 hover:opacity-80"
                     >
                       <img src="/images/send.png" alt="보내기" width="25" />
                     </button>
                   </div>
                 </div>
+
               </div>              
             </div>
           </div>

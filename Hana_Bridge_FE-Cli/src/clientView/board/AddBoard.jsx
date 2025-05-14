@@ -37,109 +37,108 @@ const AddBoard = () => {
   };
 
   return (
-    <>
-    <Header />
+    <div className="w-screen min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 text-white p-6">
+      <Header />
 
-    <Container className="add-board-container text-start">
-      <h4 className="fw-bold mb-4 text-start">글 작성하기</h4>
+      <div className="max-w-3xl mx-auto mt-24">
+        <h4 className="text-2xl font-bold mb-3 pb-2">글 작성하기</h4>
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          {role === "ROLE_ADMIN" ? (
-            <>
-            <Form.Label className="fw-semibold text-start">게시판 선택<span className="text-danger">*</span></Form.Label>
-            <div>
-              <ToggleButtonGroup
-                type="radio"
-                className="custom-toggle-group"
-                name="board"
-                value={category}
-                onChange={val => setCategory(val)}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 카테고리 선택 */}
+          <div>
+            <label className="block font-semibold mb-2">
+              {role === "ROLE_ADMIN" ? "게시판 선택" : "게시판 카테고리"}
+              <span className="text-red-500">*</span>
+            </label>
+
+            <div className="flex gap-2 flex-wrap">
+              {role === "ROLE_ADMIN" && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setCategory('notice')}
+                    className={`px-4 py-2 rounded-full text-sm ${
+                      category === 'notice'
+                        ? 'bg-white text-indigo-900 font-bold'
+                        : 'border border-white text-white'
+                    }`}
+                  >
+                    NOTICE 게시판
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => setCategory('code')}
+                className={`px-4 py-2 rounded-full text-sm ${
+                  category === 'code'
+                    ? 'bg-white text-indigo-900 font-bold'
+                    : 'border border-white text-white'
+                }`}
               >
-                <ToggleButton
-                  id="notice-board"                  
-                  variant={category === 'notice' ? 'primary' : 'outline-secondary'}
-                  value="notice"
-                >
-                  NOTICE 게시판
-                </ToggleButton>
-                <ToggleButton
-                  id="code-board"
-                  variant={category === 'code' ? 'primary' : 'outline-secondary'}
-                  value="code"
-                >
-                  CODE 게시판
-                </ToggleButton>
-              </ToggleButtonGroup>
+                CODE 게시판
+              </button>
             </div>
-            </>
-          ):(
-            <>
-            <Form.Label className="fw-semibold text-start">게시판 카테고리<span className="text-danger">*</span></Form.Label>
+          </div>
+
+          {/* 제목 */}
+          <div>
+            <label className="block font-semibold mb-2">
+              제목<span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="게시글 제목을 적어 주세요"
+              className="w-full bg-transparent border-b border-white text-white placeholder-white/70 focus:outline-none focus:ring-0"
+            />
+          </div>
+
+          {/* 코드 작성 */}
+          {category === 'code' && (
             <div>
-              <ToggleButtonGroup
-                type="radio"
-                className="custom-toggle-group"
-                name="board"
-                value={category}
-                onChange={val => setCategory(val)}
-              > 
-                <ToggleButton
-                  id="code-board"
-                  variant={category === 'code' ? 'primary' : 'outline-secondary'}
-                  value="code"
-                >
-                  CODE 게시판
-                </ToggleButton>
-              </ToggleButtonGroup>              
+              <textarea
+                rows={10}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="작성할 코드/에러를 적어 주세요"
+                className="w-full bg-transparent border border-white text-white placeholder-white/70 rounded-md p-3 resize-none focus:outline-none focus:ring-0"
+              />
             </div>
+          )}
 
-            </>
-          )}          
-        </Form.Group>
+          {/* 본문 작성 */}
+          <div>
+            <textarea
+              rows={10}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="작성할 글을 적어 주세요"
+              className="w-full bg-transparent border border-white text-white placeholder-white/70 rounded-md p-3 resize-none focus:outline-none focus:ring-0"
+            />
+          </div>
 
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold text-start">제목<span className="text-danger">*</span></Form.Label>
-          <Form.Control
-            type="text"
-            className='custom-input'
-            placeholder="게시글 제목을 적어 주세요"
-            value={title}
-            onChange={e => setTitle(e.target.value)} />
-        </Form.Group>
-
-        {category === 'code' ? (
-        <Form.Group className="mb-3">
-          <Form.Control
-            as="textarea"
-            rows={10}
-            placeholder="작성할 코드/에러를 적어 주세요"
-            value={code}
-            onChange={e => setCode(e.target.value)} />
-        </Form.Group>
-      ):null}
-
-        <Form.Group className="mb-4">
-          <Form.Control
-            as="textarea"
-            rows={10}
-            placeholder="작성할 글을 적어 주세요"
-            value={content}
-            onChange={e => setContent(e.target.value)} />
-        </Form.Group>
-
-        <div className="text-center">
-          <Button type="submit" variant="primary" className="px-5">
-            작성하기
-          </Button>
-          <Link className="btn btn-success btn-sm me-2" to="/">
-            처음으로 
-          </Link>
-        </div>
-      </Form>
-    </Container>
-    </>
+          {/* 버튼 */}
+          <div className="flex justify-center gap-4">
+            <button
+              type="submit"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-md"
+            >
+              작성하기
+            </button>
+            <Link
+              to="/"
+              className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm"
+            >
+              처음으로
+            </Link>
+          </div>
+        </form>
+      </div>
+    </div>
   );
+
 };
 
 export default AddBoard;

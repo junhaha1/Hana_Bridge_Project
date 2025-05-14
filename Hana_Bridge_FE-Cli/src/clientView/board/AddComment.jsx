@@ -4,6 +4,7 @@ import ApiClient from '../../service/ApiClient';
 
 import '../../css/Board/AddComment.css';
 import '../../css/Common.css';
+import "../../css/Scroll.css";
 
 const AddComment = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -60,7 +61,7 @@ const AddComment = (props) => {
           onInput={handleResizeHeight}
           onChange={(e) => setContent(e.target.value)}
           placeholder="댓글을 입력하세요."
-          className="w-full resize-none p-3 pr-10 bg-transparent text-white placeholder-white/60 rounded-md border border-white/30"
+          className="custom-scroll w-full resize-none p-3 pr-10 bg-transparent text-white placeholder-white/60 rounded-md border border-white/30"
         />
         
         <button
