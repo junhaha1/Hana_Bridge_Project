@@ -19,6 +19,11 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
 
+    //해당 BoardId 값들에 해당하는 board 가져오기
+    public List<Board> findByBoardIds(List<Long> boardIds) {
+        List<Board> boards = boardRepository.findByBoardIdIn(boardIds);
+        return boards;
+    }
     //글 저장
     @Transactional
     public Board save(BoardAddRequest request){
@@ -26,7 +31,7 @@ public class BoardService {
     }
 
     public List<Board> findByUserId(Long userId){
-        List<Board> boards = boardRepository.findByUsers_Id(userId);
+        List<Board> boards = boardRepository.findByCategoryAndUsers_Id("code", userId);
         return boards;
     }
     //글 전체 조회

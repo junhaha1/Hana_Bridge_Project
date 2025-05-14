@@ -12,12 +12,18 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class GoodService {
     private final GoodRepository goodRepository;
     private final BoardRepository boardRepository;
     private final UsersRepository usersRepository;
+
+    public List<Long> findTop5BoardIds() {
+        return goodRepository.findTop5BoardIdsByGoodCountNative();
+    }
 
     public Long goodCount(Long boardId){
         if (!boardRepository.existsById(boardId)) {

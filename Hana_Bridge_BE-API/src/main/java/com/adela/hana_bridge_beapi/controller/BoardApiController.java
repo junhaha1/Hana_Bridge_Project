@@ -30,9 +30,25 @@ public class BoardApiController {
     private final CommentService commentService;
     private final GoodService goodService;
 
+    //좋아요 갯수 상위 5개 게시글 가져오기
+    @GetMapping("/top")
+    public ResponseEntity<List<BoardResponse>> findTopBoards(){
+        List<Long> boardIds = goodService.findTop5BoardIds();
+
+        List<BoardResponse> boards = boardService.findByBoardIds(boardIds)
+                .stream()
+                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
+                .toList();
+        if (boards.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok().body(boards);
+    }
+
+
     //현재 사용자가 작성한 글 목록 가져오기
     @GetMapping("/me")
-    public ResponseEntity<List<BoardResponse>> findByMe(@RequestHeader("Authorization") String authHeader){
+    public ResponseEntity<List<BoardResponse>> findBoardByMe(@RequestHeader("Authorization") String authHeader){
         String accessToken = authHeader.replace("Bearer ", "");
         Long userId = tokenService.findUsersIdByToken(accessToken);
 

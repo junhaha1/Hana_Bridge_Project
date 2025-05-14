@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByCategory(String category);
-    List<Board> findByUsers_Id(Long userId);
+    List<Board> findByCategoryAndUsers_Id(String category, Long userId);
+    List<Board> findByBoardIdIn(List<Long> boardIds);
 }
