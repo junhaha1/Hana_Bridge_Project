@@ -28,7 +28,6 @@ const DashboardCards = () => {
 
       <button onClick={() => movePage("myposts")} className={cardClass}>
         <h3 className="text-xl font-semibold mb-1">My Posts</h3>
-        <p className="text-3xl font-bold">12</p>
       </button>
 
       <button onClick={() => postBoard("code")} className={cardClass}>

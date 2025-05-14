@@ -10,6 +10,7 @@ import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
 
 import MyPage from "./MyPage.jsx";
+import MyPosts from "./MyPosts.jsx";
 import DashboardCards from "./DashBoardCards.jsx";
 import CodeHelper from "../CodeHelper.jsx";
 
@@ -32,7 +33,7 @@ const DashBoard = () => {
       RenderContent = <MyPage />;
       break;
     case "myposts":
-      RenderContent = <div>내 글 모음</div>;
+      RenderContent = <MyPosts/>;
       break;
     default:
       RenderContent = 
