@@ -9,7 +9,7 @@ const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
   const category = useSelector((state) => state.user.category);
   const nickName = useSelector((state) => state.user.nickName);
-
+  const role = useSelector((state) => state.user.role);
   const navigate = useNavigate(); 
 
 
@@ -54,9 +54,8 @@ const NoticeBoard = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 mx-4 text-center">
         <h3 className="text-2xl font-bold mb-2">공지사항이 없습니다.</h3>
-        {/* 나중에 관리자만 글 작성 버튼 보이게 수정 */}
-        {nickName === 'guest' ? null 
-        : <div> 
+        {role === 'ROLE_ADMIN' 
+        ? <div> 
           <button
             type="button"
             onClick={() => { 
@@ -67,7 +66,7 @@ const NoticeBoard = () => {
             글 작성
           </button>
           </div>
-        }
+        : null }
       </div>
     );
   }
