@@ -10,8 +10,6 @@ import LeftHeader from '../header/LeftHeader';
 import RightHeader from '../header/RightHeader';
 import ApiClient from '../../service/ApiClient';
 
-import "../../css/AIChat/AIChat.css"
-import "../../css/AIChat/loading.css";
 import "../../css/Scroll.css";
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
