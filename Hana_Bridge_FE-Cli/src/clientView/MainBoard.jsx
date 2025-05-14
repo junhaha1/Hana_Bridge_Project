@@ -17,8 +17,6 @@ const MainBoard = () => {
   const category = useSelector((state) => state.user.category);
 
   return (
-
-
     <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 flex">
       <Header />
       {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
