@@ -126,11 +126,14 @@ const Comments = (props) => {
         </div>
       ))}
 
-      {/* 댓글 작성 or 작성 버튼 */}
-      <div className="mt-6 flex gap-2">
+      <div>
         {props.category === "code" && newCommentFlag ? (
           <AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} />
         ) : null}
+      </div>
+
+      {/* 댓글 작성 or 작성 버튼 */}
+      <div className="mt-6 flex gap-2">      
 
         {props.category === "code" && !newCommentFlag && role !== 'guest' && (
           <button

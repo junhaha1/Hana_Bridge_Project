@@ -161,12 +161,14 @@ const DetailBoard = () => {
                     작성자 {board.nickName}
                   </p>
 
-                  <textarea
-                    className="w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"
-                    placeholder="코드나 에러사항을 입력해주세요"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                  />
+                  {category === "code"
+                    ? <textarea
+                      className="w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"
+                      placeholder="코드나 에러사항을 입력해주세요"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                    />
+                    : null}                  
 
                   <textarea
                     className="w-full p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"
