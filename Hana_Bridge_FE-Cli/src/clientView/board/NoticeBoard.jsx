@@ -1,15 +1,14 @@
 import React from 'react';
 import ApiClient from '../../service/ApiClient';
 import { useSelector } from 'react-redux';
-import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-
 import '../../css/Board/CommonBoard.css';
 
 const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
   const category = useSelector((state) => state.user.category);
+  const nickName = useSelector((state) => state.user.nickName);
 
   const navigate = useNavigate(); 
 
@@ -63,14 +62,16 @@ const NoticeBoard = () => {
           좋아요 | 최신 날짜
         </span>
         
-        <span
-          className="text-sm text-white/75 hover:underline cursor-pointer"
-          onClick={() => {
-            navigate('/write');
-          }}
-        >
-          글 작성
-        </span>
+        {nickName === 'guest' ? null 
+        : <span
+            className="text-sm text-white/75 hover:underline cursor-pointer"
+            onClick={() => { 
+              navigate('/write');
+            }}
+          >
+            글 작성
+          </span>
+        }
       </div>
       {boards.map((post) => (
         <div
