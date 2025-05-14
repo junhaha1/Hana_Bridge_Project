@@ -35,8 +35,17 @@ const DetailAssemble = () => {
 
   useEffect(() => {
     ApiClient.getAssembleBoard(assembleBoardId, accessToken)
-    .then((res) => {
-      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
       return res.json();
     })
     .then((data) => {
@@ -46,7 +55,13 @@ const DetailAssemble = () => {
       setLikeCount(data.likeCount);
       setIsLike(data.goodCheck);
     })
-    .catch((err) => console.error("API 요청 실패:", err));    
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    });     
   }, [assembleBoardId]);
 
   if (!board) return <div>로딩 중...</div>;
@@ -54,38 +69,67 @@ const DetailAssemble = () => {
   //삭제 버튼
   const boardDeleteButton = (assembleBoardId) => {
     ApiClient.deleteAssembleBoard(assembleBoardId, accessToken)
-    .then(res => {
+    .then(async(res) => {
       if (!res.ok) {
-          throw new Error(`서버 오류: ${res.status}`);
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
       }
       console.log("게시글 삭제 완료!");
       navigate('/');
     })
-    .catch(error => {
-        console.error("게시글 삭제 중 오류 발생:", error);
-    });
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    });  
   }
 
   //좋아요
   const handleLike = (assembleBoardId) => {
     ApiClient.sendAssembleGood(assembleBoardId, accessToken)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setIsLike(data.goodCheck);
-        setLikeCount(data.likeCount);  // 추가
-      })
-      .catch((err) => console.error("API 요청 실패:", err));    
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+      setIsLike(data.goodCheck);
+      setLikeCount(data.likeCount);  // 추가
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+    });      
   }
   //좋아요 삭제
   const handleCancelLike = (assembleBoardId) => {
     ApiClient.deleteAssembleGood(assembleBoardId, accessToken)
-    .then(res => {
+    .then(async(res) => {
       if (!res.ok) {
-          throw new Error(`서버 오류: ${res.status}`);
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
       }
       return res.json();
     })
@@ -94,9 +138,9 @@ const DetailAssemble = () => {
       setIsLike(data.goodCheck);
       setLikeCount(data.likeCount);  // 추가
     })
-    .catch(error => {
-        console.error("삭제 중 오류 발생:", error);
-    });
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+    });  
   }
   
   return (

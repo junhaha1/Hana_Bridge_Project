@@ -12,39 +12,50 @@ const CodeBoard = () => {
 
   useEffect(() => {
     ApiClient.getBoards(category)
-      .then(async  (res) => {
-        if (res.status === 404) {
-          console.log("게시글 없음 (404)");
-          setBoards(null);
-          return null;
-        }
-        if (!res.ok) {
+    .then(async  (res) => {
+      if (!res.ok) {
+        //error handler 받음 
         const errorData = await res.json(); // JSON으로 파싱
-        alert("errorData: " + errorData.code + " : " + errorData.message);   
-        throw new Error(errorData.message || `서버 오류: ${res.status}`); // message 필드 추출             
-        }
-      return res.json();
-      })
-      .then((data) => {
-        if (data === null || (Array.isArray(data) && data.length === 0)) {
-          console.log("게시글이 없습니다.");
-          setBoards(null);
-        } else {
-          setBoards(data);
-        }
-      })
-      .catch((err) => console.error("API 요청 실패:", err));
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;   
+      }
+    return res.json();
+    })
+    .then((data) => {
+      if (data === null || (Array.isArray(data) && data.length === 0)) {
+        console.log("게시글이 없습니다.");
+        setBoards(null);
+      } else {
+        setBoards(data);
+      }
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 게시글 없을때 -> category error
+      if(err.code === 'CATEGORY_POST_NOT_FOUND'){
+        setBoards(null);
+      }
+      // 404일 때 에러 페이지로 이동
+      else if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    });
   }, [category]);
 
   const boardClick = (boardId) => {
     navigate(`/detailBoard/${boardId}`, { state: { category } });
   };
-
-  if (!boards) {
+  
+  //게시글이 없을 경우 
+  if (boards === null) {
     return (
-      <div className="text-center text-white mt-10">
-        <h3 className="text-xl font-semibold">게시글이 없습니다.</h3>
-        <h2 className="text-lg mt-2">첫 게시글을 작성해보세요. 😊</h2>
+      <div className="flex flex-col items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 mx-4 text-center">
+        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
+        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
       </div>
     );
   }

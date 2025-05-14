@@ -41,11 +41,21 @@ const AddComment = (props) => {
   const handleAddComment = () => {
     console.log("addComment with boardId:  " + props.boardId );
     ApiClient.sendComment(props.boardId, accessToken, content, createAt)
-      .then(() => {
-        alert("댓글이 등록되었습니다. ");
-        props.setNewCommentFlag(false)
-      })
-      .catch((err) => console.error('댓글 등록 실패:', err));
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
+      alert("댓글이 등록되었습니다. ");
+      props.setNewCommentFlag(false)
+    })
+    .catch((err) => console.error('댓글 등록 실패:', err));
   };
 
 

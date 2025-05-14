@@ -15,14 +15,17 @@ const NoticeBoard = () => {
 
   useEffect(() => {
     ApiClient.getBoards(category)
-      .then((res) => {
-         // 게시글이 없는 경우로 처리
-        if (res.status === 404) {
-          console.log("게시글 없음 (404)");
-          setBoards(null);  
-          return null;
+      .then(async (res) => {
+        if (!res.ok) {
+          //error handler 받음 
+          const errorData = await res.json(); // JSON으로 파싱
+          console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+          // 👇 error 객체에 code를 추가해 던짐
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;   
         }
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
         return res.json();
       })
       .then((data) => {
@@ -33,18 +36,28 @@ const NoticeBoard = () => {
           setBoards(data);
         }
       })
-      .catch((err) => console.error("API 요청 실패:", err));
+      .catch((err) => {
+        console.error("API 요청 실패:", err);
+        // 게시글 없을때 -> category error
+        if(err.code === 'CATEGORY_POST_NOT_FOUND'){
+          setBoards(null);
+        }
+        // 404일 때 에러 페이지로 이동
+        else if (err.code && err.code.includes('NOT_FOUND')) {
+          navigate("/error");
+        }
+      });
   }, [category]); // 의존성 배열에 category 추가 추천
   
+  //게시글이 없을 경우 
   if (boards === null) {
     return (
-      <div>
-        <h3>게시글이 없습니다.</h3>
-        <h2>첫 게시글을 작성해보세요.😊</h2>
+      <div className="flex flex-col items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 mx-4 text-center">
+        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
+        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
       </div>
     );
   }
-  
 
   //상세 화면으로 
   const boardClick = (boardId) =>{

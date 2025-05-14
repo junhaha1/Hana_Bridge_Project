@@ -28,21 +28,50 @@ const Comments = (props) => {
   //전체 댓글
   const loadComments = () => {
     ApiClient.getComments(props.boardId)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        setComments(data);
-      })
-      .catch((err) => console.error("API 요청 실패:", err));
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
+      return res.json();
+    })
+    .then((data) => {
+      setComments(data);
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    }); 
   };
 
   //댓글 삭제
   const handleDeleteComment = (commentId) => {
     ApiClient.deleteComment(commentId, accessToken)
-      .then(() => loadComments())
-      .catch((err) => console.error('댓글 삭제 실패:', err));
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
+      loadComments();
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+    }); 
   };
 
   //댓글 수정
@@ -56,12 +85,20 @@ const Comments = (props) => {
     if (!editContent.trim()) return;
     //commentId, accessToken, content, createAt
     ApiClient.updateComment(commentId, accessToken, editContent, editCreateAt)
-      .then(() => {
-        setEditCommentId(null);
-        setEditContent('');
-        loadComments();
-      })
-      .catch((err) => console.error('댓글 수정 실패:', err));
+    .then(async (res) => {
+      if (!res.ok) {
+        const errorData = await res.json();
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;
+      }      
+      setEditCommentId(null);
+      setEditContent('');
+      loadComments();
+    })
+    .catch((err) => {
+      console.error('댓글 수정 실패:', err);
+    });
   };
 
   return (
