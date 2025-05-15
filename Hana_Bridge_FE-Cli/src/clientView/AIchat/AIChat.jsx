@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Header from '../header/Header';
 import LeftHeader from '../header/LeftHeader';
-import RightHeader from '../header/RightHeader';
+import AiRightHeader from '../header/AiRightHeader';
 import ApiClient from '../../service/ApiClient';
 
 import "../../css/Scroll.css";
@@ -295,7 +295,7 @@ function AIChat() {
           </div>
 
           <div className="w-full lg:w-1/5">
-            <RightHeader />
+            <AiRightHeader />
           </div>
         </div>
       </div>
