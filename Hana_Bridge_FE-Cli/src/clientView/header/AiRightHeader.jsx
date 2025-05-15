@@ -36,8 +36,7 @@ const RightHeader = () => {
         console.log(data);
         setAssembleBoards(data);
       })
-      .catch((err) => console.error("API 요청 실패:", err))
-      .finally(() => setLoading(false));
+      .catch((err) => console.error("API 요청 실패:", err));
   }, []);
 
   return (

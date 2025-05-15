@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,20 @@ public class OpenAiApiController {
     public ResponseEntity<ClientResponse> askQuestion(@RequestBody ClientRequest clientRequest){
         String answer = openAiService.askChatGPT(clientRequest);
         return ResponseEntity.ok().body(new ClientResponse(answer));
+    }
+
+    @PostMapping(value = "/answer/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseBodyEmitter streamAnswer(@RequestHeader("Authorization") String authHeader, @RequestBody ClientRequest clientRequest) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+
+        //해당 사용자가 맞는지 검증
+        usersService.findByEmail(email);
+
+        ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+        openAiService.streamAnswerToClient(clientRequest, emitter);
+
+        return emitter;
     }
 
     @PostMapping("/summary")

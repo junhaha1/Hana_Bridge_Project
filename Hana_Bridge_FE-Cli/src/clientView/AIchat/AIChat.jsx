@@ -37,6 +37,9 @@ function AIChat() {
   const accessToken = useSelector((state) => state.user.accessToken);
   const prevMessage = useSelector((state) => state.user.chatMessages);
 
+  //테스트 답변용
+  //const [response, setResponse] = useState("");
+
   //게시판 게시 문의 모달
   const [showModal, setShowModal] = useState(false);
   const openPostModal = (content) => {
@@ -96,8 +99,101 @@ function AIChat() {
     element.style.height = `${Math.min(element.scrollHeight, maxHeight)}px`; //height값 자동 조절 + 높이 제한   
     
   };
+  //사용자 질문 보낸 뒤 스트림방식으로 답변 받아오기
+  const streamMessage = async () => {
+    /*스트림 연결 전에 실행 흐름 -> 로딩 시작, 답변 받기 전 화면 갱신*/
+    setIsLoading(true);
+    //setResponse("");
+    //질문 저장
+    const newMessage = { role: '질문', content: input};    
+    //전체 메세지 저장
+    const updatedMessages = [...messages, newMessage];
+    //보낼 이전 메세지 저장
+    const result = updatedMessages.map(msg => msg.role + ": " + msg.content).join('\n');
 
-  //사용자 질문 보내기 
+    //기존 메세지 + 현재 질문을 화면에 출력
+    setMessages(updatedMessages);
+    //입력창 초기화
+    setInput('');
+    
+    /* API 호출하여 스트림 연결 */
+    const res = await ApiClient.streamMessage(accessToken, promptLevel, result, input);
+
+    /*스트림 연결 후에 실행 흐름 -> 로딩 종료, 답변 출력*/
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let partial = "";
+
+    //스트림을 통해 답변 받을 객체 생성
+    const aiResponse = { role: '답변', content: "" };
+    //기존 화면에 출력되는 메세지에 추가
+    const finalMessages = [...updatedMessages, aiResponse];
+    //화면 갱신
+    setMessages(finalMessages);
+    //로딩 종료
+    setIsLoading(false);
+
+    while(true){
+      const {done, value} = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, {stream: true});
+      partial += chunk;
+
+      const lines = partial.split("\n\n");
+      partial = lines.pop() || "";
+
+      for (const line of lines){
+        if (line.startsWith("data:")){
+          const raw = line.replace("data: ", "").trim();
+
+          if (raw === "[DONE]"){
+            return;
+          }
+
+          try {
+            const parsed = JSON.parse(raw);
+            const delta = parsed.choices?.[0]?.delta?.content;
+
+            if (delta) {
+              //setResponse(prev => prev + delta) //로그 출력용
+              //setMessages 초기화 방식 정의
+              setMessages(prevMessages => {
+                // 마지막 메시지의 인덱스를 구함
+                const lastIndex = prevMessages.length - 1;  
+                // 마지막 메시지 객체를 가져옴       
+                const lastMsg = prevMessages[lastIndex];           
+
+                 // 마지막 메시지가 AI의 답변이면
+                if (lastMsg.role === '답변') { 
+                  // 기존 메시지를 복사한 새 배열을 만들고                   
+                  const updated = [...prevMessages];               
+                  updated[lastIndex] = {
+                    ...lastMsg,
+                    // 해당 답변 메시지에 새로운 응답 조각(delta)을 이어붙임
+                    content: lastMsg.content + delta,              
+                  };
+                  // 갱신된 메시지 배열을 반환하여 상태 변경
+                  return updated;                                  
+                }
+                // 조건이 맞지 않으면 기존 메시지를 그대로 유지
+                return prevMessages;                               
+              });
+            }
+          } catch (err) {
+            console.error("JSON parse error", err);
+          }
+        }
+      }
+    }
+  };
+
+  // 테스트 로그 출력용
+  // useEffect(() => {
+  // console.log("변경된 응답:", response);
+  // }, [response]);
+
+  //사용자 질문 보내기 -> 추후 사용될 수도 있으므로 남겨둠. 
   const sendMessage = () => {
     if (!input.trim()) return;
 
@@ -135,7 +231,7 @@ function AIChat() {
   const handleKeyDown = (e) => {
     if (e.key === 'Enter'){
       e.preventDefault();  // 새로고침 방지
-      sendMessage();
+      streamMessage();
     } 
   };
 
@@ -282,14 +378,13 @@ function AIChat() {
                       ref={textRef}
                     />
                     <button
-                      onClick={sendMessage}
+                      onClick={streamMessage}
                       className="absolute right-10 top-3/4 -translate-y-1/2 hover:opacity-80"
                     >
                       <img src="/images/send.png" alt="보내기" width="25" />
                     </button>
                   </div>
                 </div>
-
               </div>              
             </div>
           </div>

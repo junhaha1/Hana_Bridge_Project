@@ -5,11 +5,18 @@ import com.adela.hana_bridge_beapi.config.openai.PromptProperties;
 import com.adela.hana_bridge_beapi.dto.openai.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import reactor.core.publisher.Flux;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,6 +31,52 @@ public class OpenAiService {
     private String model;
 
     private final String apiUrl = "/chat/completions";
+
+    public void streamAnswerToClient(ClientRequest clientRequest, ResponseBodyEmitter emitter){
+        PromptResult promptResult = promptFactory.createPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
+
+        List<ChatGPTRequest.Message> messages = new ArrayList<>();
+        messages.add(new ChatGPTRequest.Message("system", promptResult.getPrompt()));
+        messages.add(new ChatGPTRequest.Message("assistant", clientRequest.getPreContent()));
+        messages.add(new ChatGPTRequest.Message("user", clientRequest.getQuestion()));
+
+        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(
+                model,
+                messages,
+                promptResult.getMaxTokens(),
+                0.4,
+                true // stream 옵션
+        );
+
+        openAiWebClient.post()
+                .uri("https://api.openai.com/v1/chat/completions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.TEXT_EVENT_STREAM)
+                .bodyValue(chatGPTRequest)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .doOnNext(chunk -> {
+                    try {
+                        emitter.send("data: " + chunk + "\n\n");
+                        //System.out.println("chunk: " + chunk);
+                    } catch (IOException e) {
+                        emitter.completeWithError(e);
+                    }
+                })
+                .doOnError(e -> {
+                    emitter.completeWithError(e);
+                })
+                .doOnComplete(() -> {
+                    try {
+                        emitter.send("data: [DONE]\n\n"); // 명시적 종료
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    emitter.complete();
+                })
+                .subscribe();
+    }
+
 
     public String askChatGPT(ClientRequest clientRequest){
         PromptResult promptResult = promptFactory.createPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
@@ -41,7 +94,8 @@ public class OpenAiService {
                     model,
                     messages,
                     promptResult.getMaxTokens(),
-                    0.4
+                    0.4,
+                    false
             );
 
             long start = System.currentTimeMillis();
@@ -90,7 +144,8 @@ public class OpenAiService {
                     model,
                     messages,
                     promptResult.getMaxTokens(),
-                    0.4
+                    0.4,
+                    false
             );
 
             long start = System.currentTimeMillis();
@@ -129,7 +184,8 @@ public class OpenAiService {
                 new ChatGPTRequest.Message("user", summary)
         ),
                 promptResult.getMaxTokens(),
-                0.4
+                0.4,
+                false
         );
 
         long start = System.currentTimeMillis();

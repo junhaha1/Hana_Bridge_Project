@@ -69,6 +69,24 @@ class ApiClient{
   }
 
   //OpenAi chat
+  //스트림 기반 답변 요청
+  static streamMessage(accessToken, promptLevel, preContent, question){
+    return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer/stream',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream",
+        "Authorization": `Bearer ${accessToken}`,
+      },
+        body: JSON.stringify({
+        promptLevel: promptLevel,
+        preContent: preContent,
+        question: question,
+      }),
+    });
+  }
+
+
   static sendMessage(accessToken, promptLevel, preContent, question){
     console.log("send Message to AI: " + question);
     return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer',{

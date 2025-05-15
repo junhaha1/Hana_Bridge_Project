@@ -18,6 +18,8 @@ public class ChatGPTRequest {
     @JsonProperty("temperature")
     private double temperature;
 
+    private Boolean stream;
+
     @Getter
     @Setter
     @AllArgsConstructor
