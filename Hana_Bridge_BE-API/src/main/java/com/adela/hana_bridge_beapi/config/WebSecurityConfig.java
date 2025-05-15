@@ -49,6 +49,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/user/logout").permitAll()
                         //회원 가입
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
+                        .requestMatchers("/chat/answer/stream").permitAll()
 
                         //글 등록, 수정, 삭제, ChatBot 이용은 ROLE_USER, ROLE_ADMIN만 접근 가능(ROLE_GUEST는 불가능)
                         //공지 글 접근권한 제한은 Controller에서 제한
