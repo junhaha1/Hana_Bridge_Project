@@ -19,7 +19,7 @@ const CodeHelper = () => {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-[9999]">
+    <div className="fixed bottom-0 right-5 z-[9999]">
       <div className="relative w-fit h-fit overflow-visible">
         {/* 메시지 카드 */}
         <div
@@ -54,7 +54,7 @@ const CodeHelper = () => {
             animationData={CodeBot}
             loop={true}
             autoplay={false}
-            className="w-[180px] h-[180px]"
+            className="w-[160px] h-[160px]"
           />
         </button>
       </div>

@@ -47,7 +47,7 @@ class ApiClient{
     })
   }
   //가장 최근 작성한 게시글 5개 조회 (AssembleBoard)
-  static getRecentAssemble(){
+  static getRecentAssemble(accessToken){
     console.log("get My Recent Assemble Board");
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/me/recent',{
       method: "GET", 
