@@ -63,6 +63,22 @@ public class OpenAiApiController {
             title = title.substring(1, title.length() - 1);
         }
 
+        if (title.startsWith("###")) {
+            title = title.replace("###", "").trim();
+        }
+
+        if (title.startsWith("제목:")) {
+            title = title.replace("제목:", "").trim();
+        }
+
+        if (summary.startsWith("요약:")){
+            summary = summary.replace("요약:", "").trim();
+        }
+
+        if (summary.startsWith("내용:")){
+            summary = summary.replace("내용:", "").trim();
+        }
+
         AssembleAddRequest assembleAddRequest = AssembleAddRequest.builder()
                 .users(usersService.findByEmail(email))
                 .title(title)
