@@ -11,5 +11,5 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
     List<AssembleBoard> findByUsers_Id(Long userId);
     List<AssembleBoard> findByAssembleBoardIdIn(List<Long> boardIds);
     List<AssembleBoard> findByUsers_IdOrderByCreatedAtDesc(Long userId, Pageable pageable);
-
+    List<AssembleBoard> findAllByOrderByCreatedAtDesc();
 }
