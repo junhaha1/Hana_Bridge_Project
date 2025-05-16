@@ -10,6 +10,8 @@ import { createSlice } from '@reduxjs/toolkit';
    category: '',
    page: '',
    playFlag: true,
+   postLoding: false,
+   postAssembleId: '',
  };
  
  const userSlice = createSlice({
@@ -57,9 +59,22 @@ import { createSlice } from '@reduxjs/toolkit';
     },
     setPlayFlag: (state, action) => {
       state.playFlag = action.payload.playFlag;
+    },
+    setPostLoding: (state, action) =>{
+      state.postLoding = action.payload.postLoding;
+    },
+    setPostAssembleId: (state, action) => {
+      state.postAssembleId = action.payload.postAssembleId;
+    },
+    clearPostLoging: (state) => {
+      state.postLoding = false;
+    },
+    clearPostAssembleId: (state) => {
+      state.postAssembleId = '';
     }
    },
  });
  
- export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, setPlayFlag } = userSlice.actions;
+ export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, 
+  setPlayFlag, setPostLoding, clearPostLoging, setPostAssembleId, clearPostAssembleId } = userSlice.actions;
  export default userSlice.reducer;
