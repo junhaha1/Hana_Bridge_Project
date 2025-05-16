@@ -10,7 +10,7 @@ import { createSlice } from '@reduxjs/toolkit';
    category: '',
    page: '',
    playFlag: true,
-   postLoding: false,
+   postLoading: false,
    postAssembleId: '',
  };
  
@@ -39,6 +39,8 @@ import { createSlice } from '@reduxjs/toolkit';
        state.category = '';
        state.page = '';
        state.playFlag = true;
+       state.postLoading = false;
+       state.postAssembleId = '';
      },
      setAiChat: (state, action) => {
         state.chatMessages = action.payload.chatMessages;
@@ -60,14 +62,14 @@ import { createSlice } from '@reduxjs/toolkit';
     setPlayFlag: (state, action) => {
       state.playFlag = action.payload.playFlag;
     },
-    setPostLoding: (state, action) =>{
-      state.postLoding = action.payload.postLoding;
+    setPostLoading: (state, action) =>{
+      state.postLoading = action.payload.postLoading;
     },
     setPostAssembleId: (state, action) => {
       state.postAssembleId = action.payload.postAssembleId;
     },
-    clearPostLoging: (state) => {
-      state.postLoding = false;
+    clearPostLoading: (state) => {
+      state.postLoading = false;
     },
     clearPostAssembleId: (state) => {
       state.postAssembleId = '';
@@ -76,5 +78,5 @@ import { createSlice } from '@reduxjs/toolkit';
  });
  
  export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, 
-  setPlayFlag, setPostLoding, clearPostLoging, setPostAssembleId, clearPostAssembleId } = userSlice.actions;
+  setPlayFlag, setPostLoading, clearPostLoading, setPostAssembleId, clearPostAssembleId } = userSlice.actions;
  export default userSlice.reducer;
