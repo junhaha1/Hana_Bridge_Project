@@ -34,7 +34,8 @@ const DetailBoard = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [category, setCategory] = useState(location.state?.category);
+  const category = location.state?.category;
+  console.log("category(DetailBoard): " + category)
   const [commentCount, setCommentCount] = useState(0);
 
   // const category = location.state?.category;
@@ -250,10 +251,13 @@ const DetailBoard = () => {
                         <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
                         {board.likeCount}
                       </span>
+                      {category === 'code' ?
                       <span className="flex items-center">
                         <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
                         {board.commentsCount}
                       </span>
+                      :null}
+                      
                     </div>
                     <div className="flex gap-2">
                       <button
@@ -310,10 +314,12 @@ const DetailBoard = () => {
                         </span>
                       )}
 
+                      {category === 'code'?
                       <span className="flex items-center">
                         <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
                         {commentCount}
                       </span>
+                      :null}                      
                     </div>
 
                     {(nickName === board.nickName || role === "admin") && (

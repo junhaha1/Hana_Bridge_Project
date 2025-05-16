@@ -141,15 +141,6 @@ const AssembleBoard = () => {
                 />
                 {post.likeCount}
               </span>
-              <span className="text-gray-300 flex items-center text-sm">
-                <img
-                  src="/images/comment.png"
-                  alt="댓글"
-                  width="18"
-                  className="mr-1"
-                />
-                {post.commentCount}
-              </span>
             </div>
           </div>
         ))}

@@ -12,6 +12,10 @@ const AddBoard = () => {
   const accessToken = useSelector((state) => state.user.accessToken);
   const role = useSelector((state) => state.user.role);
 
+  //이전으로 버튼을 위한 카테고리 
+  const toCategory = useSelector((state) => state.user.category);
+
+  //글씨 업로드 할 카테고리
   const [category, setCategory] = useState('code');
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
@@ -28,21 +32,23 @@ const AddBoard = () => {
     setUpdateAt(new Date());
     // TODO: API 요청 처리
     ApiClient.sendBoard(accessToken, title, category, content, code, createAt, updateAt)
-    .then(async(res) => {
+    .then(async (res) => {
       if (!res.ok) {
-        //error handler 받음 
-        const errorData = await res.json(); // JSON으로 파싱
-        console.log("errorData: " + errorData.code + " : " + errorData.message); 
-
-        // 👇 error 객체에 code를 추가해 던짐
-        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-        error.code = errorData.code;
-        throw error;  
+        const errorData = await res.json();
+        throw new Error(errorData.message);
       }
-      alert("게시글이 등록되었습니다. ");
-      navigate('/');
+
+      // ✅ 반드시 JSON을 return해야 다음 then에서 사용할 수 있음
+      return await res.json(); 
     })
-    .catch((err) => console.error("API 요청 실패:", err));
+    .then((data) => {
+      console.log("boardId: " + data); // 이제 data는 정상
+      alert("게시글이 등록되었습니다.");
+      navigate(`/detailBoard/${data}`, { state: { category: category } });
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+    });
   };
 
   return (
@@ -143,7 +149,7 @@ const AddBoard = () => {
                   작성하기
                 </button>
                 <Link
-                  to="/"
+                  to={`/board/${toCategory}`} 
                   className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm"
                 >
                   처음으로
