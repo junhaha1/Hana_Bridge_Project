@@ -36,7 +36,7 @@ public class BoardService {
     }
     //글 전체 조회
     public List<Board> findByCategory(String category) {
-        List<Board> boards = boardRepository.findByCategory(category);
+        List<Board> boards = boardRepository.findByCategoryOrderByCreateAtDesc(category);
         if (boards.isEmpty()) {
             throw new CategoryPostNotFoundException(category);
         }

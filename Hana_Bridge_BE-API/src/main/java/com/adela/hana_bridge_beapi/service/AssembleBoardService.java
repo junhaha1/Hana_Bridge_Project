@@ -39,7 +39,7 @@ public class AssembleBoardService {
 
     //모든 assemble 게시글 조회
     public List<AssembleBoard> findAllAssembleBoards() {
-        return assembleRepository.findAll();
+        return assembleRepository.findAllByOrderByCreatedAtDesc();
     }
 
     //모든 assemble 게시글 상세 조회

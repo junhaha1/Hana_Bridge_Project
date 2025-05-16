@@ -20,7 +20,9 @@ public class TokenService {
     private final UsersService usersService;
 
     //AccessToken 유효시간 1시간
-    private final long EXPIRATION_ACCESS_TIME = 1000 * 60 * 60;
+    //private final long EXPIRATION_ACCESS_TIME = 1000 * 60 * 60; //실제 서비스할 때 사용할 시간
+    //AccessToken 유효시간 12시간
+    private final long EXPIRATION_ACCESS_TIME = 1000 * 60 * 60 * 12;
     //RefreshToken 유효시간 24시간
     private final long EXPIRATION_REFRESH_TIME = 1000 * 60 * 60 * 24;
 
