@@ -136,7 +136,7 @@ const Comments = (props) => {
                 <p className="mb-1 font-semibold">{comment.nickName}</p>
                 <p className="mb-1">{comment.content}</p>
                 <div className="text-sm text-white/60 mb-2">
-                  {comment.createAt} · 👍 {comment.likes} ·{" "}
+                  {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')} · 👍 {comment.likes} ·{" "}
                   <button className="hover:underline">신고</button>
                 </div>
                 {(nickName === comment.nickName || role === "admin") && (
