@@ -1,19 +1,28 @@
 import ApiClient from "../../service/ApiClient";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FaCrown } from "react-icons/fa";
+import { useDispatch } from 'react-redux';
+import { setCategory } from '../../store/userSlice';
 
 const RightHeader = () => {
   const [boards, setBoards] = useState(null); // 게시글 목록
   const [assembleBoards, setAssembleBoards] = useState(null); // 어셈블 목록
   const [loading, setLoading] = useState(true); // 로딩 상태
   const navigate = useNavigate();
+  //const [category, setCategory] = useState(useSelector((state) => state.user.category));
+  // const category = useSelector((state) => state.user.category)
+
+  const dispatch = useDispatch();
 
   const boardClick = (boardId) => {
-    navigate(`/detailBoard/${boardId}`);
+    dispatch(setCategory({ category: "code" }));
+    navigate(`/detailBoard/${boardId}`, { state: { category: "code" }});
   };
 
   const assembleBoardClick = (assembleBoardId) => {
+    dispatch(setCategory({ category: "assemble" }));
     navigate(`/detailAssemble/${assembleBoardId}`);
   };
 
@@ -110,7 +119,7 @@ const RightHeader = () => {
         <div className="grid grid-cols-1 gap-2 py-2 w-full">
           {assembleBoards && assembleBoards.map((post) => (
             <button
-              key={post.boardId}
+              key={post.assembleBoardId}
               onClick={() => assembleBoardClick(post.assembleBoardId)}
               className="group overflow-hidden bg-white text-black px-4 py-2 rounded-lg shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 flex flex-col justify-start"
             >

@@ -170,10 +170,6 @@ const DetailAssemble = () => {
                     {likeCount}
                   </span>
                 )}
-                <span className="flex items-center">
-                  <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
-                  {board.commentsCount}
-                </span>
               </div>
 
               {(nickName === board.nickName || role === "ROLE_ADMIN") && (
