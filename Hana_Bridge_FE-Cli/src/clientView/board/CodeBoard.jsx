@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
 
+import {FaUser, FaSearch} from 'react-icons/fa';
+
 const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
   const navigate = useNavigate();
@@ -77,24 +79,41 @@ const CodeBoard = () => {
   }
 
   return (
-    <div className="grid gap-6">
-      <div className="relative mb-2">
-        <input
-          type="text"
-          placeholder="Search Your Board"
-          className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
-        <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
+    <div className={scrollStyle + " h-[80vh] mt-5 px-40"}>
+      <div className="flex justify-between p-1">
+        <h3 className="w-1/2 text-left font-bold text-white">코드 게시판</h3>
+        <div className="w-1/2 flex justify-end gap-6">
+          <div className="flex pl-5 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" >
+            <FaSearch className="mt-1 mr-1.5"/>
+            <input
+              type="text"
+              placeholder="Search Your Board"
+              className="bg-transparent focus:outline-none"
+            />
+          </div>
+          {nickName === 'guest' ? null 
+          :
+            <button 
+              className="bg-white hover:!bg-[#C5BCFF] hover:text-black px-4 py-2 rounded-md text-sm font-semibold text-indigo-900 transition-colors duration-300"
+            >
+              글 작성
+            </button>
+          }
+        </div>
       </div>
-
-      <div className="flex gap-3 justify-end">
-        <span
-          className="text-sm text-white/75 hover:underline cursor-pointer"
-          onClick={() => {
+      <div className="flex gap-3 justify-end mt-4 mb-2">
+        <label htmlFor="sort" className="sr-only">정렬 기준</label>
+        <select
+          id="sort"
+          name="sort"
+          className="text-white pr-1 py-2 text-sm bg-transparent rounded-md focus:outline-none focus:ring-0 focus:border-transparent"
+          onChange={(e) => {
+            console.log('선택된 값:', e.target.value)
           }}
         >
-          좋아요 | 최신 날짜
-        </span>
-
+          <option className="text-black" value="like">좋아요순</option>
+          <option className="text-black" value="latest">최신순</option>
+        </select>
         {nickName === 'guest' ? null 
         : <span
             className="text-sm text-white/75 hover:underline cursor-pointer"
@@ -106,29 +125,32 @@ const CodeBoard = () => {
           </span>
         }
       </div>
-      <div className={scrollStyle + " h-[75vh]"}>
         {boards.map((post) => (
           <div
             key={post.boardId}
             className={cardStyle}
+            onClick={() => boardClick(post.boardId)}
           >
             <div className="flex justify-between items-start">
               <h3
-                onClick={() => boardClick(post.boardId)}
-                className="text-white text-lg font-semibold cursor-pointer hover:underline"
+                className="text-white text-lg font-semibold line-clamp-1"
               >
                 {post.title}
               </h3>
-              <span className="text-sm text-purple-300">{post.nickName}</span>
             </div>
-
-            <p className="text-sm text-gray-200 mt-2 mb-4">
-              {post.content.length > 80
-                ? post.content.slice(0, 80) + '...'
-                : post.content}
+            <p className="text-sm text-gray-200 line-clamp-1">
+              {post.content}
             </p>
 
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-between gap-4">
+              
+              <span className="flex text-sm text-purple-300 gap-1">
+                <FaUser
+                className="mt-1"
+                />
+                {post.nickName}
+              </span>
+              <div className="flex gap-4">
               <span className="text-indigo-300 flex items-center text-sm">
                 <img
                   src="/images/blueGood.png"
@@ -147,11 +169,11 @@ const CodeBoard = () => {
                 />
                 {post.commentCount}
               </span>
+              </div>
             </div>
           </div>
         ))}
       </div>
-    </div>
   );
 };
 
