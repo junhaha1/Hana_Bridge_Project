@@ -1,9 +1,13 @@
-import React from 'react';
 import ApiClient from '../../service/ApiClient';
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import '../../css/Board/AssembleBoard.css';
+import { useNavigate} from "react-router-dom";
 import { useSelector } from 'react-redux';
+
+import { scrollStyle } from "../../style/CommonStyle";
+import { cardStyle } from "../../style/CommonStyle";
+
+import {FaUser, FaSearch} from 'react-icons/fa';
+import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
 
 
 const AssembleBoard = () => {
@@ -80,59 +84,67 @@ const AssembleBoard = () => {
   }
 
   return (
-    <div className="grid gap-6">
-      <div className="relative mb-2">
-        <input
-          type="text"
-          placeholder="Search Your Board"
-          className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
-        <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
+    <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+      <div className="flex justify-between p-1">
+        <h3 className={mainTitle}>코드 게시판</h3>
+        <div className="w-1/2 flex justify-end gap-6">
+          <div className={searchBox} >
+            <FaSearch className="mt-1 mr-1.5"/>
+            <input
+              type="text"
+              placeholder="Search Your Board"
+              className={inputBox}
+            />
+          </div>
+          {nickName === 'guest' ? null 
+          :
+            <button 
+              className={addButton}
+            >
+              글 작성
+            </button>
+          }
+        </div>
       </div>
-      <div className="flex gap-3 justify-end">
-        <span
-          className="text-sm text-white/75 hover:underline cursor-pointer"
-          onClick={() => {
+      <div className={sortCheckLayout}>
+        <label htmlFor="sort" className="sr-only">정렬 기준</label>
+        <select
+          id="sort"
+          name="sort"
+          className={sortCheckBox}
+          onChange={(e) => {
+            console.log('선택된 값:', e.target.value)
           }}
         >
-          좋아요 | 최신 날짜
-        </span>
-        
-        {nickName === 'guest' ? null 
-        : <span
-            className="text-sm text-white/75 hover:underline cursor-pointer"
-            onClick={() => { 
-              navigate('/write');
-            }}
-          >
-            글 작성
-          </span>
-        }
-        
+          <option className="text-black" value="like">좋아요순</option>
+          <option className="text-black" value="latest">최신순</option>
+        </select>
       </div>
-      <div className="custom-scroll h-[75vh] overflow-y-auto space-y-5 px-3">
-        {boards.map((post) => (
-          <div
-            key={post.assembleBoardId}
-            className="border border-white/30 bg-white/5 backdrop-blur-sm rounded-md p-4 shadow-md hover:shadow-lg transition duration-200"
-          >
-            <div className="flex justify-between items-start">
-              <h3
-                onClick={() => boardClick(post.assembleBoardId)}
-                className="text-white text-lg font-semibold cursor-pointer hover:underline"
-              >
-                {post.title}
-              </h3>
-              <span className="text-sm text-purple-300">{post.nickName}</span>
-            </div>
-
-            <p className="text-sm text-gray-200 mt-2 mb-4">
-              {post.content.length > 80
-                ? post.content.slice(0, 80) + '...'
-                : post.content}
-            </p>
-
-            <div className="flex justify-end gap-4">
-              <span className="text-indigo-300 flex items-center text-sm">
+      {boards.map((post) => (
+        <div
+          key={post.assembleBoardId}
+          className={cardStyle}
+          onClick={() => boardClick(post.assembleBoardId)}
+        >
+          <div className = {cardTopLayout}>
+            <h3
+              className= {cardTitle}
+            >
+              {post.title}
+            </h3>
+          </div>
+          <p className={cardContent}>
+            {post.content}
+          </p>
+          <div className= {cardBottomLayout}>
+            <span className={cardAuthor}>
+              <FaUser
+              className="mt-1"
+              />
+              {post.nickName}
+            </span>
+            <div className="flex gap-4">
+              <span className= {cardGood}>
                 <img
                   src="/images/blueGood.png"
                   alt="좋아요"
@@ -141,10 +153,19 @@ const AssembleBoard = () => {
                 />
                 {post.likeCount}
               </span>
+              <span className= {cardComment}>
+                <img
+                  src="/images/comment.png"
+                  alt="댓글"
+                  width="18"
+                  className="mr-1"
+                />
+                {post.commentCount}
+              </span>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 

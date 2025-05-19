@@ -1,0 +1,1 @@
+export const leftTitle = "text-left pt-1 pb-2 font-bold text-white";
