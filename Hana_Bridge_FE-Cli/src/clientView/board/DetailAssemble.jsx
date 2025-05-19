@@ -10,6 +10,7 @@ import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
 import CodeHelper from '../CodeHelper';
+import { scrollStyle } from "../../style/CommonStyle";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 

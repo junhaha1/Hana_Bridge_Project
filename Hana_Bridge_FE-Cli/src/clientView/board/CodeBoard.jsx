@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useSelector } from "react-redux";
-import "../../css/Scroll.css";
+
+//디자인 
+import { scrollStyle } from "../../style/CommonStyle";
+import { cardStyle } from "../../style/CommonStyle";
+import { buttonStyle } from "../../style/CommonStyle";
 
 const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
@@ -103,11 +107,11 @@ const CodeBoard = () => {
           </span>
         }
       </div>
-      <div className="custom-scroll h-[75vh] overflow-y-auto">
+      <div className={scrollStyle + " h-[75vh]"}>
         {boards.map((post) => (
           <div
             key={post.boardId}
-            className="border border-white/30 bg-white/5 backdrop-blur-sm rounded-md p-6 shadow-md hover:shadow-lg transition duration-200 "
+            className={cardStyle}
           >
             <div className="flex justify-between items-start">
               <h3
