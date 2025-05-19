@@ -2,15 +2,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { setPage } from "../../store/userSlice";
 import { setCategory } from '../../store/userSlice';
-import { FaHome, FaFileAlt, FaPen, FaFolder} from 'react-icons/fa';
+import { FaFolder} from 'react-icons/fa';
 
-import Default from '../../../public/images/default.png';
 import { leftFrame } from '../../style/CommonFrame';
+import { leftTitle } from '../../style/CommonLeftStyle';
 
 const boards = [
-  { id: 'code', label: 'Code 게시판' },
-  { id: 'assemble', label: 'Assemble 게시판' },
-  { id: 'notice', label: 'Notice 게시판' },
+  { id: 'myposts', label: '내 게시판' },
+  { id: 'notice', label: '공지 게시판' },
+  { id: 'code', label: '코드질문 게시판' },
+  { id: 'assemble', label: 'AI답변 게시판' },
 ];
 
 export default function LeftHeader() {
@@ -34,60 +35,8 @@ export default function LeftHeader() {
 
   return (
     <aside className={leftFrame}>
-      {nickName !== 'guest' && (
-        <>
-          {/* 프로필 및 워크스페이스 */}
-          <div className="mb-6 flex items-center space-x-4">
-            <img
-              src={Default}
-              alt="프로필 사진"
-              className="w-14 h-14 rounded-full border border-white shadow"
-            />
-            <div className="text-lg font-semibold">{nickName}'s Workspace</div>
-          </div>
-          {/* 상단 메뉴 */}
-          <div className="space-y-1 mb-6">
-            <div className="text-xs font-semibold text-gray-300 px-3 mb-1">Main</div>
-            <button 
-              onClick={() => movePage("home")}
-              className={`flex items-center gap-2 w-full px-3 py-2 rounded transition ${
-                page === "home"
-                  ? "bg-[#C5BCFF] text-black font-bold"
-                  : "text-white hover:bg-[#C5BCFF] hover:text-gray-700"
-              }`}
-            >
-              <FaHome />
-              Dashboard
-            </button>
-            <button 
-              onClick={() => movePage("mypage")}
-              className={`flex items-center gap-2 w-full px-3 py-2 rounded transition ${
-                page === "mypage"
-                  ? "bg-[#C5BCFF] text-black font-bold"
-                  : "text-white hover:bg-[#C5BCFF] hover:text-gray-700"
-              }`}
-            >
-              <FaFileAlt />
-              My Page
-            </button>
-            <button 
-              onClick={() => movePage("myposts")}
-              className={`flex items-center gap-2 w-full px-3 py-2 rounded transition ${
-                page === "myposts"
-                  ? "bg-[#C5BCFF] text-black font-bold"
-                  : "text-white hover:bg-[#C5BCFF] hover:text-gray-700"
-              }`}
-            >
-              <FaPen />
-              My Posts
-            </button>
-          </div>
-        </>
-      )}
-
-      {/* 게시판 영역 */}
-      <div className="mb-6">
-        <div className="text-xs font-semibold text-gray-300 px-3 mb-1">Boards</div>
+      <div className='mt-5'/>
+        <h3 className={leftTitle}>커뮤니티</h3>
         <div className="space-y-1">
           {boards.map(({ id, label }) => (
             <button
@@ -104,7 +53,6 @@ export default function LeftHeader() {
             </button>
           ))}
         </div>
-      </div>
     </aside>
   );
 }

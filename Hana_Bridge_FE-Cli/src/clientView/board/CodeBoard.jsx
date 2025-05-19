@@ -8,6 +8,7 @@ import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
 
 import {FaUser, FaSearch} from 'react-icons/fa';
+import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
 
 const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
@@ -79,34 +80,34 @@ const CodeBoard = () => {
   }
 
   return (
-    <div className={scrollStyle + " h-[80vh] mt-5 px-40"}>
+    <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
       <div className="flex justify-between p-1">
-        <h3 className="w-1/2 text-left font-bold text-white">코드 게시판</h3>
+        <h3 className={mainTitle}>코드 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
-          <div className="flex pl-5 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" >
+          <div className={searchBox} >
             <FaSearch className="mt-1 mr-1.5"/>
             <input
               type="text"
               placeholder="Search Your Board"
-              className="bg-transparent focus:outline-none"
+              className={inputBox}
             />
           </div>
           {nickName === 'guest' ? null 
           :
             <button 
-              className="bg-white hover:!bg-[#C5BCFF] hover:text-black px-4 py-2 rounded-md text-sm font-semibold text-indigo-900 transition-colors duration-300"
+              className={addButton}
             >
               글 작성
             </button>
           }
         </div>
       </div>
-      <div className="flex gap-3 justify-end mt-4 mb-2">
+      <div className={sortCheckLayout}>
         <label htmlFor="sort" className="sr-only">정렬 기준</label>
         <select
           id="sort"
           name="sort"
-          className="text-white pr-1 py-2 text-sm bg-transparent rounded-md focus:outline-none focus:ring-0 focus:border-transparent"
+          className={sortCheckBox}
           onChange={(e) => {
             console.log('선택된 값:', e.target.value)
           }}
@@ -114,44 +115,32 @@ const CodeBoard = () => {
           <option className="text-black" value="like">좋아요순</option>
           <option className="text-black" value="latest">최신순</option>
         </select>
-        {nickName === 'guest' ? null 
-        : <span
-            className="text-sm text-white/75 hover:underline cursor-pointer"
-            onClick={() => { 
-              navigate('/write');
-            }}
-          >
-            글 작성
-          </span>
-        }
       </div>
-        {boards.map((post) => (
-          <div
-            key={post.boardId}
-            className={cardStyle}
-            onClick={() => boardClick(post.boardId)}
-          >
-            <div className="flex justify-between items-start">
-              <h3
-                className="text-white text-lg font-semibold line-clamp-1"
-              >
-                {post.title}
-              </h3>
-            </div>
-            <p className="text-sm text-gray-200 line-clamp-1">
-              {post.content}
-            </p>
-
-            <div className="flex justify-between gap-4">
-              
-              <span className="flex text-sm text-purple-300 gap-1">
-                <FaUser
-                className="mt-1"
-                />
-                {post.nickName}
-              </span>
-              <div className="flex gap-4">
-              <span className="text-indigo-300 flex items-center text-sm">
+      {boards.map((post) => (
+        <div
+          key={post.boardId}
+          className={cardStyle}
+          onClick={() => boardClick(post.boardId)}
+        >
+          <div className = {cardTopLayout}>
+            <h3
+              className= {cardTitle}
+            >
+              {post.title}
+            </h3>
+          </div>
+          <p className={cardContent}>
+            {post.content}
+          </p>
+          <div className= {cardBottomLayout}>
+            <span className={cardAuthor}>
+              <FaUser
+              className="mt-1"
+              />
+              {post.nickName}
+            </span>
+            <div className="flex gap-4">
+              <span className= {cardGood}>
                 <img
                   src="/images/blueGood.png"
                   alt="좋아요"
@@ -160,7 +149,7 @@ const CodeBoard = () => {
                 />
                 {post.likeCount}
               </span>
-              <span className="text-gray-300 flex items-center text-sm">
+              <span className= {cardComment}>
                 <img
                   src="/images/comment.png"
                   alt="댓글"
@@ -169,11 +158,11 @@ const CodeBoard = () => {
                 />
                 {post.commentCount}
               </span>
-              </div>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
