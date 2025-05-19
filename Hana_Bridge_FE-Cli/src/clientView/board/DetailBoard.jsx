@@ -1,7 +1,7 @@
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import Comments from './Comments';
@@ -12,6 +12,7 @@ import RightHeader from '../header/RightHeader';
 import CodeHelper from '../CodeHelper';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
+import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
 
 //상세 게시글 보드
 const DetailBoard = () => {
@@ -40,7 +41,16 @@ const DetailBoard = () => {
   console.log("category(DetailBoard): " + category)
   const [commentCount, setCommentCount] = useState(0);
 
-  // const category = location.state?.category;
+  //textarea 높이 자동화
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto"; // 높이 초기화
+      textarea.style.height = textarea.scrollHeight + "px"; // 실제 콘텐츠 높이로 설정
+    }
+  }, [code, content]);
 
   useEffect(() => {
     ApiClient.getBoard(boardId, accessToken)
@@ -203,8 +213,15 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-            {isEdit ? (
-              <>
+          <div className={scrollStyle + " h-[80vh] mt-5 px-40"}>
+            <button
+              onClick={() => navigate("/board/code")}
+              className={buttonStyle + ` px-4 py-1 bg-purple-600 hover:bg-purple-400 text-white text-sm mb-2`}
+            >
+              이전
+            </button>
+            {isEdit ? (              
+              <div className={detailCardStyle}>
                 {/* 게시글 수정 폼 */}
                   <div className="text-sm text-white/60 mb-2 text-left">
                     {category === "code"
@@ -226,7 +243,8 @@ const DetailBoard = () => {
 
                   {category === "code"
                     ? <textarea
-                      className="w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"
+                      ref={textareaRef}
+                      className={scrollStyle + " w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"}
                       placeholder="코드나 에러사항을 입력해주세요"
                       value={code}
                       onChange={(e) => setCode(e.target.value)}
@@ -269,17 +287,20 @@ const DetailBoard = () => {
                       </button>
                     </div>
                   </div>
-              </>
+              </div>
             ) : (
-              <>
+              <div className={detailCardStyle}>
                 {/* 게시글 보기 (테두리 없이 투명 배경) */}
-                <div className="text-sm text-white/60 mb-2 text-left">
+                <div  className="text-sm text-white/60 mb-2 text-left ">
                   {category === "code"
-                    ? "CODE 게시판 < 상세글"
-                    : "공지 게시판 < 상세글"}
+                    ? "CODE 게시판 > 상세글"
+                    : "공지 게시판 > 상세글"}
                 </div>
                 <h2 className="text-2xl font-bold text-white">{board.title}</h2>
                 <p className="text-sm text-white/60 mb-4">작성자 {board.nickName}</p>
+                {category === "code"
+                  ? <p className="text-left whitespace-pre-wrap">{board.code}</p>
+                  : null}
                 <p className="text-left whitespace-pre-wrap">{board.content}</p>
 
                 <div className="flex justify-between items-center mt-6">
@@ -327,14 +348,12 @@ const DetailBoard = () => {
                     </div>
                   )}
                 </div>
-              </>
-            )}
-            {/* 댓글 위 흰 줄 */}
-            <div className="border-t-2 border-white/70 mt-10 pt-4">
-              <Comments boardId={boardId} category={category} />
-            </div>
-          </main>
-        </div>
+              </div>
+            )}            
+            <Comments boardId={boardId} category={category} />
+          </div>
+        </main>
+      </div>
       {email !== "guest@email.com" && <CodeHelper />}
     </div>
   );

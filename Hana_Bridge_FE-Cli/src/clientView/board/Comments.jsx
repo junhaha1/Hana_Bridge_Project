@@ -6,6 +6,9 @@ import {Link} from 'react-router-dom';
 
 import '../../css/Board/Comments.css';
 import { buttonStyle } from '../../style/CommonStyle';
+import { scrollStyle } from '../../style/CommonStyle';
+import {FaUser} from 'react-icons/fa';
+
 
 const Comments = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -103,10 +106,10 @@ const Comments = (props) => {
   };
 
   return (
-    <div>
+    <div className={scrollStyle + " h-[80vh]"}>
       {/* 댓글 리스트 */}
       {comments.map((comment) => (
-        <div key={comment.commentId} className="mb-6 px-2">
+        <div key={comment.commentId} className="mb-6">
           <div className="text-left text-white">
             {editCommentId === comment.commentId ? (
               <>
@@ -117,7 +120,7 @@ const Comments = (props) => {
                   className="w-full p-2 mb-2 rounded bg-gray-800 text-white placeholder-white/70 border border-white/30 resize-none"
                   placeholder="댓글을 수정하세요"
                 />
-                <div className="mb-2 flex gap-2">
+                <div className="mb-2 pb-2 flex gap-2 border-b border-white/20">
                   <button
                     className="px-3 py-1 bg-green-600 hover:bg-green-700 text-sm text-white rounded"
                     onClick={() => handleUpdateComment(comment.commentId)}
@@ -134,28 +137,45 @@ const Comments = (props) => {
               </>
             ) : (
               <>
-                <p className="mb-1 font-semibold">{comment.nickName}</p>
-                <p className="mb-1">{comment.content}</p>
-                <div className="text-sm text-white/60 mb-2">
-                  {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')} · 👍 {comment.likes} ·{" "}
-                  <button className="hover:underline">신고</button>
+                <div className="flex text-sm text-purple-200 gap-3 font-semibold mb-2">
+                  <span className='flex'>
+                    <FaUser
+                    className="mt-1 "
+                    />
+                    {comment.nickName}
+                  </span>
+                  <span className='text-xs text-gray-300 mt-0.5'>
+                    {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                  </span>                  
                 </div>
-                {(nickName === comment.nickName || role === "admin") && (
-                  <div className="mb-2 text-right flex gap-2 justify-end">
-                    <button
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-sm text-white rounded"
-                      onClick={() => handleEditComment(comment.commentId, comment.content)}
-                    >
-                      수정
-                    </button>
-                    <button
-                      className="px-3 py-1 bg-red-600 hover:bg-red-700 text-sm text-white rounded"
-                      onClick={() => handleDeleteComment(comment.commentId)}
-                    >
-                      삭제
-                    </button>
-                  </div>
-                )}
+                <div className='flex justify-between '>
+                  <p className="mb-1">{comment.content}</p>
+
+                  {(nickName === comment.nickName || role === "admin") && (
+                    <>
+                    <div className='px-2 flex flex-row'>
+                      <button
+                        className="px-3 py-1 mr-1 w-15 h-7 bg-blue-600 hover:bg-blue-700 text-sm text-white rounded whitespace-nowrap"
+                        onClick={() => handleEditComment(comment.commentId, comment.content)}
+                      >
+                        <p>수정</p>
+                      </button>
+                      <button
+                        className="px-3 py-1 w-15 h-7 bg-red-600 hover:bg-red-700 text-sm text-white rounded whitespace-nowrap"
+                        onClick={() => handleDeleteComment(comment.commentId)}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                    </>
+                  )}
+                </div>
+                
+                {/* <div className="text-sm text-white/60 mb-2">
+                   · 👍 {comment.likes} ·{" "}
+                  <button className="hover:underline">신고</button>
+                </div> */}
+                
                 {/* 구분선 */}
                 <div className="border-t border-white/40 my-8" />
               </>
@@ -183,12 +203,7 @@ const Comments = (props) => {
         )}
 
         {props.category === "code" && (
-          <Link
-            to="/board/code"
-            className={buttonStyle + ` px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm`}
-          >
-            이전
-          </Link>
+          <></>
         )}
 
         {props.category === "notice" && (
