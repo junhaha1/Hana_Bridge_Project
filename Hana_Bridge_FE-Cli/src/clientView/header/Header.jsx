@@ -10,6 +10,8 @@ import LoginModal from "../user/LoginModal.jsx";
 import SignUpModal from "../user/SignUpModal.jsx";
 import ConfirmLogoutModal from "../user/ConfirmLogoutModal.jsx"; // ⬅️ 커스텀 로그아웃 모달 추가
 
+import {headerFrame} from '../../style/CommonFrame.jsx';
+
 const BoardHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,7 +50,7 @@ const BoardHeader = () => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full px-6 py-2 flex items-center justify-between bg-transparent text-white z-50">
+      <div className={headerFrame}>
         {/* 로고 + 제목 */}
         <div
           className="flex items-center space-x-4 no-underline cursor-pointer"

@@ -12,6 +12,8 @@ import homeCodeHelper from "../../public/animations/homecodehelper.json";
 import codeHome from "../../public/animations/codehome.json";
 import assembleHome from "../../public/animations/assemblehome.json";
 
+import { homeFrame } from '../style/CommonFrame.jsx';
+
 const Home = () => {
   const name = useSelector((state) => state.user.name);
   const nickName = useSelector((state) => state.user.nickName);
@@ -56,8 +58,9 @@ const Home = () => {
 
   return (
     <>
-    <Header/>
-    <div className="w-screen h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
+    
+    <div className={homeFrame}>
+      <Header/>
       {modalOpen && modalType === 'login' &&(
         <LoginModal
           onClose={closeModal}

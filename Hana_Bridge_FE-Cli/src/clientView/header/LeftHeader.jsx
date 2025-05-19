@@ -5,6 +5,7 @@ import { setCategory } from '../../store/userSlice';
 import { FaHome, FaFileAlt, FaPen, FaFolder} from 'react-icons/fa';
 
 import Default from '../../../public/images/default.png';
+import { leftFrame } from '../../style/CommonFrame';
 
 const boards = [
   { id: 'code', label: 'Code 게시판' },
@@ -32,7 +33,7 @@ export default function LeftHeader() {
   }
 
   return (
-    <aside className="w-full lg:w-64 h-full px-4 py-6 bg-transparent text-sm text-white">
+    <aside className={leftFrame}>
       {nickName !== 'guest' && (
         <>
           {/* 프로필 및 워크스페이스 */}

@@ -6,6 +6,7 @@ import Lottie from "lottie-react";
 import CodeBot from '../../public/animations/codeBot.json';
 
 import { clearPostAssembleId } from '../store/userSlice';
+import { helperFrame } from '../style/CommonFrame';
 
 const CodeHelper = () => {
   const navigate = useNavigate(); 
@@ -66,7 +67,7 @@ const CodeHelper = () => {
   }, [postLoading, showCompleteMessage]);
 
   return (
-    <div className="fixed bottom-0 right-5 z-[9999]">
+    <div className={helperFrame}>
       <div className="relative w-fit h-fit overflow-visible">
         {/* 게시글 포스팅 중 메세지*/}
         {postLoading && (

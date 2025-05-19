@@ -103,7 +103,7 @@ const CodeBoard = () => {
           </span>
         }
       </div>
-      <div className="custom-scroll h-[75vh] overflow-y-auto space-y-5 px-3">
+      <div className="custom-scroll h-[75vh] overflow-y-auto">
         {boards.map((post) => (
           <div
             key={post.boardId}
