@@ -11,6 +11,7 @@ import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
 import RightHeader from "../header/RightHeader";
 import CodeHelper from '../CodeHelper';
+import { scrollStyle } from "../../style/CommonStyle";
 
 const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);

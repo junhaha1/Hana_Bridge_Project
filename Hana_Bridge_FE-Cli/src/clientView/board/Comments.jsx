@@ -5,6 +5,7 @@ import AddComment from './AddComment';
 import {Link} from 'react-router-dom';
 
 import '../../css/Board/Comments.css';
+import { buttonStyle } from '../../style/CommonStyle';
 
 const Comments = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -184,7 +185,7 @@ const Comments = (props) => {
         {props.category === "code" && (
           <Link
             to="/board/code"
-            className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded"
+            className={buttonStyle + ` px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm`}
           >
             이전
           </Link>
@@ -193,7 +194,7 @@ const Comments = (props) => {
         {props.category === "notice" && (
           <Link
             to="/board/notice"
-            className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded"
+            className={buttonStyle + ` px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm`}
           >
             이전
           </Link>
