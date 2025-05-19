@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 //디자인 
 import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
-import { buttonStyle } from "../../style/CommonStyle";
 
 const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
