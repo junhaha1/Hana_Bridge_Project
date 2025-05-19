@@ -17,7 +17,6 @@ import "../../css/Scroll.css";
 import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat, setPostLoading, setPostAssembleId } from '../../store/userSlice';
 
-
 function AIChat() {
   const [messages, setMessages] = useState([
     { role: '답변', content: `🤖 CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` },

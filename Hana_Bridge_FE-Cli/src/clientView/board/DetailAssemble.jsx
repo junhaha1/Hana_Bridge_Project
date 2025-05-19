@@ -9,9 +9,10 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
-import RightHeader from "../header/RightHeader";
 import CodeHelper from '../CodeHelper';
 import { scrollStyle } from "../../style/CommonStyle";
+
+import { mainFrame, detailFrame } from "../../style/CommonFrame";
 
 const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);
@@ -112,86 +113,75 @@ const DetailAssemble = () => {
   if (!board) return <div className="text-white p-4">로딩 중...</div>;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-indigo-900 to-purple-900">
+    <div className={mainFrame}>
       <Header />
-
-      <div className="flex flex-1 mt-20 overflow-hidden">
-        {/* 왼쪽 사이드바 */}
-        <div className="w-1/5 hidden lg:block">
-          <LeftHeader />
-        </div>
-
+      <div className="w-full flex flex-row mt-20">
+        <LeftHeader />
         {/* 메인 콘텐츠 */}
-        <main className="w-full lg:w-3/5 px-4 overflow-y-auto custom-scroll pb-20">
-          <div className="max-w-screen-lg mx-auto">
-            <div className="text-sm text-white/60 mb-2">ASSEMBLE 게시판 &lt; 상세글</div>
+        <main className={detailFrame}>
 
-            <h2 className="text-2xl font-bold text-white">{board.title}</h2>
-            <p className="text-sm text-white/60 mb-4">작성자 {board.nickName}</p>
+          <div className="text-sm text-white/60 mb-2">ASSEMBLE 게시판 &lt; 상세글</div>
 
-            <div className="text-white">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  code({ inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        {...props}
-                        style={prism}
-                        language={match[1]}
-                        PreTag="div"
-                        className="rounded-md overflow-x-auto"
-                      >
-                        {String(children).replace(/\n$/, '')}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
-                        {children}
-                      </code>
-                    );
-                  },
-                }}
-              >
-                {board.content}
-              </ReactMarkdown>
-            </div>
+          <h2 className="text-2xl font-bold text-white">{board.title}</h2>
+          <p className="text-sm text-white/60 mb-4">작성자 {board.nickName}</p>
 
-            {/* 좋아요, 댓글, 삭제 */}
-            <div className="flex justify-between items-center mt-6">
-              <div className="flex items-center space-x-6 text-white">
-                {isLike ? (
-                  <span className="cursor-pointer flex items-center" onClick={() => handleCancelLike(assembleBoardId)}>
-                    <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                    {likeCount}
-                  </span>
-                ) : (
-                  <span className="cursor-pointer flex items-center" onClick={() => handleLike(assembleBoardId)}>
-                    <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                    {likeCount}
-                  </span>
-                )}
-              </div>
+          <div className="text-white">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                code({ inline, className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || '');
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      {...props}
+                      style={prism}
+                      language={match[1]}
+                      PreTag="div"
+                      className="rounded-md overflow-x-auto"
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
+                      {children}
+                    </code>
+                  );
+                },
+              }}
+            >
+              {board.content}
+            </ReactMarkdown>
+          </div>
 
-              {(nickName === board.nickName || role === "ROLE_ADMIN") && (
-                <button className="text-red-400 text-sm hover:underline" onClick={() => boardDeleteButton(assembleBoardId)}>
-                  삭제하기
-                </button>
+          {/* 좋아요, 댓글, 삭제 */}
+          <div className="flex justify-between items-center mt-6">
+            <div className="flex items-center space-x-6 text-white">
+              {isLike ? (
+                <span className="cursor-pointer flex items-center" onClick={() => handleCancelLike(assembleBoardId)}>
+                  <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                  {likeCount}
+                </span>
+              ) : (
+                <span className="cursor-pointer flex items-center" onClick={() => handleLike(assembleBoardId)}>
+                  <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                  {likeCount}
+                </span>
               )}
             </div>
 
-            <div className="border-t-2 border-white/70 my-8" />
-
-            <Link to="/board/assemble" className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700">
-              이전
-            </Link>
+            {(nickName === board.nickName || role === "ROLE_ADMIN") && (
+              <button className="text-red-400 text-sm hover:underline" onClick={() => boardDeleteButton(assembleBoardId)}>
+                삭제하기
+              </button>
+            )}
           </div>
-        </main>
 
-        {/* 오른쪽 사이드바 */}
-        <div className="w-1/5 hidden lg:block">
-          <RightHeader />
-        </div>
+          <div className="border-t-2 border-white/70 my-8" />
+
+          <Link to="/board/assemble" className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700">
+            이전
+          </Link>
+        </main>
       </div>
 
       {email !== "guest@email.com" && <CodeHelper />}
