@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCategory, setPage } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 import { clearUser, clearAiChat } from "../../store/userSlice.js";
-import Lottie from "lottie-react";
-import logo from "../../../public/animations/logo.json";
 import ApiClient from "../../service/ApiClient.jsx";
 import LoginModal from "../user/LoginModal.jsx";
 import SignUpModal from "../user/SignUpModal.jsx";
@@ -66,17 +64,9 @@ const BoardHeader = () => {
           onMouseEnter={() => lottieRef.current?.goToAndPlay(0, true)}
           onMouseLeave={() => lottieRef.current?.stop()}
         >
-          <div className="w-[80px] h-[80px]">
-            <Lottie
-              lottieRef={lottieRef}
-              animationData={logo}
-              loop={false}
-              autoplay={false}
-            />
-          </div>
-          <strong className="text-[40px] text-white font-bold leading-[45px] no-underline">
-            AIssue
-          </strong>
+        <strong className="text-[50px] text-white font-bold leading-[45px] no-underline">
+          AIssue
+        </strong>
         </div>
 
         {/* 로그인 / 회원가입 or 로그아웃 */}
