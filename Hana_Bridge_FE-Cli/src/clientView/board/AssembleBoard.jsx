@@ -1,13 +1,13 @@
 import ApiClient from '../../service/ApiClient';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate} from "react-router-dom";
 import { useSelector } from 'react-redux';
 
 import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
 import { userDate } from '../../style/CommonDetail';
-import {FaUser, FaSearch} from 'react-icons/fa';
-import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
+import {FaUser, FaSearch, FaArrowUp} from 'react-icons/fa';
+import { upBottom, addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
 
 
 const AssembleBoard = () => {
@@ -16,6 +16,16 @@ const AssembleBoard = () => {
 
   const navigate = useNavigate(); 
   const nickName = useSelector((state) => state.user.nickName);
+
+  const scrollRef = useRef(null);
+  
+  //맨 위로가기 버튼 
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
 
   useEffect(() => {
     ApiClient.getAssembleBoards()
@@ -84,9 +94,10 @@ const AssembleBoard = () => {
   }
 
   return (
+    <>
     <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
       <div className="flex justify-between p-1">
-        <h3 className={mainTitle}>코드 게시판</h3>
+        <h3 className={mainTitle}>AI 답변 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
           <div className={searchBox} >
             <FaSearch className="mt-1 mr-1.5"/>
@@ -172,6 +183,13 @@ const AssembleBoard = () => {
         </div>
       ))}
     </div>
+    <button
+      onClick={scrollToTop}
+      className={upBottom}
+    >
+      <FaArrowUp />
+    </button>
+    </>
   );
 
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from 'react-redux';
 import { useNavigate, Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -13,8 +13,9 @@ import CodeHelper from '../CodeHelper';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
+import { upBottom } from "../../style/CommonBoardStyle";
 import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent } from "../../style/CommonDetail";
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaArrowUp } from 'react-icons/fa';
 
 const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);
@@ -28,6 +29,14 @@ const DetailAssemble = () => {
   const [likeCount, setLikeCount] = useState(0);
 
   const navigate = useNavigate();
+  const scrollRef = useRef(null);
+  
+  //맨 위로가기 버튼 
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     ApiClient.getAssembleBoard(assembleBoardId, accessToken)
@@ -201,6 +210,12 @@ const DetailAssemble = () => {
 
 
           </div>
+          <button
+            onClick={scrollToTop}
+            className={upBottom}
+          >
+            <FaArrowUp />
+          </button>
         </main>
       </div>
 

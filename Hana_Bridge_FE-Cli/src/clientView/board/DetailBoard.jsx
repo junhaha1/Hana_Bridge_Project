@@ -12,8 +12,9 @@ import CodeHelper from '../CodeHelper';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
+import { upBottom } from "../../style/CommonBoardStyle";
 import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaArrowUp } from 'react-icons/fa';
 
 
 //상세 게시글 보드
@@ -45,6 +46,15 @@ const DetailBoard = (props) => {
 
   //textarea 높이 자동화
   const textareaRef = useRef(null);
+  const scrollRef = useRef(null);
+  
+  //맨 위로가기 버튼 
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
 
   //비회원이 좋아요 눌렀을때 띄울 메시지 
   const [showGuestMessage, setShowGuestMessage] = useState(false);
@@ -401,6 +411,12 @@ const DetailBoard = (props) => {
             )}            
             <Comments boardId={boardId} category={category} />
           </div>
+          <button
+            onClick={scrollToTop}
+            className={upBottom}
+          >
+            <FaArrowUp />
+          </button>
         </main>
       </div>
       {email !== "guest@email.com" && <CodeHelper />}
