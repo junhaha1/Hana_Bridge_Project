@@ -1,39 +1,43 @@
 import { useEffect, useRef } from "react";
 
+// TopButton에서 강제로 초기화 가능하게 변경
 const useScrollSnap = (duration = 1200) => {
   const sectionRefs = useRef([]);
   const currentIndex = useRef(0);
   const isScrolling = useRef(false);
 
+  const scrollToIndex = (index) => {
+    if (index >= 0 && index < sectionRefs.current.length) {
+      currentIndex.current = index;
+      isScrolling.current = true;
+
+      sectionRefs.current[index]?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+
+      setTimeout(() => {
+        isScrolling.current = false;
+      }, duration);
+    }
+  };
+
   useEffect(() => {
     const handleWheel = (e) => {
-      e.preventDefault(); // 기본 휠 스크롤 방지
+      e.preventDefault();
       if (isScrolling.current) return;
 
       const direction = e.deltaY > 0 ? 1 : -1;
       const nextIndex = currentIndex.current + direction;
 
-      if (nextIndex >= 0 && nextIndex < sectionRefs.current.length) {
-        currentIndex.current = nextIndex;
-        isScrolling.current = true;
-
-        sectionRefs.current[nextIndex]?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, duration);
-      }
+      scrollToIndex(nextIndex);
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
-
     return () => window.removeEventListener("wheel", handleWheel);
   }, [duration]);
 
-  return sectionRefs;
+  return { sectionRefs, scrollToIndex };
 };
 
 export default useScrollSnap;
