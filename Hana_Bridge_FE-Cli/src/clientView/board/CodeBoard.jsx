@@ -1,21 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useSelector } from "react-redux";
 
 //디자인 
-import { scrollStyle } from "../../style/CommonStyle";
-import { cardStyle } from "../../style/CommonStyle";
+import { scrollStyle, cardStyle } from "../../style/CommonStyle";
 import { userDate } from "../../style/CommonDetail";
-
-import {FaUser, FaSearch} from 'react-icons/fa';
-import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
+import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
+import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
 
 const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
   const navigate = useNavigate();
   const category = useSelector((state) => state.user.category);
   const nickName = useSelector((state) => state.user.nickName);
+  const scrollRef = useRef(null);
+  
+  //맨 위로가기 버튼 
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     ApiClient.getBoards(category)
@@ -82,7 +88,8 @@ const CodeBoard = () => {
   }
 
   return (
-    <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+    <>
+    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
       <div className="flex justify-between p-1">
         <h3 className={mainTitle}>코드 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
@@ -170,6 +177,14 @@ const CodeBoard = () => {
         </div>
       ))}
     </div>
+    <button
+      onClick={scrollToTop}
+      className={upBottom}
+    >
+      <FaArrowUp />
+    </button>
+
+    </>
   );
 };
 
