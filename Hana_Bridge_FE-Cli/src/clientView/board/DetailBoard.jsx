@@ -8,7 +8,7 @@ import Comments from './Comments';
 
 import '../../css/Board/DetailBoard.css';
 import LeftHeader from '../header/LeftHeader';
-import CodeHelper from '../CodeHelper';
+import CodeHelper from '../Codi';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
@@ -419,7 +419,6 @@ const DetailBoard = () => {
           </button>
         </main>
       </div>
-      {email !== "guest@email.com" && <CodeHelper />}
     </div>
   );
 };

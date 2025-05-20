@@ -9,7 +9,7 @@ import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
 
 import DashboardCards from "./DashBoardCards.jsx";
-import CodeHelper from "../CodeHelper.jsx";
+import CodeHelper from "../Codi.jsx";
 
 import {mainFrame} from "../../style/CommonFrame.jsx";
 
@@ -67,7 +67,6 @@ const DashBoard = () => {
           <LeftHeader />
           <div className="w-4/5">
             <DashboardCards />
-            <CodeHelper/>
           </div>
         </div>
         </>

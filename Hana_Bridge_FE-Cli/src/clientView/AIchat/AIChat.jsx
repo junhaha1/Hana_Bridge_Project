@@ -1,34 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import Header from '../header/Header';
-import LeftHeader from '../header/LeftHeader';
-import AiRightHeader from '../header/AiRightHeader';
 import ApiClient from '../../service/ApiClient';
-import CodeHelper from '../CodeHelper';
-
-import Lottie from "lottie-react";
-import NewChat from "../../../public/animations/newChat.json";
 
 import "../../css/Scroll.css";
 import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat, setPostLoading, setPostAssembleId } from '../../store/userSlice';
 
-function AIChat() {
-  const [messages, setMessages] = useState([
-    { role: '답변', content: `🤖 CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` },
-  ]);
+function AIChat({onClose}) {
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');  //질문 1개 
   const [question, setQuestion] = useState(''); //질문들의 모음
   //채팅의 마지막을 가르킴
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
-
-  //대화 종료 여부
-  const [endChat, setEndChat] = useState(false);
 
   const dispatch = useDispatch();
   const lottieRef = useRef();
@@ -40,9 +27,6 @@ function AIChat() {
 
   const accessToken = useSelector((state) => state.user.accessToken);
   const prevMessage = useSelector((state) => state.user.chatMessages);
-
-  //테스트 답변용
-  //const [response, setResponse] = useState("");
 
   //게시판 게시 문의 모달
   const [showModal, setShowModal] = useState(false);
@@ -192,11 +176,6 @@ function AIChat() {
     }
   };
 
-  // 테스트 로그 출력용
-  // useEffect(() => {
-  // console.log("변경된 응답:", response);
-  // }, [response]);
-
   //사용자 질문 보내기 -> 추후 사용될 수도 있으므로 남겨둠. 
   const sendMessage = () => {
     if (!input.trim()) return;
@@ -266,15 +245,6 @@ function AIChat() {
   const postAssemble = () =>{
     console.log(coreContent);
     dispatch(setPostLoading({postLoading: true}));
-    setEndChat(true); //대화 종료 시키기
-    
-    //redux, localstorage 비우기 
-    dispatch(clearAiChat()); // 메시지만 Redux에서 초기화
-    const existingState = JSON.parse(localStorage.getItem('userState'));
-    if (existingState) {
-      existingState.chatMessages = []; // 메시지만 삭제
-      localStorage.setItem('userState', JSON.stringify(existingState)); // 다시 저장
-    }
     closePostModal();
     const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
@@ -295,188 +265,172 @@ function AIChat() {
 
   //현재 대화창 초기화하기
   const restartAiChat = () => {
-    setMessages([
-    { role: '답변', content: `🤖 CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` },
-    ]);
+    setMessages([]);
     setInput('');
     setQuestion('');
-    setEndChat(false);
     setPromptLevel(0);
     setIsLoading(false);
     setCoreContent('');
   };
 
-  //애니메이션 재생 초기화
-  const handleMouseEnter = () => {
-    lottieRef.current?.play();
-  };
-
-  const handleMouseLeave = () => {
-    lottieRef.current?.stop();
+  const startChatting = (level) => {
+    setPromptLevel(level);
+    setMessages([{ role: '답변', content: `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` },]);
   };
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 overflow-auto relative">
-      <Header />
-
-      <div className="w-full flex flex-col mt-24 mb-4">
-        <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6">
-          <div className="w-full lg:w-1/5">
-            <LeftHeader />
-          </div>
-
-          <div className="w-full lg:w-3/5">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6">
-              <h1 className="text-3xl font-bold mb-6 text-center text-white">AI Code Helper</h1>
-
-              <div className="custom-scroll bg-white/10 backdrop-blur-sm p-4 rounded-md shadow-md h-[60vh] overflow-y-auto">
-                {messages.map((msg, idx) => (
-                  <React.Fragment key={idx}>
-                    <div
-                      className={`flex ${msg.role === '답변' ? 'justify-start' : 'justify-end'} my-2`}
-                    >
-                      <div
-                        className={`max-w-[80%] p-3 rounded-lg text-sm whitespace-pre-wrap ${
-                          msg.role === '답변'
-                            ? 'bg-transparent text-white border border-white/40'
-                            : 'bg-[#322776] text-white'
-                        }`}
-                      >
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            code({ node, inline, className, children, ...props }) {
-                              const match = /language-(\w+)/.exec(className || '');
-                              return !inline && match ? (
-                                <SyntaxHighlighter
-                                  {...props}
-                                  style={prism}
-                                  language={match[1]}
-                                  PreTag="div"
-                                >
-                                  {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                              ) : (
-                                <code {...props} className={className}>
-                                  {children}
-                                </code>
-                              );
-                            },
-                          }}
-                        >
-                          {msg.content}
-                        </ReactMarkdown>
-                      </div>
-                    </div>
-
-                    {msg.role === '답변' && !endChat && msg.content !== `🤖 CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` && (
-                      <div className="flex justify-start">
-                        <button
-                          className="text-sm bg-gray-800 text-white px-3 py-1 rounded-md"
-                          onClick={() => openPostModal(msg.content)}
-                        >
-                          답변 채택
-                        </button>
-                      </div>
-                    )}                    
-                  </React.Fragment>
-                ))}
-                {isLoading && (
-                  <div className="flex justify-start my-2">
-                    <div className="loader w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+    <div className="w-full h-full flex flex-col bg-zinc-800 rounded-2xl overflow-y-hidden relative">
+        {/* 상단 메뉴바 */}
+        <div className='flex justify-between bg-white/15 backdrop-blur-sm'>
+          <button 
+            className='ml-2 p-1 text-white'
+          >
+            새 대화창➕
+          </button>
+          <button 
+            className='mr-2 p-1'
+            onClick={()=>onClose(false)}
+          >
+            ✖
+          </button>
+        </div>
+        {/* 상단 대화창 */}
+        <div className="custom-scroll bg-white/10 backdrop-blur-sm p-4  shadow-md h-[60vh] overflow-y-auto">
+          {messages.length === 0 &&(
+            <div className="text-white mt-5">
+              {/* 역할 소개 문구 */}
+              <div className="rounded-2xl p-3 my-1 text-sm">
+                <p className="mb-2">
+                  안녕하세요! 저는 <span className="font-semibold text-yellow-300">AI Codi</span>예요.
+                </p>
+                <p className="mb-2">
+                  막히는 코드, 이해 안 되는 개념, 자주 보는 에러 메시지까지!
+                </p>
+                <p>
+                  궁금한 점을 자유롭게 물어보면, 최대한 쉽게 설명해드릴게요. 😊
+                </p>
+                <p>
+                  프롬포트를 선택해주세요! 선택 시 바로 대화가 시작됩니다.
+                </p>
+                <p className='text-orange-300 font-semibold'>
+                  ⚠ 바로 대화를 시작하면 초보자로 설정됩니다.
+                </p>
+                <div className='flex flex-row gap-2'>
+                  {/* 초보자 프롬포트 선택 카드 */}
+                  <div 
+                    className="w-1/2 bg-white/10 p-2 backdrop-blur-sm border rounded border-white/20 shadow cursor-pointer
+                    hover:bg-white/30"
+                    onClick={()=>startChatting(0)}
+                  >
+                    <p className='text-lg font-semibold'>초보자</p>
+                    <p>프로그래밍을 시작하지 얼마 안된 사용자에게 추천합니다. </p>
                   </div>
-                )}
-                <div ref={messagesEndRef} />
+                  {/* 전문가 프롬포트 선택 카드 */}
+                  <div 
+                    className="w-1/2 bg-white/10 p-2 backdrop-blur-sm border rounded border-white/20 shadow cursor-pointer
+                    hover:bg-white/30"
+                    onClick={()=>startChatting(1)}
+                  >
+                    <p className='text-lg font-semibold'>전문가</p>
+                    <p>프로그래밍을 시작하여 코드 해석이 익숙한 사용자에게 추천합니다. </p>
+                  </div>
+                </div>
               </div>
-              {/*답변 채택을 통한 대화가 종료됐을 경우 */}
-              {endChat && (
-                <div className="w-full max-w-4xl mx-auto bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 mt-3">
-                  <div className="flex flex-col items-center justify-center text-center space-y-4">
-                    <h3 className="text-white text-lg font-semibold">대화가 종료되었습니다.</h3>
-
-                    <button
-                      onClick={restartAiChat}
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                      className="px-4 py-1.5 text-sm transition-colors duration-200 rounded bg-[#C5BCFF] text-white font-bold hover:text-black hover:bg-[#b7adff] flex items-center gap-2"
-                    >
-                      <Lottie
-                        lottieRef={lottieRef}
-                        animationData={NewChat}
-                        loop={true}
-                        autoplay={false}
-                        className="w-[40px] h-[40px]"
-                      />
-                      새 대화 하러가기
-                    </button>
-                  </div>
-                </div>
-              )}
-              {!endChat && (
-                <div className="w-full max-w-4xl mx-auto bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 mt-3">
-                  {/* 입력창 (윗부분) */}
-                  <div>
-                    <textarea
-                      rows={1}
-                      className="custom-scroll w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none overflow-y-auto"
-                      placeholder="메시지를 입력하세요..."
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onInput={handleResizeHeight}
-                      onKeyDown={handleKeyDown}
-                      ref={textRef}
-                      style={{
-                        maxHeight: '7.5rem',
-                        lineHeight: '1.5rem',
-                        paddingRight: '0.5rem',
-                      }}
-                    />
-                  </div>
-                  {/* 하단 버튼 영역 */}
-                  <div className="flex items-center justify-between border-t border-white/20 pt-2 mt-1">
-                    {/* 좌측: 옵션 버튼들 (탭 스타일) */}
-                    <div className="inline-flex rounded-md shadow-sm overflow-hidden border border-gray-300">
-                      <button
-                        onClick={() => setPromptLevel(0)}
-                        className={`px-4 py-1.5 text-sm transition rounded-l-md ${
-                          promptLevel === 0
-                            ? 'bg-[#C5BCFF] text-black font-bold'
-                            : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
-                        }`}
-                      >
-                        초보자
-                      </button>
-                      <button
-                        onClick={() => setPromptLevel(1)}
-                        className={`px-4 py-1.5 text-sm transition rounded-r-md ${
-                          promptLevel === 1
-                            ? 'bg-[#C5BCFF] text-black font-bold'
-                            : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
-                        }`}
-                      >
-                        전문가
-                      </button>
-                    </div>
-
-                    {/* 우측: 보내기 버튼 */}
-                    <button
-                      onClick={streamMessage}
-                      className="hover:opacity-80 hover:scale-105 transition duration-200 ease-in-out"
-                    >
-                      <img src="/images/send.png" alt="보내기" width="24" height="24" />
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
+          )}
+          {messages.length > 0 && messages.map((msg, idx) => (
+            <React.Fragment key={idx}>
+              {/* 대화창 박스*/}
+              <div
+                className={`flex ${msg.role === '답변' ? 'justify-start' : 'justify-end'} my-2`}
+              > 
+                <div
+                  className={`max-w-[80%] p-3 text-sm whitespace-pre-wrap ${
+                    msg.role === '답변'
+                      ? 'bg-white/20 text-white rounded-tl-2xl rounded-tr-2xl rounded-br-2xl'
+                      : 'bg-[#322776] text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl'
+                  }`}
+                >
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                          <SyntaxHighlighter
+                            {...props}
+                            style={prism}
+                            language={match[1]}
+                            PreTag="div"
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code {...props} className={className}>
+                            {children}
+                          </code>
+                        );
+                      },
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
+              </div>
+              
+              {/*답변 채택 버튼 박스 */}
+              {msg.role === '답변' && msg.content !== `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` &&(
+                <div className="flex justify-start">
+                  {/*답변 채택 버튼 */}
+                  <button
+                    className="text-sm bg-gray-800 text-white px-3 py-1 rounded-md"
+                    onClick={() => openPostModal(msg.content)}
+                  >
+                    답변 채택
+                  </button>
+                </div>
+              )}                    
+            </React.Fragment>
+          ))}
+          {/* 로딩창 */}
+          {isLoading && (
+            <div className="flex justify-start my-2">
+              <div className="loader w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+          {/* 자동 스크롤 영역 */}
+          <div ref={messagesEndRef} />
+        </div>
+        <div className="w-full max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-xl p-4 mt-3">
+          {/* 입력창 (윗부분) */}
+          <div>
+            <textarea
+              rows={1}
+              className="custom-scroll w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none overflow-y-auto"
+              placeholder="메시지를 입력하세요..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onInput={handleResizeHeight}
+              onKeyDown={handleKeyDown}
+              ref={textRef}
+              style={{
+                maxHeight: '7.5rem',
+                lineHeight: '1.5rem',
+                paddingRight: '0.5rem',
+              }}
+            />
           </div>
-
-          <div className="w-full lg:w-1/5">
-            <AiRightHeader />
+          {/* 하단 버튼 영역 */}
+          <div className="flex justify-end border-t border-white/20 pt-2 mt-1">
+            {/* 우측: 보내기 버튼 */}
+            <button
+              onClick={streamMessage}
+              className="hover:opacity-80 hover:scale-105 transition duration-200 ease-in-out"
+            >
+              <img src="/images/send.png" alt="보내기" width="24" height="24" />
+            </button>
           </div>
         </div>
-      </div>
-
       {/* 모달: 답변 채택 */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -504,7 +458,6 @@ function AIChat() {
           </div>
         </div>
       )}
-      <CodeHelper/>
     </div>
   );
 }

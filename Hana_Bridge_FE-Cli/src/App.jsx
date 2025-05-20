@@ -12,8 +12,13 @@ import Home from './clientView/Home';
 import DashBoard from './clientView/dashboard/DashBoard';
 import NotFound from './clientView/error/NotFound';
 
+import Codi from './clientView/Codi';
+import { useSelector } from 'react-redux';
+
 function App() {
+  const nickName = useSelector((state) => state.user.nickName);
   return (
+    <>
     <Routes>
       <Route path="/" element={<Home />} /> {/* 홈 화면 */}
       <Route path="/dashBoard/:page" element={<DashBoard/>} />
@@ -24,6 +29,8 @@ function App() {
       <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
       <Route path="/error" element={<NotFound/>} /> {/* 404 화면 */}
     </Routes>
+    {nickName !== "guest" && (<Codi/>)}
+    </>
   );
 }
 export default App;
