@@ -54,10 +54,13 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
         <div className="flex flex-col md:flex-row w-full h-full">
           
           {/* 왼쪽 로고 영역 */}
-          <div className="flex items-center justify-center basis-1/2 bg-white border-r border-gray-100 px-6 py-12">
-            <h1 className="text-3xl font-bold text-gray-800 text-center leading-snug">
-              Hana-<br />Bridge
-            </h1>
+          <div className="flex flex-col gap-3 items-center justify-center basis-1/2 ">
+            <strong className="text-[50px] text-black font-bold leading-[45px] no-underline">
+              AIssue
+            </strong>
+            <p className="text-black text-sm font-semibold">
+              AI Codi와 함께 코딩하세요!
+            </p>
           </div>
 
           {/* 오른쪽 로그인 영역 */}
@@ -98,24 +101,26 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                 로그인
               </button>
 
-              <div className="text-center text-sm text-gray-500">
+              <div className="w-full text-center text-sm text-gray-500">
                 계정을 잊으셨나요?{" "}
-                <span
-                  className="text-blue-600 hover:underline cursor-pointer"
-                  onClick={() => navigate("/recover")}
-                >
-                  비밀번호 찾기
-                </span>{" "}
-                |{" "}
-                <span
-                  className="text-blue-600 hover:underline cursor-pointer"
-                  onClick={() => {
-                    onClose();
-                    onSwitch("signup");
-                  }}
-                >
-                  회원가입
-                </span>
+                <div>
+                  <span
+                    className="text-blue-600 hover:underline cursor-pointer"
+                    onClick={() => navigate("/recover")}
+                  >
+                    비밀번호 찾기
+                  </span>{" "}
+                  |{" "}
+                  <span
+                    className="text-blue-600 hover:underline cursor-pointer"
+                    onClick={() => {
+                      onClose();
+                      onSwitch("signup");
+                    }}
+                  >
+                    회원가입
+                  </span>
+                </div>
               </div>
             </div>
           </div>
