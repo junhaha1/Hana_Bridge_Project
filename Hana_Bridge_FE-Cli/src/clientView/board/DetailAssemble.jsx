@@ -30,6 +30,15 @@ const DetailAssemble = () => {
 
   const navigate = useNavigate();
   const scrollRef = useRef(null);
+
+  //비회원이 좋아요 눌렀을때 띄울 메시지 
+  const [showGuestMessage, setShowGuestMessage] = useState(false);
+  const handleGuestClick = () => {
+    setShowGuestMessage(true);
+    setTimeout(() => {
+      setShowGuestMessage(false);
+    }, 2000); // 2초 후 자동 사라짐
+  };
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -186,17 +195,31 @@ const DetailAssemble = () => {
             {/* 좋아요, 댓글, 삭제 */}
             <div className={liekCommentButton}>
               <div className={liekComment + " text-white"}>
-                {isLike ? (
-                  <span className="cursor-pointer flex items-center" onClick={() => handleCancelLike(assembleBoardId)}>
-                    <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                    {likeCount}
-                  </span>
-                ) : (
-                  <span className="cursor-pointer flex items-center" onClick={() => handleLike(assembleBoardId)}>
-                    <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                    {likeCount}
-                  </span>
-                )}
+                <span
+                  className="relative cursor-pointer flex items-center"
+                  onClick={() => {
+                    if (nickName === 'guest') {
+                      handleGuestClick();
+                    } else {
+                      isLike ? handleCancelLike(boardId) : handleLike(boardId);
+                    }
+                  }}
+                >
+                  <img
+                    src={isLike ? "/images/blueGood.png" : "/images/whiteGood.png"}
+                    alt="좋아요"
+                    className="w-5 h-5 mr-1"
+                  />
+                  {likeCount}
+
+                  {showGuestMessage && (
+                    <div className="absolute bottom-full mb-2
+                      w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
+                      text-center">
+                      ⚠ 비회원은 이용할 수 없는 기능입니다.
+                    </div>
+                  )}
+                </span>
               </div>
 
               {(nickName === board.nickName || role === "ROLE_ADMIN") && (
