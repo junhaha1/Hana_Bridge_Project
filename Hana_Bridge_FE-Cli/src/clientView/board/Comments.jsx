@@ -5,9 +5,10 @@ import AddComment from './AddComment';
 import {Link} from 'react-router-dom';
 
 import '../../css/Board/Comments.css';
-import { buttonStyle } from '../../style/CommonStyle';
-import { scrollStyle } from '../../style/CommonStyle';
-import {FaUser} from 'react-icons/fa';
+import { buttonStyle, scrollStyle } from '../../style/CommonStyle';
+import { userDate } from "../../style/CommonDetail";
+import { editComment, saveCancel, saveButton, cancelButton, editButton, deleteButton, whiteLine, writeCommentButton } from '../../style/CommentStyle';
+import { FaUser } from 'react-icons/fa';
 
 
 const Comments = (props) => {
@@ -106,29 +107,40 @@ const Comments = (props) => {
   };
 
   return (
-    <div className={scrollStyle + " h-[80vh]"}>
+    <div >
       {/* 댓글 리스트 */}
       {comments.map((comment) => (
         <div key={comment.commentId} className="mb-6">
           <div className="text-left text-white">
             {editCommentId === comment.commentId ? (
               <>
+                <div className={userDate + " font-semibold mb-2"}>
+                  <span className='flex gap-1'>
+                    <FaUser
+                    className="mt-0.5"
+                    />
+                    {comment.nickName}
+                  </span>
+                  <span className='text-xs text-gray-300 mt-0.5'>
+                    {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                  </span>                  
+                </div>
                 <textarea
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   rows={2}
-                  className="w-full p-2 mb-2 rounded bg-gray-800 text-white placeholder-white/70 border border-white/30 resize-none"
+                  className={editComment}
                   placeholder="댓글을 수정하세요"
                 />
-                <div className="mb-2 pb-2 flex gap-2 border-b border-white/20">
+                <div className={saveCancel}>
                   <button
-                    className="px-3 py-1 bg-green-600 hover:bg-green-700 text-sm text-white rounded"
+                    className={saveButton}
                     onClick={() => handleUpdateComment(comment.commentId)}
                   >
                     저장
                   </button>
                   <button
-                    className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-sm text-white rounded"
+                    className={cancelButton}
                     onClick={() => setEditCommentId(null)}
                   >
                     취소
@@ -137,10 +149,10 @@ const Comments = (props) => {
               </>
             ) : (
               <>
-                <div className="flex text-sm text-purple-200 gap-3 font-semibold mb-2">
-                  <span className='flex'>
+                <div className={userDate + " font-semibold mb-2"}>
+                  <span className='flex gap-1'>
                     <FaUser
-                    className="mt-1 "
+                    className="mt-0.5"
                     />
                     {comment.nickName}
                   </span>
@@ -155,13 +167,13 @@ const Comments = (props) => {
                     <>
                     <div className='px-2 flex flex-row'>
                       <button
-                        className="px-3 py-1 mr-1 w-15 h-7 bg-blue-600 hover:bg-blue-700 text-sm text-white rounded whitespace-nowrap"
+                        className={editButton}
                         onClick={() => handleEditComment(comment.commentId, comment.content)}
                       >
                         <p>수정</p>
                       </button>
                       <button
-                        className="px-3 py-1 w-15 h-7 bg-red-600 hover:bg-red-700 text-sm text-white rounded whitespace-nowrap"
+                        className={deleteButton}
                         onClick={() => handleDeleteComment(comment.commentId)}
                       >
                         삭제
@@ -177,7 +189,7 @@ const Comments = (props) => {
                 </div> */}
                 
                 {/* 구분선 */}
-                <div className="border-t border-white/40 my-8" />
+                <div className={whiteLine} />
               </>
             )}
           </div>
@@ -195,25 +207,12 @@ const Comments = (props) => {
 
         {props.category === "code" && !newCommentFlag && role !== 'guest' && (
           <button
-            className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded"
+            className={writeCommentButton}
             onClick={() => setNewCommentFlag(true)}
           >
             댓글 작성
           </button>
-        )}
-
-        {props.category === "code" && (
-          <></>
-        )}
-
-        {props.category === "notice" && (
-          <Link
-            to="/board/notice"
-            className={buttonStyle + ` px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm`}
-          >
-            이전
-          </Link>
-        )}
+        )}        
       </div>
     </div>
   );

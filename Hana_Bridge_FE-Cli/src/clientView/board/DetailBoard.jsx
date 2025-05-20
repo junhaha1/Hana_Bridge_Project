@@ -8,14 +8,16 @@ import Comments from './Comments';
 
 import '../../css/Board/DetailBoard.css';
 import LeftHeader from '../header/LeftHeader';
-import RightHeader from '../header/RightHeader';
 import CodeHelper from '../CodeHelper';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
+import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
+import { FaUser } from 'react-icons/fa';
+
 
 //상세 게시글 보드
-const DetailBoard = () => {
+const DetailBoard = (props) => {
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
@@ -43,6 +45,15 @@ const DetailBoard = () => {
 
   //textarea 높이 자동화
   const textareaRef = useRef(null);
+
+  //비회원이 좋아요 눌렀을때 띄울 메시지 
+  const [showGuestMessage, setShowGuestMessage] = useState(false);
+  const handleGuestClick = () => {
+    setShowGuestMessage(true);
+    setTimeout(() => {
+      setShowGuestMessage(false);
+    }, 2000); // 2초 후 자동 사라짐
+  };
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -213,17 +224,28 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 px-40"}>
-            <button
-              onClick={() => navigate("/board/code")}
-              className={buttonStyle + ` px-4 py-1 bg-purple-600 hover:bg-purple-400 text-white text-sm mb-2`}
-            >
-              이전
-            </button>
+          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+            {props.category === "code" && (
+              <button
+                onClick={() => navigate("/board/code")}
+                className={buttonStyle + backButton}
+              >
+                이전
+              </button>
+            )}
+
+            {props.category === "notice" && (
+              <button
+                onClick={() => navigate("/board/notice")}
+                className={buttonStyle + backButton}
+              >
+                이전
+              </button>
+            )}            
             {isEdit ? (              
               <div className={detailCardStyle}>
                 {/* 게시글 수정 폼 */}
-                  <div className="text-sm text-white/60 mb-2 text-left">
+                  <div className={detailCategory}>
                     {category === "code"
                       ? "CODE 게시판 > 상세글"
                       : "공지 게시판 > 상세글"}
@@ -231,20 +253,28 @@ const DetailBoard = () => {
 
                   <input
                     type="text"
-                    className="w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white font-bold placeholder-white/50"
+                    className={editTitle}
                     placeholder="제목을 입력해주세요"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
 
-                  <p className="text-sm text-white/60 text-left mb-2">
-                    작성자 {board.nickName}
-                  </p>
+                  <div className={userDate}>
+                    <span className='flex gap-1'>
+                      <FaUser
+                      className="mt-0.5"
+                      />
+                      {board.nickName}
+                    </span>
+                    <span className='text-xs text-gray-300 mt-0.5'>
+                      {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                    </span>                  
+                  </div>
 
                   {category === "code"
                     ? <textarea
                       ref={textareaRef}
-                      className={scrollStyle + " w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"}
+                      className={scrollStyle + editContent}
                       placeholder="코드나 에러사항을 입력해주세요"
                       value={code}
                       onChange={(e) => setCode(e.target.value)}
@@ -252,14 +282,14 @@ const DetailBoard = () => {
                     : null}                  
 
                   <textarea
-                    className="w-full p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50"
+                    className={editContent}
                     placeholder="내용을 입력해주세요"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                   />
 
-                  <div className="flex justify-between items-center mt-4">
-                    <div className="flex items-center space-x-6">
+                  <div className={liekCommentButton}>
+                    <div className={liekComment}>
                       <span className="flex items-center">
                         <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
                         {board.likeCount}
@@ -274,13 +304,13 @@ const DetailBoard = () => {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                        className={buttonStyle + " bg-green-600 text-white px-3 py-1 text-sm hover:bg-green-700"}
                         onClick={() => saveBoard(boardId)}
                       >
                         저장
                       </button>
                       <button
-                        className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+                        className={buttonStyle + " bg-red-500 text-white px-3 py-1 text-sm hover:bg-red-600"}
                         onClick={() => setIsEdit(false)}
                       >
                         취소
@@ -291,37 +321,56 @@ const DetailBoard = () => {
             ) : (
               <div className={detailCardStyle}>
                 {/* 게시글 보기 (테두리 없이 투명 배경) */}
-                <div  className="text-sm text-white/60 mb-2 text-left ">
+                <div  className={detailCategory}>
                   {category === "code"
                     ? "CODE 게시판 > 상세글"
                     : "공지 게시판 > 상세글"}
                 </div>
-                <h2 className="text-2xl font-bold text-white">{board.title}</h2>
-                <p className="text-sm text-white/60 mb-4">작성자 {board.nickName}</p>
+                <h2 className={detailTitle}>{board.title}</h2>
+                <div className={userDate}>
+                  <span className='flex gap-1'>
+                    <FaUser
+                    className="mt-0.5"
+                    />
+                    {board.nickName}
+                  </span>
+                  <span className='text-xs text-gray-300 mt-0.5'>
+                    {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                  </span>                  
+                </div>
                 {category === "code"
-                  ? <p className="text-left whitespace-pre-wrap">{board.code}</p>
+                  ? <p className={detailContent}>{board.code}</p>
                   : null}
-                <p className="text-left whitespace-pre-wrap">{board.content}</p>
+                <p className={detailContent}>{board.content}</p>
 
-                <div className="flex justify-between items-center mt-6">
-                  <div className="flex items-center space-x-6">
-                    {isLike ? (
-                      <span
-                        className="cursor-pointer flex items-center"
-                        onClick={() => handleCancelLike(boardId)}
-                      >
-                        <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                        {likeCount}
-                      </span>
-                    ) : (
-                      <span
-                        className="cursor-pointer flex items-center"
-                        onClick={() => handleLike(boardId)}
-                      >
-                        <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                        {likeCount}
-                      </span>
-                    )}
+                <div className={liekCommentButton}>
+                  <div className={liekComment}>
+                    <span
+                      className="relative cursor-pointer flex items-center"
+                      onClick={() => {
+                        if (nickName === 'guest') {
+                          handleGuestClick();
+                        } else {
+                          isLike ? handleCancelLike(boardId) : handleLike(boardId);
+                        }
+                      }}
+                    >
+                      <img
+                        src={isLike ? "/images/blueGood.png" : "/images/whiteGood.png"}
+                        alt="좋아요"
+                        className="w-5 h-5 mr-1"
+                      />
+                      {likeCount}
+
+                      {showGuestMessage && (
+                        <div className="absolute bottom-full mb-2
+                          w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
+                          text-center">
+                          ⚠ 비회원은 이용할 수 없는 기능입니다.
+                        </div>
+                      )}
+                    </span>
+
 
                     {category === 'code'?
                     <span className="flex items-center">

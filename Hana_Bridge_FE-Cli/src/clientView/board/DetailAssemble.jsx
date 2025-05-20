@@ -10,9 +10,11 @@ import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
 import CodeHelper from '../CodeHelper';
-import { scrollStyle } from "../../style/CommonStyle";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
+import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
+import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent } from "../../style/CommonDetail";
+import { FaUser } from 'react-icons/fa';
 
 const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);
@@ -39,7 +41,7 @@ const DetailAssemble = () => {
         return res.json();
       })
       .then((data) => {
-        setBoard(data);
+        setBoard(data);        
         setLikeCount(data.likeCount);
         setIsLike(data.goodCheck);
       })
@@ -110,7 +112,10 @@ const DetailAssemble = () => {
       });
   };
 
-  if (!board) return <div className="text-white p-4">로딩 중...</div>;
+  if (!board){
+    navigate("/error");
+    return null;
+  }
 
   return (
     <div className={mainFrame}>
@@ -119,68 +124,83 @@ const DetailAssemble = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-
-          <div className="text-sm text-white/60 mb-2">ASSEMBLE 게시판 &lt; 상세글</div>
-
-          <h2 className="text-2xl font-bold text-white">{board.title}</h2>
-          <p className="text-sm text-white/60 mb-4">작성자 {board.nickName}</p>
-
-          <div className="text-white">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={{
-                code({ inline, className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(className || '');
-                  return !inline && match ? (
-                    <SyntaxHighlighter
-                      {...props}
-                      style={prism}
-                      language={match[1]}
-                      PreTag="div"
-                      className="rounded-md overflow-x-auto"
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
-                      {children}
-                    </code>
-                  );
-                },
-              }}
+          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+            <button
+              onClick={() => navigate("/board/assemble")}
+              className={buttonStyle + ` px-4 py-1 bg-purple-600 hover:bg-purple-400 text-white text-sm mb-2`}
             >
-              {board.content}
-            </ReactMarkdown>
-          </div>
+              이전
+            </button>
+            <div className={detailCategory}>ASSEMBLE 게시판 &gt; 상세글</div>
 
-          {/* 좋아요, 댓글, 삭제 */}
-          <div className="flex justify-between items-center mt-6">
-            <div className="flex items-center space-x-6 text-white">
-              {isLike ? (
-                <span className="cursor-pointer flex items-center" onClick={() => handleCancelLike(assembleBoardId)}>
-                  <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                  {likeCount}
-                </span>
-              ) : (
-                <span className="cursor-pointer flex items-center" onClick={() => handleLike(assembleBoardId)}>
-                  <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
-                  {likeCount}
-                </span>
+            <h2 className={detailTitle}>{board.title}</h2>
+            <div className={userDate}>
+              <span className='flex gap-1'>
+                <FaUser
+                className="mt-0.5"
+                />
+                {board.nickName}
+              </span>
+              <span className='text-xs text-gray-300 mt-0.5'>
+                {new Date(board.createdAt).toISOString().slice(0, 16).replace('T', ' ')}
+              </span>                  
+            </div>
+
+            <div className="text-white">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code({ inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        {...props}
+                        style={prism}
+                        language={match[1]}
+                        PreTag="div"
+                        className="rounded-md overflow-x-auto"
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
+                {board.content}
+              </ReactMarkdown>
+            </div>
+
+            {/* 좋아요, 댓글, 삭제 */}
+            <div className={liekCommentButton}>
+              <div className={liekComment + " text-white"}>
+                {isLike ? (
+                  <span className="cursor-pointer flex items-center" onClick={() => handleCancelLike(assembleBoardId)}>
+                    <img src="/images/blueGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                    {likeCount}
+                  </span>
+                ) : (
+                  <span className="cursor-pointer flex items-center" onClick={() => handleLike(assembleBoardId)}>
+                    <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                    {likeCount}
+                  </span>
+                )}
+              </div>
+
+              {(nickName === board.nickName || role === "ROLE_ADMIN") && (
+                <button className={buttonStyle +" text-red-400 text-sm hover:underline"} onClick={() => boardDeleteButton(assembleBoardId)}>
+                  삭제하기
+                </button>
               )}
             </div>
 
-            {(nickName === board.nickName || role === "ROLE_ADMIN") && (
-              <button className="text-red-400 text-sm hover:underline" onClick={() => boardDeleteButton(assembleBoardId)}>
-                삭제하기
-              </button>
-            )}
+            <div className="border-t-2 border-white/70 my-8" />
+
+
           </div>
-
-          <div className="border-t-2 border-white/70 my-8" />
-
-          <Link to="/board/assemble" className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700">
-            이전
-          </Link>
         </main>
       </div>
 
