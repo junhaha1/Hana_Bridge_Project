@@ -1,4 +1,4 @@
-import { useState} from 'react';
+import { useState, useRef} from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { setCategory } from '../store/userSlice';
@@ -15,9 +15,11 @@ import assembleHome from "../../public/animations/assemblehome.json";
 import { homeFrame } from '../style/CommonFrame.jsx';
 import { homeAnimation, homeButton, homeText, homeTitle, sectionBox, sectionLayout } from '../style/CommonHomeStyle.jsx';
 import useScrollSnap from '../service/useScrollSnap.js';
+import { FaArrowUp } from 'react-icons/fa';
 
 const Home = () => {
-  const sectionRefs = useScrollSnap(1000); 
+  const { sectionRefs, scrollToIndex } = useScrollSnap(1000);
+  const topSectionRef = useRef(null);
   const name = useSelector((state) => state.user.name);
   const nickName = useSelector((state) => state.user.nickName);
 
@@ -59,6 +61,10 @@ const Home = () => {
     }
   };
 
+  const handleTopClick = () => {
+    scrollToIndex(0); // 첫 번째 섹션으로 이동
+  };
+
   return (
     <>
     
@@ -77,7 +83,15 @@ const Home = () => {
       )}
 
       {/* 첫 번째 섹션 */}
-      <section ref={(el) => { if (el) sectionRefs.current[0] = el; }} className={sectionLayout}>
+      <section
+          ref={(el) => {
+            if (el) {
+              sectionRefs.current[0] = el;
+              topSectionRef.current = el;
+            }
+          }}
+          className={sectionLayout}
+        >
         <div className={sectionBox}>
           <h2 className={homeTitle}>“혼자 코딩? 이제는 Codi와 함께!”</h2>
           <p className={homeText}>
@@ -134,6 +148,12 @@ const Home = () => {
           <Lottie animationData={assembleHome} loop={true} />
         </div>
       </section>
+      <button
+        onClick={handleTopClick}
+        className="fixed bottom-6 right-6 z-50 p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg"
+      >
+        <FaArrowUp />
+      </button>
     </div>
     </>
   );
