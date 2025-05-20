@@ -18,7 +18,7 @@ import { FaUser, FaArrowUp } from 'react-icons/fa';
 
 
 //상세 게시글 보드
-const DetailBoard = (props) => {
+const DetailBoard = () => {
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
@@ -235,7 +235,7 @@ const DetailBoard = (props) => {
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
           <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
-            {props.category === "code" && (
+            {category === "code" && (
               <button
                 onClick={() => navigate("/board/code")}
                 className={buttonStyle + backButton}
@@ -244,7 +244,7 @@ const DetailBoard = (props) => {
               </button>
             )}
 
-            {props.category === "notice" && (
+            {category === "notice" && (
               <button
                 onClick={() => navigate("/board/notice")}
                 className={buttonStyle + backButton}
