@@ -3,16 +3,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { setPlayFlag } from "../../store/userSlice.js";
 
 import Header from "../header/Header.jsx";
-import RightHeader from "../header/RightHeader.jsx";
 import LeftHeader from "../header/LeftHeader.jsx";
 
 import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
 
-import MyPage from "./MyPage.jsx";
-import MyPosts from "./MyPosts.jsx";
 import DashboardCards from "./DashBoardCards.jsx";
 import CodeHelper from "../CodeHelper.jsx";
+
+import {mainFrame} from "../../style/CommonFrame.jsx";
 
 //대쉬보드
 const DashBoard = () => {
@@ -23,32 +22,6 @@ const DashBoard = () => {
   const dispatch = useDispatch();
   const page = useSelector((state) => state.user.page);
   let RenderContent;
-
-  //page값에 따른 조건부 렌더링
-  switch (page) {
-    case "home":
-      RenderContent = <DashboardCards />;
-      break;
-    case "mypage":
-      RenderContent = <MyPage />;
-      break;
-    case "myposts":
-      RenderContent = <MyPosts/>;
-      break;
-    default:
-      RenderContent = 
-      <>
-      <div className="relative mb-8">
-        <input
-          type="text"
-          placeholder="Search Your Board"
-          className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
-        <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
-      </div>
-      <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
-      <DashboardCards />
-      </>;
-  }
 
   useEffect(() => {
     if (lottieRef.current) {
@@ -67,10 +40,8 @@ const DashBoard = () => {
   };
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 text-white overflow-auto relative">
-      {/* 상단 고정 헤더 */}
+    <div className={mainFrame}>
       <Header />
-
       {/* 로딩 애니메이션 */}
       {playFlag && (
         <div
@@ -92,36 +63,13 @@ const DashBoard = () => {
       {/* 대시보드 본문 */}
       {!playFlag &&(
         <>
-        <div className="w-full flex flex-col ">
-          {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
-          <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
-            {/* Left Sidebar */}
-            <div className="w-full lg:w-1/5">
-              <LeftHeader />
-            </div>
-
-            {/* Main Content */}
-            <div className="w-full lg:w-3/5">
-              <div className="max-w-3xl mx-auto px-4 sm:px-6">
-                <div className="relative mb-8">
-                  <input
-                    type="text"
-                    placeholder="Search Your Board"
-                    className="w-full pl-10 pr-4 py-2 rounded-full bg-white text-black placeholder-gray-400 shadow" />
-                  <span className="absolute left-3 top-2.5 text-gray-500 text-lg">🔍</span>
-                </div>
-                <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
-                {RenderContent}
-              </div>
-            </div>
-
-            {/* Right Sidebar */}
-            <div className="w-full lg:w-1/5">
-              <RightHeader />
-            </div>
+        <div className="w-full flex flex-row mt-20">
+          <LeftHeader />
+          <div className="w-4/5">
+            <DashboardCards />
+            <CodeHelper/>
           </div>
         </div>
-        <CodeHelper/>
         </>
       )}
     </div>

@@ -27,12 +27,6 @@ export default function LeftHeader() {
     navigate("/board/" + id);
   };
 
-  const movePage = (pageName) => {
-    dispatch(setPage({ page: pageName }));
-    dispatch(setCategory({ category: "" }));
-    navigate("/dashboard/" + pageName);
-  }
-
   return (
     <aside className={leftFrame}>
       <div className='mt-5'/>

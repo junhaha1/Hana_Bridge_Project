@@ -3,7 +3,7 @@ import CodeHelper from "./CodeHelper";
 import NoticeBoard from "./board/NoticeBoard";
 import CodeBoard from "./board/CodeBoard";
 import AssembleBoard from "./board/AssembleBoard";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import LeftHeader from "./header/LeftHeader";

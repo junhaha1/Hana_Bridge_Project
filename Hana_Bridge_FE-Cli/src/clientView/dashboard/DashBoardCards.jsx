@@ -2,17 +2,23 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setPage, setCategory } from '../../store/userSlice';
 
+import { scrollStyle } from "../../style/CommonStyle";
+import { cardStyle } from "../../style/CommonStyle";
+import { FaQuestionCircle} from "react-icons/fa";
+
+import {dashCardContent, dashCardStyle, dashCardTitle, dashCardTopLayout} from "../../style/DashBoardStyle";
 
 const DashboardCards = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const cardClass =
-  "no-underline bg-white text-black px-8 py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-transform duration-300 h-32 flex flex-col justify-center";
 
-  const movePage = (pageName) => {
-    dispatch(setPage({ page: pageName }));
-    dispatch(setCategory({ category: "" }));
-  }
+  const boards = [
+    { id: 'myposts', title: "내 게시판", content: '내가 쓴 글을 모아볼 수 있어요.' },
+    { id: 'notice', title: "공지 게시판", content: '중요한 공지사항이 올라와요.' },
+    { id: 'code', title: "코드/질문 게시판", content: '막히는 코드, 궁금한 개념을 자유롭게 질문하세요.'  },
+    { id: 'assemble', title: "Codi 답변 모아보기", content: 'AI Codi가 답변한 글들을 모아볼 수 있어요.'  },
+  ];
+
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
@@ -21,22 +27,43 @@ const DashboardCards = () => {
   }; 
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6 w-full max-w-3xl mx-auto">
-      <button onClick={() => movePage("mypage")} className={cardClass}>
-        <h3 className="text-xl font-semibold">My Page</h3>
-      </button>
+    <div className={scrollStyle + " h-full pt-8 pb-8 ml-20 pr-40"}>
+      <div className="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-5 text-center text-white shadow-2xl">
+        <div className="mb-6 text-left space-y-4 text-xl font-semibold leading-snug">
+          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />혼자 공부하는 게 막막하지 않으셨나요?</p>
+          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />수업 들을 때 한번 놓치면 따라가기 힘들진 않으셨나요?</p>
+          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />에러는 쏟아지고, 구글링도 한계가 느껴지진 않으셨나요?</p>
+          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />내가 짠 코드, 왜 이렇게 돌아가는 건지 이해 안 되진 않으셨나요?</p>
+        </div>
 
-      <button onClick={() => movePage("myposts")} className={cardClass}>
-        <h3 className="text-xl font-semibold mb-1">My Posts</h3>
-      </button>
-
-      <button onClick={() => postBoard("code")} className={cardClass}>
-        <h3 className="text-xl font-semibold">Code Board</h3>
-      </button>
-
-      <button onClick={() => postBoard("assemble")} className={cardClass}>
-        <h3 className="text-xl font-semibold">Assemble Board</h3>
-      </button>
+        <div className="mt-8 text-white font-semibold leading-relaxed">
+          <p>그럴 땐, <span className="text-yellow-300">AI 친구 <strong>Codi</strong></span>에게 물어보세요.</p>
+          <p>코드 리뷰부터 개념 설명까지, Codi가 함께 고민해드립니다.</p>
+        </div>
+      </div>
+      <div className="mt-12 text-left text-white text-lg leading-relaxed">
+        <p className="mb-2">이 사이트에는 <span className="text-yellow-300 font-semibold">Codi AI</span>의 답변뿐 아니라,</p>
+        <p className="mb-2">여러분의 <strong className="text-indigo-300">코딩 질문</strong>, <strong className="text-indigo-300">공지사항</strong>, <strong className="text-indigo-300">내가 쓴 글</strong>도</p>
+        <p className="">모두 모아서 확인할 수 있는 게시판이 준비되어 있어요.</p>
+      </div>
+      {boards.map(({id, title, content}) => (
+        <div
+          key={id}
+          className={dashCardStyle}
+          onClick={() => postBoard(id)}
+        >
+          <div className = {dashCardTopLayout}>
+            <h3
+              className= {dashCardTitle}
+            >
+              {title}
+            </h3>
+          </div>
+          <p className={dashCardContent}>
+            {content}
+          </p>
+        </div>
+      ))}
     </div>
   );
 };
