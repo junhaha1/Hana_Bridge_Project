@@ -54,6 +54,7 @@ const CodeBoard = () => {
 
   const boardClick = (boardId) => {
     navigate(`/detailBoard/${boardId}`, { state: { category: category } });
+    console.log(category);
   };
   
   //게시글이 없을 경우 

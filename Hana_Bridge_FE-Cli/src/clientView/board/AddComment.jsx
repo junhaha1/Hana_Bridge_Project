@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
-
-import '../../css/Board/AddComment.css';
-import '../../css/Common.css';
-import "../../css/Scroll.css";
+import { commentInput } from '../../style/CommentStyle';
 
 const AddComment = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -52,7 +49,7 @@ const AddComment = (props) => {
         error.code = errorData.code;
         throw error;  
       }
-      alert("댓글이 등록되었습니다. ");
+      // alert("댓글이 등록되었습니다. ");
       props.setNewCommentFlag(false)
     })
     .catch((err) => console.error('댓글 등록 실패:', err));
@@ -70,8 +67,14 @@ const AddComment = (props) => {
           value={content}
           onInput={handleResizeHeight}
           onChange={(e) => setContent(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault(); // 줄바꿈 방지
+              handleAddComment();
+            }
+          }}
           placeholder="댓글을 입력하세요."
-          className="custom-scroll w-full resize-none p-3 pr-10 bg-transparent text-white placeholder-white/60 rounded-md border border-white/30"
+          className={commentInput}
         />
         
         <button
