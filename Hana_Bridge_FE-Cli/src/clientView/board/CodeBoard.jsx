@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 //디자인 
 import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
+import { userDate } from "../../style/CommonDetail";
 
 import {FaUser, FaSearch} from 'react-icons/fa';
 import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
@@ -134,12 +135,17 @@ const CodeBoard = () => {
             {post.content}
           </p>
           <div className= {cardBottomLayout}>
-            <span className={cardAuthor}>
-              <FaUser
-              className="mt-1"
-              />
-              {post.nickName}
-            </span>
+            <div className={userDate}>
+              <span className={cardAuthor}>
+                <FaUser
+                className="mt-1"
+                />
+                {post.nickName}
+              </span>
+              <span className='text-xs text-gray-300 mt-0.5'>
+                {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+              </span>
+            </div>
             <div className="flex gap-4">
               <span className= {cardGood}>
                 <img

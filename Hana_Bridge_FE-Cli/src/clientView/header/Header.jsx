@@ -3,19 +3,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCategory, setPage } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 import { clearUser, clearAiChat } from "../../store/userSlice.js";
-import Lottie from "lottie-react";
-import logo from "../../../public/animations/logo.json";
 import ApiClient from "../../service/ApiClient.jsx";
+
 import LoginModal from "../user/LoginModal.jsx";
 import SignUpModal from "../user/SignUpModal.jsx";
+import UserInfoModal from "../user/UserInfoModal.jsx";
+
 import ConfirmLogoutModal from "../user/ConfirmLogoutModal.jsx"; // ⬅️ 커스텀 로그아웃 모달 추가
 
 import {headerFrame} from '../../style/CommonFrame.jsx';
+import { addButton, commonButton, logoutButton, mainTitle, serviceBox, titleBox, userButton, userIcon } from "../../style/CommonHeaderStyle.jsx";
+import { FaUserCircle } from "react-icons/fa";
 
 const BoardHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const email = useSelector((state) => state.user.email);
+  const nickName = useSelector((state) => state.user.nickName);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("login");
@@ -34,6 +38,10 @@ const BoardHeader = () => {
     navigate('/dashBoard/home');
   }
 
+  const moveAddBoard = () => {
+    navigate("/write");
+  }
+
   const handleLogout = () => {
     ApiClient.userLogout()
       .then((res) => {
@@ -46,14 +54,12 @@ const BoardHeader = () => {
       .catch((err) => console.error("Logout error:", err));
   };
 
-  const lottieRef = useRef();
-
   return (
     <>
       <div className={headerFrame}>
         {/* 로고 + 제목 */}
         <div
-          className="flex items-center space-x-4 no-underline cursor-pointer"
+          className={titleBox}
           onClick={() => {
             if (email && email !== "guest@email.com") {
               dispatch(setPage({page:'home'}));
@@ -63,46 +69,51 @@ const BoardHeader = () => {
               navigate("/");
             }
           }}
-          onMouseEnter={() => lottieRef.current?.goToAndPlay(0, true)}
-          onMouseLeave={() => lottieRef.current?.stop()}
         >
-          <div className="w-[80px] h-[80px]">
-            <Lottie
-              lottieRef={lottieRef}
-              animationData={logo}
-              loop={false}
-              autoplay={false}
-            />
-          </div>
-          <strong className="text-[40px] text-white font-bold leading-[45px] no-underline">
+          <strong className={mainTitle}>
             AIssue
           </strong>
         </div>
 
         {/* 로그인 / 회원가입 or 로그아웃 */}
-        <div className="flex items-center space-x-2">
+        <div className={serviceBox}>
           {email === "guest@email.com" ? (
             <>
               <button
                 onClick={() => openModal("login")}
-                className="px-4 py-2 text-white hover:text-blue-300 rounded no-underline text-lg"
+                className={commonButton}
               >
                 로그인
               </button>
               <button
                 onClick={() => openModal("signup")}
-                className="px-4 py-2 text-white hover:text-blue-300 rounded no-underline text-lg"
+                className={commonButton}
               >
                 회원가입
               </button>
             </>
           ) : (
-            <button
-              onClick={() => setConfirmLogoutOpen(true)}
-              className="block w-full text-left px-4 py-2 rounded hover:bg-[#C5BCFF]"
-            >
-              로그아웃
-            </button>
+            <div className={serviceBox}>
+              
+              <button
+                onClick={() => openModal("myinfo")}
+                className={userButton}
+              >
+                 <FaUserCircle className={userIcon}/> {nickName}
+              </button>
+              <button
+                onClick={moveAddBoard}
+                className={addButton}
+              >
+                글 작성
+              </button>
+              <button
+                onClick={() => setConfirmLogoutOpen(true)}
+                className={logoutButton}
+              >
+                로그아웃
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -113,6 +124,9 @@ const BoardHeader = () => {
       )}
       {modalOpen && modalType === "signup" && (
         <SignUpModal onClose={closeModal} onSwitch={openModal} />
+      )}
+      {modalOpen && modalType === "myinfo" && (
+        <UserInfoModal onClose={closeModal} onSwitch={openModal} />
       )}
 
       {/* 로그아웃 확인 모달 */}

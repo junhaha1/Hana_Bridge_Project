@@ -10,7 +10,7 @@ export const liekCommentButton =  "flex justify-between items-center mt-4";
 //좋아요, 댓글 묶기
 export const liekComment = "flex items-center space-x-6";
 //사용자 - 날짜 묶기
-export const userDate = "flex text-sm text-purple-200 gap-3 mb-3";
+export const userDate = "flex text-sm text-purple-200 gap-2 mb-3";
 //category  "CODE 게시판 > 상세글"
 export const detailCategory = "text-sm text-white/60 mb-2 text-left";
 //Title
