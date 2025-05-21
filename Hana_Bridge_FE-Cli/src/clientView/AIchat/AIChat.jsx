@@ -273,7 +273,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-zinc-800 rounded-2xl overflow-y-hidden relative">
+    <div className="w-full h-full flex flex-col bg-xinc-800 rounded-2xl overflow-y-hidden relative">
         {/* 상단 메뉴바 */}
         <div className='flex justify-between bg-white/15 backdrop-blur-sm'>
             {onMode === 'sub' ? (

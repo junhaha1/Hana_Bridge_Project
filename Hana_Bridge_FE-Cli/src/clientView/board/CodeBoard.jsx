@@ -105,6 +105,7 @@ const CodeBoard = () => {
           :
             <button 
               className={addButton}
+              onClick={() => navigate("/write")}
             >
               글 작성
             </button>
