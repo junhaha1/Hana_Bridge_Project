@@ -30,14 +30,14 @@ public class AssembleBoard {
     private String content;
 
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
 
     @Builder
-    public AssembleBoard(Users users, String title, String category, String content, LocalDateTime createdAt) {
+    public AssembleBoard(Users users, String title, String category, String content, LocalDateTime createAt) {
         this.users = users;
         this.title = title;
         this.category = category;
         this.content = content;
-        this.createdAt = createdAt;
+        this.createAt = createAt;
     }
 }

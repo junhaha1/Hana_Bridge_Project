@@ -8,7 +8,7 @@ import { leftFrame } from '../../style/CommonFrame';
 import { leftTitle } from '../../style/CommonLeftStyle';
 
 const boards = [
-  { id: 'myposts', label: '내 게시판' },
+  { id: 'me', label: '내 게시판' },
   { id: 'notice', label: '공지 게시판' },
   { id: 'code', label: '코드질문 게시판' },
   { id: 'assemble', label: 'AI답변 게시판' },

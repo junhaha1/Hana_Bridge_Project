@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import LeftHeader from "./header/LeftHeader";
 
 import {mainFrame} from "../style/CommonFrame";
+import MyBoard from "./board/MyBoard";
 
 //게시판 보드
 const MainBoard = () => {
@@ -25,6 +26,7 @@ const MainBoard = () => {
         {/* Main Content */}
         <div className="w-4/5">
           {/* 게시판 분기 렌더링 */}
+          {category === "me" && <MyBoard />}
           {category === "code" && <CodeBoard />}
           {category === "assemble" && <AssembleBoard />}
           {category === "notice" && <NoticeBoard />}

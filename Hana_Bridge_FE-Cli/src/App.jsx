@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 function App() {
   const nickName = useSelector((state) => state.user.nickName);
   return (
-    <>
+    <div className='font-sans'>
     <Routes>
       <Route path="/" element={<Home />} /> {/* 홈 화면 */}
       <Route path="/dashBoard/:page" element={<DashBoard/>} />
@@ -30,7 +30,7 @@ function App() {
       <Route path="/error" element={<NotFound/>} /> {/* 404 화면 */}
     </Routes>
     {nickName !== "guest" && (<Codi/>)}
-    </>
+    </div>
   );
 }
 export default App;

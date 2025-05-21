@@ -13,7 +13,7 @@ const DashboardCards = () => {
   const dispatch = useDispatch();
 
   const boards = [
-    { id: 'myposts', title: "내 게시판", content: '내가 쓴 글을 모아볼 수 있어요.' },
+    { id: 'me', title: "내 게시판", content: '내가 쓴 글을 모아볼 수 있어요.' },
     { id: 'notice', title: "공지 게시판", content: '중요한 공지사항이 올라와요.' },
     { id: 'code', title: "코드/질문 게시판", content: '막히는 코드, 궁금한 개념을 자유롭게 질문하세요.'  },
     { id: 'assemble', title: "Codi 답변 모아보기", content: 'AI Codi가 답변한 글들을 모아볼 수 있어요.'  },
