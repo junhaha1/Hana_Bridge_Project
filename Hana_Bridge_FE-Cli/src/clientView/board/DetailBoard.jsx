@@ -234,7 +234,7 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
             {category === "code" && (
               <button
                 onClick={() => navigate("/board/code")}
