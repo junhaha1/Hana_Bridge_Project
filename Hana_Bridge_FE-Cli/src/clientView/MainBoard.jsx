@@ -1,5 +1,4 @@
 import Header from "./header/Header";
-import CodeHelper from "./CodeHelper";
 import NoticeBoard from "./board/NoticeBoard";
 import CodeBoard from "./board/CodeBoard";
 import AssembleBoard from "./board/AssembleBoard";
@@ -30,7 +29,6 @@ const MainBoard = () => {
           {category === "assemble" && <AssembleBoard />}
           {category === "notice" && <NoticeBoard />}
           {/* 게스트는 CodeHelper 안 보임 */}
-          {email !== "guest@email.com" && <CodeHelper />}
         </div>
       </div>
     </div>

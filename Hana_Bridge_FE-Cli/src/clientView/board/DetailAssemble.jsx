@@ -9,7 +9,7 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
-import CodeHelper from '../CodeHelper';
+import CodeHelper from '../Codi';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
@@ -241,8 +241,6 @@ const DetailAssemble = () => {
           </button>
         </main>
       </div>
-
-      {email !== "guest@email.com" && <CodeHelper />}
     </div>
   );
 };
