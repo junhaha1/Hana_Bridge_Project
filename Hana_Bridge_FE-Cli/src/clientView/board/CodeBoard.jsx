@@ -13,8 +13,11 @@ const CodeBoard = () => {
   const [boards, setBoards] = useState([]);
   const navigate = useNavigate();
   const category = useSelector((state) => state.user.category);
+  const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const scrollRef = useRef(null);
+
+  const [sortType, setSortType] = useState("latest");
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -24,7 +27,9 @@ const CodeBoard = () => {
   };
 
   useEffect(() => {
-    ApiClient.getBoards(category)
+    const getBoard = sortType === "latest" ? ApiClient.getBoards : ApiClient.getSortBoards;
+    console.log(email);
+    getBoard(category, email)
     .then(async  (res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -57,7 +62,7 @@ const CodeBoard = () => {
         navigate("/error");
       }
     });
-  }, [category]);
+  }, [sortType]);
 
   const boardClick = (boardId) => {
     navigate(`/detailBoard/${boardId}`, { state: { category: category } });
@@ -116,9 +121,10 @@ const CodeBoard = () => {
         <select
           id="sort"
           name="sort"
+          value={sortType}
           className={sortCheckBox}
           onChange={(e) => {
-            console.log('선택된 값:', e.target.value)
+            setSortType(e.target.value)
           }}
         >
           <option className="text-black" value="like">좋아요순</option>

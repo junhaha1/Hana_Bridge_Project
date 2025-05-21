@@ -140,9 +140,13 @@ class ApiClient{
     });
   }
   //Board 전체 조회
-  static getBoards(category){
+  static getBoards(category, email){
     console.log("Get Boards By category: " + category);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category);
+  }
+
+  static getSortBoards(category, email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/${category}/${email}`);
   }
   //Board 상세 조회
   static getBoard(boardId, accessToken){

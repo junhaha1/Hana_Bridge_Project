@@ -13,6 +13,7 @@ import { upBottom, addButton, cardAuthor, cardBottomLayout, cardComment, cardCon
 const AssembleBoard = () => {
   const [boards, setBoards] = useState([]);
   const [category, setCategory] = useState('assemble');
+  const [sortType, setSortType] = useState("latest");
 
   const navigate = useNavigate(); 
   const nickName = useSelector((state) => state.user.nickName);
@@ -122,6 +123,7 @@ const AssembleBoard = () => {
         <select
           id="sort"
           name="sort"
+          value={sortType}
           className={sortCheckBox}
           onChange={(e) => {
             console.log('선택된 값:', e.target.value)

@@ -30,6 +30,18 @@ public class BoardApiController {
     private final CommentService commentService;
     private final GoodService goodService;
 
+    //좋아요순으로 정렬하기
+    @GetMapping("/sort/good/{category}/{email}")
+    public ResponseEntity<List<BoardResponse>> sortGoodBoards(@PathVariable("category") String category, @PathVariable("email") String email) {
+        Long userId = -1L;
+        if(!email.equals("guest@email.com")) {
+            userId = usersService.findByEmail(email).getId();
+        }
+
+        List<BoardResponse> boards = boardService.getBoardsSortedByLikeWithGoodCheck(category, userId);
+        return ResponseEntity.ok().body(boards);
+    }
+
     //좋아요 갯수 상위 5개 게시글 가져오기
     @GetMapping("/top")
     public ResponseEntity<List<BoardResponse>> findTopBoards(){

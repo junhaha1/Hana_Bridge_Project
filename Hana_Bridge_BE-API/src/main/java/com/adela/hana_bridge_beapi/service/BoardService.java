@@ -1,5 +1,6 @@
 package com.adela.hana_bridge_beapi.service;
 
+import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
 import com.adela.hana_bridge_beapi.dto.board.BoardUpdateRequest;
@@ -11,8 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -34,6 +39,40 @@ public class BoardService {
         List<Board> boards = boardRepository.findByCategoryAndUsers_Id("code", userId);
         return boards;
     }
+
+    public List<BoardResponse> getBoardsSortedByLikeWithGoodCheck(String category, Long userId) {
+        List<Object[]> rows = boardRepository.findBoardsWithAllStats(category, userId);
+
+        return rows.stream().map(row -> {
+            Long boardId = (Long) row[0];
+            String nickname = (String) row[1];
+            String title = (String) row[2];
+            String cate = (String) row[3];
+            String code = row[4] == null ? "" : (String) row[4];
+            String content = (String) row[5];
+            LocalDateTime createAt = ((Timestamp) row[6]).toLocalDateTime();
+            LocalDateTime updateAt = ((Timestamp) row[7]).toLocalDateTime();
+            Long likeCount = (Long) row[8];
+            Long commentCount = (Long) row[9];
+            Boolean goodCheck = ((Integer) row[10]) == 1;
+
+            return BoardResponse.builder()
+                    .boardId(boardId)
+                    .nickName(nickname)
+                    .title(title)
+                    .code(code)
+                    .category(cate)
+                    .content(content)
+                    .createAt(createAt)
+                    .updateAt(updateAt)
+                    .goodCheck(goodCheck)
+                    .likeCount(likeCount)
+                    .commentCount(commentCount)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+
     //글 전체 조회
     public List<Board> findByCategory(String category) {
         List<Board> boards = boardRepository.findByCategoryOrderByCreateAtDesc(category);
