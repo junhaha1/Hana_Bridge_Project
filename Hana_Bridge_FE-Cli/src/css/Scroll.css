@@ -19,6 +19,7 @@
 
 .custom-scroll:hover::-webkit-scrollbar-thumb {
   background-color: #E0E0E0;
+  cursor: pointer;
 }
 
 .custom-scroll::-webkit-scrollbar-track {

@@ -45,8 +45,8 @@ const DashBoard = () => {
       {/* 로딩 애니메이션 */}
       {playFlag && (
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-r from-indigo-900 to-purple-900
-          transition-opacity duration-700 ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-zinc-800
+          transition-opacity duration-700 z-[9999] ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         >
           <div className="bg-white rounded-full p-6 shadow-2xl">
             <Lottie

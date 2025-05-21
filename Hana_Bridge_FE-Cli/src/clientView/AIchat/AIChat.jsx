@@ -8,25 +8,33 @@ import ApiClient from '../../service/ApiClient';
 import "../../css/Scroll.css";
 import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat, setPostLoading, setPostAssembleId } from '../../store/userSlice';
+import { scrollStyle } from '../../style/CommonStyle';
+import { IoClose } from "react-icons/io5";
+import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
+import { IoCopyOutline } from "react-icons/io5";
+import { FaCheck } from 'react-icons/fa6';
 
-function AIChat({onClose}) {
-  const [messages, setMessages] = useState([]);
+function AIChat({onClose, onfullTalk, onMode}) {
+  const prevMessage = useSelector((state) => state.user.chatMessages);
+  const accessToken = useSelector((state) => state.user.accessToken);
+
+  const [messages, setMessages] = useState(prevMessage);
   const [input, setInput] = useState('');  //질문 1개 
-  const [question, setQuestion] = useState(''); //질문들의 모음
   //채팅의 마지막을 가르킴
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
+  
+  //답변 복사
+  const copyRef = useRef(null);
+  //메시지 상태
+  const [copied, setCopied] = useState(false); 
 
   const dispatch = useDispatch();
-  const lottieRef = useRef();
 
   const [promptLevel, setPromptLevel] = useState(0);
   //ai chat 답변 로딩
   const [isLoading, setIsLoading] = useState(false);
   const [coreContent, setCoreContent] = useState('');
-
-  const accessToken = useSelector((state) => state.user.accessToken);
-  const prevMessage = useSelector((state) => state.user.chatMessages);
 
   //게시판 게시 문의 모달
   const [showModal, setShowModal] = useState(false);
@@ -35,49 +43,37 @@ function AIChat({onClose}) {
     setShowModal(true);
   }
   const closePostModal = () => setShowModal(false);
-  //이전 내용 불러오기 모달
-  const [showChatModel, setShowChatModel] = useState(false);
-  const closeChatModal = () => {
-    dispatch(clearAiChat()); // 메시지만 Redux에서 초기화
-  
-    // 기존 userState 가져오기
-    const existingState = JSON.parse(localStorage.getItem('userState'));
-    if (existingState) {
-      existingState.chatMessages = []; // 메시지만 삭제
-      localStorage.setItem('userState', JSON.stringify(existingState)); // 다시 저장
-    }
-  
-    setShowChatModel(false);
+  //새 대화창 초기화
+  const [showNewChatModal, setShowNewChatModal] = useState(false);
+
+  const closeNewChatModal = () => {
+    setShowNewChatModal(false);
   }; 
-
-  //초기에 이전 내용이 없다면 "이전내용 불러오기" 모달이 뜨지 안도록 설정
-  useEffect(() => {
-    if (prevMessage.length === 1 && prevMessage[0]?.content === '에러 코드를 사용중인 언어와 함께 보내주세요!') {
-      setShowChatModel(false);
-    } else if (prevMessage.length > 0) {
-      setShowChatModel(true);
-    }
-  }, []);
   
+  const createNewChat = () => {
+    dispatch(clearAiChat()); // 메시지만 Redux에서 초기화
+    restartAiChat();
+    setShowNewChatModal(false);
+  }
 
-  //메시지가 추가될 때마다 거기로 스크롤 이동
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  //이전 내용 가져오기 함수 
-  const bringMessage = () => {
-    if (prevMessage && prevMessage.length > 1) {
-      setMessages(prevMessage);
-    } else {
-      const saved = JSON.parse(localStorage.getItem('userState'));
-      if (saved?.chatMessages && saved.chatMessages.length > 1) {
-        setMessages(saved.chatMessages);
-      }
-    }
-    setShowChatModel(false);
+  //답변 복사해오기
+  const copyToClipboard = () => {
+    const text = copyRef.current.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      console.log("복사 성공")
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }).catch(err => {
+      console.error("복사 실패:", err);
+    });
   };
   
+  //메세지 추가 시 스크롤 자동 이동
+  //redux에 대화내용 저장
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    dispatch(setAiChat({ chatMessages: messages }));
+  }, [messages]);
 
   //사용자 입력창 크기 조절절
   const handleResizeHeight = () => {
@@ -87,6 +83,7 @@ function AIChat({onClose}) {
     element.style.height = `${Math.min(element.scrollHeight, maxHeight)}px`; //height값 자동 조절 + 높이 제한   
     
   };
+
   //사용자 질문 보낸 뒤 스트림방식으로 답변 받아오기
   const streamMessage = async () => {
     /*스트림 연결 전에 실행 흐름 -> 로딩 시작, 답변 받기 전 화면 갱신*/
@@ -243,7 +240,6 @@ function AIChat({onClose}) {
 
   //Assemble Board만들기
   const postAssemble = () =>{
-    console.log(coreContent);
     dispatch(setPostLoading({postLoading: true}));
     closePostModal();
     const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
@@ -255,7 +251,6 @@ function AIChat({onClose}) {
     })
     .then((data) => {      
       const assembleboardId  = data.assembleBoardId;
-      console.log(assembleboardId);
       dispatch(setPostLoading({postLoading: false}));
       dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
       //navigate(`/detailAssemble/${assembleboardId}`);
@@ -267,7 +262,6 @@ function AIChat({onClose}) {
   const restartAiChat = () => {
     setMessages([]);
     setInput('');
-    setQuestion('');
     setPromptLevel(0);
     setIsLoading(false);
     setCoreContent('');
@@ -282,24 +276,55 @@ function AIChat({onClose}) {
     <div className="w-full h-full flex flex-col bg-zinc-800 rounded-2xl overflow-y-hidden relative">
         {/* 상단 메뉴바 */}
         <div className='flex justify-between bg-white/15 backdrop-blur-sm'>
-          <button 
-            className='ml-2 p-1 text-white'
-          >
-            새 대화창➕
-          </button>
-          <button 
-            className='mr-2 p-1'
-            onClick={()=>onClose(false)}
-          >
-            ✖
-          </button>
+            {onMode === 'sub' ? (
+              <button 
+                className='ml-2'
+                onClick={()=>{
+                  onfullTalk(true);
+                  onClose(false);
+                }}
+              >
+                <AiOutlineFullscreen size={20} className='text-white'/>
+              </button>
+            ) : (
+              <button 
+                className='ml-2'
+                onClick={()=>{
+                  onfullTalk(false);
+                  onClose(true);
+                }}
+              >
+                <AiOutlineFullscreenExit size={20} className='text-white'/>
+              </button>
+            )}
+            
+            <div className='flex flex-row '>
+              <div className='my-auto text-white text-sm font-semibold'>
+              {promptLevel === 1 ? "전문가" : "초보자"} 모드
+              </div>
+              <button 
+                className='p-1 m-1 rounded text-white text-sm hover:bg-gray-500'
+                onClick={() => setShowNewChatModal(true)}
+              >
+                새 대화창
+              </button>
+              <button 
+                className='m-2 p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
+                onClick={()=>{
+                  onfullTalk(false);
+                  onClose(false);
+                }}
+              >
+                <IoClose/>
+              </button>
+            </div>
         </div>
         {/* 상단 대화창 */}
-        <div className="custom-scroll bg-white/10 backdrop-blur-sm p-4  shadow-md h-[60vh] overflow-y-auto">
+        <div className={`${scrollStyle} h-full bg-white/10 backdrop-blur-sm p-4  shadow-md `}>
           {messages.length === 0 &&(
             <div className="text-white mt-5">
               {/* 역할 소개 문구 */}
-              <div className="rounded-2xl p-3 my-1 text-sm">
+              <div className="rounded-2xl p-2 text-sm">
                 <p className="mb-2">
                   안녕하세요! 저는 <span className="font-semibold text-yellow-300">AI Codi</span>예요.
                 </p>
@@ -349,7 +374,8 @@ function AIChat({onClose}) {
                     msg.role === '답변'
                       ? 'bg-white/20 text-white rounded-tl-2xl rounded-tr-2xl rounded-br-2xl'
                       : 'bg-[#322776] text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl'
-                  }`}
+                  } [&>*]:m-0`}
+                  ref = {msg.role === '답변' ? copyRef : null}
                 >
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
@@ -380,8 +406,15 @@ function AIChat({onClose}) {
               
               {/*답변 채택 버튼 박스 */}
               {msg.role === '답변' && msg.content !== `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` &&(
-                <div className="flex justify-start">
+                <div className="flex justify-start gap-2">
                   {/*답변 채택 버튼 */}
+                  
+                  <button
+                    className="text-white"
+                    onClick={copyToClipboard}
+                  > 
+                    {copied ? <FaCheck/> : <IoCopyOutline className='font-semibold'/>}
+                  </button>
                   <button
                     className="text-sm bg-gray-800 text-white px-3 py-1 rounded-md"
                     onClick={() => openPostModal(msg.content)}
@@ -401,12 +434,12 @@ function AIChat({onClose}) {
           {/* 자동 스크롤 영역 */}
           <div ref={messagesEndRef} />
         </div>
-        <div className="w-full max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-xl p-4 mt-3">
+        <div className="w-full mx-auto bg-white/10 backdrop-blur-md rounded-bl-2xl p-4 mt-3">
           {/* 입력창 (윗부분) */}
-          <div>
+          <div className='flex flex-row gap-2'>
             <textarea
               rows={1}
-              className="custom-scroll w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none overflow-y-auto"
+              className={`${scrollStyle} w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none border-r-2 border-white/20`}
               placeholder="메시지를 입력하세요..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -419,10 +452,6 @@ function AIChat({onClose}) {
                 paddingRight: '0.5rem',
               }}
             />
-          </div>
-          {/* 하단 버튼 영역 */}
-          <div className="flex justify-end border-t border-white/20 pt-2 mt-1">
-            {/* 우측: 보내기 버튼 */}
             <button
               onClick={streamMessage}
               className="hover:opacity-80 hover:scale-105 transition duration-200 ease-in-out"
@@ -446,14 +475,19 @@ function AIChat({onClose}) {
       )}
 
       {/* 모달: 지난 대화 불러오기 */}
-      {showChatModel && (
+      {showNewChatModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white text-black rounded-md p-6 w-full max-w-md">
-            <h2 className="text-xl font-semibold mb-4">AI Chat 내용 가져오기</h2>
-            <p className="mb-4">지난 대화 내용을 불러오시겠습니까?<br />취소하시면 지난 대화 내용이 삭제 됩니다.</p>
+            <h2 className="text-xl font-semibold mb-4">새 대화 시작하기</h2>
+            <div>
+              <p>새로운 대화를 시작하시겠습니까?<br/>
+                시작하면 기존 대화 내용은 삭제됩니다.<br/>
+              </p>
+                <p className='font-semibold text-sm'><span className='text-2xl text-red-400'>*</span>필요한 답변에 대해 채택을 잊으신 경우 답변 채택 후 새 대화를 시작해주십시오.</p>
+            </div>
             <div className="flex justify-end gap-2">
-              <button className="bg-gray-300 px-4 py-1 rounded" onClick={closeChatModal}>취소</button>
-              <button className="bg-indigo-600 text-white px-4 py-1 rounded" onClick={bringMessage}>불러오기</button>
+              <button className="bg-indigo-600 text-white px-4 py-1 rounded" onClick={createNewChat}>확인</button>
+              <button className="bg-gray-300 px-4 py-1 rounded" onClick={closeNewChatModal}>취소</button>
             </div>
           </div>
         </div>

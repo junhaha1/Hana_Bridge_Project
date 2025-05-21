@@ -176,14 +176,13 @@ const CodeBoard = () => {
           </div>
         </div>
       ))}
+      <button
+        onClick={scrollToTop}
+        className={upBottom}
+      >
+        <FaArrowUp />
+      </button>
     </div>
-    <button
-      onClick={scrollToTop}
-      className={upBottom}
-    >
-      <FaArrowUp />
-    </button>
-
     </>
   );
 };

@@ -44,7 +44,6 @@ import { createSlice } from '@reduxjs/toolkit';
      },
      setAiChat: (state, action) => {
         state.chatMessages = action.payload.chatMessages;
-        console.log(state.chatMessages);
      },
      clearAiChat: (state) =>{
       state.chatMessages = [];

@@ -24,7 +24,6 @@ const CodeHelper = () => {
   const postAssembleId = useSelector((state) => state.user.postAssembleId);
 
   const [showCompleteMessage, setShowCompleteMessage] = useState(false);
-  const [countdown, setCountdown] = useState(3);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -37,11 +36,6 @@ const CodeHelper = () => {
       lottieRef.current?.stop();
     }
   };
-
-  const handleMovePosting = () => {
-    dispatch(clearPostAssembleId());
-    navigate(`/detailAssemble/${postAssembleId}`);
-  }
 
   useEffect(() => {
     if (!postLoading && postAssembleId !== '') {
@@ -100,8 +94,11 @@ const CodeHelper = () => {
             </div>
 
             <button 
-              className="bg-none border-none cursor-pointer p-0 inline-block leading-none relative z-10 overflow-hidden" 
-              onClick={() => setSubTalking(true)}
+              className="cursor-pointer" 
+              onClick={() => {
+                setSubTalking(true);
+                setIsHovered(false);
+              }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
@@ -110,15 +107,22 @@ const CodeHelper = () => {
                 animationData={CodeBot}
                 loop={true}
                 autoplay={false}
-                className="w-[160px] h-[160px]"
+                className="w-[130px] h-[130px]"
               />
             </button>
           </div>
       </div>
     )}
    {subTalking &&(
-      <div className="fixed bottom-0 right-0 w-[500px] h-[600px] rounded-2xl bg-white/15 z-[9999]">
-        <AIChat onClose={setSubTalking}/>
+      <div className="fixed bottom-0 right-0 w-[500px] h-[700px] rounded-2xl p-1 z-[9999]">
+        <AIChat onClose={setSubTalking} onfullTalk={setFullTalking} onMode={"sub"}/>
+      </div>
+   )}
+   {fullTalking &&(
+      <div className="fixed top-0 left-0 flex justify-center w-screen h-screen backdrop-blur-sm rounded-2xl z-[9999]">
+        <div className='h-full w-2/3 py-4'>
+          <AIChat onClose={setSubTalking} onfullTalk={setFullTalking} onMode={"full"}/>
+        </div>
       </div>
    )}
     </>
