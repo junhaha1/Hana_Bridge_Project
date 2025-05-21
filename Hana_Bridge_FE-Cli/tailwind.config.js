@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Pretendard Variable', 'Pretendard', 'sans-serif'], //폰트 적용
+      },
       animation: {
         'modal-fade': 'fadeInScale 0.3s ease-out forwards',
       },

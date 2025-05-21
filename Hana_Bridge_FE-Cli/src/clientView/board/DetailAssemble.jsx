@@ -149,8 +149,23 @@ const DetailAssemble = () => {
               이전
             </button>
 
+<<<<<<< HEAD
             <div className={detailCardStyle}>
               <div className={detailCategory}>ASSEMBLE 게시판 &gt; 상세글</div>
+=======
+            <h2 className={detailTitle}>{board.title}</h2>
+            <div className={userDate}>
+              <span className='flex gap-1'>
+                <FaUser
+                className="mt-0.5"
+                />
+                {board.nickName}
+              </span>
+              <span className='text-xs text-gray-300 mt-0.5'>
+                {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+              </span>                  
+            </div>
+>>>>>>> 711e9fc91daad6a703efebbda462096b765275d0
 
               <h2 className={detailTitle}>{board.title}</h2>
               <div className={userDate}>

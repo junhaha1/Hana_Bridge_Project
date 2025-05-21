@@ -3,7 +3,6 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
-import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
@@ -33,13 +32,13 @@ public class AssembleBoardService {
     //현재 사용자의 최근 게시글 5개 조회
     public List<AssembleBoard> findRecentByUserId(Long userId){
         PageRequest pageRequest = PageRequest.of(0, 5);
-        List<AssembleBoard> assembleBoards = assembleRepository.findByUsers_IdOrderByCreatedAtDesc(userId, pageRequest);
+        List<AssembleBoard> assembleBoards = assembleRepository.findByUsers_IdOrderByCreateAtDesc(userId, pageRequest);
         return assembleBoards;
     }
 
     //모든 assemble 게시글 조회
     public List<AssembleBoard> findAllAssembleBoards() {
-        return assembleRepository.findAllByOrderByCreatedAtDesc();
+        return assembleRepository.findAllByOrderByCreateAtDesc();
     }
 
     //모든 assemble 게시글 상세 조회
