@@ -13,6 +13,7 @@ import { IoClose } from "react-icons/io5";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
 import { IoCopyOutline } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
+import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, loding, inputBox, sendButton, upDiv, downDiv, okButton, cancelButton } from '../../style/AIChatStyle';
 
 function AIChat({onClose, onfullTalk, onMode}) {
   const prevMessage = useSelector((state) => state.user.chatMessages);
@@ -273,9 +274,9 @@ function AIChat({onClose, onfullTalk, onMode}) {
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-xinc-800 rounded-2xl overflow-y-hidden relative">
+    <div className={aiChatFrame}>
         {/* 상단 메뉴바 */}
-        <div className='flex justify-between bg-white/15 backdrop-blur-sm'>
+        <div className={topNavi}>
             {onMode === 'sub' ? (
               <button 
                 className='ml-2'
@@ -320,7 +321,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
             </div>
         </div>
         {/* 상단 대화창 */}
-        <div className={`${scrollStyle} h-full bg-white/10 backdrop-blur-sm p-4  shadow-md `}>
+        <div className={`${scrollStyle} ${chatBox} `}>
           {messages.length === 0 &&(
             <div className="text-white mt-5">
               {/* 역할 소개 문구 */}
@@ -343,8 +344,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
                 <div className='flex flex-row gap-2'>
                   {/* 초보자 프롬포트 선택 카드 */}
                   <div 
-                    className="w-1/2 bg-white/10 p-2 backdrop-blur-sm border rounded border-white/20 shadow cursor-pointer
-                    hover:bg-white/30"
+                    className={promptButton}
                     onClick={()=>startChatting(0)}
                   >
                     <p className='text-lg font-semibold'>초보자</p>
@@ -352,8 +352,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
                   </div>
                   {/* 전문가 프롬포트 선택 카드 */}
                   <div 
-                    className="w-1/2 bg-white/10 p-2 backdrop-blur-sm border rounded border-white/20 shadow cursor-pointer
-                    hover:bg-white/30"
+                    className={promptButton}
                     onClick={()=>startChatting(1)}
                   >
                     <p className='text-lg font-semibold'>전문가</p>
@@ -372,8 +371,8 @@ function AIChat({onClose, onfullTalk, onMode}) {
                 <div
                   className={`max-w-[80%] p-3 text-sm whitespace-pre-wrap ${
                     msg.role === '답변'
-                      ? 'bg-white/20 text-white rounded-tl-2xl rounded-tr-2xl rounded-br-2xl'
-                      : 'bg-[#322776] text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl'
+                      ? aiBox
+                      : userBox
                   } [&>*]:m-0`}
                   ref = {msg.role === '답변' ? copyRef : null}
                 >
@@ -428,13 +427,13 @@ function AIChat({onClose, onfullTalk, onMode}) {
           {/* 로딩창 */}
           {isLoading && (
             <div className="flex justify-start my-2">
-              <div className="loader w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className={loding}></div>
             </div>
           )}
           {/* 자동 스크롤 영역 */}
           <div ref={messagesEndRef} />
         </div>
-        <div className="w-full mx-auto bg-white/10 backdrop-blur-md rounded-bl-2xl p-4 mt-3">
+        <div className={inputBox}>
           {/* 입력창 (윗부분) */}
           <div className='flex flex-row gap-2'>
             <textarea
@@ -454,7 +453,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
             />
             <button
               onClick={streamMessage}
-              className="hover:opacity-80 hover:scale-105 transition duration-200 ease-in-out"
+              className={sendButton}
             >
               <img src="/images/send.png" alt="보내기" width="24" height="24" />
             </button>
@@ -462,13 +461,13 @@ function AIChat({onClose, onfullTalk, onMode}) {
         </div>
       {/* 모달: 답변 채택 */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white text-black rounded-md p-6 w-full max-w-md">
+        <div className={upDiv}>
+          <div className={downDiv}>
             <h2 className="text-xl font-semibold mb-4">답변 채택</h2>
             <p className="mb-4">해당 질문과 답변을 채택 하시겠습니까?<br />채택하시면 질문과 내용이 요약되어 게시됩니다.</p>
-            <div className="flex justify-end gap-2">
-              <button className="bg-gray-300 px-4 py-1 rounded" onClick={closePostModal}>취소</button>
-              <button className="bg-indigo-600 text-white px-4 py-1 rounded" onClick={postAssemble}>확인</button>
+            <div className="flex justify-end gap-2">              
+              <button className={okButton} onClick={postAssemble}>확인</button>
+              <button className={cancelButton} onClick={closePostModal}>취소</button>
             </div>
           </div>
         </div>
@@ -476,8 +475,8 @@ function AIChat({onClose, onfullTalk, onMode}) {
 
       {/* 모달: 지난 대화 불러오기 */}
       {showNewChatModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white text-black rounded-md p-6 w-full max-w-md">
+        <div className={upDiv}>
+          <div className={downDiv}>
             <h2 className="text-xl font-semibold mb-4">새 대화 시작하기</h2>
             <div>
               <p>새로운 대화를 시작하시겠습니까?<br/>
@@ -486,8 +485,8 @@ function AIChat({onClose, onfullTalk, onMode}) {
                 <p className='font-semibold text-sm'><span className='text-2xl text-red-400'>*</span>필요한 답변에 대해 채택을 잊으신 경우 답변 채택 후 새 대화를 시작해주십시오.</p>
             </div>
             <div className="flex justify-end gap-2">
-              <button className="bg-indigo-600 text-white px-4 py-1 rounded" onClick={createNewChat}>확인</button>
-              <button className="bg-gray-300 px-4 py-1 rounded" onClick={closeNewChatModal}>취소</button>
+              <button className={okButton} onClick={createNewChat}>확인</button>
+              <button className={cancelButton} onClick={closeNewChatModal}>취소</button>
             </div>
           </div>
         </div>
