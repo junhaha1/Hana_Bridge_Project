@@ -41,6 +41,13 @@ public class AssembleApiController {
         return ResponseEntity.ok().body(boards);
     }
 
+    //좋아요순으로 정렬하기
+    @GetMapping("/sort/good")
+    public ResponseEntity<List<BoardResponse>> sortGoodAsseamble() {
+        List<BoardResponse> boards = assembleBoardService.getAssemblesSortedByLike();
+        return ResponseEntity.ok().body(boards);
+    }
+
     //사용자가 작성한 게시글 전체 조회
     @GetMapping("/me")
     public ResponseEntity<List<AssembleBoardResponse>> findAssembleByMe(@RequestHeader("Authorization") String authHeader){

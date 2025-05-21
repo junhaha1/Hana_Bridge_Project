@@ -29,7 +29,8 @@ const AssembleBoard = () => {
 
 
   useEffect(() => {
-    ApiClient.getAssembleBoards()
+    const getAssemble = sortType === "latest" ? ApiClient.getAssembleBoards : ApiClient.getSortAssembleBoards;
+    getAssemble()
     .then(async  (res) => {
         if (!res.ok) {
           //error handler 받음 
@@ -63,7 +64,7 @@ const AssembleBoard = () => {
         navigate("/error");
       }
     });    
-  }, [category]);
+  }, [sortType]);
 
   //게시글이 없을 경우 
   if (boards === null) {
@@ -126,7 +127,7 @@ const AssembleBoard = () => {
           value={sortType}
           className={sortCheckBox}
           onChange={(e) => {
-            console.log('선택된 값:', e.target.value)
+            setSortType(e.target.value)
           }}
         >
           <option className="text-black" value="like">좋아요순</option>

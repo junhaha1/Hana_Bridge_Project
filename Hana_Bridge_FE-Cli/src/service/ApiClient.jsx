@@ -148,6 +148,7 @@ class ApiClient{
   static getSortBoards(category, email){
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/${category}/${email}`);
   }
+
   //Board 상세 조회
   static getBoard(boardId, accessToken){
     console.log("Get Article By boardId: " + boardId);
@@ -196,6 +197,10 @@ class ApiClient{
     console.log("Get AssembleBoard");
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD);
   }
+  static getSortAssembleBoards(){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/sort/good`);
+  }
+
   //Assemble 상세 조회
   static getAssembleBoard(assembleBoardId, accessToken){
     console.log("Get AssembleBoard By assembleBoardId: " + assembleBoardId);

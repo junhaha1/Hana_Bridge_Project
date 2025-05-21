@@ -2,6 +2,7 @@ package com.adela.hana_bridge_beapi.service;
 
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
+import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
@@ -11,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +43,33 @@ public class AssembleBoardService {
     //모든 assemble 게시글 조회
     public List<AssembleBoard> findAllAssembleBoards() {
         return assembleRepository.findAllByOrderByCreateAtDesc();
+    }
+
+    public List<BoardResponse> getAssemblesSortedByLike() {
+        List<Object[]> rows = assembleRepository.findAssembleBoardsWithAllStats();
+
+        return rows.stream().map(row -> {
+            Long assembleBoardId = (Long) row[0];
+            String nickname = (String) row[1];
+            String title = (String) row[2];
+            String content = (String) row[3];
+            LocalDateTime createAt = ((Timestamp) row[4]).toLocalDateTime();
+            Long likeCount = (Long) row[5];
+
+            return BoardResponse.builder()
+                    .boardId(assembleBoardId)
+                    .nickName(nickname)
+                    .title(title)
+                    .code("")
+                    .category("assemble")
+                    .content(content)
+                    .createAt(createAt)
+                    .updateAt(null)
+                    .goodCheck(false)
+                    .likeCount(likeCount)
+                    .commentCount(0L)
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     //모든 assemble 게시글 상세 조회
