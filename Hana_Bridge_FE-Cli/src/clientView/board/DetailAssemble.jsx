@@ -142,7 +142,7 @@ const DetailAssemble = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
             <button
               onClick={() => navigate("/board/assemble")}
               className={buttonStyle + ` px-4 py-1 bg-purple-600 hover:bg-purple-400 text-white text-sm mb-2`}
