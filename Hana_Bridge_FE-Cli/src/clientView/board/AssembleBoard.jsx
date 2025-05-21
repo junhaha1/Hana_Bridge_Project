@@ -156,7 +156,7 @@ const AssembleBoard = () => {
                 {post.nickName}
               </span>
               <span className='text-xs text-gray-300 mt-0.5'>
-                {new Date(post.createdAt).toISOString().slice(0, 16).replace('T', ' ')}
+                {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
               </span>
             </div>
             <div className="flex gap-4">

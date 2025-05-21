@@ -17,7 +17,7 @@ public class AssembleAddRequest {
     private String title;
     private String category;
     private String content;
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
 
     public AssembleBoard toEntity(){
         return AssembleBoard.builder()
@@ -25,7 +25,7 @@ public class AssembleAddRequest {
                 .title(title)
                 .category(category)
                 .content(content)
-                .createdAt(createdAt)
+                .createAt(createAt)
                 .build();
     }
 }

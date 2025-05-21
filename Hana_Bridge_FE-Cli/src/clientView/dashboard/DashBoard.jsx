@@ -7,9 +7,7 @@ import LeftHeader from "../header/LeftHeader.jsx";
 
 import Lottie from "lottie-react";
 import HelloWorld from "../../../public/animations/helloworld.json";
-
 import DashboardCards from "./DashBoardCards.jsx";
-import CodeHelper from "../Codi.jsx";
 
 import {mainFrame} from "../../style/CommonFrame.jsx";
 

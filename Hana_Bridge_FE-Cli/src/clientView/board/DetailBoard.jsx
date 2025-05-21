@@ -235,23 +235,12 @@ const DetailBoard = () => {
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
           <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
-            {category === "code" && (
-              <button
-                onClick={() => navigate("/board/code")}
-                className={buttonStyle + backButton}
-              >
-                이전
-              </button>
-            )}
-
-            {category === "notice" && (
-              <button
-                onClick={() => navigate("/board/notice")}
-                className={buttonStyle + backButton}
-              >
-                이전
-              </button>
-            )}            
+            <button
+              onClick={() => navigate("/board/" + category)}
+              className={buttonStyle + backButton}
+            >
+              이전
+            </button>     
             {isEdit ? (              
               <div className={detailCardStyle}>
                 {/* 게시글 수정 폼 */}

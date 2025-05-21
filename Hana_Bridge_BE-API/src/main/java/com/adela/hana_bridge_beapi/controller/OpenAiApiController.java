@@ -84,7 +84,7 @@ public class OpenAiApiController {
                 .title(title)
                 .content(summary)
                 .category("assemble")
-                .createdAt(LocalDateTime.now())
+                .createAt(LocalDateTime.now())
                 .build();
         AssembleSummaryResponse assembleSummaryResponse =  assembleBoardService.save(assembleAddRequest);
         return ResponseEntity.ok().body(assembleSummaryResponse);

@@ -160,7 +160,7 @@ const DetailAssemble = () => {
                 {board.nickName}
               </span>
               <span className='text-xs text-gray-300 mt-0.5'>
-                {new Date(board.createdAt).toISOString().slice(0, 16).replace('T', ' ')}
+                {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
               </span>                  
             </div>
 
