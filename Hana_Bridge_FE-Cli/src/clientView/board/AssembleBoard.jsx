@@ -7,7 +7,7 @@ import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
 import { userDate } from '../../style/CommonDetail';
 import {FaUser, FaSearch, FaArrowUp} from 'react-icons/fa';
-import { upBottom, addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
+import { upBottom, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
 
 
 const AssembleBoard = () => {
@@ -98,23 +98,13 @@ const AssembleBoard = () => {
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
       <div className="flex justify-between p-1">
         <h3 className={mainTitle}>AI 답변 게시판</h3>
-        <div className="w-1/2 flex justify-end gap-6">
-          <div className={searchBox} >
-            <FaSearch className="mt-1 mr-1.5"/>
-            <input
-              type="text"
-              placeholder="Search Your Board"
-              className={inputBox}
-            />
-          </div>
-          {nickName === 'guest' ? null 
-          :
-            <button 
-              className={addButton}
-            >
-              글 작성
-            </button>
-          }
+        <div className={searchBox} >
+          <FaSearch className="mt-1 mr-1.5"/>
+          <input
+            type="text"
+            placeholder="Search Your Board"
+            className={inputBox}
+          />
         </div>
       </div>
       <div className={sortCheckLayout}>

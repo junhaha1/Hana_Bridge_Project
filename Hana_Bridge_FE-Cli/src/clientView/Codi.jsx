@@ -38,27 +38,6 @@ const CodeHelper = () => {
   };
 
   useEffect(() => {
-    if (!postLoading && postAssembleId !== '') {
-      setShowCompleteMessage(true);
-      setCountdown(5); // 3초로 초기화
-
-      const timer = setTimeout(() => {
-        setShowCompleteMessage(false);
-        dispatch(clearPostAssembleId());
-      }, 5000);
-
-      const countdownInterval = setInterval(() => {
-        setCountdown(prev => prev - 1);
-      }, 1000);
-
-      return () => {
-        clearTimeout(timer);
-        clearInterval(countdownInterval);
-      };
-    }
-  }, [postLoading, postAssembleId]);
-
-  useEffect(() => {
     if (postLoading || showCompleteMessage) {
       lottieRef.current?.play();
     } else {

@@ -13,8 +13,8 @@ import { upBottom, addButton, cardAuthor, cardBottomLayout, cardComment, cardCon
 const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
   const category = useSelector((state) => state.user.category);
-  const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
+  console.log(role);
   const navigate = useNavigate(); 
   const scrollRef = useRef(null);
   
@@ -103,9 +103,10 @@ const NoticeBoard = () => {
               className={inputBox}
             />
           </div>
-          {nickName === 'role' && 
+          {role === 'ROLE_ADMIN' && 
             <button 
               className={addButton}
+              onClick={() => navigate("/write", { state: { category: 'notice' } })}            
             >
               공지글 작성
             </button>

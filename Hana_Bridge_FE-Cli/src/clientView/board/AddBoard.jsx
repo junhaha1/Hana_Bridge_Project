@@ -4,9 +4,12 @@ import Header from '../header/Header';
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import LeftHeader from '../header/LeftHeader';
-import RightHeader from '../header/RightHeader';
 import '../../css/Board/AddBoard.css';
 import '../../css/Common.css';
+
+import { mainFrame, detailFrame } from "../../style/CommonFrame";
+import { scrollStyle } from '../../style/CommonStyle';
+import { addBoardButton, addTitle, addContent } from '../../style/AddBoardStyle';
 
 const AddBoard = () => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -16,7 +19,7 @@ const AddBoard = () => {
   const toCategory = useSelector((state) => state.user.category);
 
   //글씨 업로드 할 카테고리
-  const [category, setCategory] = useState('code');
+  const [category, setCategory] = useState(toCategory);
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
   const [content, setContent] = useState('');
@@ -52,55 +55,51 @@ const AddBoard = () => {
   };
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-r from-indigo-900 to-purple-900 text-white p-6 flex flex-col lg:flex-row">
+    <div className={mainFrame}>
       <Header />
 
-      <div className="w-full flex flex-col lg:flex-row gap-4 px-2 sm:px-6 mt-24">
-        <div className="w-full lg:w-1/5">
-          <LeftHeader />
-        </div>
+      <div className="w-full flex flex-row mt-20">
+        <LeftHeader />
+        <main className={detailFrame}>
+          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+            <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
-        <div className="w-full lg:w-3/5">
-          <div className="container mx-auto mt-6 px-4">
-            <h4 className="text-2xl font-bold mb-3 pb-2">글 작성하기</h4>
+            <p className='text-white/80'>코드 질문 게시판</p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="flex flex-col">
               {/* 카테고리 선택 */}
-              <div>
-                <label className="block font-semibold mb-2">
-                  {role === "ROLE_ADMIN" ? "게시판 선택" : "게시판 카테고리"}
-                  <span className="text-red-500">*</span>
-                </label>
-
-                <div className="flex gap-2 flex-wrap">
-                  {role === "ROLE_ADMIN" && (
-                    <>
+              {role === "ROLE_ADMIN" && (
+                <div>                
+                  <label className="block font-semibold mb-2">
+                    게시판 선택 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2 flex-wrap mb-3">
+                    <button
+                      type="button"
+                      onClick={() => setCategory('notice')}
+                      className={`px-4 py-2 rounded-full text-sm ${
+                        category === 'notice'
+                          ? 'bg-white/95 text-indigo-800 font-bold'
+                          : 'border border-white text-white'
+                      }`}
+                    >
+                      NOTICE 게시판
+                    </button>
                       <button
-                        type="button"
-                        onClick={() => setCategory('notice')}
-                        className={`px-4 py-2 rounded-full text-sm ${
-                          category === 'notice'
-                            ? 'bg-white text-indigo-900 font-bold'
-                            : 'border border-white text-white'
-                        }`}
-                      >
-                        NOTICE 게시판
-                      </button>
-                    </>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setCategory('code')}
-                    className={`px-4 py-2 rounded-full text-sm ${
-                      category === 'code'
-                        ? 'bg-white text-indigo-900 font-bold'
-                        : 'border border-white text-white'
-                    }`}
-                  >
-                    CODE 게시판
-                  </button>
-                </div>
+                      type="button"
+                      onClick={() => setCategory('code')}
+                      className={`px-4 py-2 rounded-full text-sm ${
+                        category === 'code'
+                          ? 'bg-white/95 text-indigo-800 font-bold'
+                          : 'border border-white text-white'
+                      }`}
+                    >
+                      CODE 게시판
+                    </button>
+                  </div>
               </div>
+              )}
+              
 
               {/* 제목 */}
               <div>
@@ -112,7 +111,7 @@ const AddBoard = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="게시글 제목을 적어 주세요"
-                  className="w-full bg-transparent border-b border-white text-white placeholder-white/70 focus:outline-none focus:ring-0"
+                  className={addTitle}
                 />
               </div>
 
@@ -120,11 +119,11 @@ const AddBoard = () => {
               {category === 'code' && (
                 <div>
                   <textarea
-                    rows={10}
+                    rows={7}
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="작성할 코드/에러를 적어 주세요"
-                    className="w-full bg-transparent border border-white text-white placeholder-white/70 rounded-md p-3 resize-none focus:outline-none focus:ring-0"
+                    className={addContent}
                   />
                 </div>
               )}
@@ -132,11 +131,11 @@ const AddBoard = () => {
               {/* 본문 작성 */}
               <div>
                 <textarea
-                  rows={10}
+                  rows={7}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="작성할 글을 적어 주세요"
-                  className="w-full bg-transparent border border-white text-white placeholder-white/70 rounded-md p-3 resize-none focus:outline-none focus:ring-0"
+                  className={addContent}
                 />
               </div>
 
@@ -144,23 +143,20 @@ const AddBoard = () => {
               <div className="flex justify-center gap-4">
                 <button
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-md"
+                  className={addBoardButton}
                 >
                   작성하기
                 </button>
-                <Link
-                  to={`/board/${toCategory}`} 
-                  className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm"
+                <button 
+                  onClick={() => navigate(`/board/${toCategory}`)}
+                  className={addBoardButton}
                 >
                   처음으로
-                </Link>
+                </button>
               </div>
             </form>
           </div>
-        </div>
-        <div className="w-full lg:w-1/5">
-          <RightHeader />
-        </div>
+        </main>
       </div>
     </div>
   );
