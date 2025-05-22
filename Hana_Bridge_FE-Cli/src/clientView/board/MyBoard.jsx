@@ -19,6 +19,7 @@ const MyBoard = () => {
 
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
+  const nickName = useSelector((state) => state.user.nickName);
   const [sortType, setSortType] = useState("latest");
   const scrollRef = useRef(null);
 
@@ -35,7 +36,8 @@ const MyBoard = () => {
 
   //검색어로 검색하기
   const getMySearch = (word) => {
-    const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchMyAssembleBoards;
+    const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchUserAssembleBoards;
+    console.log(toggle, word)
     getSearchmyBoards(toggle, word, sortType, email)
     .then(async  (res) => {
       if (!res.ok) {
@@ -214,13 +216,19 @@ const MyBoard = () => {
       <div className={sortCheckLayout + " justify-between"}>
         <div className="flex rounded">
           <button
-            onClick={() => setToggle("code")}
+            onClick={() => {
+              setToggle("code");
+              resetBoards();
+            }}
             className={`bg-gray-600  font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 scale-95 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
           >
             코드 질문
           </button>
           <button
-            onClick={() => setToggle("assemble")}
+            onClick={() => {
+              setToggle("assemble");
+              resetBoards();
+            }}
             className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600 scale-95 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
           >
             AI 답변

@@ -5,6 +5,7 @@ import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
+import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
@@ -26,6 +27,20 @@ public class AssembleBoardService {
     //해당 BoardId 값들에 해당하는 board 가져오기
     public List<AssembleBoard> findByBoardIds(List<Long> assembleBoardIds) {
         List<AssembleBoard> assembleBoards = assembleRepository.findByAssembleBoardIdIn(assembleBoardIds);
+        return assembleBoards;
+    }
+
+    //검색어가 제목, 내용에 포함되어 있는 게시글 정렬기준으로 정렬하여 조회
+    public List<AssembleBoard> getSearchAssembleBoards(String word, String sort){
+        List<AssembleBoard> assembleBoards = assembleRepository.searchAssembleBoardsByWord(word, sort);
+        return assembleBoards;
+    }
+
+    //오버로딩
+    //해당 유저가 작성한 글에서 검색어가 제목, 내용에 포함되어 있는 게시글 정렬기준으로 정렬하여 조회
+    public List<AssembleBoard> getSearchAssembleBoards(String word, String sort, Long userId){
+        System.out.println(word + sort + userId);
+        List<AssembleBoard> assembleBoards = assembleRepository.searchAssembleBoardsByWordAndUserId(word,userId, sort);
         return assembleBoards;
     }
 
