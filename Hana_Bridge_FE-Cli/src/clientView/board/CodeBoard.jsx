@@ -27,9 +27,9 @@ const CodeBoard = () => {
   };
 
   useEffect(() => {
+    //정렬 기준에 따라서 게시글 조회 함수 교체
     const getBoard = sortType === "latest" ? ApiClient.getBoards : ApiClient.getSortBoards;
-    console.log(email);
-    getBoard(category, email)
+    getBoard(category)
     .then(async  (res) => {
       if (!res.ok) {
         //error handler 받음 

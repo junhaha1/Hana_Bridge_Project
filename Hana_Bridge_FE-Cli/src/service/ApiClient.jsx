@@ -15,16 +15,14 @@ class ApiClient{
 
 
   //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
-  static getMyBoard(accessToken){
-    console.log("get myBoard");
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/me',{
-      method: "GET", 
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
+  static getMyBoard(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}`);
   }
+  //사용자 본인 code게시글 좋아요순으로 조회
+  static getSortMyBoards(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/code/user/${email}`);
+  }
+
   //좋아요 갯수 상위 5개 게시글 조회 (CodeBoard, NoticeBoard)
   static getBestBoard(){
     console.log("get Best Board");
@@ -35,17 +33,17 @@ class ApiClient{
       }
     })
   }
+
   //사용자 본인 게시글 조회 (AssembleBoard)
-  static getMyAssemble(accessToken){
-    console.log("get myAssemble");
-    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/me',{
-      method: "GET", 
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
+  static getMyAssemble(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${email}`);
   }
+
+  //사용자 본인 assemble 게시글 좋아요순으로 조회
+  static getSortMyAssembleBoards(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/sort/good/user/${email}`);
+  }
+
   //가장 최근 작성한 게시글 5개 조회 (AssembleBoard)
   static getRecentAssemble(accessToken){
     console.log("get My Recent Assemble Board");
@@ -140,13 +138,14 @@ class ApiClient{
     });
   }
   //Board 전체 조회
-  static getBoards(category, email){
+  static getBoards(category){
     console.log("Get Boards By category: " + category);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category);
   }
 
-  static getSortBoards(category, email){
-    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/${category}/${email}`);
+  //좋아요순으로 정렬하여 전체 조회
+  static getSortBoards(category){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/${category}`);
   }
 
   //Board 상세 조회

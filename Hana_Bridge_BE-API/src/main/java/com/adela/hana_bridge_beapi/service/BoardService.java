@@ -35,13 +35,15 @@ public class BoardService {
         return boardRepository.save(request.toEntity());
     }
 
+    //해당 사용자의 code 게시글 목록 생성시간 순으로 정렬 조회
     public List<Board> findByUserId(Long userId){
-        List<Board> boards = boardRepository.findByCategoryAndUsers_Id("code", userId);
+        List<Board> boards = boardRepository.findByCategoryAndUsers_IdOrderByCreateAtDesc("code", userId);
         return boards;
     }
 
-    public List<BoardResponse> getBoardsSortedByLikeWithGoodCheck(String category, Long userId) {
-        List<Object[]> rows = boardRepository.findBoardsWithAllStats(category, userId);
+    //좋아요 순으로 게시물 조회
+    public List<BoardResponse> getBoardsSortedByLikeWithGoodCheck(String category) {
+        List<Object[]> rows = boardRepository.findBoardsWithAllStats(category);
 
         return rows.stream().map(row -> {
             Long boardId = (Long) row[0];
@@ -54,7 +56,6 @@ public class BoardService {
             LocalDateTime updateAt = ((Timestamp) row[7]).toLocalDateTime();
             Long likeCount = (Long) row[8];
             Long commentCount = (Long) row[9];
-            Boolean goodCheck = ((Integer) row[10]) == 1;
 
             return BoardResponse.builder()
                     .boardId(boardId)
@@ -65,7 +66,39 @@ public class BoardService {
                     .content(content)
                     .createAt(createAt)
                     .updateAt(updateAt)
-                    .goodCheck(goodCheck)
+                    .goodCheck(false)
+                    .likeCount(likeCount)
+                    .commentCount(commentCount)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+    //해당 사용자가 작성한 게시글 좋아요순으로 정렬조회
+    public List<BoardResponse> getMyCodeBoardsSortedByLike(Long userId) {
+        List<Object[]> rows = boardRepository.findBoardsWithAllStats(userId);
+
+        return rows.stream().map(row -> {
+            Long boardId = (Long) row[0];
+            String nickname = (String) row[1];
+            String title = (String) row[2];
+            String cate = (String) row[3];
+            String code = row[4] == null ? "" : (String) row[4];
+            String content = (String) row[5];
+            LocalDateTime createAt = ((Timestamp) row[6]).toLocalDateTime();
+            LocalDateTime updateAt = ((Timestamp) row[7]).toLocalDateTime();
+            Long likeCount = (Long) row[8];
+            Long commentCount = (Long) row[9];
+
+            return BoardResponse.builder()
+                    .boardId(boardId)
+                    .nickName(nickname)
+                    .title(title)
+                    .code(code)
+                    .category(cate)
+                    .content(content)
+                    .createAt(createAt)
+                    .updateAt(updateAt)
+                    .goodCheck(false)
                     .likeCount(likeCount)
                     .commentCount(commentCount)
                     .build();

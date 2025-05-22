@@ -12,7 +12,6 @@ import { upBottom, addButton, cardAuthor, cardBottomLayout, cardComment, cardCon
 
 const AssembleBoard = () => {
   const [boards, setBoards] = useState([]);
-  const [category, setCategory] = useState('assemble');
   const [sortType, setSortType] = useState("latest");
 
   const navigate = useNavigate(); 
