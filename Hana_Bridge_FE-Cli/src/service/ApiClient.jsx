@@ -143,6 +143,17 @@ class ApiClient{
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category);
   }
 
+  //검색어를 통해 Board 조회
+  static getSearchBoards(category, searchWord, sortType){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}`);
+  }
+
+  //검색어를 통해 Board 조회
+  static getSearchUserBoards(category, searchWord, sortType, email){
+    console.log(`검색 : ${category}, ${searchWord}, ${sortType}, ${email}`);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/user/${email}`);
+  }
+
   //좋아요순으로 정렬하여 전체 조회
   static getSortBoards(category){
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/${category}`);
