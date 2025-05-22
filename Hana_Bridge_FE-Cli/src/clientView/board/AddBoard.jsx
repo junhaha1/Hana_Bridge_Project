@@ -48,14 +48,14 @@ const AddBoard = () => {
     ];
 
     return (
-      <div className="w-full mb-2 flex flex-row">
-        <label className="w-1/2 mb-2 text-sm text-center">
+      <div className="w-full py-2 border-t border-white/20 flex flex-row">
+        <label className="w-[100px] mb-2 text-sm text-center">
           프로그래밍 <br />언어 선택
         </label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-full px-4 py-2 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-[200px] px-4 py-2 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">언어를 선택해주세요</option>
           {languages.map((lang) => (
@@ -178,7 +178,7 @@ const AddBoard = () => {
                     </button>
 
                     {isOpen && (
-                      <div>
+                      <div className='h-full'>
                         {renderLanguageSelectBox()}
                       
                         <textarea

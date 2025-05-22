@@ -5,4 +5,4 @@ export const addTitle = "w-full mb-4 bg-transparent border-b border-white text-w
 //내용 입력 스타일
 export const addContent = "w-full mb-2 bg-transparent border border-white text-white placeholder-white/70 rounded-md p-3 resize-none focus:outline-none focus:ring-0";
 //코드 입력 스타일 
-export const addCode = "w-full bg-transparent border-t border-white text-white placeholder-white/70 rounded-md p-3 resize-none focus:outline-none focus:ring-0";
+export const addCode = "w-full bg-transparent border-t border-white text-white placeholder-white/70 p-3 resize-none focus:outline-none focus:ring-0";
