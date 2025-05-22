@@ -32,41 +32,42 @@ const AddBoard = () => {
 
   //언어 선택 박스
   const [language, setLanguage] = useState("");
+
   const renderLanguageSelectBox = () => {
     const languages = [
-      "JavaScript",
-      "Python",
-      "Java",
-      "C++",
-      "C#",
-      "Go",
-      "Rust",
-      "TypeScript",
-      "Kotlin",
-      "Swift",
+      { label: "JavaScript", value: "javascript" },
+      { label: "Python", value: "python" },
+      { label: "Java", value: "java" },
+      { label: "C++", value: "cpp" },
+      { label: "C#", value: "csharp" },
+      { label: "Go", value: "go" },
+      { label: "Rust", value: "rust" },
+      { label: "TypeScript", value: "typescript" },
+      { label: "Kotlin", value: "kotlin" },
+      { label: "Swift", value: "swift" },
     ];
 
     return (
       <div className="w-full mb-2 flex flex-row">
         <label className="w-1/2 mb-2 text-sm text-center">
-          프로그래밍 <br/>언어 선택
+          프로그래밍 <br />언어 선택
         </label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-full px-4 py-2 text-sm text-gray-900 font-semibold  hover:bg-white  rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-4 py-2 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">언어를 선택해주세요</option>
           {languages.map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
+            <option key={lang.value} value={lang.value}>
+              {lang.label}
             </option>
           ))}
         </select>
       </div>
     );
   };
-  
+    
 
   useEffect(() =>{
     if(role !== "ROLE_ADMIN"){
@@ -81,7 +82,9 @@ const AddBoard = () => {
     console.log({ category, title, content });
     setCreateAt(new Date());
     setUpdateAt(new Date());
-    const finalCode = `\`\`\`${language}\n${code}\n\`\`\``;
+    //const finalCode = `\`\`\`${language}\n${code}\n\`\`\``;
+    //const finalCode = "```" + language + "\n" + code + "\n```";
+    const finalCode = ["```" + language, code, "```"].join("\n");
     console.log(finalCode);
     // TODO: API 요청 처리
     ApiClient.sendBoard(accessToken, title, category, content, finalCode, createAt, updateAt)
@@ -108,7 +111,7 @@ const AddBoard = () => {
       <div className="w-full flex flex-row mt-20">
         <LeftHeader />
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
             <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
             <p className='text-white/80'>코드 질문 게시판</p>

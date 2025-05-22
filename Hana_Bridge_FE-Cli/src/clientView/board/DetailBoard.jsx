@@ -239,7 +239,7 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
             <button
               onClick={() => navigate("/board/" + category)}
               className={buttonStyle + backButton}
@@ -342,9 +342,37 @@ const DetailBoard = () => {
                     {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>                  
                 </div>
+                <div className="border-t border-white/10 mb-3" />
                 {category === "code"
-                  ? <p className={detailContent}>{board.code}</p>
-                  : null}
+                  ? 
+                  <div className="text-white">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code({ inline, className, children, ...props }) {
+                          const match = /language-(\w+)/.exec(className || '');
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              {...props}
+                              style={prism}
+                              language={match[1]}
+                              PreTag="div"
+                              className="rounded-md overflow-x-auto max-w-[100%]"
+                            >
+                              {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
+                              {children}
+                            </code>
+                          );
+                        },
+                      }}
+                    >
+                      {board.code}
+                    </ReactMarkdown>
+                    </div>
+                  : <></>}
                 <p className={detailContent}>{board.content}</p>
 
                 <div className={liekCommentButton}>

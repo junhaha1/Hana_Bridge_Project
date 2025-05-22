@@ -89,7 +89,7 @@ const CodeBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
       <div className="flex justify-between p-1">
         <h3 className={mainTitle}>코드 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
