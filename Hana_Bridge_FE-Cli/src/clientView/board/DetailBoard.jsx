@@ -134,7 +134,7 @@ const DetailBoard = () => {
         throw error;  
       }
       console.log("게시글 삭제 완료!");
-      navigate('/');
+      navigate("/board/" + category);
     })
     .catch((err) => {
       console.error("API 요청 실패(게시글 삭제 중 오류):", err);
@@ -160,7 +160,7 @@ const DetailBoard = () => {
         throw error;  
       }
       console.log("게시글 수정 완료 ! ");
-      navigate(`/detailBoard/${boardId}`, {state: {category: category}});
+      navigate(`/detailBoard/${boardId}`);
       setIsEdit(false);
     })
     .catch((err) => {

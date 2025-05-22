@@ -79,7 +79,7 @@ const DetailAssemble = () => {
           error.code = errorData.code;
           throw error;
         }
-        navigate('/');
+        navigate("/board/notice");
       })
       .catch((err) => {
         console.error("API 요청 실패:", err);
