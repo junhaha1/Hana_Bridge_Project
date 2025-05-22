@@ -3,12 +3,11 @@ package com.adela.hana_bridge_beapi.controller;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodResponse;
-import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
-import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
 import com.adela.hana_bridge_beapi.service.AssembleGoodService;
 import com.adela.hana_bridge_beapi.service.TokenService;
+import com.adela.hana_bridge_beapi.service.UsersService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +24,7 @@ public class AssembleApiController {
     private final AssembleBoardService assembleBoardService;
     private final AssembleGoodService assembleGoodService;
     private final TokenService tokenService;
+    private final UsersService usersService;
 
     //좋아요 갯수 상위 5개 게시글 가져오기
     @GetMapping("/top")
@@ -41,13 +41,26 @@ public class AssembleApiController {
         return ResponseEntity.ok().body(boards);
     }
 
-    //사용자가 작성한 게시글 전체 조회
-    @GetMapping("/me")
-    public ResponseEntity<List<AssembleBoardResponse>> findAssembleByMe(@RequestHeader("Authorization") String authHeader){
-        String accessToken = authHeader.replace("Bearer ", "");
-        Long userId = tokenService.findUsersIdByToken(accessToken);
+    //좋아요순으로 정렬하기
+    @GetMapping("/sort/good")
+    public ResponseEntity<List<AssembleBoardResponse>> sortGoodAssemble() {
+        List<AssembleBoardResponse> boards = assembleBoardService.getAssemblesSortedByLike();
+        return ResponseEntity.ok().body(boards);
+    }
 
-        List<AssembleBoardResponse> assembleBoards = assembleBoardService.findRecentByUserId(userId)
+    //해당 사용자 좋아요순으로 정렬하기
+    @GetMapping("/sort/good/user/{email}")
+    public ResponseEntity<List<AssembleBoardResponse>> sortGoodUserAssemble(@PathVariable String email) {
+        Long userId = usersService.findByEmail(email).getId();
+        List<AssembleBoardResponse> boards = assembleBoardService.getAssemblesSortedByLike(userId);
+        return ResponseEntity.ok().body(boards);
+    }
+
+    //사용자가 작성한 게시글 전체 조회
+    @GetMapping("/user/{email}")
+    public ResponseEntity<List<AssembleBoardResponse>> findAssembleByEmail(@PathVariable String email){
+        Long userId = usersService.findByEmail(email).getId();
+        List<AssembleBoardResponse> assembleBoards = assembleBoardService.findByUserId(userId)
                 .stream()
                 .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
                 .toList();

@@ -12,7 +12,7 @@ import { upBottom, cardAuthor, cardBottomLayout, cardComment, cardContent, cardG
 
 const AssembleBoard = () => {
   const [boards, setBoards] = useState([]);
-  const [category, setCategory] = useState('assemble');
+  const [sortType, setSortType] = useState("latest");
 
   const navigate = useNavigate(); 
   const nickName = useSelector((state) => state.user.nickName);
@@ -28,7 +28,8 @@ const AssembleBoard = () => {
 
 
   useEffect(() => {
-    ApiClient.getAssembleBoards()
+    const getAssemble = sortType === "latest" ? ApiClient.getAssembleBoards : ApiClient.getSortAssembleBoards;
+    getAssemble()
     .then(async  (res) => {
         if (!res.ok) {
           //error handler 받음 
@@ -62,7 +63,7 @@ const AssembleBoard = () => {
         navigate("/error");
       }
     });    
-  }, [category]);
+  }, [sortType]);
 
   //게시글이 없을 경우 
   if (boards === null) {
@@ -112,9 +113,10 @@ const AssembleBoard = () => {
         <select
           id="sort"
           name="sort"
+          value={sortType}
           className={sortCheckBox}
           onChange={(e) => {
-            console.log('선택된 값:', e.target.value)
+            setSortType(e.target.value)
           }}
         >
           <option className="text-black" value="like">좋아요순</option>

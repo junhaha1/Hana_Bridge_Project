@@ -113,20 +113,6 @@ const NoticeBoard = () => {
           }
         </div>
       </div>
-      <div className={sortCheckLayout}>
-        <label htmlFor="sort" className="sr-only">정렬 기준</label>
-        <select
-          id="sort"
-          name="sort"
-          className={sortCheckBox}
-          onChange={(e) => {
-            console.log('선택된 값:', e.target.value)
-          }}
-        >
-          <option className="text-black" value="like">좋아요순</option>
-          <option className="text-black" value="latest">최신순</option>
-        </select>
-      </div>
         {boards.map((post) => (
           <div
             key={post.boardId}

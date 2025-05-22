@@ -17,7 +17,8 @@ const MyBoard = () => {
   const [toggle, setToggle] = useState("code");
 
   const category = useSelector((state) => state.user.category);
-  const accessToken = useSelector((state) => state.user.accessToken);
+  const email = useSelector((state) => state.user.email);
+  const [sortType, setSortType] = useState("latest");
 
   const scrollRef = useRef(null);
 
@@ -28,11 +29,28 @@ const MyBoard = () => {
     }
   };
 
-  //toggle을 통해 바꿀 때마다 글 조회해오기
   useEffect(() => {
-    const getBoards = toggle === "code" ? ApiClient.getMyBoard : ApiClient.getMyAssemble;
+    let getSortMyboard = null;
+    //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
+    if (toggle === "code"){
+      if (sortType === "latest"){
+        getSortMyboard = ApiClient.getMyBoard
+      } 
+      if (sortType === "like"){
+        getSortMyboard = ApiClient.getSortMyBoards
+      }
+    }
 
-    getBoards(accessToken)
+    if (toggle === "assemble"){
+      if (sortType === "latest"){
+        getSortMyboard = ApiClient.getMyAssemble
+      } 
+      if (sortType === "like"){
+        getSortMyboard = ApiClient.getSortMyAssembleBoards
+      }
+    }
+
+    getSortMyboard(email)
     .then(async  (res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -65,7 +83,7 @@ const MyBoard = () => {
         navigate("/error");
       }
     });
-  }, [toggle]);
+  }, [toggle, sortType]);
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {
@@ -138,12 +156,13 @@ const MyBoard = () => {
           id="sort"
           name="sort"
           className={sortCheckBox}
+          value={sortType}
           onChange={(e) => {
-            console.log('선택된 값:', e.target.value)
+            setSortType(e.target.value)
           }}
         >
-          <option className="text-black" value="like">좋아요순</option>
           <option className="text-black" value="latest">최신순</option>
+          <option className="text-black" value="like">좋아요순</option>
         </select>
       </div>
       {boards.map((post) => {
