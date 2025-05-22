@@ -1,6 +1,7 @@
 package com.adela.hana_bridge_beapi.repository;
 
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
+import com.adela.hana_bridge_beapi.entity.Board;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -46,4 +47,22 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
     ORDER BY like_count DESC
     """, nativeQuery = true)
     List<Object[]> findAssembleBoardsWithAllStats(@Param("userId") Long userId);
+
+    @Query("""
+      SELECT b 
+      FROM AssembleBoard b
+      WHERE b.title LIKE %:word%
+      OR b.content LIKE %:word%
+      ORDER BY :sort DESC
+    """)
+    List<AssembleBoard> searchAssembleBoardsByWord(@Param("word") String word, @Param("sort") String sort);
+
+    @Query("""
+      SELECT b 
+      FROM AssembleBoard b
+      WHERE  b.users.id = :userId
+        AND (b.title LIKE %:word% OR b.content LIKE %:word%)
+      ORDER BY :sort DESC
+    """)
+    List<AssembleBoard> searchAssembleBoardsByWordAndUserId(@Param("word") String word, @Param("userId") Long userId, @Param("sort") String sort);
 }

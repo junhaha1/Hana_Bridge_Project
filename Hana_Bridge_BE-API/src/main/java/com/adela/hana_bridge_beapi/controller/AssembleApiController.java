@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.controller;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodResponse;
+import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
 import com.adela.hana_bridge_beapi.service.AssembleGoodService;
@@ -38,6 +39,27 @@ public class AssembleApiController {
         if (boards.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        return ResponseEntity.ok().body(boards);
+    }
+
+    //검색어가 포함 되어 있는 게시글 조회하기
+    @GetMapping("/search/{searchWord}/orderBy/{sortType}")
+    public ResponseEntity<List<AssembleBoardResponse>> searchAssembleBoards(@PathVariable String searchWord, @PathVariable String sortType) {
+        List<AssembleBoardResponse> boards = assembleBoardService.getSearchAssembleBoards(searchWord, sortType)
+                .stream()
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
+                .toList();
+        return ResponseEntity.ok().body(boards);
+    }
+
+    @GetMapping("/search/{searchWord}/orderBy/{sortType}/user/{email}")
+    public ResponseEntity<List<AssembleBoardResponse>> searchUserAssembleBoards(@PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email) {
+        Long userId = usersService.findByEmail(email).getId();
+
+        List<AssembleBoardResponse> boards = assembleBoardService.getSearchAssembleBoards(searchWord, sortType, userId)
+                .stream()
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
+                .toList();
         return ResponseEntity.ok().body(boards);
     }
 

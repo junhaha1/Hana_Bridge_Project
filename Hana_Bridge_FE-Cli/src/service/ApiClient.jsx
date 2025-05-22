@@ -207,8 +207,18 @@ class ApiClient{
     console.log("Get AssembleBoard");
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD);
   }
+
+  //좋아요순으로 조회
   static getSortAssembleBoards(){
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/sort/good`);
+  }
+
+  static getSearchAssembleBoards(word, sortType){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}`);
+  }
+
+  static getSearchUserAssembleBoards(toggle, word, sortType, email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/user/${email}`);
   }
 
   //Assemble 상세 조회
