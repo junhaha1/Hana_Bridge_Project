@@ -15,6 +15,12 @@ import { upBottom } from "../../style/CommonBoardStyle";
 import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
 import { FaUser, FaArrowUp } from 'react-icons/fa';
 
+//code 마크다운
+import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 
 //상세 게시글 보드
 const DetailBoard = () => {
@@ -233,7 +239,7 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
+          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
             <button
               onClick={() => navigate("/board/" + category)}
               className={buttonStyle + backButton}
@@ -336,9 +342,37 @@ const DetailBoard = () => {
                     {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>                  
                 </div>
+                <div className="border-t border-white/10 mb-3" />
                 {category === "code"
-                  ? <p className={detailContent}>{board.code}</p>
-                  : null}
+                  ? 
+                  <div className="text-white">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code({ inline, className, children, ...props }) {
+                          const match = /language-(\w+)/.exec(className || '');
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              {...props}
+                              style={prism}
+                              language={match[1]}
+                              PreTag="div"
+                              className="rounded-md overflow-x-auto max-w-[100%]"
+                            >
+                              {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
+                              {children}
+                            </code>
+                          );
+                        },
+                      }}
+                    >
+                      {board.code}
+                    </ReactMarkdown>
+                    </div>
+                  : <></>}
                 <p className={detailContent}>{board.content}</p>
 
                 <div className={liekCommentButton}>
