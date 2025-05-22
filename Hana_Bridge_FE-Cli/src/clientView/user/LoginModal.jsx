@@ -46,6 +46,16 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
       });
   };
 
+  //enter로 전송
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      // 전송하고 줄바꿈 막기
+      e.preventDefault();
+      loginButton(email, pwd);
+
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-modal-fade">
@@ -78,6 +88,7 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                   className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 py-2 text-sm"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
 
@@ -91,6 +102,7 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                   className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 py-2 text-sm"
                   value={pwd}
                   onChange={(e) => setPwd(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
 
