@@ -15,6 +15,12 @@ import { upBottom } from "../../style/CommonBoardStyle";
 import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
 import { FaUser, FaArrowUp } from 'react-icons/fa';
 
+//code 마크다운
+import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 
 //상세 게시글 보드
 const DetailBoard = () => {

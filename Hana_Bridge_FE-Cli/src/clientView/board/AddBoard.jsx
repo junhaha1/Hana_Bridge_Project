@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ApiClient from '../../service/ApiClient';
 import Header from '../header/Header';
 import { useNavigate, Link } from "react-router-dom";
@@ -9,7 +9,7 @@ import '../../css/Common.css';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle } from '../../style/CommonStyle';
-import { addBoardButton, addTitle, addContent } from '../../style/AddBoardStyle';
+import { addBoardButton, addTitle, addContent, addCode } from '../../style/AddBoardStyle';
 
 const AddBoard = () => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -17,6 +17,7 @@ const AddBoard = () => {
 
   //이전으로 버튼을 위한 카테고리 
   const toCategory = useSelector((state) => state.user.category);
+  console.log(toCategory);
 
   //글씨 업로드 할 카테고리
   const [category, setCategory] = useState(toCategory);
@@ -26,6 +27,53 @@ const AddBoard = () => {
   const [createAt, setCreateAt] = useState(new Date());
   const [updateAt, setUpdateAt] = useState(new Date());  
 
+  //코드 토글 버튼 
+  const [isOpen, setIsOpen] = useState(false);
+
+  //언어 선택 박스
+  const [language, setLanguage] = useState("");
+  const renderLanguageSelectBox = () => {
+    const languages = [
+      "JavaScript",
+      "Python",
+      "Java",
+      "C++",
+      "C#",
+      "Go",
+      "Rust",
+      "TypeScript",
+      "Kotlin",
+      "Swift",
+    ];
+
+    return (
+      <div className="w-full mb-2 flex flex-row">
+        <label className="w-1/2 mb-2 text-sm text-center">
+          프로그래밍 <br/>언어 선택
+        </label>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="w-full px-4 py-2 text-sm text-gray-900 font-semibold  hover:bg-white  rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">언어를 선택해주세요</option>
+          {languages.map((lang) => (
+            <option key={lang} value={lang}>
+              {lang}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+  
+
+  useEffect(() =>{
+    if(role !== "ROLE_ADMIN"){
+      setCategory('code');
+    }
+  }, []);
+
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -33,19 +81,18 @@ const AddBoard = () => {
     console.log({ category, title, content });
     setCreateAt(new Date());
     setUpdateAt(new Date());
+    const finalCode = `\`\`\`${language}\n${code}\n\`\`\``;
+    console.log(finalCode);
     // TODO: API 요청 처리
-    ApiClient.sendBoard(accessToken, title, category, content, code, createAt, updateAt)
+    ApiClient.sendBoard(accessToken, title, category, content, finalCode, createAt, updateAt)
     .then(async (res) => {
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message);
       }
-
-      // ✅ 반드시 JSON을 return해야 다음 then에서 사용할 수 있음
       return await res.json(); 
     })
     .then((data) => {
-      console.log("boardId: " + data); // 이제 data는 정상
       alert("게시글이 등록되었습니다.");
       navigate(`/detailBoard/${data}`, { state: { category: category } });
     })
@@ -66,7 +113,7 @@ const AddBoard = () => {
 
             <p className='text-white/80'>코드 질문 게시판</p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="flex flex-col">
               {/* 카테고리 선택 */}
               {role === "ROLE_ADMIN" && (
                 <div>                
@@ -116,15 +163,31 @@ const AddBoard = () => {
               </div>
 
               {/* 코드 작성 */}
-              {category === 'code' && (
+              {category === 'notice' ? null : (
                 <div>
-                  <textarea
-                    rows={7}
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="작성할 코드/에러를 적어 주세요"
-                    className={addContent}
-                  />
+                  <div className="w-full mx-auto mb-3 border rounded-lg">
+                    <button
+                      onClick={() => setIsOpen(!isOpen)}
+                      className="w-full text-left p-2 hover:bg-white/20 rounded-md flex justify-between items-center"
+                    >
+                      <span className="font-medium">에러 코드</span>
+                      <span>{isOpen ? "▲" : "▼"}</span>
+                    </button>
+
+                    {isOpen && (
+                      <div>
+                        {renderLanguageSelectBox()}
+                      
+                        <textarea
+                          rows={7}
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                          placeholder="작성할 코드/에러를 적어 주세요"
+                          className={addCode}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -142,7 +205,7 @@ const AddBoard = () => {
               {/* 버튼 */}
               <div className="flex justify-center gap-4">
                 <button
-                  type="submit"
+                  onClick={handleSubmit}
                   className={addBoardButton}
                 >
                   작성하기
@@ -154,7 +217,7 @@ const AddBoard = () => {
                   처음으로
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </main>
       </div>
