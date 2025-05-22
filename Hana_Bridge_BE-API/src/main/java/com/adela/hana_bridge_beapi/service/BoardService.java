@@ -24,6 +24,18 @@ import java.util.stream.Collectors;
 public class BoardService {
     private final BoardRepository boardRepository;
 
+    //해당 카테고리 게시글에서 검색어가 제목, 내용에 포함되어 있는 게시글 정렬기준으로 정렬하여 조회
+    public List<Board> getSearchBoards(String category, String word, String sort){
+        List<Board> boards = boardRepository.searchBoardsByCategoryAndWord(category, word, sort);
+        return boards;
+    }
+
+    //해당 유저가 작성한 게시글에서 검색어가 제목, 내용에 포함되어 있는 게시글 정렬기준으로 정렬하여 조회
+    public List<Board> getSearchBoards(String category, String word, String sort, Long userId){
+        List<Board> boards = boardRepository.searchBoardsByCategoryAndWordAndUserId(category, userId, word, sort);
+        return boards;
+    }
+
     //해당 BoardId 값들에 해당하는 board 가져오기
     public List<Board> findByBoardIds(List<Long> boardIds) {
         List<Board> boards = boardRepository.findByBoardIdIn(boardIds);

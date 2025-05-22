@@ -1,23 +1,19 @@
 package com.adela.hana_bridge_beapi.controller;
 
-import com.adela.hana_bridge_beapi.config.jwt.TokenProvider;
 import com.adela.hana_bridge_beapi.dto.board.*;
 import com.adela.hana_bridge_beapi.dto.comment.CommentAddRequest;
 import com.adela.hana_bridge_beapi.dto.comment.CommentResponse;
 import com.adela.hana_bridge_beapi.dto.comment.CommentUpdateRequest;
 import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.entity.Comment;
-import com.adela.hana_bridge_beapi.repository.UsersRepository;
 import com.adela.hana_bridge_beapi.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,6 +25,27 @@ public class BoardApiController {
     private final UsersService usersService;
     private final CommentService commentService;
     private final GoodService goodService;
+
+    //검색어가 포함 되어 있는 게시글 조회하기
+    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}")
+    public ResponseEntity<List<BoardResponse>> searchBoards(@PathVariable String category, @PathVariable String searchWord, @PathVariable String sortType) {
+        List<BoardResponse> boards = boardService.getSearchBoards(category, searchWord, sortType)
+                .stream()
+                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
+                .toList();
+        return ResponseEntity.ok().body(boards);
+    }
+
+    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}/user/{email}")
+    public ResponseEntity<List<BoardResponse>> searchUserCodeBoards(@PathVariable String category, @PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email) {
+        Long userId = usersService.findByEmail(email).getId();
+
+        List<BoardResponse> boards = boardService.getSearchBoards(category, searchWord, sortType, userId)
+                .stream()
+                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
+                .toList();
+        return ResponseEntity.ok().body(boards);
+    }
 
     //좋아요순으로 정렬하기
     @GetMapping("/sort/good/{category}")

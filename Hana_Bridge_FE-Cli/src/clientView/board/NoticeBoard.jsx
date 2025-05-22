@@ -8,7 +8,8 @@ import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
 import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
-import { upBottom, addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout } from "../../style/CommonBoardStyle";
+import { upBottom, inputResetButton, addButton, cardAuthor, cardBottomLayout, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox,  } from "../../style/CommonBoardStyle";
+import { IoMdClose } from "react-icons/io";
 
 const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
@@ -17,6 +18,9 @@ const NoticeBoard = () => {
   console.log(role);
   const navigate = useNavigate(); 
   const scrollRef = useRef(null);
+
+  const [searchWord, setSearchWord] = useState("");
+  const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -25,10 +29,48 @@ const NoticeBoard = () => {
     }
   };
 
+  const getSearch = (word) => {
+    ApiClient.getSearchBoards(category, word, "latest")
+    .then(async  (res) => {
+      if (!res.ok) {
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;   
+      }
+    return res.json();
+    })
+    .then((data) => {
+      if (data === null || (Array.isArray(data) && data.length === 0)) {
+        console.log("해당 게시글이 없습니다.");
+        setBoards(null);
+      } else {
+        setBoards(data);
+      }
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 게시글 없을때 -> category error
+      if(err.code === 'CATEGORY_POST_NOT_FOUND'){
+        setBoards(null);
+      }
+      // 404일 때 에러 페이지로 이동
+      else if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    });
+  }
 
   useEffect(() => {
-    ApiClient.getBoards(category)
-      .then(async (res) => {
+    if (searchWord.trim() !== ""){ //검색어가 존재하는 경우
+      getSearch(searchWord);
+    } 
+    else{ //검색어가 없는 경우
+      ApiClient.getBoards(category)
+      .then(async  (res) => {
         if (!res.ok) {
           //error handler 받음 
           const errorData = await res.json(); // JSON으로 파싱
@@ -39,7 +81,7 @@ const NoticeBoard = () => {
           error.code = errorData.code;
           throw error;   
         }
-        return res.json();
+      return res.json();
       })
       .then((data) => {
         if (data === null || (Array.isArray(data) && data.length === 0)) {
@@ -60,7 +102,8 @@ const NoticeBoard = () => {
           navigate("/error");
         }
       });
-  }, [category]); // 의존성 배열에 category 추가 추천
+    }
+  }, [redirect]); // 의존성 배열에 category 추가 추천
   
   //게시글이 없을 경우 
   if (boards === null) {
@@ -89,19 +132,48 @@ const NoticeBoard = () => {
     navigate(`/detailBoard/${boardId}`, {state: {category: category}});
   }
 
+  //enter로 전송
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      const word = e.target.value.trim();
+      console.log(word);
+      if (word !== "")
+        getSearch(word);
+      else{ //검색창이 비어있을 때 일반 전체 검색으로 새로고침
+        resetBoards();
+      }
+    }
+  };
+
+  //화면 새로고침을 위해 useEffect 의존 변수들을 초기화하는 함수
+  const resetBoards = () => {
+    setRedirect(!redirect);
+    setSearchWord("");
+  }
+
   return (
     <>
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
       <div className="flex justify-between p-1">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
-          <div className={searchBox} >
+          <div className={searchBox}>
             <FaSearch className="mt-1 mr-1.5"/>
             <input
-              type="text"
-              placeholder="Search Your Board"
               className={inputBox}
+              type="text"
+              placeholder="게시글 검색"
+              value={searchWord}
+              onChange={(e) => setSearchWord(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
+            {searchWord.length > 0 && (
+            <button 
+              className={inputResetButton}
+              onClick={resetBoards}
+            >
+              <IoMdClose/>
+            </button>)}
           </div>
           {role === 'ROLE_ADMIN' && 
             <button 

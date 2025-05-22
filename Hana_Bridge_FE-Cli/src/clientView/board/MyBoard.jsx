@@ -4,10 +4,11 @@ import ApiClient from "../../service/ApiClient";
 import { useSelector } from "react-redux";
 
 //디자인 
-import { scrollStyle, cardStyle, buttonStyle } from "../../style/CommonStyle";
+import { scrollStyle, cardStyle } from "../../style/CommonStyle";
 import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
-import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
+import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, inputResetButton, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
+import { IoMdClose } from "react-icons/io";
 
 const MyBoard = () => {
   const [boards, setBoards] = useState([]);
@@ -19,8 +20,11 @@ const MyBoard = () => {
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
   const [sortType, setSortType] = useState("latest");
-
   const scrollRef = useRef(null);
+
+  const [searchWord, setSearchWord] = useState("");
+  const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
+
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -29,31 +33,12 @@ const MyBoard = () => {
     }
   };
 
-  useEffect(() => {
-    let getSortMyboard = null;
-    //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
-    if (toggle === "code"){
-      if (sortType === "latest"){
-        getSortMyboard = ApiClient.getMyBoard
-      } 
-      if (sortType === "like"){
-        getSortMyboard = ApiClient.getSortMyBoards
-      }
-    }
-
-    if (toggle === "assemble"){
-      if (sortType === "latest"){
-        getSortMyboard = ApiClient.getMyAssemble
-      } 
-      if (sortType === "like"){
-        getSortMyboard = ApiClient.getSortMyAssembleBoards
-      }
-    }
-
-    getSortMyboard(email)
+  //검색어로 검색하기
+  const getMySearch = (word) => {
+    const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchMyAssembleBoards;
+    getSearchmyBoards(toggle, word, sortType, email)
     .then(async  (res) => {
       if (!res.ok) {
-        //error handler 받음 
         const errorData = await res.json(); // JSON으로 파싱
         console.log("errorData: " + errorData.code + " : " + errorData.message); 
 
@@ -66,7 +51,7 @@ const MyBoard = () => {
     })
     .then((data) => {
       if (data === null || (Array.isArray(data) && data.length === 0)) {
-        console.log("게시글이 없습니다.");
+        console.log("해당 게시글이 없습니다.");
         setBoards(null);
       } else {
         setBoards(data);
@@ -83,7 +68,68 @@ const MyBoard = () => {
         navigate("/error");
       }
     });
-  }, [toggle, sortType]);
+  }
+
+  useEffect(() => {
+    if (searchWord.trim() !== ""){
+      getMySearch(searchWord)
+    }
+    else{
+      let getSortMyboard = null;
+      //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
+      if (toggle === "code"){
+        if (sortType === "latest"){
+          getSortMyboard = ApiClient.getMyBoard
+        } 
+        if (sortType === "like"){
+          getSortMyboard = ApiClient.getSortMyBoards
+        }
+      }
+
+      if (toggle === "assemble"){
+        if (sortType === "latest"){
+          getSortMyboard = ApiClient.getMyAssemble
+        } 
+        if (sortType === "like"){
+          getSortMyboard = ApiClient.getSortMyAssembleBoards
+        }
+      }
+
+      getSortMyboard(email)
+      .then(async  (res) => {
+        if (!res.ok) {
+          //error handler 받음 
+          const errorData = await res.json(); // JSON으로 파싱
+          console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+          // 👇 error 객체에 code를 추가해 던짐
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;   
+        }
+      return res.json();
+      })
+      .then((data) => {
+        if (data === null || (Array.isArray(data) && data.length === 0)) {
+          console.log("게시글이 없습니다.");
+          setBoards(null);
+        } else {
+          setBoards(data);
+        }
+      })
+      .catch((err) => {
+        console.error("API 요청 실패:", err);
+        // 게시글 없을때 -> category error
+        if(err.code === 'CATEGORY_POST_NOT_FOUND'){
+          setBoards(null);
+        }
+        // 404일 때 에러 페이지로 이동
+        else if (err.code && err.code.includes('NOT_FOUND')) {
+          navigate("/error");
+        }
+      });
+    }
+  }, [toggle, sortType, redirect]);
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {
@@ -91,6 +137,25 @@ const MyBoard = () => {
     navigate(address, { state: { category: category } });
     console.log(category);
   };
+
+  //enter로 전송
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      const word = e.target.value.trim();
+      console.log(word);
+      if (word !== "")
+        getMySearch(word);
+      else{ //검색창이 비어있을 때 일반 전체 검색으로 새로고침
+        resetBoards();
+      }
+    }
+  };
+
+  const resetBoards = () => {
+    setRedirect(!redirect);
+    setSortType("latest");
+    setSearchWord("");
+  }
 
   //게시글이 없을 경우
   if (boards === null) {
@@ -121,13 +186,23 @@ const MyBoard = () => {
       <div className="flex justify-between p-1">
         <h3 className={mainTitle}>내 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
-          <div className={searchBox} >
+          <div className={searchBox}>
             <FaSearch className="mt-1 mr-1.5"/>
             <input
-              type="text"
-              placeholder="Search Your Board"
               className={inputBox}
+              type="text"
+              placeholder="게시글 검색"
+              value={searchWord}
+              onChange={(e) => setSearchWord(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
+            {searchWord.length > 0 && (
+            <button 
+              className={inputResetButton}
+              onClick={resetBoards}
+            >
+              <IoMdClose/>
+            </button>)}
           </div>
           <button 
             className={addButton}

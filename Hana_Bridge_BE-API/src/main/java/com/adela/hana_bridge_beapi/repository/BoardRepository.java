@@ -55,4 +55,16 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     ORDER BY like_count DESC
     """, nativeQuery = true)
     List<Object[]> findBoardsWithAllStats(@Param("userId") Long userId);
+
+    @Query("SELECT b FROM Board b WHERE b.category = :category AND (b.title LIKE %:word% OR b.content LIKE %:word%) ORDER BY :sort DESC")
+    List<Board> searchBoardsByCategoryAndWord(@Param("category") String category, @Param("word") String word, @Param("sort") String sort);
+
+    @Query("""
+      SELECT b FROM Board b
+      WHERE b.category = :category
+        AND b.users.id = :userId
+        AND (b.title LIKE %:word% OR b.content LIKE %:word%)
+      ORDER BY :sort DESC
+    """)
+    List<Board> searchBoardsByCategoryAndWordAndUserId(@Param("category") String category, @Param("userId") Long userId, @Param("word") String word, @Param("sort") String sort);
 }
