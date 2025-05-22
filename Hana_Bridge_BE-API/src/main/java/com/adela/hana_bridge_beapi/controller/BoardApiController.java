@@ -30,6 +30,22 @@ public class BoardApiController {
     private final CommentService commentService;
     private final GoodService goodService;
 
+    //좋아요순으로 정렬하기
+    @GetMapping("/sort/good/{category}")
+    public ResponseEntity<List<BoardResponse>> sortGoodBoards(@PathVariable("category") String category) {
+
+        List<BoardResponse> boards = boardService.getBoardsSortedByLikeWithGoodCheck(category);
+        return ResponseEntity.ok().body(boards);
+    }
+
+    @GetMapping("/sort/good/code/user/{email}")
+    public ResponseEntity<List<BoardResponse>> sortGoodCodeBoardsByEmail(@PathVariable("email") String email) {
+        Long userId = usersService.findByEmail(email).getId();
+
+        List<BoardResponse> boards = boardService.getMyCodeBoardsSortedByLike(userId);
+        return ResponseEntity.ok().body(boards);
+    }
+
     //좋아요 갯수 상위 5개 게시글 가져오기
     @GetMapping("/top")
     public ResponseEntity<List<BoardResponse>> findTopBoards(){
@@ -47,10 +63,9 @@ public class BoardApiController {
 
 
     //현재 사용자가 작성한 글 목록 가져오기
-    @GetMapping("/me")
-    public ResponseEntity<List<BoardResponse>> findBoardByMe(@RequestHeader("Authorization") String authHeader){
-        String accessToken = authHeader.replace("Bearer ", "");
-        Long userId = tokenService.findUsersIdByToken(accessToken);
+    @GetMapping("/user/{email}")
+    public ResponseEntity<List<BoardResponse>> findBoardByEmail(@PathVariable String email){
+        Long userId = usersService.findByEmail(email).getId();
 
         List<BoardResponse> boards = boardService.findByUserId(userId)
                 .stream()

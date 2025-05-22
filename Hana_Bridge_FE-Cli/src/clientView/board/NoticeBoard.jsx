@@ -92,7 +92,7 @@ const NoticeBoard = () => {
   return (
     <>
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-60"}>
-      <div className="flex justify-between p-1">
+      <div className="flex justify-between p-1 mb-5">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
           <div className={searchBox} >
@@ -112,20 +112,6 @@ const NoticeBoard = () => {
             </button>
           }
         </div>
-      </div>
-      <div className={sortCheckLayout}>
-        <label htmlFor="sort" className="sr-only">정렬 기준</label>
-        <select
-          id="sort"
-          name="sort"
-          className={sortCheckBox}
-          onChange={(e) => {
-            console.log('선택된 값:', e.target.value)
-          }}
-        >
-          <option className="text-black" value="like">좋아요순</option>
-          <option className="text-black" value="latest">최신순</option>
-        </select>
       </div>
         {boards.map((post) => (
           <div
