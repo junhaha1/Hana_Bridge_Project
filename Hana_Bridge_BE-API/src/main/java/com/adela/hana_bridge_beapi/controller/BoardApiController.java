@@ -72,9 +72,6 @@ public class BoardApiController {
                 .stream()
                 .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
                 .toList();
-        if (boards.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return ResponseEntity.ok().body(boards);
     }
 
@@ -88,10 +85,6 @@ public class BoardApiController {
                 .stream()
                 .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
                 .toList();
-
-        if (boards.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return ResponseEntity.ok().body(boards);
     }
 

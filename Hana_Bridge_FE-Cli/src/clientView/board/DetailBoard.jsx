@@ -251,7 +251,7 @@ const DetailBoard = () => {
                 {/* 게시글 수정 폼 */}
                   <div className={detailCategory}>
                     {category === "code"
-                      ? "CODE 게시판 > 상세글"
+                      ? "코드/질문 게시판 > 상세글"
                       : "공지 게시판 > 상세글"}
                   </div>
 
@@ -327,7 +327,7 @@ const DetailBoard = () => {
                 {/* 게시글 보기 (테두리 없이 투명 배경) */}
                 <div  className={detailCategory}>
                   {category === "code"
-                    ? "CODE 게시판 > 상세글"
+                    ? "코드/질문 게시판 > 상세글"
                     : "공지 게시판 > 상세글"}
                 </div>
                 <h2 className={detailTitle}>{board.title}</h2>

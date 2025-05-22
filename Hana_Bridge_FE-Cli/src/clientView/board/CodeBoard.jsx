@@ -11,7 +11,7 @@ import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardG
 import { IoMdClose } from "react-icons/io";
 
 const CodeBoard = () => {
-  const [boards, setBoards] = useState([]);
+  const [boards, setBoards] = useState(null);
   const navigate = useNavigate();
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
@@ -130,29 +130,6 @@ const CodeBoard = () => {
     setSearchWord("");
   }
   
-  //게시글이 없을 경우 
-  if (boards === null) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 mx-4 text-center">
-        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
-        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
-        {nickName === 'guest' ? null 
-        : <div> 
-          <button
-            type="button"
-            onClick={() => { 
-              navigate('/write');
-            }}
-            className={` font-bold hover:underline cursor-pointer px-4 py-2 rounded-full text-sm bg-white text-indigo-900 font-bold`}
-          >
-            글 작성
-          </button>
-          </div>
-        }
-      </div>
-    );
-  }
-
   return (
     <>
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
@@ -188,22 +165,43 @@ const CodeBoard = () => {
           }
         </div>
       </div>
-      <div className={sortCheckLayout}>
-        <label htmlFor="sort" className="sr-only">정렬 기준</label>
-        <select
-          id="sort"
-          name="sort"
-          value={sortType}
-          className={sortCheckBox}
-          onChange={(e) => {
-            setSortType(e.target.value)
-          }}
-        >
-          <option className="text-black" value="like">좋아요순</option>
-          <option className="text-black" value="latest">최신순</option>
-        </select>
-      </div>
-      {boards.map((post) => (
+
+      {/* 게시글이 없을 경우 */}
+      {boards === null && (
+        <div className="flex flex-col mt-5 items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 text-center">
+          {searchWord.trim().length > 0 ? (
+            <>
+              <h3 className="text-2xl font-bold mb-2">'{searchWord}'에 대한 검색 결과가 없습니다.</h3>
+            </>
+          ):(
+            <>
+              <h3 className="text-2xl font-bold mb-2">아직 게시글이 없습니다.</h3>
+              <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
+            </>
+          )}
+        </div>
+      )}
+
+      {boards !== null && (
+        <div className={sortCheckLayout}>
+          <label htmlFor="sort" className="sr-only">정렬 기준</label>
+          <select
+            id="sort"
+            name="sort"
+            value={sortType}
+            className={sortCheckBox}
+            onChange={(e) => {
+              setSortType(e.target.value)
+            }}
+          >
+            <option className="text-black" value="like">좋아요순</option>
+            <option className="text-black" value="latest">최신순</option>
+          </select>
+        </div>
+      )}
+      
+      {boards !== null && boards.map((post) => (
+        <>
         <div
           key={post.boardId}
           className={cardStyle}
@@ -253,6 +251,7 @@ const CodeBoard = () => {
             </div>
           </div>
         </div>
+        </>
       ))}
       <button
         onClick={scrollToTop}
