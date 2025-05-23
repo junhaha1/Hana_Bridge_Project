@@ -10,8 +10,8 @@ import { createSlice } from '@reduxjs/toolkit';
    category: '',
    page: '',
    playFlag: true,
-   postLoading: false,
-   postAssembleId: '',
+  //  postLoading: false,
+  //  postAssembleId: '',
  };
  
  const userSlice = createSlice({
@@ -39,8 +39,8 @@ import { createSlice } from '@reduxjs/toolkit';
        state.category = '';
        state.page = '';
        state.playFlag = true;
-       state.postLoading = false;
-       state.postAssembleId = '';
+      //  state.postLoading = false;
+      //  state.postAssembleId = '';
      },
      setAiChat: (state, action) => {
         state.chatMessages = action.payload.chatMessages;
@@ -61,21 +61,21 @@ import { createSlice } from '@reduxjs/toolkit';
     setPlayFlag: (state, action) => {
       state.playFlag = action.payload.playFlag;
     },
-    setPostLoading: (state, action) =>{
-      state.postLoading = action.payload.postLoading;
-    },
-    setPostAssembleId: (state, action) => {
-      state.postAssembleId = action.payload.postAssembleId;
-    },
-    clearPostLoading: (state) => {
-      state.postLoading = false;
-    },
-    clearPostAssembleId: (state) => {
-      state.postAssembleId = '';
-    }
+    // setPostLoading: (state, action) =>{
+    //   state.postLoading = action.payload.postLoading;
+    // },
+    // setPostAssembleId: (state, action) => {
+    //   state.postAssembleId = action.payload.postAssembleId;
+    // },
+    // clearPostLoading: (state) => {
+    //   state.postLoading = false;
+    // },
+    // clearPostAssembleId: (state) => {
+    //   state.postAssembleId = '';
+    // }
    },
  });
  
  export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, 
-  setPlayFlag, setPostLoading, clearPostLoading, setPostAssembleId, clearPostAssembleId } = userSlice.actions;
+  setPlayFlag /* setPostLoading, clearPostLoading, setPostAssembleId, clearPostAssembleId */ } = userSlice.actions;
  export default userSlice.reducer;

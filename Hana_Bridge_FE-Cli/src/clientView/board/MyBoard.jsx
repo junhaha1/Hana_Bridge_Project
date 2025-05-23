@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 
 //디자인 
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
+//import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
 import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
 import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, inputResetButton, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
@@ -71,7 +72,16 @@ const MyBoard = () => {
     });
   }
 
-  useEffect(() => {
+    if(nickName === 'guest'){
+    return (
+      <div className={`${emptyDiv} mt-40`}>
+        <h3 className="text-2xl font-bold mb-2">⚠ 비회원은 이용할 수 없는 기능입니다.</h3>
+        <p>로그인을 진행해주세요. </p>
+      </div>
+    );
+  }
+
+  useEffect(() => {    
     if (searchWord.trim() !== ""){
       getMySearch(searchWord)
     }
@@ -158,6 +168,30 @@ const MyBoard = () => {
     setSearchWord("");
   }
 
+
+  //게시글이 없을 경우
+  if (boards === null) {
+    return (
+      <div className={emptyDiv}>
+        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
+        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
+        {nickName === 'guest' ? null 
+        : <div> 
+          <button
+            type="button"
+            onClick={() => { 
+              navigate('/write');
+            }}
+            className={writeButton}
+          >
+            글 작성
+          </button>
+          </div>
+        }
+      </div>
+    );
+  }
+
   return (
     <>
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
@@ -190,13 +224,13 @@ const MyBoard = () => {
         </div>
       </div>
       <div className={sortCheckLayout + " justify-between"}>
-        <div className="flex rounded">
+        <div className="flex rounded gap-2">
           <button
             onClick={() => {
               setToggle("code");
               resetBoards();
             }}
-            className={`bg-gray-600  font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 scale-95 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
+            className={`bg-gray-600  font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
           >
             코드 질문
           </button>
@@ -205,7 +239,7 @@ const MyBoard = () => {
               setToggle("assemble");
               resetBoards();
             }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600 scale-95 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
+            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
           >
             AI 답변
           </button>

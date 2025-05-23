@@ -4,17 +4,16 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from '../../service/ApiClient';
-import Lottie from "lottie-react";
-import Loading from '../../../public/animations/loading.json';
-import '../../css/AIChat/loading.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAiChat, clearAiChat, setPostLoading, setPostAssembleId } from '../../store/userSlice';
+import { setAiChat, clearAiChat } from '../../store/userSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
 import { IoCopyOutline } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
-import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, loding, inputBox, sendButton, upDiv, downDiv, okButton, cancelButton } from '../../style/AIChatStyle';
+import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, 
+  loding, inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
+ postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
 
 function AIChat({onClose, onfullTalk, onMode}) {
   const prevMessage = useSelector((state) => state.user.chatMessages);
@@ -430,19 +429,19 @@ function AIChat({onClose, onfullTalk, onMode}) {
                   {copied ? <FaCheck/> : <IoCopyOutline className='font-semibold'/>}
                 </button>
                   {isPostLoading ? (
-                    <div className='flex flex-row gap-2 justify-center items-center bg-[#C5BCFF] text-black text-sm font-semibold px-3 py-1 rounded-md'>
+                    <div className={postingDiv}>
                       게시글 등록 중입니다. 
                       <div className="flex items-center justify-center ">
-                        <div className="h-5 w-5 border-3 border-zinc-700 border-t-transparent rounded-full animate-spin"></div>
+                        <div className={sipnning + " h-5 w-5 border-3 border-zinc-700"}></div>
                       </div>
                     </div>
                   ) : postComplete ? (
-                    <div className='text-black text-sm font-semibold bg-lime-400 px-3 py-1 rounded-md'>
+                    <div className={postCompleteDiv}>
                       게시글이 등록 되었습니다.
                     </div>
                   ) : (
                     <button
-                  className={`text-sm bg-gray-800 text-white px-3 py-1 rounded-md`}
+                  className={answerChooseButton}
                   onClick={() => openPostModal(msg.content)}
                   >
                     답변 채택
@@ -459,7 +458,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
           //    <Lottie animationData={Loading} loop={true} />
           // </div>
           <div className="flex justify-start my-2">
-            <div className="h-7 w-7 border-4 border-white/20 border-t-transparent rounded-full animate-spin"></div>
+            <div className={sipnning + " h-7 w-7 border-4 border-white/20 "}></div>
           </div>
         )}        
         {/* 자동 스크롤 영역 */}
@@ -470,7 +469,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
         <div className='flex flex-row gap-2'>
           <textarea
             rows={1}
-            className={`${scrollStyle} w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none border-r-2 border-white/20`}
+            className={`${scrollStyle} ${inputTextarea}`}
             placeholder="메시지를 입력하세요..."
             value={input}
             onChange={(e) => setInput(e.target.value)}

@@ -4,8 +4,6 @@ import Header from '../header/Header';
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import LeftHeader from '../header/LeftHeader';
-import '../../css/Board/AddBoard.css';
-import '../../css/Common.css';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle } from '../../style/CommonStyle';

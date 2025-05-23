@@ -5,6 +5,7 @@ import { useNavigate} from "react-router-dom";
 
 
 import { scrollStyle } from "../../style/CommonStyle";
+import { emptyDiv, writeButton } from '../../style/CommonEmptyBoard';
 import { cardStyle } from "../../style/CommonStyle";
 import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
@@ -105,6 +106,29 @@ const NoticeBoard = () => {
     }
   }, [redirect]); // 의존성 배열에 category 추가 추천
 
+  
+  //게시글이 없을 경우 
+  if (boards === null) {
+    return (
+      <div className={emptyDiv}>
+        <h3 className="text-2xl font-bold mb-2">공지사항이 없습니다.</h3>
+        {role === 'ROLE_ADMIN' 
+        ? <div> 
+          <button
+            type="button"
+            onClick={() => { 
+              navigate('/write');
+            }}
+            className={writeButton}>
+            글 작성
+          </button>
+          </div>
+        : null }
+      </div>
+    );
+  }
+
+
   //상세 화면으로 
   const boardClick = (boardId) =>{
     navigate(`/detailBoard/${boardId}`, {state: {category: category}});
@@ -132,7 +156,7 @@ const NoticeBoard = () => {
   return (
     <>
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
-      <div className="flex justify-between p-1">
+      <div className="flex justify-between p-1 mb-4">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
           <div className={searchBox}>

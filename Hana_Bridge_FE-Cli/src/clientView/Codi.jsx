@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Lottie from "lottie-react";
 import CodeBot from '../../public/animations/codeBot.json';
 
-import { clearPostAssembleId } from '../store/userSlice';
+// import { clearPostAssembleId } from '../store/userSlice';
 import { helperFrame } from '../style/CommonFrame';
 import AIChat from './AIchat/AIChat';
 
@@ -21,7 +21,7 @@ const CodeHelper = () => {
   const [fullTalking, setFullTalking] = useState(false);
 
   const postLoading = useSelector((state) => state.user.postLoading);
-  const postAssembleId = useSelector((state) => state.user.postAssembleId);
+  // const postAssembleId = useSelector((state) => state.user.postAssembleId);
 
   const [showCompleteMessage, setShowCompleteMessage] = useState(false);
 

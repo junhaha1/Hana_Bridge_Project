@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
 import { userDate } from '../../style/CommonDetail';
+import { emptyDiv, writeButton } from '../../style/CommonEmptyBoard';
 import {FaUser, FaSearch, FaArrowUp} from 'react-icons/fa';
 import { upBottom, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox, sortCheckBox, sortCheckLayout, inputResetButton } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
@@ -107,6 +108,29 @@ const AssembleBoard = () => {
       });
     }
   }, [redirect, sortType]);
+
+  //게시글이 없을 경우 
+  if (boards === null) {
+    return (
+      <div className={emptyDiv}>
+        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
+        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
+        {nickName === 'guest' ? null 
+        : <div> 
+          <button
+            type="button"
+            onClick={() => { 
+              navigate('/write');
+            }}
+            className={writeButton}
+          >
+            글 작성
+          </button>
+          </div>
+        }
+      </div>
+    );
+  }
 
   //enter로 전송
   const handleKeyDown = (e) => {

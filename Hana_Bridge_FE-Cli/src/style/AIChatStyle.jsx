@@ -14,8 +14,19 @@ export const userBox = 'bg-[#322776] text-white rounded-tl-2xl rounded-tr-2xl ro
 export const loding = "loader w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin";
 //하단 입력창
 export const inputBox = "w-full mx-auto bg-white/10 backdrop-blur-md rounded-bl-2xl p-4 mt-3";
+//입력창 textarea
+export const inputTextarea = "w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none border-r-2 border-white/20";
 //입력창 보내기 버튼 
 export const sendButton = "hover:opacity-80 hover:scale-105 transition duration-200 ease-in-out";
+
+//게시글 등록 중 div
+export const postingDiv = 'flex flex-row gap-2 justify-center items-center bg-[#C5BCFF] text-black text-sm font-semibold px-3 py-1 rounded-md';
+//로딩 
+export const sipnning = "border-t-transparent rounded-full animate-spin";
+//게시글 등록 완료 div
+export const postCompleteDiv = 'text-black text-sm font-semibold bg-lime-400 px-3 py-1 rounded-md';
+//답변 채택 버튼 
+export const answerChooseButton = "text-sm bg-gray-800 text-white px-3 py-1 rounded-md";
 
 //모달창 
 // - 최상단 div
