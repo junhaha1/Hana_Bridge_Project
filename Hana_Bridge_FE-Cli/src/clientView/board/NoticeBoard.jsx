@@ -232,7 +232,7 @@ const NoticeBoard = () => {
               <div className="flex gap-4">
                 <span className= {cardGood}>
                   <img
-                    src="/images/blueGood.png"
+                    src="/src/images/blueGood.png"
                     alt="좋아요"
                     width="18"
                     className="mr-1"

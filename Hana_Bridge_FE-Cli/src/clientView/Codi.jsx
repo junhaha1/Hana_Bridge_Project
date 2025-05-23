@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 
 import Lottie from "lottie-react";
-import CodeBot from '../../public/animations/codeBot.json';
+import CodeBot from '../animations/codebot.json';
 
 // import { clearPostAssembleId } from '../store/userSlice';
 import { helperFrame } from '../style/CommonFrame';

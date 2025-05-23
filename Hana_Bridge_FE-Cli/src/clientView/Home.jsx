@@ -8,9 +8,9 @@ import Header from "./header/Header.jsx";
 import LoginModal from './user/LoginModal.jsx';
 import SignUpModal from "./user/SignUpModal.jsx";
 
-import homeCodeHelper from "../../public/animations/homecodehelper.json";
-import codeHome from "../../public/animations/codehome.json";
-import assembleHome from "../../public/animations/assemblehome.json";
+import homeCodeHelper from "../animations/homecodehelper.json";
+import codeHome from "../animations/codehome.json";
+import assembleHome from "../animations/assemblehome.json";
 
 import { homeFrame } from '../style/CommonFrame.jsx';
 import { homeAnimation, homeButton, homeText, homeTitle, sectionBox, sectionLayout } from '../style/CommonHomeStyle.jsx';

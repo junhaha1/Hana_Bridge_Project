@@ -203,12 +203,12 @@ const DetailAssemble = () => {
                       if (nickName === 'guest') {
                         handleGuestClick();
                       } else {
-                        isLike ? handleCancelLike(boardId) : handleLike(boardId);
+                        isLike ? handleCancelLike(assembleBoardId) : handleLike(assembleBoardId);
                       }
                     }}
                   >
                     <img
-                      src={isLike ? "/images/blueGood.png" : "/images/whiteGood.png"}
+                      src={isLike ? "/src/images/blueGood.png" : "/src/images/whiteGood.png"}
                       alt="좋아요"
                       className="w-5 h-5 mr-1"
                     />

@@ -6,7 +6,7 @@ import Header from "../header/Header.jsx";
 import LeftHeader from "../header/LeftHeader.jsx";
 
 import Lottie from "lottie-react";
-import HelloWorld from "../../../public/animations/helloworld.json";
+import HelloWorld from "../../animations/helloworld.json";
 import DashboardCards from "./DashBoardCards.jsx";
 
 import {mainFrame} from "../../style/CommonFrame.jsx";
