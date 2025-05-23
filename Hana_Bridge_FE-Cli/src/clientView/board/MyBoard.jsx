@@ -44,7 +44,6 @@ const MyBoard = () => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
         console.log("errorData: " + errorData.code + " : " + errorData.message); 
-
         // 👇 error 객체에 code를 추가해 던짐
         const error = new Error(errorData.message || `서버 오류: ${res.status}`);
         error.code = errorData.code;
@@ -169,6 +168,7 @@ const MyBoard = () => {
     setSearchWord("");
   }
 
+
   //게시글이 없을 경우
   if (boards === null) {
     return (
@@ -244,21 +244,51 @@ const MyBoard = () => {
             AI 답변
           </button>
         </div>
-        <label htmlFor="sort" className="sr-only">정렬 기준</label>
-        <select
-          id="sort"
-          name="sort"
-          className={sortCheckBox}
-          value={sortType}
-          onChange={(e) => {
-            setSortType(e.target.value)
-          }}
-        >
-          <option className="text-black" value="latest">최신순</option>
-          <option className="text-black" value="like">좋아요순</option>
-        </select>
+        {boards !== null && (
+          <>
+            <label htmlFor="sort" className="sr-only">정렬 기준</label>
+            <select
+              id="sort"
+              name="sort"
+              className={sortCheckBox}
+              value={sortType}
+              onChange={(e) => {
+                setSortType(e.target.value)
+              }}
+            >
+              <option className="text-black" value="latest">최신순</option>
+              <option className="text-black" value="like">좋아요순</option>
+            </select>
+          </>
+        )}
       </div>
-      {boards.map((post) => {
+      {/* 게시글이 없을 경우 */}
+      {boards === null && (
+        <div className="flex flex-col mt-5 items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 text-center">
+          {searchWord.trim().length > 0 ? (
+            <>
+              <h3 className="text-2xl font-bold mb-2">‘{searchWord}’에 대한 검색 결과가 없습니다.</h3>
+            </>
+          ) : toggle === "code" ? (
+            <>
+              <h3 className="text-2xl font-bold mb-2">아직 게시글이 없습니다.</h3>
+              <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
+            </>
+          ) : (
+            <>
+              <h3 className="text-2xl font-bold mb-2">아직 AI Codi와 대화를 안 해보셨나요?</h3>
+              <p className="mb-2">
+                <span className="font-semibold text-yellow-300">AI Codi</span>는!
+              </p>
+              <p className="mb-2">막히는 코드, 이해 안 되는 개념, 자주 보는 에러 메시지까지!</p>
+              <p>우측 하단에 AI Codi에게 궁금한 점을 자유롭게 물어보고</p>
+              <p>원하는 답변을 자신만의 게시글로 자동 포스팅할 수 있어요!</p>
+            </>
+          )}
+        </div>
+      )}
+
+      {boards!== null && boards.map((post) => {
         const boardId = toggle === "code" ? post.boardId : post.assembleBoardId;
 
         return (

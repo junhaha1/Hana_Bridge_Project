@@ -10,7 +10,7 @@ import { leftTitle } from '../../style/CommonLeftStyle';
 const boards = [
   { id: 'me', label: '내 게시판' },
   { id: 'notice', label: '공지 게시판' },
-  { id: 'code', label: '코드질문 게시판' },
+  { id: 'code', label: '코드/질문 게시판' },
   { id: 'assemble', label: 'AI답변 게시판' },
 ];
 
