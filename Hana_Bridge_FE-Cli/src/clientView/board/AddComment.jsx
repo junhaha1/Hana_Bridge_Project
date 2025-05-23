@@ -81,7 +81,7 @@ const AddComment = (props) => {
           onClick={handleAddComment}
           className="absolute right-2 top-1/2 -translate-y-1/2 hover:opacity-80"
         >
-          <img src="/images/send.png" alt="보내기" width="20" />
+          <img src="/src/images/send.png" alt="보내기" width="20" />
         </button>
       </div>
     </div>

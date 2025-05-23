@@ -294,12 +294,12 @@ const DetailBoard = () => {
                   <div className={liekCommentButton}>
                     <div className={liekComment}>
                       <span className="flex items-center">
-                        <img src="/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                        <img src="/src/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
                         {board.likeCount}
                       </span>
                       {category === 'code' ?
                       <span className="flex items-center">
-                        <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
+                        <img src="/src/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
                         {board.commentsCount}
                       </span>
                       :null}
@@ -387,7 +387,7 @@ const DetailBoard = () => {
                       }}
                     >
                       <img
-                        src={isLike ? "/images/blueGood.png" : "/images/whiteGood.png"}
+                        src={isLike ? "/src/images/blueGood.png" : "/src/images/whiteGood.png"}
                         alt="좋아요"
                         className="w-5 h-5 mr-1"
                       />
@@ -405,7 +405,7 @@ const DetailBoard = () => {
 
                     {category === 'code'?
                     <span className="flex items-center">
-                      <img src="/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
+                      <img src="/src/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
                       {commentCount}
                     </span>
                     :null}                      

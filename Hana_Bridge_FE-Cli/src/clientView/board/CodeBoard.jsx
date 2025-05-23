@@ -255,7 +255,7 @@ const CodeBoard = () => {
             <div className="flex gap-4">
               <span className= {cardGood}>
                 <img
-                  src="/images/blueGood.png"
+                  src="/src/images/blueGood.png"
                   alt="좋아요"
                   width="18"
                   className="mr-1"
@@ -264,7 +264,7 @@ const CodeBoard = () => {
               </span>
               <span className= {cardComment}>
                 <img
-                  src="/images/comment.png"
+                  src="/src/images/comment.png"
                   alt="댓글"
                   width="18"
                   className="mr-1"

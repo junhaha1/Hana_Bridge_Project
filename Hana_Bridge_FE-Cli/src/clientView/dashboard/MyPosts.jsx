@@ -101,7 +101,7 @@ const MyPosts = () => {
                   {/* 좋아요 */}
                   <div className="flex items-center gap-1">
                     <img
-                      src="/images/blueGood.png"
+                      src="/src/images/blueGood.png"
                       alt="좋아요"
                       width="18"
                       height="18"
@@ -112,7 +112,7 @@ const MyPosts = () => {
                   {/* 댓글 */}
                   <div className="flex items-center gap-1">
                     <img
-                      src="/images/comment.png"
+                      src="/src/images/comment.png"
                       alt="댓글"
                       width="18"
                       height="18"

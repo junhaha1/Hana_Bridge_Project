@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 //디자인 
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
-//import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
+import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
 import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
 import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, inputResetButton, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
@@ -317,11 +317,11 @@ const MyBoard = () => {
               </div>
               <div className="flex gap-4">
                 <span className={cardGood}>
-                  <img src="/images/blueGood.png" alt="좋아요" width="18" className="mr-1" />
+                  <img src="/src/images/blueGood.png" alt="좋아요" width="18" className="mr-1" />
                   {post.likeCount}
                 </span>
                 <span className={cardComment}>
-                  <img src="/images/comment.png" alt="댓글" width="18" className="mr-1" />
+                  <img src="/src/images/comment.png" alt="댓글" width="18" className="mr-1" />
                   {post.commentCount}
                 </span>
               </div>

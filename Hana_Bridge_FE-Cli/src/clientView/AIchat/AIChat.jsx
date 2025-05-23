@@ -486,7 +486,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
             onClick={streamMessage}
             className={sendButton}
           >
-            <img src="/images/send.png" alt="보내기" width="24" height="24" />
+            <img src="/src/images/send.png" alt="보내기" width="24" height="24" />
           </button>
         </div>
       </div>       

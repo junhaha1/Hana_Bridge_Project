@@ -1,5 +1,5 @@
 import Lottie from "lottie-react";
-import send from "../../../public/animations/send.json";
+import send from "../../animations/send.json";
 import Header from "../header/Header";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
