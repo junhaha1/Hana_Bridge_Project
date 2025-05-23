@@ -4,8 +4,9 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from '../../service/ApiClient';
-
-import "../../css/Scroll.css";
+import Lottie from "lottie-react";
+import Loading from '../../../public/animations/loading.json';
+import '../../css/AIChat/loading.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat, setPostLoading, setPostAssembleId } from '../../store/userSlice';
 import { scrollStyle } from '../../style/CommonStyle';
@@ -47,6 +48,9 @@ function AIChat({onClose, onfullTalk, onMode}) {
   //새 대화창 초기화
   const [showNewChatModal, setShowNewChatModal] = useState(false);
 
+  const [isPostLoading, setIsPostLoading] = useState(false);
+  const [postComplete, setPostComplete] = useState(false);
+
   const closeNewChatModal = () => {
     setShowNewChatModal(false);
   }; 
@@ -75,6 +79,11 @@ function AIChat({onClose, onfullTalk, onMode}) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     dispatch(setAiChat({ chatMessages: messages }));
   }, [messages]);
+
+  useEffect(() =>{
+    if(postComplete)
+      setTimeout(() => setPostComplete(false), 2000);
+  }, [postComplete]);
 
   //사용자 입력창 크기 조절절
   const handleResizeHeight = () => {
@@ -241,7 +250,8 @@ function AIChat({onClose, onfullTalk, onMode}) {
 
   //Assemble Board만들기
   const postAssemble = () =>{
-    dispatch(setPostLoading({postLoading: true}));
+    setIsPostLoading(true);
+    //dispatch(setPostLoading({postLoading: true}));
     closePostModal();
     const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
@@ -252,8 +262,11 @@ function AIChat({onClose, onfullTalk, onMode}) {
     })
     .then((data) => {      
       const assembleboardId  = data.assembleBoardId;
-      dispatch(setPostLoading({postLoading: false}));
-      dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
+      //dispatch(setPostLoading({postLoading: false}));
+      setPostComplete(true);
+      setIsPostLoading(false);      
+      console.log("posting complete!");
+      //dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
       //navigate(`/detailAssemble/${assembleboardId}`);
     })
     .catch((err) => console.error("API 요청 실패:", err));
@@ -275,190 +288,210 @@ function AIChat({onClose, onfullTalk, onMode}) {
 
   return (
     <div className={aiChatFrame}>
-        {/* 상단 메뉴바 */}
-        <div className={topNavi}>
-            {onMode === 'sub' ? (
-              <button 
-                className='ml-2'
-                onClick={()=>{
-                  onfullTalk(true);
-                  onClose(false);
-                }}
-              >
-                <AiOutlineFullscreen size={20} className='text-white'/>
-              </button>
-            ) : (
-              <button 
-                className='ml-2'
-                onClick={()=>{
-                  onfullTalk(false);
-                  onClose(true);
-                }}
-              >
-                <AiOutlineFullscreenExit size={20} className='text-white'/>
-              </button>
-            )}
-            
-            <div className='flex flex-row '>
-              <div className='my-auto text-white text-sm font-semibold'>
-              {promptLevel === 1 ? "전문가" : "초보자"} 모드
-              </div>
-              <button 
-                className='p-1 m-1 rounded text-white text-sm hover:bg-gray-500'
-                onClick={() => setShowNewChatModal(true)}
-              >
-                새 대화창
-              </button>
-              <button 
-                className='m-2 p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
-                onClick={()=>{
-                  onfullTalk(false);
-                  onClose(false);
-                }}
-              >
-                <IoClose/>
-              </button>
-            </div>
+      {/* 상단 메뉴바 */}
+      <div className={topNavi}>
+        {onMode === 'sub' ? (
+          <button 
+            className='ml-2'
+            onClick={()=>{
+              onfullTalk(true);
+              onClose(false);
+            }}
+          >
+            <AiOutlineFullscreen size={20} className='text-white'/>
+          </button>
+        ) : (
+          <button 
+            className='ml-2'
+            onClick={()=>{
+              onfullTalk(false);
+              onClose(true);
+            }}
+          >
+            <AiOutlineFullscreenExit size={20} className='text-white'/>
+          </button>
+        )}
+          
+        <div className='flex flex-row '>
+          <div className='my-auto text-white text-sm font-semibold'>
+          {promptLevel === 1 ? "전문가" : "초보자"} 모드
+          </div>
+          <button 
+            className='p-1 m-1 rounded text-white text-sm hover:bg-gray-500'
+            onClick={() => setShowNewChatModal(true)}
+          >
+            새 대화창
+          </button>
+          <button 
+            className='m-2 p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
+            onClick={()=>{
+              onfullTalk(false);
+              onClose(false);
+            }}
+          >
+            <IoClose/>
+          </button>
         </div>
-        {/* 상단 대화창 */}
-        <div className={`${scrollStyle} ${chatBox} `}>
-          {messages.length === 0 &&(
-            <div className="text-white mt-5">
-              {/* 역할 소개 문구 */}
-              <div className="rounded-2xl p-2 text-sm">
-                <p className="mb-2">
-                  안녕하세요! 저는 <span className="font-semibold text-yellow-300">AI Codi</span>예요.
-                </p>
-                <p className="mb-2">
-                  막히는 코드, 이해 안 되는 개념, 자주 보는 에러 메시지까지!
-                </p>
-                <p>
-                  궁금한 점을 자유롭게 물어보면, 최대한 쉽게 설명해드릴게요. 😊
-                </p>
-                <p>
-                  프롬포트를 선택해주세요! 선택 시 바로 대화가 시작됩니다.
-                </p>
-                <p className='text-orange-300 font-semibold'>
-                  ⚠ 바로 대화를 시작하면 초보자로 설정됩니다.
-                </p>
-                <div className='flex flex-row gap-2'>
-                  {/* 초보자 프롬포트 선택 카드 */}
-                  <div 
-                    className={promptButton}
-                    onClick={()=>startChatting(0)}
-                  >
-                    <p className='text-lg font-semibold'>초보자</p>
-                    <p>프로그래밍을 시작하지 얼마 안된 사용자에게 추천합니다. </p>
-                  </div>
-                  {/* 전문가 프롬포트 선택 카드 */}
-                  <div 
-                    className={promptButton}
-                    onClick={()=>startChatting(1)}
-                  >
-                    <p className='text-lg font-semibold'>전문가</p>
-                    <p>프로그래밍을 시작하여 코드 해석이 익숙한 사용자에게 추천합니다. </p>
-                  </div>
+      </div>
+
+            
+      {/* 상단 대화창 */}
+      <div className={`${scrollStyle} ${chatBox} relative`}>
+        {messages.length === 0 &&(
+          <div className="text-white mt-5">
+            {/* 역할 소개 문구 */}
+            <div className="rounded-2xl p-2 text-sm">
+              <p className="mb-2">
+                안녕하세요! 저는 <span className="font-semibold text-yellow-300">AI Codi</span>예요.
+              </p>
+              <p className="mb-2">
+                막히는 코드, 이해 안 되는 개념, 자주 보는 에러 메시지까지!
+              </p>
+              <p>
+                궁금한 점을 자유롭게 물어보면, 최대한 쉽게 설명해드릴게요. 😊
+              </p>
+              <p>
+                프롬포트를 선택해주세요! 선택 시 바로 대화가 시작됩니다.
+              </p>
+              <p className='text-orange-300 font-semibold'>
+                ⚠ 바로 대화를 시작하면 초보자로 설정됩니다.
+              </p>
+              <div className='flex flex-row gap-2'>
+                {/* 초보자 프롬포트 선택 카드 */}
+                <div 
+                  className={promptButton}
+                  onClick={()=>startChatting(0)}
+                >
+                  <p className='text-lg font-semibold'>초보자</p>
+                  <p>프로그래밍을 시작하지 얼마 안된 사용자에게 추천합니다. </p>
+                </div>
+                {/* 전문가 프롬포트 선택 카드 */}
+                <div 
+                  className={promptButton}
+                  onClick={()=>startChatting(1)}
+                >
+                  <p className='text-lg font-semibold'>전문가</p>
+                  <p>프로그래밍을 시작하여 코드 해석이 익숙한 사용자에게 추천합니다. </p>
                 </div>
               </div>
             </div>
-          )}
-          {messages.length > 0 && messages.map((msg, idx) => (
-            <React.Fragment key={idx}>
-              {/* 대화창 박스*/}
+          </div>
+        )}
+        {messages.length > 0 && messages.map((msg, idx) => (
+          <React.Fragment key={idx}>
+            {/* 대화창 박스*/}
+            <div
+              className={`flex ${msg.role === '답변' ? 'justify-start' : 'justify-end'} my-2`}
+            > 
               <div
-                className={`flex ${msg.role === '답변' ? 'justify-start' : 'justify-end'} my-2`}
-              > 
-                <div
-                  className={`max-w-[80%] p-3 text-sm whitespace-pre-wrap ${
-                    msg.role === '답변'
-                      ? aiBox
-                      : userBox
-                  } [&>*]:m-0`}
-                  ref = {msg.role === '답변' ? copyRef : null}
+                className={`max-w-[80%] p-3 text-sm whitespace-pre-wrap ${
+                  msg.role === '답변'
+                    ? aiBox
+                    : userBox
+                } [&>*]:m-0`}
+                ref = {msg.role === '답변' ? copyRef : null}
+              >
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline && match ? (
+                        <SyntaxHighlighter
+                          {...props}
+                          style={prism}
+                          language={match[1]}
+                          PreTag="div"
+                        >
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <code {...props} className={className}>
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
                 >
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      code({ node, inline, className, children, ...props }) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        return !inline && match ? (
-                          <SyntaxHighlighter
-                            {...props}
-                            style={prism}
-                            language={match[1]}
-                            PreTag="div"
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code {...props} className={className}>
-                            {children}
-                          </code>
-                        );
-                      },
-                    }}
-                  >
-                    {msg.content}
-                  </ReactMarkdown>
-                </div>
+                  {msg.content}
+                </ReactMarkdown>
               </div>
-              
-              {/*답변 채택 버튼 박스 */}
-              {msg.role === '답변' && msg.content !== `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` &&(
-                <div className="flex justify-start gap-2">
-                  {/*답변 채택 버튼 */}
-                  
-                  <button
-                    className="text-white"
-                    onClick={copyToClipboard}
-                  > 
-                    {copied ? <FaCheck/> : <IoCopyOutline className='font-semibold'/>}
-                  </button>
-                  <button
-                    className="text-sm bg-gray-800 text-white px-3 py-1 rounded-md"
-                    onClick={() => openPostModal(msg.content)}
+            </div>
+            
+            {/*답변 채택 버튼 박스 */}
+            {msg.role === '답변' && msg.content !== `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` &&(
+              <div className="flex justify-start gap-2">
+                {/*답변 채택 버튼 */}
+                
+                <button
+                  className="text-white"
+                  onClick={copyToClipboard}
+                > 
+                  {copied ? <FaCheck/> : <IoCopyOutline className='font-semibold'/>}
+                </button>
+                  {isPostLoading ? (
+                    <div className='flex flex-row gap-2 justify-center items-center bg-[#C5BCFF] text-black text-sm font-semibold px-3 py-1 rounded-md'>
+                      게시글 등록 중입니다. 
+                      <div className="flex items-center justify-center ">
+                        <div className="h-5 w-5 border-3 border-zinc-700 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    </div>
+                  ) : postComplete ? (
+                    <div className='text-black text-sm font-semibold bg-lime-400 px-3 py-1 rounded-md'>
+                      게시글이 등록 되었습니다.
+                    </div>
+                  ) : (
+                    <button
+                  className={`text-sm bg-gray-800 text-white px-3 py-1 rounded-md`}
+                  onClick={() => openPostModal(msg.content)}
                   >
                     답변 채택
                   </button>
-                </div>
-              )}                    
-            </React.Fragment>
-          ))}
-          {/* 로딩창 */}
-          {isLoading && (
-            <div className="flex justify-start my-2">
-              <div className={loding}></div>
-            </div>
-          )}
-          {/* 자동 스크롤 영역 */}
-          <div ref={messagesEndRef} />
-        </div>
-        <div className={inputBox}>
-          {/* 입력창 (윗부분) */}
-          <div className='flex flex-row gap-2'>
-            <textarea
-              rows={1}
-              className={`${scrollStyle} w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none border-r-2 border-white/20`}
-              placeholder="메시지를 입력하세요..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onInput={handleResizeHeight}
-              onKeyDown={handleKeyDown}
-              ref={textRef}
-              style={{
-                maxHeight: '7.5rem',
-                lineHeight: '1.5rem',
-                paddingRight: '0.5rem',
-              }}
-            />
-            <button
-              onClick={streamMessage}
-              className={sendButton}
-            >
-              <img src="/images/send.png" alt="보내기" width="24" height="24" />
-            </button>
+                  )}
+                
+              </div>
+            )}                    
+          </React.Fragment>
+        ))}
+        {/* 로딩창 */}
+        {isLoading && (
+          // <div className="flex justify-start my-2">
+          //    <Lottie animationData={Loading} loop={true} />
+          // </div>
+          <div className="flex justify-start my-2">
+            <div className="h-7 w-7 border-4 border-white/20 border-t-transparent rounded-full animate-spin"></div>
           </div>
+        )}        
+        {/* 자동 스크롤 영역 */}
+        <div ref={messagesEndRef} />
+      </div>
+      <div className={inputBox}>
+        {/* 입력창 (윗부분) */}
+        <div className='flex flex-row gap-2'>
+          <textarea
+            rows={1}
+            className={`${scrollStyle} w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none border-r-2 border-white/20`}
+            placeholder="메시지를 입력하세요..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onInput={handleResizeHeight}
+            onKeyDown={handleKeyDown}
+            ref={textRef}
+            style={{
+              maxHeight: '7.5rem',
+              lineHeight: '1.5rem',
+              paddingRight: '0.5rem',
+            }}
+          />
+          <button
+            onClick={streamMessage}
+            className={sendButton}
+          >
+            <img src="/images/send.png" alt="보내기" width="24" height="24" />
+          </button>
         </div>
+      </div>       
+
       {/* 모달: 답변 채택 */}
       {showModal && (
         <div className={upDiv}>
