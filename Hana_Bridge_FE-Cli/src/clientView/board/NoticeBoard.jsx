@@ -11,7 +11,6 @@ import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
 import { upBottom, inputResetButton, addButton, cardAuthor, cardBottomLayout, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox,  } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
-import { writeButton } from '../../style/CommonEmptyBoard';
 
 const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
@@ -155,7 +154,7 @@ const NoticeBoard = () => {
   return (
     <>
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
-      <div className="flex justify-between p-1">
+      <div className="flex justify-between p-1 mb-4">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6">
           <div className={searchBox}>
