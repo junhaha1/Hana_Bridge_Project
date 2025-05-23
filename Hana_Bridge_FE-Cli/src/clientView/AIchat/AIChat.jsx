@@ -437,7 +437,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
                       </div>
                     </div>
                   ) : postComplete ? (
-                    <div className='text-black text-sm font-semibold bg-green-400 px-3 py-1 rounded-md'>
+                    <div className='text-black text-sm font-semibold bg-lime-400 px-3 py-1 rounded-md'>
                       게시글이 등록 되었습니다.
                     </div>
                   ) : (
@@ -455,8 +455,11 @@ function AIChat({onClose, onfullTalk, onMode}) {
         ))}
         {/* 로딩창 */}
         {isLoading && (
+          // <div className="flex justify-start my-2">
+          //    <Lottie animationData={Loading} loop={true} />
+          // </div>
           <div className="flex justify-start my-2">
-             <Lottie animationData={Loading} loop={true} />
+            <div className="h-7 w-7 border-4 border-white/20 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}        
         {/* 자동 스크롤 영역 */}
