@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
 import AddComment from './AddComment';
-import {Link} from 'react-router-dom';
 
-import '../../css/Board/Comments.css';
-import { buttonStyle, scrollStyle } from '../../style/CommonStyle';
 import { userDate } from "../../style/CommonDetail";
 import { editComment, saveCancel, saveButton, cancelButton, editButton, deleteButton, whiteLine, writeCommentButton } from '../../style/CommentStyle';
 import { FaUser } from 'react-icons/fa';

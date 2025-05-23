@@ -5,10 +5,12 @@ import { useSelector } from "react-redux";
 
 //디자인 
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
+import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
 import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
 import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, inputResetButton, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
+import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
 
 const MyBoard = () => {
   const [boards, setBoards] = useState([]);
@@ -162,7 +164,7 @@ const MyBoard = () => {
   //게시글이 없을 경우
   if (boards === null) {
     return (
-      <div className="flex flex-col items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 mx-4 text-center">
+      <div className={emptyDiv}>
         <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
         <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
         {nickName === 'guest' ? null 
@@ -172,7 +174,7 @@ const MyBoard = () => {
             onClick={() => { 
               navigate('/write');
             }}
-            className={` font-bold hover:underline cursor-pointer px-4 py-2 rounded-full text-sm bg-white text-indigo-900 font-bold`}
+            className={writeButton}
           >
             글 작성
           </button>

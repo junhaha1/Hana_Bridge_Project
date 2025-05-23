@@ -1,6 +1,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css' 
+import './css/Scroll.css';
 
 import { Routes, Route } from 'react-router-dom';
 import MainBoard from './clientView/MainBoard';

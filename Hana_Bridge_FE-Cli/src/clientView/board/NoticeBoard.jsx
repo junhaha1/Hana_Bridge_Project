@@ -5,11 +5,13 @@ import { useNavigate} from "react-router-dom";
 
 
 import { scrollStyle } from "../../style/CommonStyle";
+import { emptyDiv, writeButton } from '../../style/CommonEmptyBoard';
 import { cardStyle } from "../../style/CommonStyle";
 import { userDate } from "../../style/CommonDetail";
 import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
 import { upBottom, inputResetButton, addButton, cardAuthor, cardBottomLayout, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox,  } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
+import { writeButton } from '../../style/CommonEmptyBoard';
 
 const NoticeBoard = () => {
   const [boards, setBoards] = useState([]);
@@ -108,7 +110,7 @@ const NoticeBoard = () => {
   //게시글이 없을 경우 
   if (boards === null) {
     return (
-      <div className="flex flex-col items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 mx-4 text-center">
+      <div className={emptyDiv}>
         <h3 className="text-2xl font-bold mb-2">공지사항이 없습니다.</h3>
         {role === 'ROLE_ADMIN' 
         ? <div> 
@@ -117,8 +119,7 @@ const NoticeBoard = () => {
             onClick={() => { 
               navigate('/write');
             }}
-            className={` font-bold hover:underline cursor-pointer px-4 py-2 rounded-full text-sm bg-white text-indigo-900 font-bold`}
-          >
+            className={writeButton}>
             글 작성
           </button>
           </div>

@@ -6,7 +6,6 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
-import '../../css/Board/DetailBoard.css';
 import LeftHeader from '../header/LeftHeader';
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";

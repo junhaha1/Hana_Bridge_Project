@@ -1,5 +1,3 @@
-import "../css/Scroll.css";
-
 //scroll 
 export const scrollStyle = "custom-scroll overflow-y-auto";
 //card 
