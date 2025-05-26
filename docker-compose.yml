@@ -3,13 +3,18 @@ version: "3"
 services:
   frontend:
     build:
-      context: ./frontend
+      context: ./Hana_Bridge_FE_Cli
       dockerfile: Dockerfile
+    image: hana-frontend
+    container_name: hana-frontend-container
     ports:
       - "3000:80"
     depends_on:
       - backend
+      
   backend:
+    build:
+      context: Hana_Bridge_BE_API
     ports:
       - "8080:8080"
     image: hana-backend
@@ -24,6 +29,14 @@ services:
       - .env
     depends_on:
       - mysql
+      - redis
+      
+  redis:
+    image: redis:7.2
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+      
   mysql:
     image: mysql:8.0
     container_name: mysql-container
@@ -34,7 +47,7 @@ services:
       - MYSQL_DATABASE=hana_bridge
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./MySQL_init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   mysql_data:
