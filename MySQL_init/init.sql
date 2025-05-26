@@ -1,5 +1,5 @@
 CREATE USER 'app_user'@'%' IDENTIFIED BY 'hana0701';
-GRANT ALL PRIVILEGES ON hana_bridge.* TO 'app_user'@'%';
+GRANT ALL PRIVILEGES ON hana_db.* TO 'app_user'@'%';
 FLUSH PRIVILEGES;
 
 CREATE TABLE `users` (
