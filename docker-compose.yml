@@ -3,38 +3,51 @@ version: "3"
 services:
   frontend:
     build:
-      context: ./frontend
+      context: ./Hana_Bridge_FE_Cli
       dockerfile: Dockerfile
+    image: hana-frontend
+    container_name: hana-frontend-container
     ports:
       - "3000:80"
     depends_on:
       - backend
+      
   backend:
+    build:
+      context: ./Hana_Bridge_BE_API
     ports:
       - "8080:8080"
     image: hana-backend
     container_name: hana-backend-container
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hana_bridge
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=hana0701
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/${DATABASE_DB}
+      - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     env_file:
       - .env
     depends_on:
       - mysql
+      - redis
+      
+  redis:
+    image: redis:7.2
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+      
   mysql:
     image: mysql:8.0
     container_name: mysql-container
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=hana0701
-      - MYSQL_DATABASE=hana_bridge
+      - MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PASSWORD}
+      - MYSQL_DATABASE=${DATABASE_DB}
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./MySQL_init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   mysql_data:
