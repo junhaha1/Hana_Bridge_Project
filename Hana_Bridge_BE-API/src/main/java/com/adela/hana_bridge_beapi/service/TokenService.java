@@ -20,7 +20,9 @@ public class TokenService {
     private final UsersService usersService;
 
     //AccessToken 유효시간 1시간
-    private final long EXPIRATION_ACCESS_TIME = 1000 * 60 * 60;
+    //private final long EXPIRATION_ACCESS_TIME = 1000 * 60 * 60; //실제 서비스할 때 사용할 시간
+    //AccessToken 유효시간 12시간
+    private final long EXPIRATION_ACCESS_TIME = 1000 * 60 * 60 * 12;
     //RefreshToken 유효시간 24시간
     private final long EXPIRATION_REFRESH_TIME = 1000 * 60 * 60 * 24;
 
@@ -58,9 +60,15 @@ public class TokenService {
         }
 
         String email = decoded.getSubject();
+
+        String redisRefreshToken = refreshTokenRepository.findById(email).get().getRefreshToken();
+        if (redisRefreshToken == null || !redisRefreshToken.equals(refreshToken)) {
+            throw new IllegalArgumentException("Invalid refresh token");
+        }
+
         Users users = usersService.findByEmail(email);
 
-        return tokenProvider.createToken(users.getEmail(), users.getRole(), EXPIRATION_REFRESH_TIME);
+        return tokenProvider.createToken(users.getEmail(), users.getRole(), EXPIRATION_ACCESS_TIME);
     }
 
     //-------------RefreshToken 기능-------------

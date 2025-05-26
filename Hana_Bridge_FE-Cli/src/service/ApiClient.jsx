@@ -1,5 +1,5 @@
 class ApiClient{
-  static SERVER_URL = "http://localhost:8080";
+  static SERVER_URL = "/api";
 
   //게시글
   static BOARD = "/board";
@@ -10,8 +10,114 @@ class ApiClient{
   static BOARD_COMMENT = "/board/comment";
   //사용자
   static USER = "/user";
+  //Open AI
+  static AIChat = "/chat"
 
 
+  //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
+  static getMyBoard(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}`);
+  }
+  //사용자 본인 code게시글 좋아요순으로 조회
+  static getSortMyBoards(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/code/user/${email}`);
+  }
+
+  //좋아요 갯수 상위 5개 게시글 조회 (CodeBoard, NoticeBoard)
+  static getBestBoard(){
+    console.log("get Best Board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/top',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+  }
+
+  //사용자 본인 게시글 조회 (AssembleBoard)
+  static getMyAssemble(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${email}`);
+  }
+
+  //사용자 본인 assemble 게시글 좋아요순으로 조회
+  static getSortMyAssembleBoards(email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/sort/good/user/${email}`);
+  }
+
+  //가장 최근 작성한 게시글 5개 조회 (AssembleBoard)
+  static getRecentAssemble(accessToken){
+    console.log("get My Recent Assemble Board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/me/recent',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      }
+    })
+  }
+  //좋아요 갯수 상위 5개 게시글 조회 (AssembleBoard)
+  static getBestAssemble(){
+    console.log("get Best Board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/top',{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+  }
+
+  //OpenAi chat
+  //스트림 기반 답변 요청
+  static streamMessage(accessToken, promptLevel, preContent, question){
+    return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer/stream',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream",
+        "Authorization": `Bearer ${accessToken}`,
+      },
+        body: JSON.stringify({
+        promptLevel: promptLevel,
+        preContent: preContent,
+        question: question,
+      }),
+    });
+  }
+
+
+  static sendMessage(accessToken, promptLevel, preContent, question){
+    console.log("send Message to AI: " + question);
+    return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        promptLevel: promptLevel,
+        preContent: preContent,
+        question: question,
+      }),
+    });
+  }
+
+  //assemble게시글 등록(AI)
+  static postAssemble(accessToken, promptLevel, messages, coreContent){
+    console.log("make Assemble board");
+    return fetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/summary',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        promptLevel: promptLevel,
+        totalContent: messages,
+        coreContent: coreContent,
+      })
+    })
+  }
+  
   //Board 등록 
   static sendBoard(accessToken, title, category, content, code, createAt, updateAt){
     console.log("POST Board");
@@ -36,6 +142,23 @@ class ApiClient{
     console.log("Get Boards By category: " + category);
     return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category);
   }
+
+  //검색어를 통해 Board 조회
+  static getSearchBoards(category, searchWord, sortType){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}`);
+  }
+
+  //검색어를 통해 Board 조회
+  static getSearchUserBoards(category, searchWord, sortType, email){
+    console.log(`검색 : ${category}, ${searchWord}, ${sortType}, ${email}`);
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/user/${email}`);
+  }
+
+  //좋아요순으로 정렬하여 전체 조회
+  static getSortBoards(category){
+    return fetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/${category}`);
+  }
+
   //Board 상세 조회
   static getBoard(boardId, accessToken){
     console.log("Get Article By boardId: " + boardId);
@@ -84,6 +207,20 @@ class ApiClient{
     console.log("Get AssembleBoard");
     return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD);
   }
+
+  //좋아요순으로 조회
+  static getSortAssembleBoards(){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/sort/good`);
+  }
+
+  static getSearchAssembleBoards(word, sortType){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}`);
+  }
+
+  static getSearchUserAssembleBoards(toggle, word, sortType, email){
+    return fetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/user/${email}`);
+  }
+
   //Assemble 상세 조회
   static getAssembleBoard(assembleBoardId, accessToken){
     console.log("Get AssembleBoard By assembleBoardId: " + assembleBoardId);
@@ -110,7 +247,7 @@ class ApiClient{
 
   //사용자 로그인
   static userLogin(email, password){
-    console.log("login by Email: " + email + ", Password: " + password);
+    console.log("login by Email: " + email);
     return fetch(ApiClient.SERVER_URL + ApiClient.USER + '/login', {
       method: "POST",credentials: "include", 
       headers: {

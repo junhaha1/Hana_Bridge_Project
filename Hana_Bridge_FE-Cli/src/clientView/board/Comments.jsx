@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
 import AddComment from './AddComment';
-import {Link} from 'react-router-dom';
+
+import { userDate } from "../../style/CommonDetail";
+import { editComment, saveCancel, saveButton, cancelButton, editButton, deleteButton, whiteLine, writeCommentButton } from '../../style/CommentStyle';
+import { FaUser } from 'react-icons/fa';
+
 
 const Comments = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -26,21 +30,50 @@ const Comments = (props) => {
   //전체 댓글
   const loadComments = () => {
     ApiClient.getComments(props.boardId)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        setComments(data);
-      })
-      .catch((err) => console.error("API 요청 실패:", err));
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
+      return res.json();
+    })
+    .then((data) => {
+      setComments(data);
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 404일 때 에러 페이지로 이동
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    }); 
   };
 
   //댓글 삭제
   const handleDeleteComment = (commentId) => {
     ApiClient.deleteComment(commentId, accessToken)
-      .then(() => loadComments())
-      .catch((err) => console.error('댓글 삭제 실패:', err));
+    .then(async(res) => {
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;  
+      }
+      loadComments();
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+    }); 
   };
 
   //댓글 수정
@@ -54,60 +87,106 @@ const Comments = (props) => {
     if (!editContent.trim()) return;
     //commentId, accessToken, content, createAt
     ApiClient.updateComment(commentId, accessToken, editContent, editCreateAt)
-      .then(() => {
-        setEditCommentId(null);
-        setEditContent('');
-        loadComments();
-      })
-      .catch((err) => console.error('댓글 수정 실패:', err));
+    .then(async (res) => {
+      if (!res.ok) {
+        const errorData = await res.json();
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;
+      }      
+      setEditCommentId(null);
+      setEditContent('');
+      loadComments();
+    })
+    .catch((err) => {
+      console.error('댓글 수정 실패:', err);
+    });
   };
 
   return (
-    <div>
-
+    <div >
       {/* 댓글 리스트 */}
-      {comments.map(comment => (
-        <div className="card mb-2" key={comment.commentId}>
-          <div className="card-body">
-            {/* 수정 중일 때 */}
+      {comments.map((comment) => (
+        <div key={comment.commentId} className="mb-6">
+          <div className="text-left text-white">
             {editCommentId === comment.commentId ? (
               <>
-                <textarea 
-                  className="form-control mb-2"
+                <div className={userDate + " font-semibold mb-2"}>
+                  <span className='flex gap-1'>
+                    <FaUser
+                    className="mt-0.5"
+                    />
+                    {comment.nickName}
+                  </span>
+                  <span className='text-xs text-gray-300 mt-0.5'>
+                    {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                  </span>                  
+                </div>
+                <textarea
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
-                  rows="2"
+                  rows={2}
+                  className={editComment}
+                  placeholder="댓글을 수정하세요"
                 />
-                <button className="btn btn-success btn-sm me-2" onClick={() => handleUpdateComment(comment.commentId)}>
-                  저장
-                </button>
-                <button className="btn btn-secondary btn-sm" onClick={() => setEditCommentId(null)}>
-                  취소
-                </button>
+                <div className={saveCancel}>
+                  <button
+                    className={saveButton}
+                    onClick={() => handleUpdateComment(comment.commentId)}
+                  >
+                    저장
+                  </button>
+                  <button
+                    className={cancelButton}
+                    onClick={() => setEditCommentId(null)}
+                  >
+                    취소
+                  </button>
+                </div>
               </>
             ) : (
               <>
-                <p className="mb-1"><strong>{comment.nickName}</strong></p>
-                <p className="mb-1">{comment.content}</p>
-                <div className="text-muted small">
-                  {comment.createAt} · 👍 {comment.likes} ·{' '}
-                  <a href="#" className="text-decoration-none">신고</a>
+                <div className={userDate + " font-semibold mb-2"}>
+                  <span className='flex gap-1'>
+                    <FaUser
+                    className="mt-0.5"
+                    />
+                    {comment.nickName}
+                  </span>
+                  <span className='text-xs text-gray-300 mt-0.5'>
+                    {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                  </span>                  
                 </div>
-                {nickName === comment.nickName || role === "admin" ? (
-                  <>
-                  <div className="mt-2">
-                  <button className="btn btn-outline-primary btn-sm me-2" onClick={() => handleEditComment(comment.commentId, comment.content)}>
-                    수정
-                  </button>
-                  <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteComment(comment.commentId)}>
-                    삭제
-                  </button>
+                <div className='flex justify-between '>
+                  <p className="mb-1">{comment.content}</p>
+
+                  {(nickName === comment.nickName || role === "admin") && (
+                    <>
+                    <div className='px-2 flex flex-row'>
+                      <button
+                        className={editButton}
+                        onClick={() => handleEditComment(comment.commentId, comment.content)}
+                      >
+                        <p>수정</p>
+                      </button>
+                      <button
+                        className={deleteButton}
+                        onClick={() => handleDeleteComment(comment.commentId)}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                    </>
+                  )}
                 </div>
-                </>
-              ):(
-              <></>
-              )}
                 
+                {/* <div className="text-sm text-white/60 mb-2">
+                   · 👍 {comment.likes} ·{" "}
+                  <button className="hover:underline">신고</button>
+                </div> */}
+                
+                {/* 구분선 */}
+                <div className={whiteLine} />
               </>
             )}
           </div>
@@ -115,22 +194,26 @@ const Comments = (props) => {
       ))}
 
       <div>
-        {newCommentFlag == true ?(
-          <><AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} /></>
-        ):(
-          <>
-          <button className="btn btn-success btn-sm me-2" onClick={() => setNewCommentFlag(true)}>
+        {props.category === "code" && newCommentFlag ? (
+          <AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} />
+        ) : null}
+      </div>
+
+      {/* 댓글 작성 or 작성 버튼 */}
+      <div className="mt-6 flex gap-2">      
+
+        {props.category === "code" && !newCommentFlag && role !== 'guest' && (
+          <button
+            className={writeCommentButton}
+            onClick={() => setNewCommentFlag(true)}
+          >
             댓글 작성
           </button>
-          </>
-        )}
-        <Link className="btn btn-success btn-sm me-2" to="/">
-          처음으로 
-        </Link>
-      </div>    
-
+        )}        
+      </div>
     </div>
   );
+
 };
 
 export default Comments;

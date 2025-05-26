@@ -49,7 +49,7 @@ class UsersApiControllerTest {
         UserResponse mockUserResponse = UserResponse.builder()
                 .email(email)
                 .name(name)
-                .nickname(nickname)
+//                .nickname(nickname)
                 .role(role)
                 .build();
 

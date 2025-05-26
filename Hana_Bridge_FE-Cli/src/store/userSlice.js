@@ -6,6 +6,12 @@ import { createSlice } from '@reduxjs/toolkit';
    nickName: 'guest',
    accessToken: 'guest',
    role: 'guest',
+   chatMessages: [],
+   category: '',
+   page: '',
+   playFlag: true,
+  //  postLoading: false,
+  //  postAssembleId: '',
  };
  
  const userSlice = createSlice({
@@ -28,11 +34,48 @@ import { createSlice } from '@reduxjs/toolkit';
        state.email = 'guest@email.com';
        state.name = 'guest';
        state.nickName = 'guest';
-       state.accessToken = null;
-       state.role = null;
+       state.accessToken = 'guest';
+       state.role = 'guest';
+       state.category = '';
+       state.page = '';
+       state.playFlag = true;
+      //  state.postLoading = false;
+      //  state.postAssembleId = '';
      },
+     setAiChat: (state, action) => {
+        state.chatMessages = action.payload.chatMessages;
+     },
+     clearAiChat: (state) =>{
+      state.chatMessages = [];
+     },
+     // 전체 상태 초기화
+     resetAll: (state) => {
+      Object.assign(state, initialState); 
+    },
+    setCategory: (state, action) => {
+      state.category = action.payload.category;
+    },
+    setPage: (state, action) =>{
+      state.page = action.payload.page;
+    },
+    setPlayFlag: (state, action) => {
+      state.playFlag = action.payload.playFlag;
+    },
+    // setPostLoading: (state, action) =>{
+    //   state.postLoading = action.payload.postLoading;
+    // },
+    // setPostAssembleId: (state, action) => {
+    //   state.postAssembleId = action.payload.postAssembleId;
+    // },
+    // clearPostLoading: (state) => {
+    //   state.postLoading = false;
+    // },
+    // clearPostAssembleId: (state) => {
+    //   state.postAssembleId = '';
+    // }
    },
  });
  
- export const { setUser, modifyUser, clearUser } = userSlice.actions;
+ export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, 
+  setPlayFlag /* setPostLoading, clearPostLoading, setPostAssembleId, clearPostAssembleId */ } = userSlice.actions;
  export default userSlice.reducer;

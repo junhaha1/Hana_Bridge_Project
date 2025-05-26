@@ -32,6 +32,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.auth0:java-jwt:4.4.0'
 
+	// WebClient 기본 모듈 (Spring WebFlux)
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	// Reactor Netty (타임아웃 등 커스터마이징용, 선택적 명시)
+	implementation("io.projectreactor.netty:reactor-netty")
+	//OpenAI RestTemplate 타임아웃 환경설정을 위한 의존성
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.4'
+
 	//JWT 의존성
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'

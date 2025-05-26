@@ -1,6 +1,7 @@
 package com.adela.hana_bridge_beapi.dto.board;
 
 import com.adela.hana_bridge_beapi.entity.Board;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,9 +21,11 @@ public class BoardResponse {
     private final LocalDateTime updateAt;
 
     private final Long likeCount;
+    private final Long commentCount;
+
     private boolean goodCheck;
 
-    public BoardResponse(Board board, Long likeCount) {
+    public BoardResponse(Board board, Long likeCount, Long commentCount) {
         this.boardId = board.getBoardId();
         this.nickName = board.getUsers().getNickName();
         this.title = board.getTitle();
@@ -33,6 +36,22 @@ public class BoardResponse {
         this.updateAt = board.getUpdateAt();
 
         this.likeCount = likeCount;
+        this.commentCount = commentCount;
         this.goodCheck = false;
+    }
+
+    @Builder
+    public BoardResponse(Long boardId, String nickName, String title, String category, String content, String code, LocalDateTime createAt, LocalDateTime updateAt, Long likeCount, Long commentCount, boolean goodCheck) {
+        this.boardId = boardId;
+        this.nickName = nickName;
+        this.title = title;
+        this.category = category;
+        this.content = content;
+        this.code = code;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
+        this.goodCheck = goodCheck;
     }
 }

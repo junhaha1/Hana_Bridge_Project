@@ -1,24 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ApiClient from '../../service/ApiClient';
-import Header from '../Header';
-import { Container, Form, Button, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from '../header/Header';
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
+import LeftHeader from '../header/LeftHeader';
+
+import { mainFrame, detailFrame } from "../../style/CommonFrame";
+import { scrollStyle } from '../../style/CommonStyle';
+import { addBoardButton, addTitle, addContent, addCode } from '../../style/AddBoardStyle';
 
 const AddBoard = () => {
-  const email = useSelector((state) => state.user.email) || 'guest';
-  const nickName = useSelector((state) => state.user.nickName) || 'guest';
+  const accessToken = useSelector((state) => state.user.accessToken);
+  const role = useSelector((state) => state.user.role);
 
-  const [category, setCategory] = useState('code');
+  //이전으로 버튼을 위한 카테고리 
+  const toCategory = useSelector((state) => state.user.category);
+  console.log(toCategory);
+
+  //글씨 업로드 할 카테고리
+  const [category, setCategory] = useState(toCategory);
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
   const [content, setContent] = useState('');
   const [createAt, setCreateAt] = useState(new Date());
-  const [updateAt, setUpdateAt] = useState(new Date());
+  const [updateAt, setUpdateAt] = useState(new Date());  
 
+  //코드 토글 버튼 
+  const [isOpen, setIsOpen] = useState(false);
 
-  const accessToken = useSelector((state) => state.user.accessToken);
+  //언어 선택 박스
+  const [language, setLanguage] = useState("");
+
+  const renderLanguageSelectBox = () => {
+    const languages = [
+      { label: "JavaScript", value: "javascript" },
+      { label: "Python", value: "python" },
+      { label: "Java", value: "java" },
+      { label: "C++", value: "cpp" },
+      { label: "C#", value: "csharp" },
+      { label: "Go", value: "go" },
+      { label: "Rust", value: "rust" },
+      { label: "TypeScript", value: "typescript" },
+      { label: "Kotlin", value: "kotlin" },
+      { label: "Swift", value: "swift" },
+    ];
+
+    return (
+      <div className="w-full py-2 border-t border-white/20 flex flex-row">
+        <label className="w-[100px] mb-2 text-sm text-center">
+          프로그래밍 <br />언어 선택
+        </label>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="w-[200px] px-4 py-2 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">언어를 선택해주세요</option>
+          {languages.map((lang) => (
+            <option key={lang.value} value={lang.value}>
+              {lang.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+    
+
+  useEffect(() =>{
+    if(role !== "ROLE_ADMIN"){
+      setCategory('code');
+    }
+  }, []);
 
   const navigate = useNavigate();
 
@@ -27,89 +80,151 @@ const AddBoard = () => {
     console.log({ category, title, content });
     setCreateAt(new Date());
     setUpdateAt(new Date());
+    //const finalCode = `\`\`\`${language}\n${code}\n\`\`\``;
+    //const finalCode = "```" + language + "\n" + code + "\n```";
+    const finalCode = ["```" + language, code, "```"].join("\n");
+    console.log(finalCode);
     // TODO: API 요청 처리
-    ApiClient.sendBoard(accessToken, title, category, content, code, createAt, updateAt)
-    .then(() => {
-      alert("게시글이 등록되었습니다. ");
-      navigate('/');
+    ApiClient.sendBoard(accessToken, title, category, content, finalCode, createAt, updateAt)
+    .then(async (res) => {
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message);
+      }
+      return await res.json(); 
     })
-    .catch((err) => console.error("API 요청 실패:", err));
+    .then((data) => {
+      alert("게시글이 등록되었습니다.");
+      navigate(`/detailBoard/${data}`, { state: { category: category } });
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+    });
   };
 
   return (
-    <>
-    <Header />
+    <div className={mainFrame}>
+      <Header />
 
-    <Container className="mt-5" style={{ maxWidth: '700px' }}>
-      <h4 className="fw-bold mb-4">글 작성하기</h4>
+      <div className="w-full flex flex-row mt-20">
+        <LeftHeader />
+        <main className={detailFrame}>
+          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
+            <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold">게시판 선택<span className="text-danger">*</span></Form.Label>
-          <div>
-            <ToggleButtonGroup
-              type="radio"
-              name="board"
-              value={category}
-              onChange={val => setCategory(val)}
-            >
-              <ToggleButton
-                id="notice-board"
-                variant={category === 'notice' ? 'primary' : 'outline-secondary'}
-                value="notice"
-              >
-                NOTICE 게시판
-              </ToggleButton>
-              <ToggleButton
-                id="code-board"
-                variant={category === 'code' ? 'primary' : 'outline-secondary'}
-                value="code"
-              >
-                CODE 게시판
-              </ToggleButton>
-            </ToggleButtonGroup>
+            <p className='text-white/80'>코드 질문 게시판</p>
+
+            <div className="flex flex-col">
+              {/* 카테고리 선택 */}
+              {role === "ROLE_ADMIN" && (
+                <div>                
+                  <label className="block font-semibold mb-2">
+                    게시판 선택 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2 flex-wrap mb-3">
+                    <button
+                      type="button"
+                      onClick={() => setCategory('notice')}
+                      className={`px-4 py-2 rounded-full text-sm ${
+                        category === 'notice'
+                          ? 'bg-white/95 text-indigo-800 font-bold'
+                          : 'border border-white text-white'
+                      }`}
+                    >
+                      NOTICE 게시판
+                    </button>
+                      <button
+                      type="button"
+                      onClick={() => setCategory('code')}
+                      className={`px-4 py-2 rounded-full text-sm ${
+                        category === 'code'
+                          ? 'bg-white/95 text-indigo-800 font-bold'
+                          : 'border border-white text-white'
+                      }`}
+                    >
+                      CODE 게시판
+                    </button>
+                  </div>
+              </div>
+              )}
+              
+
+              {/* 제목 */}
+              <div>
+                <label className="block font-semibold mb-2">
+                  제목<span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="게시글 제목을 적어 주세요"
+                  className={addTitle}
+                />
+              </div>
+
+              {/* 코드 작성 */}
+              {category === 'notice' ? null : (
+                <div>
+                  <div className="w-full mx-auto mb-3 border rounded-lg">
+                    <button
+                      onClick={() => setIsOpen(!isOpen)}
+                      className="w-full text-left p-2 hover:bg-white/20 rounded-md flex justify-between items-center"
+                    >
+                      <span className="font-medium">에러 코드</span>
+                      <span>{isOpen ? "▲" : "▼"}</span>
+                    </button>
+
+                    {isOpen && (
+                      <div className='h-full'>
+                        {renderLanguageSelectBox()}
+                      
+                        <textarea
+                          rows={7}
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                          placeholder="작성할 코드/에러를 적어 주세요"
+                          className={addCode}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 본문 작성 */}
+              <div>
+                <textarea
+                  rows={7}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="작성할 글을 적어 주세요"
+                  className={addContent}
+                />
+              </div>
+
+              {/* 버튼 */}
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleSubmit}
+                  className={addBoardButton}
+                >
+                  작성하기
+                </button>
+                <button 
+                  onClick={() => navigate(`/board/${toCategory}`)}
+                  className={addBoardButton}
+                >
+                  처음으로
+                </button>
+              </div>
+            </div>
           </div>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold">제목<span className="text-danger">*</span></Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="게시글 제목을 적어 주세요"
-            value={title}
-            onChange={e => setTitle(e.target.value)} />
-        </Form.Group>
-
-        <Form.Group className="mb-4">
-          <Form.Control
-            as="textarea"
-            rows={10}
-            placeholder="작성할 코드/에러를 적어 주세요"
-            value={code}
-            onChange={e => setCode(e.target.value)} />
-        </Form.Group>
-
-        <Form.Group className="mb-4">
-          <Form.Control
-            as="textarea"
-            rows={10}
-            placeholder="작성할 글을 적어 주세요"
-            value={content}
-            onChange={e => setContent(e.target.value)} />
-        </Form.Group>
-
-        <div className="text-center">
-          <Button type="submit" variant="primary" className="px-5">
-            작성하기
-          </Button>
-          <Link className="btn btn-success btn-sm me-2" to="/">
-            처음으로 
-          </Link>
-        </div>
-      </Form>
-    </Container>
-    </>
+        </main>
+      </div>
+    </div>
   );
+
 };
 
 export default AddBoard;

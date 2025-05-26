@@ -1,0 +1,35 @@
+name: Deploy to KT Cloud on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main  # main 브랜치에 merge된 경우만
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ✅ Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🔐 Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -p ${{ secrets.PORT }} ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+    - name: 📂 Upload project to server
+      run: |
+        rsync -avz -e "ssh -p ${{ secrets.PORT }}" ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ secrets.DEPLOY_PATH }}
+
+    - name: 🐳 Restart Docker on server
+      run: |
+        ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
+          cd ${{ secrets.DEPLOY_PATH }}
+          docker-compose down
+          docker-compose up -d --build
+        EOF

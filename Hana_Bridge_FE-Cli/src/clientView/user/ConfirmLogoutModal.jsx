@@ -1,0 +1,31 @@
+import React from "react";
+
+const ConfirmLogoutModal = ({ onConfirm, onCancel }) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* 배경 오버레이 */}
+      <div className="absolute inset-0 bg-gray-900 bg-opacity-30"></div>
+
+      {/* 모달 콘텐츠 */}
+      <div className="relative bg-white shadow-xl rounded-lg border border-gray-200 w-full max-w-sm p-6 animate-fade-in text-center z-10">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">로그아웃 하시겠습니까?</h3>
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={onConfirm}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+          >
+            확인
+          </button>
+          <button
+            onClick={onCancel}
+            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
+          >
+            취소
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ConfirmLogoutModal;

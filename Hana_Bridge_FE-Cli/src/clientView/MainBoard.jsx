@@ -1,49 +1,41 @@
-import Header from "./Header";
-import CodeHelper from "./CodeHelper";
+import Header from "./header/Header";
 import NoticeBoard from "./board/NoticeBoard";
 import CodeBoard from "./board/CodeBoard";
 import AssembleBoard from "./board/AssembleBoard";
-import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+import LeftHeader from "./header/LeftHeader";
 
+import {mainFrame} from "../style/CommonFrame";
+import MyBoard from "./board/MyBoard";
+
+//게시판 보드
 const MainBoard = () => {
-  const [category, setCategory] = useState('code');
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
   const email = useSelector((state) => state.user.email);
+  const category = useSelector((state) => state.user.category);
 
   return (
-    <div>
+    <div className={mainFrame}>
       <Header />
-
-      <Container className="mt-4">
-        {/* 글 모아보기 탭 */}
-        <div className="mb-3 d-flex gap-2">
-          <strong>글 모아보기</strong>
-        </div>        
-        <div className="mb-3 d-flex gap-2">
-          <Button variant={category === 'code' ? 'primary' : 'light'} size="sm" onClick={() => setCategory('code')}>CODE 게시판</Button>
-          <Button variant={category === 'assemble' ? 'primary' : 'light'} size="sm" onClick={() => setCategory('assemble')}>ASSEMBLE 게시판</Button>
-          <Button variant={category === 'notice' ? 'primary' : 'light'} size="sm" onClick={() => setCategory('notice')}>NOTICE 게시판</Button>
+      {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
+      <div className="w-full flex flex-row mt-20">
+        {/* Left Sidebar */}
+        <LeftHeader />
+        {/* Main Content */}
+        <div className="w-4/5">
+          {/* 게시판 분기 렌더링 */}
+          {category === "me" && <MyBoard />}
+          {category === "code" && <CodeBoard />}
+          {category === "assemble" && <AssembleBoard />}
+          {category === "notice" && <NoticeBoard />}
+          {/* 게스트는 CodeHelper 안 보임 */}
         </div>
-        {category === "code"? (<><CodeBoard /></>):(<></>)}
-        {category === "assemble"? (<><AssembleBoard /></>):(<></>)}
-        {category === "notice"? (<><NoticeBoard /></>):(<></>)}
-      </Container>
-      {email === "guest@email.com" ? (
-        <>
-        </>
-      ) : (
-        <>
-          <CodeHelper />
-        </>
-      )}
-      
+      </div>
     </div>
   );
+
 };
 
 export default MainBoard;

@@ -1,154 +1,246 @@
-import React from 'react';
-import ApiClient from "../../service/ApiClient";
-import Header from '../Header';
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from 'react-redux';
-import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useParams } from 'react-router-dom';
+import { useNavigate, Link, useParams } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+import ApiClient from "../../service/ApiClient";
+import Header from '../header/Header';
+import LeftHeader from "../header/LeftHeader";
+
+import { mainFrame, detailFrame } from "../../style/CommonFrame";
+import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
+import { upBottom } from "../../style/CommonBoardStyle";
+import { liekCommentButton, liekComment, userDate, detailCategory, detailTitle, backButton } from "../../style/CommonDetail";
+import { FaUser, FaArrowUp } from 'react-icons/fa';
 
 const DetailAssemble = () => {
+  const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
   const accessToken = useSelector((state) => state.user.accessToken);
 
-  const { assembleBoardId } = useParams(); 
-  console.log(assembleBoardId);
-
+  const { assembleBoardId } = useParams();
   const [board, setBoard] = useState(null);
-
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
 
-
   const navigate = useNavigate();
-  const location = useLocation();
+  const scrollRef = useRef(null);
 
-  const category = location.state?.category;
+  //비회원이 좋아요 눌렀을때 띄울 메시지 
+  const [showGuestMessage, setShowGuestMessage] = useState(false);
+  const handleGuestClick = () => {
+    setShowGuestMessage(true);
+    setTimeout(() => {
+      setShowGuestMessage(false);
+    }, 2000); // 2초 후 자동 사라짐
+  };
+  
+  //맨 위로가기 버튼 
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     ApiClient.getAssembleBoard(assembleBoardId, accessToken)
-    .then((res) => {
-      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-      return res.json();
-    })
-    .then((data) => {
-      console.log(data);
-      console.log(data.goodCheck);
-      setBoard(data);
-      setLikeCount(data.likeCount);
-      setIsLike(data.goodCheck);
-    })
-    .catch((err) => console.error("API 요청 실패:", err));    
-  }, [assembleBoardId]);
-
-  if (!board) return <div>로딩 중...</div>;
-
-  //삭제 버튼
-  const boardDeleteButton = (assembleBoardId) => {
-    ApiClient.deleteAssembleBoard(assembleBoardId, accessToken)
-    .then(res => {
-      if (!res.ok) {
-          throw new Error(`서버 오류: ${res.status}`);
-      }
-      console.log("게시글 삭제 완료!");
-      navigate('/');
-    })
-    .catch(error => {
-        console.error("게시글 삭제 중 오류 발생:", error);
-    });
-  }
-
-  //좋아요
-  const handleLike = (assembleBoardId) => {
-    ApiClient.sendAssembleGood(assembleBoardId, accessToken)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;
+        }
         return res.json();
       })
       .then((data) => {
-        console.log(data);
+        setBoard(data);        
+        setLikeCount(data.likeCount);
         setIsLike(data.goodCheck);
-        setLikeCount(data.likeCount);  // 추가
       })
-      .catch((err) => console.error("API 요청 실패:", err));    
-  }
-  //좋아요 삭제
+      .catch((err) => {
+        console.error("API 요청 실패:", err);
+        if (err.code && err.code.includes('NOT_FOUND')) {
+          navigate("/error");
+        }
+      });
+  }, [assembleBoardId]);
+
+  const boardDeleteButton = (assembleBoardId) => {
+    ApiClient.deleteAssembleBoard(assembleBoardId, accessToken)
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;
+        }
+        navigate("/board/notice");
+      })
+      .catch((err) => {
+        console.error("API 요청 실패:", err);
+        if (err.code && err.code.includes('NOT_FOUND')) {
+          navigate("/error");
+        }
+      });
+  };
+
+  const handleLike = (assembleBoardId) => {
+    ApiClient.sendAssembleGood(assembleBoardId, accessToken)
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setIsLike(data.goodCheck);
+        setLikeCount(data.likeCount);
+      })
+      .catch((err) => {
+        console.error("좋아요 실패:", err);
+      });
+  };
+
   const handleCancelLike = (assembleBoardId) => {
     ApiClient.deleteAssembleGood(assembleBoardId, accessToken)
-    .then(res => {
-      if (!res.ok) {
-          throw new Error(`서버 오류: ${res.status}`);
-      }
-      return res.json();
-    })
-    .then((data) =>{
-      console.log("좋아요 취소!");
-      setIsLike(data.goodCheck);
-      setLikeCount(data.likeCount);  // 추가
-    })
-    .catch(error => {
-        console.error("삭제 중 오류 발생:", error);
-    });
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+          error.code = errorData.code;
+          throw error;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setIsLike(data.goodCheck);
+        setLikeCount(data.likeCount);
+      })
+      .catch((err) => {
+        console.error("좋아요 취소 실패:", err);
+      });
+  };
+
+  if (!board){
+    navigate("/error");
+    return null;
   }
-  
 
   return (
-    <>
-    <Header />
-    
-    <Container className="mt-4">
-      <div className="container mt-4">
-          {/* 게시글 카드 */}
-          <div className="card mb-4">
-            <div className="card-body">
-              <div className="text-muted mb-2">ASSEMBLE 게시판 &lt; 상세글</div>
-                <h5 className="card-title fw-bold">{board.title}</h5>
-                <p className="text-secondary">작성자 {board.nickName}</p>
-                <p>{board.content}</p>
-              <div className="d-flex justify-content-between mt-3">
-                <div>
-                {isLike === true ? (
-                    <>
-                      <span className="me-3" style={{ cursor: 'pointer' }} 
-                        onClick={() => handleCancelLike(assembleBoardId)}>
-                        <img src="/images/blueGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="me-3" style={{ cursor: 'pointer' }} 
-                        onClick={() => handleLike(assembleBoardId)}>
-                        <img src="/images/whiteGood.png" alt="좋아요" width="20" className="me-1" /> {likeCount}
-                      </span>
-                    </>
-                  )}
-                                
-                  <span><img src="/images/comment.png" alt="말풍선" width="20" className="me-1" /> {board.commentsCount}</span>
-                </div>
-                <div>
-                  {/* 글을 생성한 사람이거나 관리자인 경우만 버튼을 볼 수 있음 */}
-                  {nickName === board.nickName || role === "admin" ? (
-                      <>
-                        <Link className="text-decoration-none text-danger" onClick={() => boardDeleteButton(assembleBoardId)}>삭제하기</Link>
-                      </>
-                    ) : (
-                      <>
-                      </>
-                  )}
-                </div>
+    <div className={mainFrame}>
+      <Header />
+      <div className="w-full flex flex-row mt-20">
+        <LeftHeader />
+        {/* 메인 콘텐츠 */}
+        <main className={detailFrame}>
+          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 pl-20 pr-40"}>
+            <button
+              onClick={() => navigate("/board/assemble")}
+              className={buttonStyle + backButton}
+            >
+              이전
+            </button>
+
+            <div className={detailCardStyle}>
+              <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
+
+              <h2 className={detailTitle}>{board.title}</h2>
+              <div className={userDate}>
+                <span className='flex gap-1'>
+                  <FaUser
+                  className="mt-0.5"
+                  />
+                  {board.nickName}
+                </span>
+                <span className='text-xs text-gray-300 mt-0.5'>
+                  {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                </span>                  
               </div>
-            </div>                       
-          </div>  
-          <div>
-            <Link className="btn btn-success btn-sm me-2" to="/">
-              처음으로 
-            </Link>
-          </div>       
+              <div className="border-t border-white/10 mb-3" />
+
+              <div className="text-white">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    code({ inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline && match ? (
+                        <SyntaxHighlighter
+                          {...props}
+                          style={prism}
+                          language={match[1]}
+                          PreTag="div"
+                          className="rounded-md overflow-x-auto"
+                        >
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {board.content}
+                </ReactMarkdown>
+              </div>
+
+              {/* 좋아요, 댓글, 삭제 */}
+              <div className={liekCommentButton}>
+                <div className={liekComment + " text-white"}>
+                  <span
+                    className="relative cursor-pointer flex items-center"
+                    onClick={() => {
+                      if (nickName === 'guest') {
+                        handleGuestClick();
+                      } else {
+                        isLike ? handleCancelLike(assembleBoardId) : handleLike(assembleBoardId);
+                      }
+                    }}
+                  >
+                    <img
+                      src={isLike ? "/src/images/blueGood.png" : "/src/images/whiteGood.png"}
+                      alt="좋아요"
+                      className="w-5 h-5 mr-1"
+                    />
+                    {likeCount}
+
+                    {showGuestMessage && (
+                      <div className="absolute bottom-full mb-2
+                        w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
+                        text-center">
+                        ⚠ 비회원은 이용할 수 없는 기능입니다.
+                      </div>
+                    )}
+                  </span>
+                </div>
+
+                {(nickName === board.nickName || role === "ROLE_ADMIN") && (
+                  <button className={buttonStyle +" text-red-400 text-sm hover:underline"} onClick={() => boardDeleteButton(assembleBoardId)}>
+                    삭제하기
+                  </button>
+                )}
+              </div>              
+            </div>
+          </div>
+          <button
+            onClick={scrollToTop}
+            className={upBottom}
+          >
+            <FaArrowUp />
+          </button>
+        </main>
       </div>
-      
-    </Container>
-    </>
+    </div>
   );
 };
 
