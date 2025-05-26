@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - main  # main 브랜치에 merge된 경우만
+      - main 
 
 jobs:
   deploy:
