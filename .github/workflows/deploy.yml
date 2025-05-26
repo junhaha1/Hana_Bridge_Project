@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - main 
+      - main  # main 브랜치에 merge된 경우만
 
 jobs:
   deploy:
@@ -44,8 +44,8 @@ jobs:
 
       - name: 🐳 Restart Docker on server
         run: |
-          ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} <<EOF
-            cd ${{ secrets.DEPLOY_PATH }}
-            docker-compose down --volumes
+          ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            cd ${{ secrets.DEPLOY_PATH }} && \
+            docker-compose down --volumes && \
             docker-compose up -d --build
-EOF
+          "
