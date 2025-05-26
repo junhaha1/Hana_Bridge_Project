@@ -26,7 +26,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     env_file:
-      - .env
+      - ./Hana_Bridge_BE-API/.env
     depends_on:
       - mysql
       - redis
@@ -45,6 +45,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_DB}
+    env_file:
+      - ../Hana_Bridge_BE-API/.env
     volumes:
       - mysql_data:/var/lib/mysql
       - ./MySQL_init/init.sql:/docker-entrypoint-initdb.d/init.sql
