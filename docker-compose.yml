@@ -3,7 +3,7 @@ version: "3"
 services:
   frontend:
     build:
-      context: ./Hana_Bridge_FE_Cli
+      context: ./Hana_Bridge_FE-Cli
       dockerfile: Dockerfile
     image: hana-frontend
     container_name: hana-frontend-container
@@ -14,7 +14,7 @@ services:
       
   backend:
     build:
-      context: ./Hana_Bridge_BE_API
+      context: ./Hana_Bridge_BE-API
     ports:
       - "8080:8080"
     image: hana-backend
