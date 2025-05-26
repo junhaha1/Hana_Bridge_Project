@@ -9,7 +9,10 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // React 개발 서버 주소
+                .allowedOrigins(
+                        "http://localhost:5173",
+                        "http://211.253.26.109:3000"
+                ) // React 개발 서버 주소
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 🔥 이게 꼭 필요!
                 .allowedHeaders("*")
                 .allowCredentials(true);

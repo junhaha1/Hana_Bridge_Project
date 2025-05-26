@@ -168,30 +168,6 @@ const MyBoard = () => {
     setSearchWord("");
   }
 
-
-  //게시글이 없을 경우
-  if (boards === null) {
-    return (
-      <div className={emptyDiv}>
-        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
-        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
-        {nickName === 'guest' ? null 
-        : <div> 
-          <button
-            type="button"
-            onClick={() => { 
-              navigate('/write');
-            }}
-            className={writeButton}
-          >
-            글 작성
-          </button>
-          </div>
-        }
-      </div>
-    );
-  }
-
   return (
     <>
     <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
