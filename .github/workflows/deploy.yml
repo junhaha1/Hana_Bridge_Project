@@ -41,7 +41,13 @@ jobs:
       - name: 📂 Upload project to server
         run: |
           rsync -avz -e "ssh -p ${{ secrets.PORT }}" ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ secrets.DEPLOY_PATH }}
-
+      
+      - name: 🔍 서버에서 .env 확인
+        run: |
+          ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '[서버 내 .env 확인]' && \
+            cat ${{ secrets.DEPLOY_PATH }}/Hana_Bridge_BE-API/.env || echo '❌ .env 파일이 없습니다'
+          "
       - name: 🐳 Restart Docker on server
         run: |
           ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
