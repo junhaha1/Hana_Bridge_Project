@@ -24,7 +24,7 @@ jobs:
 
       - name: 📄 Generate .env file
         run: |
-          mkdir -p Hana_Bridge_BE_API
+          mkdir -p Hana_Bridge_BE-API
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > Hana_Bridge_BE_API/.env
           echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> Hana_Bridge_BE_API/.env
           echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> Hana_Bridge_BE_API/.env
