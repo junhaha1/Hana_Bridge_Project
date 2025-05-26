@@ -1,4 +1,5 @@
-FROM openjdk:21
+# Debian 기반 (apt 사용 가능)
+FROM openjdk:21-slim
 
 RUN apt-get update && apt-get install -y coreutils
 
