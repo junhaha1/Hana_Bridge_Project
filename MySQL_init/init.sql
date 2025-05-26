@@ -14,7 +14,7 @@ CREATE TABLE `users` (
 	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE `board` (assembleboardboard
+CREATE TABLE `board` (
 	`board_id`	BIGINT	NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`user_id`	BIGINT	NOT NULL,
 	`title`	VARCHAR(255)	NOT NULL,
