@@ -24,7 +24,7 @@ jobs:
 
       - name: 📄 Generate .env file
         run: |
-          cat <<EOF > Hana_Bridge_BE_API/.env
+          cat <<EOT > Hana_Bridge_BE_API/.env
 OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
 OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}
 OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}
@@ -37,7 +37,7 @@ ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD }}
 DATABASE_DB=${{ secrets.DATABASE_DB }}
 JWT_ISSUER=${{ secrets.JWT_ISSUER }}
 JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}
-EOF
+EOT
 
       - name: 📂 Upload project to server
         run: |
