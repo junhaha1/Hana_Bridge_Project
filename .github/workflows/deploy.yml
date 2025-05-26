@@ -24,19 +24,20 @@ jobs:
 
       - name: 📄 Generate .env file
         run: |
-          mkdir -p Hana_Bridge_BE-API
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > Hana_Bridge_BE-API/.env
-          echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> Hana_Bridge_BE-API/.env
-          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> Hana_Bridge_BE-API/.env
-          echo "OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}" >> Hana_Bridge_BE-API/.env
-          echo "OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}" >> Hana_Bridge_BE-API/.env
-          echo "OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}" >> Hana_Bridge_BE-API/.env
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> Hana_Bridge_BE-API/.env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> Hana_Bridge_BE-API/.env
-          echo "ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD }}" >> Hana_Bridge_BE-API/.env
-          echo "DATABASE_DB=${{ secrets.DATABASE_DB }}" >> Hana_Bridge_BE-API/.env
-          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> Hana_Bridge_BE-API/.env
-          echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> Hana_Bridge_BE-API/.env
+          ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo 'OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}' > ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'DATABASE_DB=${{ secrets.DATABASE_DB }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'JWT_ISSUER=${{ secrets.JWT_ISSUER }}' >> ${{ secrets.DEPLOY_PATH }}/.env && \
+            echo 'JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}' >> ${{ secrets.DEPLOY_PATH }}/.env
+          "
 
       - name: 📂 Upload project to server
         run: |
