@@ -12,7 +12,7 @@ import { upBottom, cardAuthor, cardBottomLayout, cardComment, cardContent, cardG
 import { IoMdClose } from "react-icons/io";
 
 const AssembleBoard = () => {
-  const [boards, setBoards] = useState([]);
+  const [boards, setBoards] = useState(null);
   const [sortType, setSortType] = useState("latest");
 
   const navigate = useNavigate(); 
@@ -108,29 +108,6 @@ const AssembleBoard = () => {
       });
     }
   }, [redirect, sortType]);
-
-  //게시글이 없을 경우 
-  if (boards === null) {
-    return (
-      <div className={emptyDiv}>
-        <h3 className="text-2xl font-bold mb-2">게시글이 없습니다.</h3>
-        <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
-        {nickName === 'guest' ? null 
-        : <div> 
-          <button
-            type="button"
-            onClick={() => { 
-              navigate('/write');
-            }}
-            className={writeButton}
-          >
-            글 작성
-          </button>
-          </div>
-        }
-      </div>
-    );
-  }
 
   //enter로 전송
   const handleKeyDown = (e) => {

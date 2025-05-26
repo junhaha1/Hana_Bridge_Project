@@ -1,7 +1,9 @@
 spring:
   config:
     import: optional:file:.env
-
+  server:
+    port: 8080
+    address: 0.0.0.0
   jpa:
     properties:
       hibernate:

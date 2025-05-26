@@ -13,7 +13,7 @@ import { upBottom, inputResetButton, addButton, cardAuthor, cardBottomLayout, ca
 import { IoMdClose } from "react-icons/io";
 
 const NoticeBoard = () => {
-  const [boards, setBoards] = useState([]);
+  const [boards, setBoards] = useState(null);
   const category = useSelector((state) => state.user.category);
   const role = useSelector((state) => state.user.role);
   console.log(role);
@@ -105,28 +105,6 @@ const NoticeBoard = () => {
       });
     }
   }, [redirect]); // 의존성 배열에 category 추가 추천
-
-  
-  //게시글이 없을 경우 
-  if (boards === null) {
-    return (
-      <div className={emptyDiv}>
-        <h3 className="text-2xl font-bold mb-2">공지사항이 없습니다.</h3>
-        {role === 'ROLE_ADMIN' 
-        ? <div> 
-          <button
-            type="button"
-            onClick={() => { 
-              navigate('/write');
-            }}
-            className={writeButton}>
-            글 작성
-          </button>
-          </div>
-        : null }
-      </div>
-    );
-  }
 
 
   //상세 화면으로 
