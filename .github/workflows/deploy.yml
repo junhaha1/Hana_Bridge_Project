@@ -1,4 +1,4 @@
-name: Deploy to KT Cloud on Merge
+name: Deploy Test to KT Cloud on Merge
 
 on:
   pull_request:
@@ -30,6 +30,6 @@ jobs:
       run: |
         ssh -p ${{ secrets.PORT }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
           cd ${{ secrets.DEPLOY_PATH }}
-          docker-compose down
+          docker-compose down --volumes
           docker-compose up -d --build
         EOF
