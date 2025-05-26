@@ -1,5 +1,5 @@
 class ApiClient{
-  static SERVER_URL = "http://localhost:8080";
+  static SERVER_URL = "/api";
 
   //게시글
   static BOARD = "/board";
