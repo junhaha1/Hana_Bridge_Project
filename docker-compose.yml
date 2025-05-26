@@ -26,7 +26,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     env_file:
-      - ./Hana_Bridge_BE-API/.env
+      - .env
     depends_on:
       - mysql
       - redis
