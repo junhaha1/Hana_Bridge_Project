@@ -25,18 +25,18 @@ jobs:
       - name: 📄 Generate .env file
         run: |
           mkdir -p Hana_Bridge_BE-API
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > Hana_Bridge_BE_API/.env
-          echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> Hana_Bridge_BE_API/.env
-          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> Hana_Bridge_BE_API/.env
-          echo "OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}" >> Hana_Bridge_BE_API/.env
-          echo "OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}" >> Hana_Bridge_BE_API/.env
-          echo "OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}" >> Hana_Bridge_BE_API/.env
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> Hana_Bridge_BE_API/.env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> Hana_Bridge_BE_API/.env
-          echo "ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD }}" >> Hana_Bridge_BE_API/.env
-          echo "DATABASE_DB=${{ secrets.DATABASE_DB }}" >> Hana_Bridge_BE_API/.env
-          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> Hana_Bridge_BE_API/.env
-          echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> Hana_Bridge_BE_API/.env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > Hana_Bridge_BE-API/.env
+          echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> Hana_Bridge_BE-API/.env
+          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> Hana_Bridge_BE-API/.env
+          echo "OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}" >> Hana_Bridge_BE-API/.env
+          echo "OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}" >> Hana_Bridge_BE-API/.env
+          echo "OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}" >> Hana_Bridge_BE-API/.env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> Hana_Bridge_BE-API/.env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> Hana_Bridge_BE-API/.env
+          echo "ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD }}" >> Hana_Bridge_BE-API/.env
+          echo "DATABASE_DB=${{ secrets.DATABASE_DB }}" >> Hana_Bridge_BE-API/.env
+          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> Hana_Bridge_BE-API/.env
+          echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> Hana_Bridge_BE-API/.env
 
       - name: 📂 Upload project to server
         run: |
