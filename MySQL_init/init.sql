@@ -1,4 +1,4 @@
-CREATE USER 'app_user'@'%' IDENTIFIED BY 'hana0701';
+CREATE USER 'app_user'@'%' IDENTIFIED BY 'app0701';
 GRANT ALL PRIVILEGES ON hana_db.* TO 'app_user'@'%';
 FLUSH PRIVILEGES;
 
