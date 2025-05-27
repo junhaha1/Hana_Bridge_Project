@@ -27,6 +27,11 @@ jobs:
           echo "${{ secrets.SSH_KEY_DEV }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ secrets.PORT_DEV }} -H ${{ secrets.HOST_DEV }} >> ~/.ssh/known_hosts
+      
+      - name: 🔍 Print key head (디버깅용)
+        run: |
+          head -n 5 ~/.ssh/id_rsa
+      
       - name: Debug SSH command
         run: |
           echo "ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}"
