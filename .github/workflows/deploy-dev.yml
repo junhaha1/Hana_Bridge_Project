@@ -64,3 +64,4 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }} && \
             docker-compose down && \
             docker-compose up -d --build
+          "
