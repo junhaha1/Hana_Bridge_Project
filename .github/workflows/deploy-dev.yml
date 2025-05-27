@@ -31,6 +31,15 @@ jobs:
       - name: 🔍 Print key head (디버깅용)
         run: |
           head -n 5 ~/.ssh/id_rsa
+          
+      - name: 🔐 Check SSH key permissions
+        run: |
+          stat ~/.ssh/id_rsa
+
+      - name: 🐛 Debug SSH connection
+        run: |
+          ssh -vvv -i ~/.ssh/id_rsa -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} true
+
       
       - name: Debug SSH command
         run: |
