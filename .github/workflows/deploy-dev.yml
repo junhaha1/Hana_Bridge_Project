@@ -18,9 +18,10 @@ jobs:
       - name: 🔐 Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY_DEV }}" > ~/.ssh/id_rsa
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KEY_DEV }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.PORT_DEV }} ${{ secrets.HOST_DEV }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p ${{ secrets.PORT_DEV }} -H ${{ secrets.HOST_DEV }} >> ~/.ssh/known_hosts
 
       - name: 📄 Generate .env file
         run: |
