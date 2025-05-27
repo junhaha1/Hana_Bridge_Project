@@ -94,4 +94,16 @@ jobs:
             echo '[서버 내 .env 확인]' && \
             cat ${{ secrets.DEPLOY_PATH_DEV }}/.env || echo '❌ .env 파일이 없습니다'
           "
-      
+          
+      - name: 🐳 Restart Docker Compose
+        run: |
+          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
+            cd ${{ secrets.DEPLOY_PATH_SERVICE }} && \
+            docker compose pull && \
+            docker compose down && \
+            docker compose up -d --build
+          "
+
+      - name: 📋 Print docker-compose ps
+        run: |
+          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "cd ${{ secrets.DEPLOY_PATH_SERVICE }} && docker compose ps"
