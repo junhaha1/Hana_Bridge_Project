@@ -59,15 +59,27 @@ jobs:
         working-directory: Hana_Bridge_FE-Cli
         run: npm install && npm run build
 
+      - name: 📂 Prepare deploy folder
+        run: |
+          mkdir -p deploy/Hana_Bridge_BE-API/build/libs
+          mkdir -p deploy/Hana_Bridge_FE-Cli/dist
+          mkdir -p deploy/Hana_Bridge_FE-Cli
+          mkdir -p deploy/MySQL_init
+      
+          cp -r Hana_Bridge_BE-API/build/libs/* deploy/Hana_Bridge_BE-API/build/libs/
+          cp -r Hana_Bridge_FE-Cli/dist/* deploy/Hana_Bridge_FE-Cli/dist/
+          cp Hana_Bridge_BE-API/Dockerfile deploy/Hana_Bridge_BE-API/
+          cp Hana_Bridge_FE-Cli/nginx.conf deploy/Hana_Bridge_FE-Cli/
+          cp Hana_Bridge_FE-Cli/Dockerfile deploy/Hana_Bridge_FE-Cli/
+          cp -r MySQL_init/* deploy/MySQL_init/
+          cp docker-compose.yml deploy/
+          cp .env deploy/
+
+
       - name: 📂 Upload artifacts to server
         run: |
           rsync -avz -e "ssh -p ${{ secrets.PORT_DEV }}" \
-            Hana_Bridge_BE-API/build/libs/Hana_Bridge_BE-API-0.0.1.jar \
-            Hana_Bridge_FE-Cli/dist/ \
-            Hana_Bridge_FE-Cli/nginx.conf \
-            MySQL_init/ \
-            docker-compose.yml \
-            .env \
+            deploy/
             ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}:${{ secrets.DEPLOY_PATH_DEV }}
 
       - name: 🔍 서버에서 .env 확인
