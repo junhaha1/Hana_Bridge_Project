@@ -11,9 +11,7 @@ on:
 
 jobs:
   deploy:
-    if: |
-      github.event_name == 'push' || 
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -48,13 +46,18 @@ jobs:
           echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
           echo "INIT_DB=init_dev.sql" >> .env
           echo "MYSQL_HOST=mysql" >> .env
+
+      - name: 📄 Generate frontend .env.production
+        working-directory: Hana_Bridge_FE-Cli
+        run: |
+          echo "VITE_API_BASE_URL=https://${{secrets.HOST_DEV}}/api" > .env.production
           
       - name: 🧱 Build Backend
         working-directory: Hana_Bridge_BE-API
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
-
+      
       - name: ⚙️ Build Frontend
         working-directory: Hana_Bridge_FE-Cli
         run: npm install && npm run build
