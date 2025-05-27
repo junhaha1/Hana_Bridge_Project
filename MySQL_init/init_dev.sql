@@ -1,5 +1,5 @@
-CREATE USER 'app_user'@'%' IDENTIFIED BY 'appuser!@#';
-GRANT ALL PRIVILEGES ON hana_service_db.* TO 'app_user'@'%';
+CREATE USER 'test_user'@'%' IDENTIFIED BY 'testuser!@#';
+GRANT ALL PRIVILEGES ON hana_dev_db.* TO 'test_user'@'%';
 FLUSH PRIVILEGES;
 
 CREATE TABLE `users` (
