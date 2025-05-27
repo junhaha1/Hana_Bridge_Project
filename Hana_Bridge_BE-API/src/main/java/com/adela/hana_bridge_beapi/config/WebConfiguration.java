@@ -11,7 +11,8 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:5173",
-                        "http://211.253.26.109:3000"
+                        "http://14.63.178.152",
+                        "http://14.63.178.151"
                 ) // React 개발 서버 주소
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 🔥 이게 꼭 필요!
                 .allowedHeaders("*")

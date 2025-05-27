@@ -1,12 +1,11 @@
 # frontend/Dockerfile
-FROM node:20 as builder
-WORKDIR /app
-COPY . .
-RUN npm install && npm run build
-
 FROM nginx:stable-alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+# GitHub Actions에서 빌드된 dist/만 복사
+COPY dist/ /usr/share/nginx/html
+
+# nginx 설정 (필요시)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
