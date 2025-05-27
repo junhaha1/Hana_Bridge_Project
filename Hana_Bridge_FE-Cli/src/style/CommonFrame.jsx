@@ -4,4 +4,4 @@ export const leftFrame = "w-1/5 h-full ml-40 pr-10 bg-transparent text-white bor
 export const helperFrame = "fixed bottom-0 right-10 z-[9000]";
 export const boardFrame = "";
 export const detailFrame = "w-4/5 text-white flex-col item-center";
-export const homeFrame = "w-screen h-screen overflow-x-hidden overflow-y-scroll scroll-smooth bg-zinc-800";
+export const homeFrame = "custom-scroll w-screen h-screen overflow-x-hidden overflow-y-scroll scroll-smooth bg-zinc-800";

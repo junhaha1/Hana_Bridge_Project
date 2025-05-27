@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
+import { setShouldAutoOpenHelper } from '../store/userSlice';
 
 import Lottie from "lottie-react";
 import CodeBot from '../animations/codebot.json';
@@ -12,6 +13,10 @@ import AIChat from './AIchat/AIChat';
 const CodeHelper = () => {
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
+
+  //홈 화면에서 AIChat 열기 
+  const shouldAutoOpenHelper = useSelector((state) => state.user.shouldAutoOpenHelper);
+
   const lottieRef = useRef();
   const [isHovered, setIsHovered] = useState(false);
   //확장 플래그
@@ -36,6 +41,14 @@ const CodeHelper = () => {
       lottieRef.current?.stop();
     }
   };
+
+  //홈 화면에서 aichat 실행
+  useEffect(() => {
+    if (shouldAutoOpenHelper) {
+      setFullTalking(true);
+      dispatch(setShouldAutoOpenHelper(false)); // 한 번만 작동하도록 상태 초기화
+    }
+  }, [shouldAutoOpenHelper, dispatch]);
 
   useEffect(() => {
     if (postLoading || showCompleteMessage) {
