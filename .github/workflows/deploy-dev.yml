@@ -53,7 +53,7 @@ jobs:
       - name: 📄 Generate frontend .env.production
         working-directory: Hana_Bridge_FE-Cli
         run: |
-          echo "VITE_API_URL=https:/api" > .env.production
+          echo "VITE_API_URL=/api" > .env.production
           
       - name: 🧱 Build Backend
         working-directory: Hana_Bridge_BE-API
