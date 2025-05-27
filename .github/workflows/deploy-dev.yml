@@ -31,23 +31,21 @@ jobs:
         run: |
           echo "ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}"
 
-      - name: 📄 Generate .env file
+      - name: 📄 Generate .env file locally
         run: |
-          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
-            echo 'OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}' > ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_DEV }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD_DEV }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD_DEV }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'DATABASE_DB=${{ secrets.DATABASE_DB_DEV }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'JWT_ISSUER=${{ secrets.JWT_ISSUER }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'INIT_DB=init_dev.sql' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env
-          "
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+          echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> .env
+          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> .env
+          echo "OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}" >> .env
+          echo "OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}" >> .env
+          echo "OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_DEV }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD_DEV }}" >> .env
+          echo "ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD_DEV }}" >> .env
+          echo "DATABASE_DB=${{ secrets.DATABASE_DB_DEV }}" >> .env
+          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
+          echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
+          echo "INIT_DB=init_dev.sql" >> .env
 
       - name: 📂 Upload project to server
         run: |
