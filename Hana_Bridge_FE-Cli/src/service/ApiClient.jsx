@@ -1,5 +1,5 @@
 class ApiClient{
-  static SERVER_URL = "/api";
+  static SERVER_URL = import.meta.env.VITE_API_URL;
 
   //게시글
   static BOARD = "/board";
