@@ -36,7 +36,8 @@ jobs:
             echo 'ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD_DEV }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
             echo 'DATABASE_DB=${{ secrets.DATABASE_DB_DEV }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
             echo 'JWT_ISSUER=${{ secrets.JWT_ISSUER }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
-            echo 'JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env
+            echo 'JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env && \
+            echo 'INIT_DB=init_dev.sql' >> ${{ secrets.DEPLOY_PATH_DEV }}/.env
           "
 
       - name: 📂 Upload project to server
