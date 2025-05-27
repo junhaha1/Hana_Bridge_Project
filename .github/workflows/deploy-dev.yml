@@ -28,25 +28,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ secrets.PORT_DEV }} -H ${{ secrets.HOST_DEV }} >> ~/.ssh/known_hosts
       
-      - name: 🔍 Print key head (디버깅용)
-        run: |
-          head -n 5 ~/.ssh/id_rsa
-          
-      - name: 🔐 Check SSH key permissions
-        run: |
-          stat ~/.ssh/id_rsa
-
       - name: Test key validity
         run: |
           ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null && echo "✅ SSH 키 정상" || echo "❌ SSH 키 형식 오류"
-
-      - name: 🐛 Debug SSH connection
-        run: |
-          ssh -vvv -i ~/.ssh/id_rsa -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} true
-      
-      - name: Debug SSH command
-        run: |
-          echo "ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}"
 
       - name: 📄 Generate .env file locally
         run: |
@@ -74,3 +58,9 @@ jobs:
             echo '[서버 내 .env 확인]' && \
             cat ${{ secrets.DEPLOY_PATH_DEV }}/.env || echo '❌ .env 파일이 없습니다'
           "
+      - name: 🐳 Restart Docker on server
+        run: |
+          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            cd ${{ secrets.DEPLOY_PATH }} && \
+            docker-compose down && \
+            docker-compose up -d --build
