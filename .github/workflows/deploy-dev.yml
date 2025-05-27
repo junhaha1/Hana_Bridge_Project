@@ -11,7 +11,9 @@ on:
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event_name == 'push' || 
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
 
     steps:
@@ -49,7 +51,9 @@ jobs:
           
       - name: 🧱 Build Backend
         working-directory: Hana_Bridge_BE-API
-        run: ./gradlew build -x test
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
 
       - name: ⚙️ Build Frontend
         working-directory: Hana_Bridge_FE-Cli
