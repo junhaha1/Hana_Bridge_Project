@@ -46,14 +46,14 @@ jobs:
           echo "DATABASE_DB=${{ secrets.DATABASE_DB_SERVICE }}" >> .env
           echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
           echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
-          echo "INIT_DB=init_SERVICE.sql" >> .env
+          echo "INIT_DB=init.sql" >> .env
           echo "MYSQL_HOST=mysql" >> .env
           echo "REDIS_HOST=redis" >> .env
 
       - name: 📄 Generate frontend .env.production
         working-directory: Hana_Bridge_FE-Cli
         run: |
-          echo "VITE_API_URL=https:/api" > .env.production
+          echo "VITE_API_URL=/api" > .env.production
           
       - name: 🧱 Build Backend
         working-directory: Hana_Bridge_BE-API
