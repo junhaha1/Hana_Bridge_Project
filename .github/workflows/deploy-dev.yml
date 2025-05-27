@@ -11,9 +11,7 @@ on:
 
 jobs:
   deploy:
-    if: |
-      github.event_name == 'push' || 
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -47,21 +45,31 @@ jobs:
           echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
           echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
           echo "INIT_DB=init_dev.sql" >> .env
+          echo "MYSQL_HOST=mysql" >> .env
+          
+      - name: 🧱 Build Backend
+        working-directory: Hana_Bridge_BE-API
+        run: ./gradlew build -x test
 
-      - name: 📂 Upload project to server
+      - name: ⚙️ Build Frontend
+        working-directory: Hana_Bridge_FE-Cli
+        run: npm install && npm run build
+
+      - name: 📂 Upload artifacts to server
         run: |
-          rsync -avz -e "ssh -p ${{ secrets.PORT_DEV }}" ./ ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}:${{ secrets.DEPLOY_PATH_DEV }}
-      
+          rsync -avz -e "ssh -p ${{ secrets.PORT_DEV }}" \
+            Hana_Bridge_BE-API/build/libs/Hana_Bridge_BE-API-0.0.1.jar \
+            Hana_Bridge_FE-Cli/dist/ \
+            Hana_Bridge_FE-Cli/nginx.conf \
+            MySQL_init/ \
+            docker-compose.yml \
+            .env \
+            ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}:${{ secrets.DEPLOY_PATH_DEV }}
+
       - name: 🔍 서버에서 .env 확인
         run: |
           ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
             echo '[서버 내 .env 확인]' && \
             cat ${{ secrets.DEPLOY_PATH_DEV }}/.env || echo '❌ .env 파일이 없습니다'
           "
-      - name: 🐳 Restart Docker on server
-        run: |
-          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
-            cd ${{ secrets.DEPLOY_PATH_DEV }} && \
-            docker compose down && \
-            docker compose up -d --build
-          "
+      
