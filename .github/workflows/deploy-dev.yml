@@ -105,4 +105,4 @@ jobs:
 
       - name: 📋 Print docker-compose ps
         run: |
-          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "cd ${{ secrets.DEPLOY_PATH_SERVICE }} && docker compose ps"
+          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV}}@${{ secrets.HOST_DEV }} "cd ${{ secrets.DEPLOY_PATH_DEV }} && docker compose ps"
