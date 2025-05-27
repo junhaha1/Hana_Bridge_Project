@@ -10,6 +10,7 @@ import { createSlice } from '@reduxjs/toolkit';
    category: '',
    page: '',
    playFlag: true,
+   shouldAutoOpenHelper: false,
   //  postLoading: false,
   //  postAssembleId: '',
  };
@@ -39,6 +40,7 @@ import { createSlice } from '@reduxjs/toolkit';
        state.category = '';
        state.page = '';
        state.playFlag = true;
+       state.shouldAutoOpenHelper = false;
       //  state.postLoading = false;
       //  state.postAssembleId = '';
      },
@@ -61,6 +63,9 @@ import { createSlice } from '@reduxjs/toolkit';
     setPlayFlag: (state, action) => {
       state.playFlag = action.payload.playFlag;
     },
+    setShouldAutoOpenHelper: (state, action) => {
+      state.shouldAutoOpenHelper = action.payload;
+    },
     // setPostLoading: (state, action) =>{
     //   state.postLoading = action.payload.postLoading;
     // },
@@ -77,5 +82,5 @@ import { createSlice } from '@reduxjs/toolkit';
  });
  
  export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, 
-  setPlayFlag /* setPostLoading, clearPostLoading, setPostAssembleId, clearPostAssembleId */ } = userSlice.actions;
+  setPlayFlag, setShouldAutoOpenHelper /* setPostLoading, clearPostLoading, setPostAssembleId, clearPostAssembleId */ } = userSlice.actions;
  export default userSlice.reducer;

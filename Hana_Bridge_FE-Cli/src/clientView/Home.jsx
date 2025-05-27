@@ -1,13 +1,12 @@
 import { useState, useRef} from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { setCategory } from '../store/userSlice';
+import { setCategory, setShouldAutoOpenHelper } from '../store/userSlice';
+
 import Lottie from "lottie-react";
 import Header from "./header/Header.jsx";
-
 import LoginModal from './user/LoginModal.jsx';
 import SignUpModal from "./user/SignUpModal.jsx";
-
 import homeCodeHelper from "../animations/homecodehelper.json";
 import codeHome from "../animations/codehome.json";
 import assembleHome from "../animations/assemblehome.json";
@@ -39,7 +38,8 @@ const Home = () => {
       setModalType('login');
       setModalOpen(true);
     } else {
-      navigate('/aiChat');
+      dispatch(setShouldAutoOpenHelper(true));
+      navigate('/dashboard/home');
     }
   };
 
@@ -56,7 +56,8 @@ const Home = () => {
   const handleLoginSuccess = () => {
     setModalOpen(false);
     if (pendingRoute) {
-      navigate(pendingRoute);
+      dispatch(setShouldAutoOpenHelper(true));
+      navigate('/dashboard/home');
       setPendingRoute(null);
     }
   };
