@@ -41,7 +41,7 @@ jobs:
 
       - name: 📂 Upload project to server
         run: |
-          rsync -avz -e "ssh -p ${{ secrets.PORT_DEV }}" ./ ${{ secrets.USERNAME_DVE }}@${{ secrets.HOST_DEV }}:${{ secrets.DEPLOY_PATH_DEV }}
+          rsync -avz -e "ssh -p ${{ secrets.PORT_DEV }}" ./ ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}:${{ secrets.DEPLOY_PATH_DEV }}
       
       - name: 🔍 서버에서 .env 확인
         run: |
