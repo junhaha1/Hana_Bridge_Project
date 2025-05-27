@@ -1,6 +1,9 @@
 name: Deploy Hana Project Dev
 
 on:
+  push:
+      branches:
+        - dev
   pull_request:
     types: [closed]
     branches:
