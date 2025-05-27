@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
 import { commentInput } from '../../style/CommentStyle';
+import { RiSendPlaneFill } from "react-icons/ri";
+
 
 const AddComment = (props) => {
   const accessToken = useSelector((state) => state.user.accessToken);
@@ -79,9 +81,9 @@ const AddComment = (props) => {
         
         <button
           onClick={handleAddComment}
-          className="absolute right-2 top-1/2 -translate-y-1/2 hover:opacity-80"
+          className="absolute right-3 bottom-2 -translate-y-1/2 hover:opacity-80"
         >
-          <img src="/src/images/send.png" alt="보내기" width="20" />
+          <RiSendPlaneFill className='size-7 text-white'/>
         </button>
       </div>
     </div>

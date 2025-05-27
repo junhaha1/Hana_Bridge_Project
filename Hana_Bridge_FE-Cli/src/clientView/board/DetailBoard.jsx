@@ -12,7 +12,8 @@ import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
 import { upBottom } from "../../style/CommonBoardStyle";
 import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
-import { FaUser, FaArrowUp } from 'react-icons/fa';
+import { FaUser, FaArrowUp,  FaRegComment  } from 'react-icons/fa';
+import { BiLike, BiSolidLike } from "react-icons/bi";
 
 //code 마크다운
 import ReactMarkdown from "react-markdown";
@@ -294,13 +295,13 @@ const DetailBoard = () => {
                   <div className={liekCommentButton}>
                     <div className={liekComment}>
                       <span className="flex items-center">
-                        <img src="/src/images/whiteGood.png" alt="좋아요" className="w-5 h-5 mr-1" />
+                        <BiLike className="size-5 mr-1"/>
                         {board.likeCount}
                       </span>
                       {category === 'code' ?
                       <span className="flex items-center">
-                        <img src="/src/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
-                        {board.commentsCount}
+                        <FaRegComment className="size-5 mr-1" />
+                        {board.commentCount}
                       </span>
                       :null}
                       
@@ -386,11 +387,7 @@ const DetailBoard = () => {
                         }
                       }}
                     >
-                      <img
-                        src={isLike ? "/src/images/blueGood.png" : "/src/images/whiteGood.png"}
-                        alt="좋아요"
-                        className="w-5 h-5 mr-1"
-                      />
+                      {isLike ? <BiSolidLike  className="size-5 mr-1"/> : <BiLike className="size-5 mr-1"/>}
                       {likeCount}
 
                       {showGuestMessage && (
@@ -405,7 +402,7 @@ const DetailBoard = () => {
 
                     {category === 'code'?
                     <span className="flex items-center">
-                      <img src="/src/images/comment.png" alt="댓글" className="w-5 h-5 mr-1" />
+                      <FaRegComment className="size-5 mr-1" />
                       {commentCount}
                     </span>
                     :null}                      
