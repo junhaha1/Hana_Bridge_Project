@@ -22,6 +22,28 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_KEY_MAIN }}" | tr -d '\r' > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_KEY_SERVICE }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.PORT_MAIN }} -H ${{ secrets.HOST_MAIN }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p ${{ secrets.PORT_SERVICE }} -H ${{ secrets.HOST_SERVICE }} >> ~/.ssh/known_hosts
+      - name: 📄 Generate .env file
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+          echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> .env
+          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> .env
+          echo "OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}" >> .env
+          echo "OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}" >> .env
+          echo "OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_SERVICE }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD_SERVICE }}" >> .env
+          echo "ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD_SERVICE }}" >> .env
+          echo "DATABASE_DB=${{ secrets.DATABASE_DB_SERVICE }}" >> .env
+          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
+          echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
+          echo "INIT_DB=init.sql" >> .env
+          echo "MYSQL_HOST=mysql" >> .env
+          echo "REDIS_HOST=redis" >> .env
+
+      - name: 📂 Upload only changed artifacts to server
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT_SERVICE }}" \
+              .env \
+	              ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }}:${{ secrets.DEPLOY_PATH_SERVICE }}
