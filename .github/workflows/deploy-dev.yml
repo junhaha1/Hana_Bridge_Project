@@ -124,9 +124,9 @@ jobs:
         run: |
           ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
             cd ${{ secrets.DEPLOY_PATH_DEV }} && \
-            docker-compose pull && \
-            docker-compose down && \
-            docker-compose up -d --build
+            docker compose pull && \
+            docker compose down && \
+            docker compose up -d --build
           "
 
       - name: 📋 Print docker-compose ps
