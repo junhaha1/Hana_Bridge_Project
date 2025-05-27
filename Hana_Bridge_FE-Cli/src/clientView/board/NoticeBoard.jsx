@@ -8,7 +8,8 @@ import { scrollStyle } from "../../style/CommonStyle";
 import { emptyDiv, writeButton } from '../../style/CommonEmptyBoard';
 import { cardStyle } from "../../style/CommonStyle";
 import { userDate } from "../../style/CommonDetail";
-import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
+import {FaUser, FaSearch, FaArrowUp,  FaRegComment  } from 'react-icons/fa';
+import { BiLike } from "react-icons/bi";
 import { upBottom, inputResetButton, addButton, cardAuthor, cardBottomLayout, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox,  } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
 
@@ -209,12 +210,7 @@ const NoticeBoard = () => {
               </div>
               <div className="flex gap-4">
                 <span className= {cardGood}>
-                  <img
-                    src="/src/images/blueGood.png"
-                    alt="좋아요"
-                    width="18"
-                    className="mr-1"
-                  />
+                  <BiLike className="size-5 "/>
                   {post.likeCount}
                 </span>
               </div>

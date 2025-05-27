@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat } from '../../store/userSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
+import { RiSendPlaneFill } from "react-icons/ri";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
 import { IoCopyOutline } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
@@ -486,7 +487,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
             onClick={streamMessage}
             className={sendButton}
           >
-            <img src="/src/images/send.png" alt="보내기" width="24" height="24" />
+            <RiSendPlaneFill className='size-7 text-black'/>
           </button>
         </div>
       </div>       

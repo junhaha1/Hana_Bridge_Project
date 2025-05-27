@@ -14,7 +14,8 @@ import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
 import { upBottom } from "../../style/CommonBoardStyle";
 import { liekCommentButton, liekComment, userDate, detailCategory, detailTitle, backButton } from "../../style/CommonDetail";
-import { FaUser, FaArrowUp } from 'react-icons/fa';
+import { FaUser, FaArrowUp  } from 'react-icons/fa';
+import { BiLike, BiSolidLike } from "react-icons/bi";
 
 const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);
@@ -198,7 +199,7 @@ const DetailAssemble = () => {
               <div className={liekCommentButton}>
                 <div className={liekComment + " text-white"}>
                   <span
-                    className="relative cursor-pointer flex items-center"
+                    className="relative cursor-pointer flex items-center gap-1"
                     onClick={() => {
                       if (nickName === 'guest') {
                         handleGuestClick();
@@ -206,12 +207,8 @@ const DetailAssemble = () => {
                         isLike ? handleCancelLike(assembleBoardId) : handleLike(assembleBoardId);
                       }
                     }}
-                  >
-                    <img
-                      src={isLike ? "/src/images/blueGood.png" : "/src/images/whiteGood.png"}
-                      alt="좋아요"
-                      className="w-5 h-5 mr-1"
-                    />
+                  >                    
+                    {isLike ? <BiSolidLike className="size-5 "/> : <BiLike  className="size-5 "/>}
                     {likeCount}
 
                     {showGuestMessage && (
