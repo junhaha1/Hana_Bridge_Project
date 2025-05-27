@@ -46,6 +46,7 @@ jobs:
           echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
           echo "INIT_DB=init_dev.sql" >> .env
           echo "MYSQL_HOST=mysql" >> .env
+          echo "REDIS_HOST=redis" >> .env
 
       - name: 📄 Generate frontend .env.production
         working-directory: Hana_Bridge_FE-Cli
