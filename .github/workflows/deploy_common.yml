@@ -8,6 +8,7 @@ on:
     types: [closed]
     branches:
       - dev # dev 브랜치에 merge된 경우만
+      - main
 
   workflow_dispatch:
     inputs:
