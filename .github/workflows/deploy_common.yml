@@ -1,4 +1,4 @@
-name: Deploy Hana Project Dev
+name: Deploy Hana Project Common
 
 on:
   push:
