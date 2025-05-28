@@ -37,10 +37,14 @@ jobs:
             echo "backend_changed=true" >> $GITHUB_OUTPUT
             echo "compose_changed=true" >> $GITHUB_OUTPUT
           else
-            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            git fetch origin ${{ github.base_ref }} --depth=1
+            changed_files=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
         
             echo "🔍 Changed files:"
             echo "$changed_files"
+
+            echo "BEFORE: ${{ github.event.before }}"
+            echo "AFTER:  ${{ github.sha }}"
         
             if echo "$changed_files" | grep -q '^Hana_Bridge_FE-Cli/'; then
               echo "frontend_changed=true" >> $GITHUB_OUTPUT
@@ -201,7 +205,8 @@ jobs:
             echo "backend_changed=true" >> $GITHUB_OUTPUT
             echo "compose_changed=true" >> $GITHUB_OUTPUT
           else
-            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            git fetch origin ${{ github.base_ref }} --depth=1
+            changed_files=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
         
             echo "🔍 Changed files:"
             echo "$changed_files"
