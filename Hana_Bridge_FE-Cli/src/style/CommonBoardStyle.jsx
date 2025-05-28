@@ -24,4 +24,4 @@ export const cardGood = "text-indigo-300 flex items-center gap-1";
 export const cardComment = "text-gray-300 flex items-center gap-1";
 
 /* 위로가기 버튼 */
-export const upBottom = "fixed bottom-5 right-2 p-3 rounded-full text-white rounded-full shadow-md z-[8000]";
+export const upBottom = "fixed bottom-5 right-2 p-3 rounded-full text-white hover:bg-zinc-700 rounded-full shadow-md z-[8000]";
