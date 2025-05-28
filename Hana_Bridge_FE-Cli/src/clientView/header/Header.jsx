@@ -93,7 +93,7 @@ const BoardHeader = () => {
               </button>
             </>
           ) : (
-            <div className={serviceBox}>
+            <div className={serviceBox + "z-[9999]"}>
               
               <button
                 onClick={() => openModal("myinfo")}
