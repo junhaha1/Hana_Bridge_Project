@@ -73,12 +73,15 @@ const MyBoard = () => {
     });
   }
 
-    if(nickName === 'guest'){
+  if(nickName === 'guest'){
     return (
-      <div className={`${emptyDiv} mt-40`}>
-        <h3 className="text-2xl font-bold mb-2">⚠ 비회원은 이용할 수 없는 기능입니다.</h3>
-        <p>로그인을 진행해주세요. </p>
+      <div className="mt-5 ml-20 pr-40">
+        <div className={`${emptyDiv} mt-40`}>
+          <h3 className="text-2xl font-bold mb-2">⚠ 비회원은 이용할 수 없는 기능입니다.</h3>
+          <p>로그인을 진행해주세요. </p>
+        </div>
       </div>
+      
     );
   }
 
@@ -241,7 +244,7 @@ const MyBoard = () => {
       </div>
       {/* 게시글이 없을 경우 */}
       {boards === null && (
-        <div className="flex flex-col mt-5 items-center justify-center h-[50vh] text-white bg-white/5 backdrop-blur-sm border border-white/30 rounded-lg shadow-md p-8 text-center">
+        <div className={emptyDiv}>
           {searchWord.trim().length > 0 ? (
             <>
               <h3 className="text-2xl font-bold mb-2">‘{searchWord}’에 대한 검색 결과가 없습니다.</h3>
