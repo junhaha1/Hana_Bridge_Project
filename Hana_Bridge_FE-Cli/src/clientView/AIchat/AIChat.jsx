@@ -12,11 +12,10 @@ import { RiSendPlaneFill } from "react-icons/ri";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
 import { IoCopyOutline, IoSettingsSharp } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
+import { FaLightbulb } from "react-icons/fa";
 import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, 
   loding, inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
- import { editTitle, editContent, liekCommentButton, liekComment, userDate, 
-  detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
 
 
 function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
@@ -59,6 +58,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const [settingModal, setSettingModal] = useState(false);
   //프롬프트 
   const [prompts, setPrompts] = useState(defaultPrompt);
+  //질문 tip
+  const [isHovered, setIsHovered] = useState(false);
 
   const savePrompt = () =>{
     console.log(prompts)
@@ -329,7 +330,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           </button>
         )}
           
-        <div className='flex flex-row gap-2 '>
+        <div className='flex flex-row gap-2 overflow-visible z-[9999] '>
           <div className='my-auto text-white text-sm font-semibold'>
           {promptLevel === 1 ? "전문가" : "초보자"} 모드
           </div>
@@ -339,6 +340,28 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           >
             새 대화창
           </button>
+
+          <div
+            className="relative z-[9999]"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <button className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+              <FaLightbulb className="m-1" />
+              Tip
+            </button>
+            
+
+            <div
+              className={`absolute top-full right-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+              style={{ opacity: isHovered ? 1 : 0 }}
+            >
+              설정에서 <span className="text-yellow-400 font-semibold">프롬프트</span>를 명확히 설정하고 <br/>
+              <span className="text-yellow-400 font-semibold">질문을 구체적</span>으로 할수록 <br/>
+              AI에게 더 좋은 답변을 받을 수 있습니다.
+            </div>
+          </div>
+
           <button
             className='my-2 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md'
             onClick={()=>{setSettingModal(true)}}  

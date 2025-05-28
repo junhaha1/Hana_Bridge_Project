@@ -1,9 +1,9 @@
 //최상단 프레임
-export const aiChatFrame = "w-full h-full flex flex-col bg-zinc-800 rounded-2xl overflow-y-hidden relative";
+export const aiChatFrame = "w-full h-full flex flex-col bg-zinc-800 rounded-2xl overflow-hidden relative";
 //상단 메뉴바 
 export const topNavi = 'flex justify-between bg-white/15 backdrop-blur-sm';
 //상단 대화창
-export const chatBox = " h-full bg-white/10 backdrop-blur-sm p-4  shadow-md ";
+export const chatBox = " h-full bg-white/10 p-4  shadow-md ";
 //초보자 전문자 버튼
 export const promptButton = "w-1/2 bg-white/10 p-2 backdrop-blur-sm border rounded border-white/20 shadow cursor-pointer hover:bg-white/30";
 //AI 메시지 박스

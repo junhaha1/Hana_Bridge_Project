@@ -38,7 +38,7 @@ const Home = () => {
       setModalType('login');
       setModalOpen(true);
     } else {
-      dispatch(setShouldAutoOpenHelper(true));
+      dispatch(setShouldAutoOpenHelper({shouldAutoOpenHelper: true}));
       navigate('/dashboard/home');
     }
   };
@@ -56,7 +56,7 @@ const Home = () => {
   const handleLoginSuccess = () => {
     setModalOpen(false);
     if (pendingRoute) {
-      dispatch(setShouldAutoOpenHelper(true));
+      dispatch(setShouldAutoOpenHelper({shouldAutoOpenHelper: true}));
       navigate('/dashboard/home');
       setPendingRoute(null);
     }
