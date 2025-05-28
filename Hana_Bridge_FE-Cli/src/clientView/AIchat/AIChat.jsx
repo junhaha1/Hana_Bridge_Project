@@ -16,7 +16,7 @@ import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox,
   loding, inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
 
-function AIChat({onClose, onfullTalk, onMode}) {
+function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const prevMessage = useSelector((state) => state.user.chatMessages);
   const accessToken = useSelector((state) => state.user.accessToken);
 
@@ -33,7 +33,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
 
   const dispatch = useDispatch();
 
-  const [promptLevel, setPromptLevel] = useState(0);
+  const [promptLevel, setPromptLevel] = useState(level);
   //ai chat 답변 로딩
   const [isLoading, setIsLoading] = useState(false);
   const [coreContent, setCoreContent] = useState('');
@@ -277,12 +277,14 @@ function AIChat({onClose, onfullTalk, onMode}) {
     setMessages([]);
     setInput('');
     setPromptLevel(0);
+    setLevel(0);
     setIsLoading(false);
     setCoreContent('');
   };
 
   const startChatting = (level) => {
     setPromptLevel(level);
+    setLevel(level);
     setMessages([{ role: '답변', content: `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` },]);
   };
 
