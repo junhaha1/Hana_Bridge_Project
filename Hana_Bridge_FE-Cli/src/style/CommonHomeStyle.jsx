@@ -1,17 +1,7 @@
-export const sectionLayout = "w-screen h-screen flex max-w-[400px]:flex-col flex-row items-center justify-center max-w-[400px]:gap-4 gap-6 text-white max-w-[400px]:px-4 px-6";
+export const sectionLayout = "w-screen h-screen flex flex-row items-center justify-center max-md:flex-col max-md:gap-4 gap-6 text-white max-md:px-4 px-6";
 export const sectionBox = "flex flex-col items-center justify-center text-center";
 
-export const homeTitle = "max-w-[400px]:text-base max-y-[400px]:font-semibold text-5xl font-extrabold max-w-[400px]:mb-6 mb-8 leading-tight";
-export const homeText = "max-w-[400px]:text-base text-xl max-w-[400px]:mb-4 mb-8";
-export const homeButton = "cursor-pointer no-underline bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full max-w-[400px]:test-base text-lg";
-export const homeAnimation = "max-w-[400px]:w-[280] max-w-[400px]:h-[280px] w-[440px] h-[440px]";
-
-// 모바일: column / ≥ md: row
-//export const sectionLayout =  "w-full h-full flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 text-white px-4 md:px-6";
-
-//export const homeTitle ="text-3xl md:text-5xl font-extrabold mb-6 md:mb-8 leading-tight";
-
-//export const homeText = "text-base md:text-xl mb-6 md:mb-8";
-
-// export const homeButton =
-//   "cursor-pointer no-underline bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full text-base md:text-lg";
+export const homeTitle = "text-5xl font-extrabold mb-8 leading-tight max-md:text-2xl max-md:font-semibold max-md:mb-6";
+export const homeText = "text-xl mb-8 max-md:text-base max-md:mb-4";
+export const homeButton = "bg-indigo-500 no-underline hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full text-lg max-md:py-1 max-md:px-3 max-md:text-xs";
+export const homeAnimation = "w-[440px] h-[440px] max-md:w-[280px] max-md:h-[280px]";

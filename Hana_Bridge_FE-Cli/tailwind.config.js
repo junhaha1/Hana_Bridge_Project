@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         sans: ['Pretendard Variable', 'Pretendard', 'sans-serif'], //폰트 적용
       },
+      screens: {
+        'max-md': {'max': '767px'},  // 767px 이하 (모바일 기준)
+      },
       animation: {
         'modal-fade': 'fadeInScale 0.3s ease-out forwards',
       },
