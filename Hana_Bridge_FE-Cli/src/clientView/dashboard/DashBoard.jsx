@@ -34,7 +34,9 @@ const DashBoard = () => {
   const handleComplete = () => {
     console.log("before playFlag: " + playFlag);
     setFadeOut(true);
-    setTimeout(dispatch(setPlayFlag({playFlag: false})), 700);
+    setTimeout(() => {
+      dispatch(setPlayFlag({ playFlag: false }));
+    }, 700);
   };
 
   return (
