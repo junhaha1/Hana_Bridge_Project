@@ -15,6 +15,9 @@ import { FaCheck } from 'react-icons/fa6';
 import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, 
   loding, inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
+ import { editTitle, editContent, liekCommentButton, liekComment, userDate, 
+  detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
+
 
 function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const prevMessage = useSelector((state) => state.user.chatMessages);
@@ -51,7 +54,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const [isPostLoading, setIsPostLoading] = useState(false);
   const [postComplete, setPostComplete] = useState(false);
 
+  //프롬프트 설정 모달
   const [settingModal, setSettingModal] = useState(false);
+  //프롬프트 
+  const [prompts, setPrompts] = useState({
+    role: '너는 프로그래밍 강사야.',
+    format: '예시 코드를 보여주면서 설명해줘.', //ex: 표로 비교해줘, 주석으로 설명을 함께 달아줘, 코드만 짧게 알려줘. 등
+    level: '초등학생도 이해할 수 있도록 설명해줘.' 
+  })
 
   const closeNewChatModal = () => {
     setShowNewChatModal(false);
@@ -502,12 +512,46 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         </div>
       </div>      
 
+        {/* const [prompts, setPrompts] = useState({
+              role: '너는 프로그래밍 강사야.',
+              format: '예시 코드를 보여주면서 설명해줘.', //ex: 표로 비교해줘, 주석으로 설명을 함께 달아줘, 코드만 짧게 알려줘. 등
+              level: '초등학생도 이해할 수 있도록 설명해줘.' 
+            }) */}
+
        {/* 프롬프트 설정 모달 */}
        {settingModal && (
         <div className={upDiv}>
           <div className={downDiv}>
-            <h2 className="text-xl font-semibold mb-4">AI 부가 설정</h2>
-            <p className="mb-4">해당 질문과 답변을 채택 하시겠습니까?<br />채택하시면 질문과 내용이 요약되어 게시됩니다.</p>
+            <h2 className="text-xl font-semibold mb-4">AI 프롬프트 설정</h2>
+            <p className="mb-3 text-sm"><span className="text-yellow-300 font-semibold">Tip</span> 프롬프트란? <br />AI에게 명확한 지시를 내리는 입력값으로 좋은 답변을 받는데 기여할 수 있습니다.  </p>
+            
+            
+            <p className='font-semibold mb-1'>AI의 역할</p>
+            <textarea
+              className={editContent + "text-black"}
+              placeholder="AI의 역할을 정해주세요."
+              value={prompts.role}
+              onChange={(e) => setPrompts({role: e.target.value})}
+            />
+
+            <p className='font-semibold mb-1'>AI의 답변 형식</p>
+            <textarea
+              className={editContent + "text-white"}
+              placeholder="AI의 답변 형식을 정해주세요."
+              value={prompts.format}
+              onChange={(e) => setPrompts({format: e.target.value})}
+            />
+            
+
+            <p className='font-semibold mb-1'>AI의 답변 수준</p>
+            <textarea
+              className={editContent + "text-white"}
+              placeholder="AI의 답변 수준을 정해주세요."
+              value={prompts.level}
+              onChange={(e) => setPrompts({level: e.target.value})}
+            />
+            
+            
             
             <div className="flex justify-end gap-2">              
               <button className={okButton} onClick={postAssemble}>확인</button>
