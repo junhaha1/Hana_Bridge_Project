@@ -205,6 +205,9 @@ jobs:
         
             echo "🔍 Changed files:"
             echo "$changed_files"
+
+            echo "BEFORE: ${{ github.event.before }}"
+            echo "AFTER:  ${{ github.sha }}"
         
             if echo "$changed_files" | grep -q '^Hana_Bridge_FE-Cli/'; then
               echo "frontend_changed=true" >> $GITHUB_OUTPUT
