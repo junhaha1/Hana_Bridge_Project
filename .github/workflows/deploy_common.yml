@@ -1,0 +1,224 @@
+name: Deploy Hana Project Dev
+
+on:
+  push:
+      branches:
+        - dev
+  pull_request:
+    types: [closed]
+    branches:
+      - dev # dev 브랜치에 merge된 경우만
+
+  workflow_dispatch:
+    inputs:
+      target:
+        description: '배포 브랜치 선택 (main/dev)'
+        required: false
+        default: 'dev'
+
+jobs:
+  deploy-main:
+    if: > 
+      (github.event.pull_request.merged == true && github.base_ref == 'main') || 
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'main')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🚀 Main 배포 ##배포 확인 로그
+        run: echo "🚀 main 브랜치에 머지되어 배포 중"
+      
+      - name: 🔐 Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KEY_SERVICE }}" | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.PORT_SERVICE }} -H ${{ secrets.HOST_SERVICE }} >> ~/.ssh/known_hosts
+      
+      - name: Test key validity
+        run: |
+          ssh-keygen -y -f ~/.ssh/id_rsa > /SERVICE/null && echo "✅ SSH 키 정상" || echo "❌ SSH 키 형식 오류"
+
+      - name: 📄 Generate .env file locally
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+          echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> .env
+          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> .env
+          echo "OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}" >> .env
+          echo "OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}" >> .env
+          echo "OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_SERVICE }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD_SERVICE }}" >> .env
+          echo "ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD_SERVICE }}" >> .env
+          echo "DATABASE_DB=${{ secrets.DATABASE_DB_SERVICE }}" >> .env
+          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
+          echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
+          echo "INIT_DB=init.sql" >> .env
+          echo "MYSQL_HOST=mysql" >> .env
+          echo "REDIS_HOST=redis" >> .env
+
+      - name: 📄 Generate frontend .env.production
+        working-directory: Hana_Bridge_FE-Cli
+        run: |
+          echo "VITE_API_URL=/api" > .env.production
+          
+      - name: 🧱 Build Backend
+        working-directory: Hana_Bridge_BE-API
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
+      
+      - name: ⚙️ Build Frontend
+        working-directory: Hana_Bridge_FE-Cli
+        run: npm install && npm run build
+
+      - name: 📂 Prepare deploy folder
+        run: |
+          mkdir -p deploy/Hana_Bridge_BE-API
+          mkdir -p deploy/Hana_Bridge_FE-Cli
+          mkdir -p deploy/MySQL_init
+      
+          cp -r Hana_Bridge_BE-API/build deploy/Hana_Bridge_BE-API/
+          cp -r Hana_Bridge_FE-Cli/dist deploy/Hana_Bridge_FE-Cli/
+          cp Hana_Bridge_BE-API/Dockerfile deploy/Hana_Bridge_BE-API/
+          cp Hana_Bridge_FE-Cli/nginx.conf deploy/Hana_Bridge_FE-Cli/
+          cp Hana_Bridge_FE-Cli/Dockerfile deploy/Hana_Bridge_FE-Cli/
+          cp -r MySQL_init/* deploy/MySQL_init/
+          cp docker-compose.yml deploy/
+          cp .env deploy/
+
+      - name: 📦 Install tree
+        run: sudo apt-get update && sudo apt-get install -y tree
+
+      - name: 📁 Print deploy folder structure # 폴더 구조 출력 로그
+        run: tree -L 3 deploy
+
+      - name: 📂 Upload artifacts to server
+        run: |
+          rsync -avz -e "ssh -p ${{ secrets.PORT_SERVICE }}" \
+            deploy/ \
+            ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }}:${{ secrets.DEPLOY_PATH_SERVICE }}
+
+      - name: 🔍 서버에서 .env 확인
+        run: |
+          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
+            echo '[서버 내 .env 확인]' && \
+            cat ${{ secrets.DEPLOY_PATH_SERVICE }}/.env || echo '❌ .env 파일이 없습니다'
+          "
+      - name: 🐳 Restart Docker Compose
+        run: |
+          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
+            cd ${{ secrets.DEPLOY_PATH_SERVICE}} && \
+            docker compose down && \
+            docker compose build --no-cache && docker compose up -d
+          "
+
+      - name: 📋 Print docker-compose ps
+        run: |
+          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE}}@${{ secrets.HOST_SERVICE }} "cd ${{ secrets.DEPLOY_PATH_SERVICE }} && docker compose ps"
+  deploy-dev:
+    if: > 
+      (github.event.pull_request.merged == true && github.base_ref == 'dev') || 
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'dev')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🚀 dev 배포 ##dev 배포 확인 로그
+        run: echo "🚀 dev 브랜치에 머지되어 배포 중"
+
+      - name: 🔐 Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KEY_DEV }}" | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.PORT_DEV }} -H ${{ secrets.HOST_DEV }} >> ~/.ssh/known_hosts
+      
+      - name: Test key validity
+        run: |
+          ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null && echo "✅ SSH 키 정상" || echo "❌ SSH 키 형식 오류"
+
+      - name: 📄 Generate .env file locally
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+          echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> .env
+          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> .env
+          echo "OPENAI_PROMPT_COMMON=${{ secrets.OPENAI_PROMPT_COMMON }}" >> .env
+          echo "OPENAI_PROMPT0=${{ secrets.OPENAI_PROMPT0 }}" >> .env
+          echo "OPENAI_PROMPT1=${{ secrets.OPENAI_PROMPT1 }}" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_DEV }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD_DEV }}" >> .env
+          echo "ROOT_DATABASE_PASSWORD=${{ secrets.ROOT_DATABASE_PASSWORD_DEV }}" >> .env
+          echo "DATABASE_DB=${{ secrets.DATABASE_DB_DEV }}" >> .env
+          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
+          echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
+          echo "INIT_DB=init_dev.sql" >> .env
+          echo "MYSQL_HOST=mysql" >> .env
+          echo "REDIS_HOST=redis" >> .env
+
+      - name: 📄 Generate frontend .env.production
+        working-directory: Hana_Bridge_FE-Cli
+        run: |
+          echo "VITE_API_URL=/api" > .env.production
+          
+      - name: 🧱 Build Backend
+        working-directory: Hana_Bridge_BE-API
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
+      
+      - name: ⚙️ Build Frontend
+        working-directory: Hana_Bridge_FE-Cli
+        run: npm install && npm run build
+
+      - name: 📂 Prepare deploy folder
+        run: |
+          mkdir -p deploy/Hana_Bridge_BE-API
+          mkdir -p deploy/Hana_Bridge_FE-Cli
+          mkdir -p deploy/MySQL_init
+
+          cp -r Hana_Bridge_BE-API/build deploy/Hana_Bridge_BE-API/
+          cp -r Hana_Bridge_FE-Cli/dist deploy/Hana_Bridge_FE-Cli/
+          cp Hana_Bridge_BE-API/Dockerfile deploy/Hana_Bridge_BE-API/
+          cp Hana_Bridge_FE-Cli/nginx.conf deploy/Hana_Bridge_FE-Cli/
+          cp Hana_Bridge_FE-Cli/Dockerfile deploy/Hana_Bridge_FE-Cli/
+          cp -r MySQL_init/* deploy/MySQL_init/
+          cp docker-compose.yml deploy/
+          cp .env deploy/
+
+      - name: 📦 Install tree
+        run: sudo apt-get update && sudo apt-get install -y tree
+
+      - name: 📁 Print deploy folder structure # 폴더 구조 출력 로그
+        run: tree -L 3 deploy
+
+      - name: 📂 Upload artifacts to server
+        run: |
+          rsync -avz -e "ssh -p ${{ secrets.PORT_DEV }}" \
+            deploy/ \
+            ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}:${{ secrets.DEPLOY_PATH_DEV }}
+
+      - name: 🔍 서버에서 .env 확인
+        run: |
+          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
+            echo '[서버 내 .env 확인]' && \
+            cat ${{ secrets.DEPLOY_PATH_DEV }}/.env || echo '❌ .env 파일이 없습니다'
+          "
+          
+      - name: 🐳 Restart Docker Compose
+        run: |
+          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
+            cd ${{ secrets.DEPLOY_PATH_DEV }} && \
+            docker compose down && \
+            docker compose build --no-cache && docker compose up -d
+          "
+
+      - name: 📋 Print docker-compose ps
+        run: |
+          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV}}@${{ secrets.HOST_DEV }} "cd ${{ secrets.DEPLOY_PATH_DEV }} && docker compose ps"
