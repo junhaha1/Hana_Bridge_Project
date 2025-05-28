@@ -10,7 +10,7 @@ import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
-import { IoCopyOutline } from "react-icons/io5";
+import { IoCopyOutline, IoSettingsSharp } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
 import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, 
   loding, inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
@@ -50,6 +50,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
 
   const [isPostLoading, setIsPostLoading] = useState(false);
   const [postComplete, setPostComplete] = useState(false);
+
+  const [settingModal, setSettingModal] = useState(false);
 
   const closeNewChatModal = () => {
     setShowNewChatModal(false);
@@ -314,7 +316,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           </button>
         )}
           
-        <div className='flex flex-row '>
+        <div className='flex flex-row gap-2 '>
           <div className='my-auto text-white text-sm font-semibold'>
           {promptLevel === 1 ? "전문가" : "초보자"} 모드
           </div>
@@ -323,6 +325,12 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             onClick={() => setShowNewChatModal(true)}
           >
             새 대화창
+          </button>
+          <button
+            className='my-2 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md'
+            onClick={()=>{setSettingModal(true)}}  
+          >
+            <IoSettingsSharp/>
           </button>
           <button 
             className='m-2 p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
@@ -492,7 +500,22 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             <RiSendPlaneFill className='size-7 text-black'/>
           </button>
         </div>
-      </div>       
+      </div>      
+
+       {/* 프롬프트 설정 모달 */}
+       {settingModal && (
+        <div className={upDiv}>
+          <div className={downDiv}>
+            <h2 className="text-xl font-semibold mb-4">AI 부가 설정</h2>
+            <p className="mb-4">해당 질문과 답변을 채택 하시겠습니까?<br />채택하시면 질문과 내용이 요약되어 게시됩니다.</p>
+            
+            <div className="flex justify-end gap-2">              
+              <button className={okButton} onClick={postAssemble}>확인</button>
+              <button className={cancelButton} onClick={() =>{setSettingModal(false)}}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 모달: 답변 채택 */}
       {showModal && (
