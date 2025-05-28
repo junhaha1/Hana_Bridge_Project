@@ -19,11 +19,12 @@ const SignUpModal = ({ onClose, onSwitch }) => {
     }
 
     ApiClient.sendUser(email, password, name, nickName, createAt)
-      .then(() => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+      .then((res) => {
+        if (!res.ok) 
+          throw new Error(`서버 오류: ${res.status}`);
         alert("회원가입을 축하합니다.");
         onClose();
-        navigate("/");
+        onSwitch("login");
       })
       .catch((err) => console.error("회원가입 실패:", err));
   };
