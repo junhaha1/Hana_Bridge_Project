@@ -195,15 +195,28 @@ jobs:
           echo "frontend_changed=false" >> $GITHUB_OUTPUT
           echo "backend_changed=false" >> $GITHUB_OUTPUT
           echo "compose_changed=false" >> $GITHUB_OUTPUT
-
+        
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "frontend_changed=true" >> $GITHUB_OUTPUT
             echo "backend_changed=true" >> $GITHUB_OUTPUT
             echo "compose_changed=true" >> $GITHUB_OUTPUT
           else
-            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_FE-Cli/' && echo "frontend_changed=true" >> $GITHUB_OUTPUT
-            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_BE-API/' && echo "backend_changed=true" >> $GITHUB_OUTPUT
-            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^docker-compose.yml$' && echo "compose_changed=true" >> $GITHUB_OUTPUT
+            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+        
+            echo "🔍 Changed files:"
+            echo "$changed_files"
+        
+            if echo "$changed_files" | grep -q '^Hana_Bridge_FE-Cli/'; then
+              echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            fi
+        
+            if echo "$changed_files" | grep -q '^Hana_Bridge_BE-API/'; then
+              echo "backend_changed=true" >> $GITHUB_OUTPUT
+            fi
+        
+            if echo "$changed_files" | grep -q '^docker-compose.yml$'; then
+              echo "compose_changed=true" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: 🚀 dev 배포 ##dev 배포 확인 로그
