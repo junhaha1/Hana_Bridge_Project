@@ -97,10 +97,18 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
       console.log("정보 수정 완료 ! ");
       setIsEdit(false);
       dispatch(modifyUser({email: data.email, name: data.name, nickName: data.nickName}));
+      if (data.email !== email){
+        alert("이메일이 수정되었습니다. 다시 로그인 해주십시오.");
+        ApiClient.userLogout();
+        dispatch(clearUser());
+        dispatch(clearAiChat());
+        localStorage.removeItem('userState');
+        navigate('/');
+      }
     })
     .catch((err) => {
       console.error("API 요청 실패:", err);
-      alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+      alert("회원 정보 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
     });
   };
 
@@ -114,24 +122,19 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
     ApiClient.deleteUser(accessToken)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류 [${res.status}]`);
-      alert("정상적으로 탈퇴되었습니다.");
+
+      alert("회원 탈퇴되었습니다.");
       ApiClient.userLogout();
       dispatch(clearUser());
       dispatch(clearAiChat());
       localStorage.removeItem('userState');
       navigate('/');
     })
-    .catch((err) => console.error("API 요청 실패:", err));
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+    });
   }
-
-  //이메일 수정 시에 로그인 화면으로 이동
-  useEffect(() => {
-    if (accessToken && initialEmail.current && initialEmail.current !== email) {
-      ApiClient.userLogout();
-      alert("이메일이 변경되었습니다. 다시 로그인 해주십시오.");
-      navigate('/login');
-    }
-  }, [email, accessToken]);
 
   //닉네임만 수정 시에 화면에 닉네임을 바꾸어줌
   useEffect(() => {
