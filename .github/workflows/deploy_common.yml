@@ -25,25 +25,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧠 Detect changed parts for push/PR
-        if: github.event_name != 'workflow_dispatch'
+      - name: 🧠 Detect changed parts
         id: changes
         run: |
           echo "frontend_changed=false" >> $GITHUB_OUTPUT
           echo "backend_changed=false" >> $GITHUB_OUTPUT
           echo "compose_changed=false" >> $GITHUB_OUTPUT
 
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_FE-Cli/' && echo "frontend_changed=true" >> $GITHUB_OUTPUT
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_BE-API/' && echo "backend_changed=true" >> $GITHUB_OUTPUT
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^docker-compose.yml$' && echo "compose_changed=true" >> $GITHUB_OUTPUT
-      
-      - name: Set all changes to true for manual dispatch
-        if: github.event_name == 'workflow_dispatch'
-        id: changes
-        run: |
-          echo "frontend_changed=true" >> $GITHUB_OUTPUT
-          echo "backend_changed=true" >> $GITHUB_OUTPUT
-          echo "compose_changed=true" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            echo "backend_changed=true" >> $GITHUB_OUTPUT
+            echo "compose_changed=true" >> $GITHUB_OUTPUT
+          else
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_FE-Cli/' && echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_BE-API/' && echo "backend_changed=true" >> $GITHUB_OUTPUT
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^docker-compose.yml$' && echo "compose_changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: ✅ Checkout code
         uses: actions/checkout@v3
@@ -147,25 +144,23 @@ jobs:
           "
       
       - name: 🐳 Restart Docker Compose for Backend
-        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed != 'true'
+        if: steps.changes.outputs.backend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
         run: |
           ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
             cd ${{ secrets.DEPLOY_PATH_SERVICE}} && \
             docker compose stop backend && \
             docker compose rm -f backend && \
-            docker compose build --no-cache backend && \
-            docker compose up -d backend
+            docker compose up -d --build backend
           "
 
       - name: 🐳 Restart Docker Compose for Frontend
-        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed != 'true'
+        if: steps.changes.outputs.frontend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
         run: |
           ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
             cd ${{ secrets.DEPLOY_PATH_SERVICE}} && \
             docker compose stop frontend && \
             docker compose rm -f frontend && \
-            docker compose build --no-cache frontend && \
-            docker compose up -d frontend
+            docker compose up -d --build frontend
           "
 
       - name: 📋 Print docker-compose ps
@@ -188,10 +183,15 @@ jobs:
           echo "backend_changed=false" >> $GITHUB_OUTPUT
           echo "compose_changed=false" >> $GITHUB_OUTPUT
 
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_FE-Cli/' && echo "frontend_changed=true" >> $GITHUB_OUTPUT
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_BE-API/' && echo "backend_changed=true" >> $GITHUB_OUTPUT
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^docker-compose.yml$' && echo "compose_changed=true" >> $GITHUB_OUTPUT
-
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            echo "backend_changed=true" >> $GITHUB_OUTPUT
+            echo "compose_changed=true" >> $GITHUB_OUTPUT
+          else
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_FE-Cli/' && echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^Hana_Bridge_BE-API/' && echo "backend_changed=true" >> $GITHUB_OUTPUT
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^docker-compose.yml$' && echo "compose_changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: 🚀 dev 배포 ##dev 배포 확인 로그
         run: echo "🚀 dev 브랜치에 머지되어 배포 중"
@@ -292,25 +292,23 @@ jobs:
           "
       
       - name: 🐳 Restart Docker Compose for Backend
-        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed != 'true'
+        if: steps.changes.outputs.backend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
         run: |
           ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
             cd ${{ secrets.DEPLOY_PATH_DEV}} && \
             docker compose stop backend && \
             docker compose rm -f backend && \
-            docker compose build --no-cache backend && \
-            docker compose up -d backend
+            docker compose up -d --build backend
           "
 
       - name: 🐳 Restart Docker Compose for Frontend
-        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed != 'true'
+        if: steps.changes.outputs.frontend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
         run: |
           ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
             cd ${{ secrets.DEPLOY_PATH_DEV}} && \
             docker compose stop frontend && \
             docker compose rm -f frontend && \
-            docker compose build --no-cache frontend && \
-            docker compose up -d frontend
+            docker compose up -d --build frontend
           "
 
       - name: 📋 Print docker-compose ps
