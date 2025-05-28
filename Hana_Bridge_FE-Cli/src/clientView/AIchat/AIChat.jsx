@@ -515,46 +515,43 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         </div>
       </div>      
 
-        {/* const [prompts, setPrompts] = useState({
-              role: '너는 프로그래밍 강사야.',
-              format: '예시 코드를 보여주면서 설명해줘.', //ex: 표로 비교해줘, 주석으로 설명을 함께 달아줘, 코드만 짧게 알려줘. 등
-              level: '초등학생도 이해할 수 있도록 설명해줘.' 
-            }) */}
-
        {/* 프롬프트 설정 모달 */}
        {settingModal && (
         <div className={upDiv}>
           <div className={downDiv}>
             <h2 className="text-xl font-semibold mb-4">AI 프롬프트 설정</h2>
-            <p className="mb-3 text-sm"><span className="text-yellow-400 font-semibold">Tip</span> 프롬프트란? <br />AI에게 명확한 지시를 내리는 입력값으로 좋은 답변을 받는데 기여할 수 있습니다.  </p>
+            <p className="mb-3 text-sm"><span className="text-yellow-400 font-semibold">Tip  </span>프롬프트란? <br />AI에게 명확한 지시를 내리는 입력값으로 좋은 답변을 받는데 기여할 수 있습니다.  </p>
             
             
             <p className='font-semibold mb-1'>AI의 역할</p>
+            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 너는 친절한 프로그래밍 도우미야.</p>
             <textarea
-              className='w-full p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
+              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
               placeholder="AI의 역할을 정해주세요."
               value={prompts.role}
               onChange={(e) => setPrompts({role: e.target.value, format: prompts.format, level: prompts.level})}
             />
-            <p className="mb-3 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 당신은 친절한 프로그래밍 도우미입니다.</p>
+            
 
             <p className='font-semibold mb-1'>AI의 답변 형식</p>
+            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 요약해서 설명해줘.</p>
             <textarea
-              className='w-full p-2 rounded bg-transparent border border-white/30  placeholder-white/50'
+              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30  placeholder-white/50'
               placeholder="AI의 답변 형식을 정해주세요."
               value={prompts.format}
               onChange={(e) => setPrompts({role: prompts.role, format: e.target.value, level: prompts.level})}
             />
-            <p className="mb-3 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 요약해서 설명해줘.</p>
+            
 
             <p className='font-semibold mb-1'>AI의 답변 수준</p>
+             <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 전문가라고 생각하고 설명해줘. </p>   
             <textarea
-              className='w-full p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
+              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
               placeholder="AI의 답변 수준을 정해주세요."
               value={prompts.level}
               onChange={(e) => setPrompts({role: prompts.role, format: prompts.format, level: e.target.value})}
             />           
-            <p className="mb-3 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 이 분야의 전문가라고 생각하고 답변해줘. </p>   
+           
             
             <div className="flex justify-end gap-2">              
               <button className={okButton} onClick={savePrompt}>확인</button>
