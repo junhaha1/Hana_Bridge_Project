@@ -1,8 +1,8 @@
 /* 상단 게시판 타이틀*/
-export const mainTitle = "w-1/2 text-left font-bold text-white";
+export const mainTitle = "w-1/2 text-left font-bold text-white whitespace-nowrap";
 
 /* 검색창 스타일 */
-export const searchBox = "flex pl-5 py-2 relative  rounded-full bg-white text-black placeholder-gray-400 shadow border-2 border-gray-300 focus-within:border-purple-700";
+export const searchBox = "flex pl-5 py-2 relative  rounded-full bg-white text-black placeholder-gray-400 shadow border-2 border-gray-300 focus-within:border-purple-700 whitespace-nowrap";
 export const inputBox = "w-full pr-8 bg-transparent focus:outline-none whitespace-nowrap";
 export const inputResetButton = "absolute rounded-full bg-gray-200 p-1 right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black hover:bg-gray-400";
 /*글 작성 버튼 */
