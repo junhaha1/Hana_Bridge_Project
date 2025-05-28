@@ -70,7 +70,7 @@ import { createSlice } from '@reduxjs/toolkit';
       state.playFlag = action.payload.playFlag;
     },
     setShouldAutoOpenHelper: (state, action) => {
-      state.shouldAutoOpenHelper = action.payload.setShouldAutoOpenHelper;
+      state.shouldAutoOpenHelper = action.payload.shouldAutoOpenHelper;
     },
     setAiPrompts: (state, action) =>{
       state.aiPrompts = action.payload.aiPrompts;

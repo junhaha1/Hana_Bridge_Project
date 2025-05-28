@@ -16,6 +16,7 @@ const CodeHelper = () => {
 
   //홈 화면에서 AIChat 열기 
   const shouldAutoOpenHelper = useSelector((state) => state.user.shouldAutoOpenHelper);
+  console.log("shouldAutoOpenHelper: " + shouldAutoOpenHelper);
 
   const lottieRef = useRef();
   const [isHovered, setIsHovered] = useState(false);
