@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: ✅ Checkout code
+        uses: actions/checkout@v3
+        
       - name: 🧠 Detect changed parts
         id: changes
         run: |
@@ -33,13 +36,10 @@ jobs:
             echo "backend_changed=true" >> $GITHUB_OUTPUT
             echo "compose_changed=true" >> $GITHUB_OUTPUT
           else
-            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            changed_files=$(git diff --name-only HEAD^1 HEAD)
         
             echo "🔍 Changed files:"
             echo "$changed_files"
-
-            echo "BEFORE: ${{ github.event.before }}"
-            echo "AFTER:  ${{ github.sha }}"
         
             if echo "$changed_files" | grep -q '^Hana_Bridge_FE-Cli/'; then
               echo "frontend_changed=true" >> $GITHUB_OUTPUT
@@ -53,9 +53,6 @@ jobs:
               echo "compose_changed=true" >> $GITHUB_OUTPUT
             fi
           fi
-
-      - name: ✅ Checkout code
-        uses: actions/checkout@v3
 
       - name: 🚀 Main 배포 ##배포 확인 로그
         run: echo "🚀 main 브랜치에 머지되어 배포 중"
@@ -200,13 +197,10 @@ jobs:
             echo "backend_changed=true" >> $GITHUB_OUTPUT
             echo "compose_changed=true" >> $GITHUB_OUTPUT
           else
-            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            changed_files=$(git diff --name-only HEAD^1 HEAD)
         
             echo "🔍 Changed files:"
             echo "$changed_files"
-
-            echo "BEFORE: ${{ github.event.before }}"
-            echo "AFTER:  ${{ github.sha }}"
         
             if echo "$changed_files" | grep -q '^Hana_Bridge_FE-Cli/'; then
               echo "frontend_changed=true" >> $GITHUB_OUTPUT
