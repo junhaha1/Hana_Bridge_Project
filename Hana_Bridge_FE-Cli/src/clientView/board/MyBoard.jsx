@@ -7,7 +7,8 @@ import { useSelector } from "react-redux";
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
 import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
 import { userDate } from "../../style/CommonDetail";
-import {FaUser, FaSearch, FaArrowUp } from 'react-icons/fa';
+import {FaUser, FaSearch, FaArrowUp,  FaRegComment  } from 'react-icons/fa';
+import { BiLike } from "react-icons/bi"; 
 import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, inputResetButton, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
 
@@ -206,7 +207,7 @@ const MyBoard = () => {
               setToggle("code");
               resetBoards();
             }}
-            className={`bg-gray-600  font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
+            className={`bg-gray-600  font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap`}
           >
             코드 질문
           </button>
@@ -215,7 +216,7 @@ const MyBoard = () => {
               setToggle("assemble");
               resetBoards();
             }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"}`}
+            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap`}
           >
             AI 답변
           </button>
@@ -293,11 +294,11 @@ const MyBoard = () => {
               </div>
               <div className="flex gap-4">
                 <span className={cardGood}>
-                  <img src="/src/images/blueGood.png" alt="좋아요" width="18" className="mr-1" />
+                  <BiLike className="size-5 "/>
                   {post.likeCount}
                 </span>
                 <span className={cardComment}>
-                  <img src="/src/images/comment.png" alt="댓글" width="18" className="mr-1" />
+                  <FaRegComment className="size-5" />
                   {post.commentCount}
                 </span>
               </div>

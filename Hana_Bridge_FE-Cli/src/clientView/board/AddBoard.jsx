@@ -205,18 +205,18 @@ const AddBoard = () => {
 
               {/* 버튼 */}
               <div className="flex justify-center gap-4">
-                <button
-                  onClick={handleSubmit}
-                  className={addBoardButton}
-                >
-                  작성하기
-                </button>
                 <button 
                   onClick={() => navigate(`/board/${toCategory}`)}
                   className={addBoardButton}
                 >
                   처음으로
                 </button>
+                <button
+                  onClick={handleSubmit}
+                  className={addBoardButton}
+                >
+                  작성하기
+                </button>                
               </div>
             </div>
           </div>

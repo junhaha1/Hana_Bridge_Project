@@ -5,20 +5,24 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from '../../service/ApiClient';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAiChat, clearAiChat } from '../../store/userSlice';
+import { setAiChat, clearAiChat, setAiPrompts } from '../../store/userSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
-import { IoCopyOutline } from "react-icons/io5";
+import { IoCopyOutline, IoSettingsSharp } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
 import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, 
   loding, inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
+ import { editTitle, editContent, liekCommentButton, liekComment, userDate, 
+  detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
 
-function AIChat({onClose, onfullTalk, onMode}) {
+
+function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const prevMessage = useSelector((state) => state.user.chatMessages);
   const accessToken = useSelector((state) => state.user.accessToken);
+  const defaultPrompt = useSelector((state) => state.user.aiPrompts)
 
   const [messages, setMessages] = useState(prevMessage);
   const [input, setInput] = useState('');  //질문 1개 
@@ -33,7 +37,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
 
   const dispatch = useDispatch();
 
-  const [promptLevel, setPromptLevel] = useState(0);
+  const [promptLevel, setPromptLevel] = useState(level);
   //ai chat 답변 로딩
   const [isLoading, setIsLoading] = useState(false);
   const [coreContent, setCoreContent] = useState('');
@@ -50,6 +54,17 @@ function AIChat({onClose, onfullTalk, onMode}) {
 
   const [isPostLoading, setIsPostLoading] = useState(false);
   const [postComplete, setPostComplete] = useState(false);
+
+  //프롬프트 설정 모달
+  const [settingModal, setSettingModal] = useState(false);
+  //프롬프트 
+  const [prompts, setPrompts] = useState(defaultPrompt);
+
+  const savePrompt = () =>{
+    console.log(prompts)
+    dispatch(setAiPrompts({ aiPrompts: prompts }));
+    setSettingModal(false);
+  }
 
   const closeNewChatModal = () => {
     setShowNewChatModal(false);
@@ -277,12 +292,14 @@ function AIChat({onClose, onfullTalk, onMode}) {
     setMessages([]);
     setInput('');
     setPromptLevel(0);
+    setLevel(0);
     setIsLoading(false);
     setCoreContent('');
   };
 
   const startChatting = (level) => {
     setPromptLevel(level);
+    setLevel(level);
     setMessages([{ role: '답변', content: `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` },]);
   };
 
@@ -312,7 +329,7 @@ function AIChat({onClose, onfullTalk, onMode}) {
           </button>
         )}
           
-        <div className='flex flex-row '>
+        <div className='flex flex-row gap-2 '>
           <div className='my-auto text-white text-sm font-semibold'>
           {promptLevel === 1 ? "전문가" : "초보자"} 모드
           </div>
@@ -321,6 +338,12 @@ function AIChat({onClose, onfullTalk, onMode}) {
             onClick={() => setShowNewChatModal(true)}
           >
             새 대화창
+          </button>
+          <button
+            className='my-2 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md'
+            onClick={()=>{setSettingModal(true)}}  
+          >
+            <IoSettingsSharp/>
           </button>
           <button 
             className='m-2 p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
@@ -490,7 +513,53 @@ function AIChat({onClose, onfullTalk, onMode}) {
             <RiSendPlaneFill className='size-7 text-black'/>
           </button>
         </div>
-      </div>       
+      </div>      
+
+       {/* 프롬프트 설정 모달 */}
+       {settingModal && (
+        <div className={upDiv}>
+          <div className={downDiv}>
+            <h2 className="text-xl font-semibold mb-4">AI 프롬프트 설정</h2>
+            <p className="mb-3 text-sm"><span className="text-yellow-400 font-semibold">Tip  </span>프롬프트란? <br />AI에게 명확한 지시를 내리는 입력값으로 좋은 답변을 받는데 기여할 수 있습니다.  </p>
+            
+            
+            <p className='font-semibold mb-1'>AI의 역할</p>
+            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 너는 친절한 프로그래밍 도우미야.</p>
+            <textarea
+              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
+              placeholder="AI의 역할을 정해주세요."
+              value={prompts.role}
+              onChange={(e) => setPrompts({role: e.target.value, format: prompts.format, level: prompts.level})}
+            />
+            
+
+            <p className='font-semibold mb-1'>AI의 답변 형식</p>
+            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 요약해서 설명해줘.</p>
+            <textarea
+              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30  placeholder-white/50'
+              placeholder="AI의 답변 형식을 정해주세요."
+              value={prompts.format}
+              onChange={(e) => setPrompts({role: prompts.role, format: e.target.value, level: prompts.level})}
+            />
+            
+
+            <p className='font-semibold mb-1'>AI의 답변 수준</p>
+             <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 전문가라고 생각하고 설명해줘. </p>   
+            <textarea
+              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
+              placeholder="AI의 답변 수준을 정해주세요."
+              value={prompts.level}
+              onChange={(e) => setPrompts({role: prompts.role, format: prompts.format, level: e.target.value})}
+            />           
+           
+            
+            <div className="flex justify-end gap-2">              
+              <button className={okButton} onClick={savePrompt}>확인</button>
+              <button className={cancelButton} onClick={() =>{setSettingModal(false)}}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 모달: 답변 채택 */}
       {showModal && (

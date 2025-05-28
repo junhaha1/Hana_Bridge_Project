@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  frontend:
+  frontend: #리액트 + nginx 서비스명 
     build:
       context: ./Hana_Bridge_FE-Cli
       dockerfile: Dockerfile
@@ -13,7 +13,7 @@ services:
       - backend
       
   backend:
-    build:
+    build: #Spring Boot API 서버 서비스명
       context: ./Hana_Bridge_BE-API
     ports:
       - "8080:8080"
@@ -31,13 +31,13 @@ services:
       - mysql
       - redis
       
-  redis:
+  redis: #Redis 서비스명
     image: redis:7.2
     container_name: redis-container
     ports:
       - "6379:6379"
       
-  mysql:
+  mysql: #MySQL 서비스명
     image: mysql:8.0
     container_name: mysql-container
     ports:

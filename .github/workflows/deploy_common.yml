@@ -4,10 +4,7 @@ on:
   push:
       branches:
         - dev
-  pull_request:
-    types: [closed]
-    branches:
-      - dev # dev 브랜치에 merge된 경우만
+        - main
 
   workflow_dispatch:
     inputs:
@@ -19,13 +16,54 @@ on:
 jobs:
   deploy-main:
     if: > 
-      (github.event.pull_request.merged == true && github.base_ref == 'main') || 
+      (github.event_name == 'push' && github.ref_name == 'main') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'main')
     runs-on: ubuntu-latest
 
     steps:
       - name: ✅ Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: 🔍 Print GitHub context
+        run: |
+          echo "event_name: ${{ github.event_name }}"
+          echo "ref: ${{ github.ref }}"
+          echo "ref_name: ${{ github.ref_name }}"
+          echo "base_ref: ${{ github.base_ref }}"
+          echo "head_ref: ${{ github.head_ref }}"
+          echo "sha: ${{ github.sha }}"
+          
+      - name: 🧠 Detect changed parts
+        id: changes
+        run: |
+          echo "frontend_changed=false" >> $GITHUB_OUTPUT
+          echo "backend_changed=false" >> $GITHUB_OUTPUT
+          echo "compose_changed=false" >> $GITHUB_OUTPUT
+        
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            echo "backend_changed=true" >> $GITHUB_OUTPUT
+            echo "compose_changed=true" >> $GITHUB_OUTPUT
+          else
+            changed_files=$(git diff --name-only HEAD^1 HEAD)
+        
+            echo "🔍 Changed files:"
+            echo "$changed_files"
+        
+            if echo "$changed_files" | grep -q '^Hana_Bridge_FE-Cli/'; then
+              echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            fi
+        
+            if echo "$changed_files" | grep -q '^Hana_Bridge_BE-API/'; then
+              echo "backend_changed=true" >> $GITHUB_OUTPUT
+            fi
+        
+            if echo "$changed_files" | grep -q '^docker-compose.yml$'; then
+              echo "compose_changed=true" >> $GITHUB_OUTPUT
+            fi
+          fi
 
       - name: 🚀 Main 배포 ##배포 확인 로그
         run: echo "🚀 main 브랜치에 머지되어 배포 중"
@@ -43,6 +81,7 @@ jobs:
           ssh-keygen -y -f ~/.ssh/id_rsa > /SERVICE/null && echo "✅ SSH 키 정상" || echo "❌ SSH 키 형식 오류"
 
       - name: 📄 Generate .env file locally
+        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         run: |
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
           echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> .env
@@ -61,34 +100,47 @@ jobs:
           echo "REDIS_HOST=redis" >> .env
 
       - name: 📄 Generate frontend .env.production
+        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         working-directory: Hana_Bridge_FE-Cli
         run: |
           echo "VITE_API_URL=/api" > .env.production
           
       - name: 🧱 Build Backend
+        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         working-directory: Hana_Bridge_BE-API
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
       
       - name: ⚙️ Build Frontend
+        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         working-directory: Hana_Bridge_FE-Cli
         run: npm install && npm run build
 
-      - name: 📂 Prepare deploy folder
+      - name: 📂 Prepare deploy folder for Backend
+        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         run: |
           mkdir -p deploy/Hana_Bridge_BE-API
-          mkdir -p deploy/Hana_Bridge_FE-Cli
           mkdir -p deploy/MySQL_init
       
           cp -r Hana_Bridge_BE-API/build deploy/Hana_Bridge_BE-API/
-          cp -r Hana_Bridge_FE-Cli/dist deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_BE-API/Dockerfile deploy/Hana_Bridge_BE-API/
+          cp -r MySQL_init/* deploy/MySQL_init/
+          cp .env deploy/
+
+      - name: 📂 Prepare deploy folder for Frontend
+        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
+        run: |
+          mkdir -p deploy/Hana_Bridge_FE-Cli
+      
+          cp -r Hana_Bridge_FE-Cli/dist deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_FE-Cli/nginx.conf deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_FE-Cli/Dockerfile deploy/Hana_Bridge_FE-Cli/
-          cp -r MySQL_init/* deploy/MySQL_init/
+
+      - name: 📂 Prepare deploy folder for docker-compose
+        if: steps.changes.outputs.compose_changed == 'true'
+        run: |
           cp docker-compose.yml deploy/
-          cp .env deploy/
 
       - name: 📦 Install tree
         run: sudo apt-get update && sudo apt-get install -y tree
@@ -102,18 +154,33 @@ jobs:
             deploy/ \
             ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }}:${{ secrets.DEPLOY_PATH_SERVICE }}
 
-      - name: 🔍 서버에서 .env 확인
-        run: |
-          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
-            echo '[서버 내 .env 확인]' && \
-            cat ${{ secrets.DEPLOY_PATH_SERVICE }}/.env || echo '❌ .env 파일이 없습니다'
-          "
-      - name: 🐳 Restart Docker Compose
+      - name: 🐳 Restart Docker Compose All
+        if: steps.changes.outputs.compose_changed == 'true'
         run: |
           ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
             cd ${{ secrets.DEPLOY_PATH_SERVICE}} && \
             docker compose down && \
             docker compose build --no-cache && docker compose up -d
+          "
+      
+      - name: 🐳 Restart Docker Compose for Backend
+        if: steps.changes.outputs.backend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
+        run: |
+          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
+            cd ${{ secrets.DEPLOY_PATH_SERVICE}} && \
+            docker compose stop backend && \
+            docker compose rm -f backend && \
+            docker compose up -d --build backend
+          "
+
+      - name: 🐳 Restart Docker Compose for Frontend
+        if: steps.changes.outputs.frontend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
+        run: |
+          ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE }}@${{ secrets.HOST_SERVICE }} "
+            cd ${{ secrets.DEPLOY_PATH_SERVICE}} && \
+            docker compose stop frontend && \
+            docker compose rm -f frontend && \
+            docker compose up -d --build frontend
           "
 
       - name: 📋 Print docker-compose ps
@@ -121,13 +188,45 @@ jobs:
           ssh -p ${{ secrets.PORT_SERVICE }} ${{ secrets.USERNAME_SERVICE}}@${{ secrets.HOST_SERVICE }} "cd ${{ secrets.DEPLOY_PATH_SERVICE }} && docker compose ps"
   deploy-dev:
     if: > 
-      (github.event.pull_request.merged == true && github.base_ref == 'dev') || 
+      (github.event_name == 'push' && github.ref_name == 'dev') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'dev')
     runs-on: ubuntu-latest
 
     steps:
       - name: ✅ Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: 🧠 Detect changed parts
+        id: changes
+        run: |
+          echo "frontend_changed=false" >> $GITHUB_OUTPUT
+          echo "backend_changed=false" >> $GITHUB_OUTPUT
+          echo "compose_changed=false" >> $GITHUB_OUTPUT
+        
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            echo "backend_changed=true" >> $GITHUB_OUTPUT
+            echo "compose_changed=true" >> $GITHUB_OUTPUT
+          else
+            changed_files=$(git diff --name-only HEAD^1 HEAD)
+        
+            echo "🔍 Changed files:"
+            echo "$changed_files"
+        
+            if echo "$changed_files" | grep -q '^Hana_Bridge_FE-Cli/'; then
+              echo "frontend_changed=true" >> $GITHUB_OUTPUT
+            fi
+        
+            if echo "$changed_files" | grep -q '^Hana_Bridge_BE-API/'; then
+              echo "backend_changed=true" >> $GITHUB_OUTPUT
+            fi
+        
+            if echo "$changed_files" | grep -q '^docker-compose.yml$'; then
+              echo "compose_changed=true" >> $GITHUB_OUTPUT
+            fi
+          fi
 
       - name: 🚀 dev 배포 ##dev 배포 확인 로그
         run: echo "🚀 dev 브랜치에 머지되어 배포 중"
@@ -145,6 +244,7 @@ jobs:
           ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null && echo "✅ SSH 키 정상" || echo "❌ SSH 키 형식 오류"
 
       - name: 📄 Generate .env file locally
+        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         run: |
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
           echo "OPENAI_API_MODEL=${{ secrets.OPENAI_API_MODEL }}" >> .env
@@ -163,40 +263,58 @@ jobs:
           echo "REDIS_HOST=redis" >> .env
 
       - name: 📄 Generate frontend .env.production
+        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         working-directory: Hana_Bridge_FE-Cli
         run: |
           echo "VITE_API_URL=/api" > .env.production
           
       - name: 🧱 Build Backend
+        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         working-directory: Hana_Bridge_BE-API
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
       
       - name: ⚙️ Build Frontend
+        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         working-directory: Hana_Bridge_FE-Cli
         run: npm install && npm run build
 
-      - name: 📂 Prepare deploy folder
+      - name: 📂 Prepare deploy folder for Backend
+        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
         run: |
           mkdir -p deploy/Hana_Bridge_BE-API
-          mkdir -p deploy/Hana_Bridge_FE-Cli
           mkdir -p deploy/MySQL_init
-
+      
           cp -r Hana_Bridge_BE-API/build deploy/Hana_Bridge_BE-API/
-          cp -r Hana_Bridge_FE-Cli/dist deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_BE-API/Dockerfile deploy/Hana_Bridge_BE-API/
+          cp -r MySQL_init/* deploy/MySQL_init/
+          cp .env deploy/
+
+      - name: 📂 Prepare deploy folder for Frontend
+        if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
+        run: |
+          mkdir -p deploy/Hana_Bridge_FE-Cli
+      
+          cp -r Hana_Bridge_FE-Cli/dist deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_FE-Cli/nginx.conf deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_FE-Cli/Dockerfile deploy/Hana_Bridge_FE-Cli/
-          cp -r MySQL_init/* deploy/MySQL_init/
+
+      - name: 📂 Prepare deploy folder for docker-compose
+        if: steps.changes.outputs.compose_changed == 'true'
+        run: |
           cp docker-compose.yml deploy/
-          cp .env deploy/
 
       - name: 📦 Install tree
         run: sudo apt-get update && sudo apt-get install -y tree
 
       - name: 📁 Print deploy folder structure # 폴더 구조 출력 로그
-        run: tree -L 3 deploy
+        run: |
+          if [ -d deploy ]; then
+            tree -L 3 deploy
+          else
+            echo "📁 'deploy/' 폴더가 존재하지 않아 출력 생략"
+          fi
 
       - name: 📂 Upload artifacts to server
         run: |
@@ -204,19 +322,33 @@ jobs:
             deploy/ \
             ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }}:${{ secrets.DEPLOY_PATH_DEV }}
 
-      - name: 🔍 서버에서 .env 확인
+      - name: 🐳 Restart Docker Compose All
+        if: steps.changes.outputs.compose_changed == 'true'
         run: |
           ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
-            echo '[서버 내 .env 확인]' && \
-            cat ${{ secrets.DEPLOY_PATH_DEV }}/.env || echo '❌ .env 파일이 없습니다'
-          "
-          
-      - name: 🐳 Restart Docker Compose
-        run: |
-          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
-            cd ${{ secrets.DEPLOY_PATH_DEV }} && \
+            cd ${{ secrets.DEPLOY_PATH_DEV}} && \
             docker compose down && \
             docker compose build --no-cache && docker compose up -d
+          "
+      
+      - name: 🐳 Restart Docker Compose for Backend
+        if: steps.changes.outputs.backend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
+        run: |
+          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
+            cd ${{ secrets.DEPLOY_PATH_DEV}} && \
+            docker compose stop backend && \
+            docker compose rm -f backend && \
+            docker compose up -d --build backend
+          "
+
+      - name: 🐳 Restart Docker Compose for Frontend
+        if: steps.changes.outputs.frontend_changed == 'true' && steps.changes.outputs.compose_changed != 'true'
+        run: |
+          ssh -p ${{ secrets.PORT_DEV }} ${{ secrets.USERNAME_DEV }}@${{ secrets.HOST_DEV }} "
+            cd ${{ secrets.DEPLOY_PATH_DEV}} && \
+            docker compose stop frontend && \
+            docker compose rm -f frontend && \
+            docker compose up -d --build frontend
           "
 
       - name: 📋 Print docker-compose ps
