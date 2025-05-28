@@ -38,7 +38,7 @@ jobs:
             echo "compose_changed=true" >> $GITHUB_OUTPUT
           else
             git fetch origin ${{ github.base_ref }} --depth=1
-            changed_files=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+            changed_files=$(git diff --name-only HEAD origin/${{ github.base_ref }})
         
             echo "🔍 Changed files:"
             echo "$changed_files"
@@ -206,7 +206,7 @@ jobs:
             echo "compose_changed=true" >> $GITHUB_OUTPUT
           else
             git fetch origin ${{ github.base_ref }} --depth=1
-            changed_files=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+            changed_files=$(git diff --name-only HEAD origin/${{ github.base_ref }})
         
             echo "🔍 Changed files:"
             echo "$changed_files"
@@ -308,7 +308,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y tree
 
       - name: 📁 Print deploy folder structure # 폴더 구조 출력 로그
-        run: tree -L 3 deploy
+        run: |
+          if [ -d deploy ]; then
+            tree -L 3 deploy
+          else
+            echo "📁 'deploy/' 폴더가 존재하지 않아 출력 생략"
+          fi
 
       - name: 📂 Upload artifacts to server
         run: |
