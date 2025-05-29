@@ -16,6 +16,7 @@ import RenderError from './clientView/error/RenderError';
 
 import Codi from './clientView/Codi';
 import { useSelector } from 'react-redux';
+import TestView from './clientView/testView';
 
 function App() {
   const nickName = useSelector((state) => state.user.nickName);
@@ -31,6 +32,7 @@ function App() {
         <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
         <Route path="/error" element={<NotFound/>} /> {/* 404 화면 */}
         <Route path="/renderError" element={<RenderError/>} />  {/* 렌더링 오류 화면 */}
+        <Route path="/test" element={<TestView/>} />  {/* 렌더링 오류 화면 */}
       </Routes>
       {nickName !== "guest" && (<Codi/>)}
     </div>

@@ -20,7 +20,6 @@ import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox,
 
 function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const prevMessage = useSelector((state) => state.user.chatMessages);
-  const accessToken = useSelector((state) => state.user.accessToken);
   const defaultPrompt = useSelector((state) => state.user.aiPrompts)
 
   const [messages, setMessages] = useState(prevMessage);
@@ -128,7 +127,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setInput('');
     
     /* API 호출하여 스트림 연결 */
-    const res = await ApiClient.streamMessage(accessToken, promptLevel, result, input);
+    const res = await ApiClient.streamMessage(promptLevel, result, input);
 
     /*스트림 연결 후에 실행 흐름 -> 로딩 종료, 답변 출력*/
     const reader = res.body.getReader();
@@ -216,7 +215,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     const result = updatedMessages.map(msg => msg.role + ": " + msg.content).join('\n');
   
     setIsLoading(true); 
-    ApiClient.sendMessage(accessToken, promptLevel, result, input)
+    ApiClient.sendMessage(promptLevel, result, input)
       .then((res) => {
         if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
         return res.json();
@@ -271,7 +270,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     closePostModal();
     const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
-    ApiClient.postAssemble(accessToken, promptLevel, result, coreContent)
+    ApiClient.postAssemble(promptLevel, result, coreContent)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();

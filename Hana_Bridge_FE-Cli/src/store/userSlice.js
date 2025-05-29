@@ -4,7 +4,6 @@ import { createSlice } from '@reduxjs/toolkit';
   email: 'guest@email.com',
   name: 'guest',
   nickName: 'guest',
-  accessToken: 'guest',
   role: 'guest',
   chatMessages: [],
   category: '',
@@ -26,7 +25,6 @@ import { createSlice } from '@reduxjs/toolkit';
       state.email = action.payload.email;
       state.name = action.payload.name;
       state.nickName = action.payload.nickName;
-      state.accessToken = action.payload.accessToken;
       state.role = action.payload.role;
     },
     modifyUser: (state, action) => {

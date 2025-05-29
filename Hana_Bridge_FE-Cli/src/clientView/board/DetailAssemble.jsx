@@ -21,8 +21,6 @@ const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
-  const accessToken = useSelector((state) => state.user.accessToken);
-
   const { assembleBoardId } = useParams();
   const [board, setBoard] = useState(null);
   const [isLike, setIsLike] = useState('');
@@ -48,7 +46,7 @@ const DetailAssemble = () => {
   };
 
   useEffect(() => {
-    ApiClient.getAssembleBoard(assembleBoardId, accessToken)
+    ApiClient.getAssembleBoard(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
@@ -72,7 +70,7 @@ const DetailAssemble = () => {
   }, [assembleBoardId]);
 
   const boardDeleteButton = (assembleBoardId) => {
-    ApiClient.deleteAssembleBoard(assembleBoardId, accessToken)
+    ApiClient.deleteAssembleBoard(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
@@ -91,7 +89,7 @@ const DetailAssemble = () => {
   };
 
   const handleLike = (assembleBoardId) => {
-    ApiClient.sendAssembleGood(assembleBoardId, accessToken)
+    ApiClient.sendAssembleGood(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
@@ -111,7 +109,7 @@ const DetailAssemble = () => {
   };
 
   const handleCancelLike = (assembleBoardId) => {
-    ApiClient.deleteAssembleGood(assembleBoardId, accessToken)
+    ApiClient.deleteAssembleGood(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();

@@ -6,7 +6,6 @@ import { useNavigate} from "react-router-dom";
 import { modifyUser, clearUser, clearAiChat } from '../../store/userSlice';
 
 const UserInfoModal = ({ onClose, onSwitch }) => {
-  const accessToken = useSelector((state) => state.user.accessToken);
   
   //이메일 관련
   const email = useSelector((state) => state.user.email);
@@ -67,7 +66,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
   //비밀번호 변경
   const changePassword = () => {
-    ApiClient.changePassword(accessToken, oldPassword, newPassword)
+    ApiClient.changePassword(oldPassword, newPassword)
     .then(async (res) => {
       if (!res.ok) {
         const data = await res.json();
@@ -88,7 +87,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
   //정보 수정
   const updateUser = () => {
-    ApiClient.updateUser(accessToken, tempEmail, name, tempNickName)
+    ApiClient.updateUser(tempEmail, name, tempNickName)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류 [${res.status}]`);
       return res.json();
@@ -119,7 +118,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
   //회원 탈퇴
   const deleteUser = () => {
-    ApiClient.deleteUser(accessToken)
+    ApiClient.deleteUser()
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류 [${res.status}]`);
 
