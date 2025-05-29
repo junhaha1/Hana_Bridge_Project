@@ -36,7 +36,7 @@ export default function LeftHeader() {
             <button
               key={id}
               onClick={() => postBoard(id)}
-              className={`w-full text-left flex items-center px-3 py-2 rounded transition ${
+              className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition ${
                 category === id
                   ? 'bg-[#C5BCFF] text-black font-bold'
                   : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
