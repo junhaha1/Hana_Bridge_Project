@@ -16,23 +16,6 @@ class ApiClient{
   //Open AI
   static AIChat = "/chat"
 
-  static testCode(){
-    console.log("get My Recent Assemble Board");
-    CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/article', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: "test",
-        category: "code",
-        content: "test",
-        code: "",
-        createAt: new Date(),
-        updateAt: new Date()
-      }),
-    });
-  }
   //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
   static getMyBoard(email){
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}`);
