@@ -105,10 +105,10 @@ const AddBoard = () => {
     <div className={mainFrame}>
       <Header />
 
-      <div className="w-full flex flex-row mt-20">
+      <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
+          <div className={scrollStyle + " md:h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
             <p className='text-white/80'>코드 질문 게시판</p>

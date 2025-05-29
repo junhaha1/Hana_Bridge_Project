@@ -53,7 +53,7 @@ const DashBoard = () => {
               animationData={HelloWorld}
               loop={false}
               onComplete={handleComplete}
-              className="w-[500px] h-[500px] max-md:w-[300px] max-md:h-3[300px]"
+              className="w-[500px] h-[500px] max-md:w-[200px] max-md:h-[200px]"
             />
           </div>
         </div>

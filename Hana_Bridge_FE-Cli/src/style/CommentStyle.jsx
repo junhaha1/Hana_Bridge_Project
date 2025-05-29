@@ -13,7 +13,7 @@ export const editButton = "px-3 py-1 mr-1 w-15 h-7 bg-blue-600 hover:bg-blue-700
 //삭제 버튼
 export const deleteButton = "px-3 py-1 w-15 h-7 bg-red-600 hover:bg-red-700 text-sm text-white rounded whitespace-nowrap";
 //구분선
-export const whiteLine = "border-t border-white/40 my-8";
+export const whiteLine = "border-t border-white/40 my-8 max-md:my-4";
 //댓글 작성 버튼
 export const writeCommentButton = "px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded";
 
