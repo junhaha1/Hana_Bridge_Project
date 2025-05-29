@@ -30,10 +30,10 @@ const SignUpModal = ({ onClose, onSwitch }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
       {/* 바깥 껍데기: 둥근 테두리 유지 */}
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade">
-        
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade
+          md:h-auto max-md:h-full max-md:h-screen max-md:max-h-screen max-md:rounded-none">                      
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}

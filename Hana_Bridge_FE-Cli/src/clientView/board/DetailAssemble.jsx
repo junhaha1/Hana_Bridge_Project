@@ -136,11 +136,11 @@ const DetailAssemble = () => {
   return (
     <div className={mainFrame}>
       <Header />
-      <div className="w-full flex flex-row mt-20">
+      <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 pl-20 pr-40"}>
+          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             <button
               onClick={() => navigate("/board/assemble")}
               className={buttonStyle + backButton}
