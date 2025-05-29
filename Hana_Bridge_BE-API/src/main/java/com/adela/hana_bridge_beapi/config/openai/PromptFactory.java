@@ -13,6 +13,24 @@ public class PromptFactory {
     private int maxTokens = 500;
     private double temperature = 0.4;
 
+    //사용자가 입력한 프롬포트로 생성
+    public PromptResult createCustomPromptResult(String role, String form, String level, String option, String question) {
+        StringBuilder systemPrompt = new StringBuilder();
+        systemPrompt.append(role).append('\n');
+        systemPrompt.append(form).append('\n');
+        systemPrompt.append(level).append('\n');
+        systemPrompt.append(option).append('\n');
+
+        promptProperties.toKeywordPromptMap().forEach((keyword, addition)->{
+            if (question.contains(keyword)){
+                systemPrompt.append(addition);
+            }
+        });
+        System.out.println(systemPrompt.toString());
+        return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
+    }
+
+    //시스템 기본값으로 프롬포트 생성
     public PromptResult createPromptResult(int level, String question) {
         StringBuilder systemPrompt = new StringBuilder();
         //공용 프롬포트 설정
@@ -28,16 +46,6 @@ public class PromptFactory {
         });
 
         System.out.println(systemPrompt.toString());
-
-//        // 토큰 조절
-//        if(level == 0){
-//            maxTokens = 500;
-//        }
-//        if (question.matches(".*100자.*|.*간단.*|.*짧게.*")) {
-//            maxTokens = 150;
-//        } else if (question.matches(".*자세히.*|.*길게.*|.*1000자.*")) {
-//            maxTokens = 600;
-//        }
         return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
     }
 
@@ -47,7 +55,7 @@ public class PromptFactory {
         systemPrompt.append(promptProperties.getPromptCommon());
         //레벨에 따른 프롬포트 설정
         systemPrompt.append(promptProperties.getPrompts().getOrDefault(level, ""));
-        systemPrompt.append("현재 내용을 핵심내용 위주로 요약 정리하여 마크다운 형식으로 줘. 내용: 을 앞에 붙여서 알려줘.");
+        systemPrompt.append("현재 내용을 핵심내용 위주로 요약 정리하여 마크다운 형식으로 줘.");
 
         System.out.println(systemPrompt.toString());
         return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
@@ -55,7 +63,8 @@ public class PromptFactory {
 
     public PromptResult createTitlePromptResult(String question) {
         StringBuilder systemPrompt = new StringBuilder();
-        systemPrompt.append("현재 요약본을 내용으로 게시글 작성할건데 알맞은 제목을 알려줘.");
+        systemPrompt.append("현재 요약본을 내용으로 게시글 작성할건데 알맞은 제목을 알려줘." +
+                "혹시 마크 다운 사용할거면 앞에 제목: 이런건 없애줘.");
 
         System.out.println(systemPrompt.toString());
         return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
