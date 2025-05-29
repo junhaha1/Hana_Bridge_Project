@@ -24,7 +24,7 @@ const MainBoard = () => {
         {/* Left Sidebar */}
         <LeftHeader />
         {/* Main Content */}
-        <div className="w-4/5">
+        <div className="w-4/5 max-md:w-full">
           {/* 게시판 분기 렌더링 */}
           {category === "me" && <MyBoard />}
           {category === "code" && <CodeBoard />}

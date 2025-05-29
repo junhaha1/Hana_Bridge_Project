@@ -75,13 +75,12 @@ const MyBoard = () => {
 
   if(nickName === 'guest'){
     return (
-      <div className="mt-5 ml-20 pr-40">
+      <div className="md:mt-32 ml-20 pr-40 max-md:mt-2 max-md:ml-2.5 max-md:pr-1">
         <div className={`${emptyDiv} mt-40`}>
           <h3 className="text-2xl font-bold mb-2">⚠ 비회원은 이용할 수 없는 기능입니다.</h3>
           <p>로그인을 진행해주세요. </p>
         </div>
-      </div>
-      
+      </div>      
     );
   }
 
@@ -174,10 +173,10 @@ const MyBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
-      <div className="flex justify-between p-1">
+    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40 max-md:m-1 max-md:p-2"}>
+      <div className="flex justify-between p-1 max-md:flex-col">
         <h3 className={mainTitle}>내 게시판</h3>
-        <div className="w-1/2 flex justify-end gap-6">
+        <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
           <div className={searchBox}>
             <FaSearch className="mt-1 mr-1.5"/>
             <input
@@ -210,7 +209,7 @@ const MyBoard = () => {
               setToggle("code");
               resetBoards();
             }}
-            className={`bg-gray-600  font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap`}
+            className={`bg-gray-600  font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md: whitespace-nowrap`}
           >
             코드 질문
           </button>
