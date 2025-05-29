@@ -60,14 +60,14 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-modal-fade">
-        
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-modal-fade
+          md:h-auto max-md:h-full max-md:h-screen max-md:max-h-screen max-md:rounded-none">        
         {/* 내부 2단 구조 */}
         <div className="flex flex-col md:flex-row w-full h-full">
           
           {/* 왼쪽 로고 영역 */}
-          <div className="flex flex-col gap-3 items-center justify-center basis-1/2 ">
+          <div className="flex flex-col gap-3 items-center justify-center basis-1/2 max-md:mt-6">
             <strong className="text-[50px] text-black font-bold leading-[45px] no-underline">
               AIssue
             </strong>
