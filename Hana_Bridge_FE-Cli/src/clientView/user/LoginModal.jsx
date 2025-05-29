@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useDispatch } from "react-redux";
 import { setUser, setPage } from "../../store/userSlice";
+import { updateAccessToken } from "../../store/authSlice";
 
 const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
   const [email, setEmail] = useState("");
@@ -32,10 +33,12 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
             email: data.email,
             name: data.name,
             nickName: data.nickName,
-            accessToken: data.accessToken,
             role: data.role,
           })
         );
+        dispatch(
+          updateAccessToken({accessToken: data.accessToken})
+        )
         onClose(); //모달 닫기
         dispatch(setPage({page: 'home'}));
         onSuccess();

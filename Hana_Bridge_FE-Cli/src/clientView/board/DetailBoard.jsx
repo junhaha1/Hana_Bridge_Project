@@ -27,7 +27,6 @@ const DetailBoard = () => {
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
-  const accessToken = useSelector((state) => state.user.accessToken);
 
   const { boardId } = useParams(); 
 
@@ -79,7 +78,7 @@ const DetailBoard = () => {
   }, [code, content]);
 
   useEffect(() => {
-    ApiClient.getBoard(boardId, accessToken)
+    ApiClient.getBoard(boardId)
     .then(async (res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -121,7 +120,7 @@ const DetailBoard = () => {
 
   //삭제 버튼
   const boardDeleteButton = (boardId) => {
-    ApiClient.deleteBoard(boardId, accessToken, category)
+    ApiClient.deleteBoard(boardId, category)
     .then(async (res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -147,7 +146,7 @@ const DetailBoard = () => {
 
   //수정 저장 버튼
   const saveBoard = (boardId) => {
-    ApiClient.updateBoard(boardId, accessToken, category, title, content, code, updateAt)
+    ApiClient.updateBoard(boardId, category, title, content, code, updateAt)
     .then(async(res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -174,7 +173,7 @@ const DetailBoard = () => {
 
   //좋아요 추가 
   const handleLike = (boardId) => {
-    ApiClient.sendBoardGood(boardId, accessToken)
+    ApiClient.sendBoardGood(boardId)
       .then(async(res) => {
         if (!res.ok) {
           //error handler 받음 
@@ -203,7 +202,7 @@ const DetailBoard = () => {
   }
   //좋아요 삭제
   const handleCancelLike = (boardId) => {
-    ApiClient.deleteBoardGood(boardId, accessToken)
+    ApiClient.deleteBoardGood(boardId)
     .then(async(res) => {
       if (!res.ok) {
         //error handler 받음 
