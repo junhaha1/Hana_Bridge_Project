@@ -53,7 +53,7 @@ const DashBoard = () => {
               animationData={HelloWorld}
               loop={false}
               onComplete={handleComplete}
-              style={{ width: 500, height: 500 }}
+              className="w-[500px] h-[500px] max-md:w-[300px] max-md:h-3[300px]"
             />
           </div>
         </div>
@@ -62,9 +62,9 @@ const DashBoard = () => {
       {/* 대시보드 본문 */}
       {!playFlag &&(
         <>
-        <div className="w-full flex flex-row mt-20">
+        <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
           <LeftHeader />
-          <div className="w-4/5">
+          <div className="w-4/5 max-md:w-full">
             <DashboardCards />
           </div>
         </div>

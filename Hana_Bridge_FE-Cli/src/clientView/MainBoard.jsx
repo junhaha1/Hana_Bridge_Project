@@ -20,11 +20,11 @@ const MainBoard = () => {
     <div className={mainFrame}>
       <Header />
       {/* 3열 레이아웃 구성: 좌측 / 본문 / 우측 */}
-      <div className="w-full flex md:flex-row max-md:flex-col md:mt-20 ">
+      <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         {/* Left Sidebar */}
         <LeftHeader />
         {/* Main Content */}
-        <div className="w-4/5 max-md:w-full ">
+        <div className="w-4/5 max-md:w-full">
           {/* 게시판 분기 렌더링 */}
           {category === "me" && <MyBoard />}
           {category === "code" && <CodeBoard />}

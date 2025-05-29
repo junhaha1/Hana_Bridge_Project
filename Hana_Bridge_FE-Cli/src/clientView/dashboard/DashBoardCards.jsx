@@ -27,21 +27,21 @@ const DashboardCards = () => {
   }; 
 
   return (
-    <div className={scrollStyle + " h-full pt-8 pb-8 ml-20 pr-40"}>
-      <div className="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-5 text-center text-white shadow-2xl">
-        <div className="mb-6 text-left space-y-4 text-xl font-semibold leading-snug">
-          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />혼자 공부하는 게 막막하지 않으셨나요?</p>
-          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />수업 들을 때 한번 놓치면 따라가기 힘들진 않으셨나요?</p>
-          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />에러는 쏟아지고, 구글링도 한계가 느껴지진 않으셨나요?</p>
-          <p className="flex items-center gap-2"><FaQuestionCircle className="text-yellow-300" />내가 짠 코드, 왜 이렇게 돌아가는 건지 이해 안 되진 않으셨나요?</p>
+    <div className={scrollStyle + " h-full pt-8 pb-8 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+      <div className="backdrop-blur-sm bg-white/10 p-5 border border-white/20 rounded-2xl text-center text-white shadow-2xl max-md:!p-3">
+        <div className="mb-6 text-left space-y-4  text-xl font-semibold leading-snug max-md:space-y-3">
+          <p className="flex items-center gap-2 max-md:text-base"><FaQuestionCircle className="text-yellow-300 size-6 shrink-0 max-md:size-5" />혼자 공부하는 게 막막하지 않으셨나요?</p>
+          <p className="flex items-center gap-2 max-md:text-base"><FaQuestionCircle className="text-yellow-300 size-6 shrink-0 max-md:size-5" />수업 들을 때 한번 놓치면 따라가기 힘들진 않으셨나요?</p>
+          <p className="flex items-center gap-2 max-md:text-base"><FaQuestionCircle className="text-yellow-300 size-6 shrink-0 max-md:size-5" />에러는 쏟아지고, 구글링도 한계가 느껴지진 않으셨나요?</p>
+          <p className="flex items-center gap-2 max-md:text-base"><FaQuestionCircle className="text-yellow-300 size-6 shrink-0 max-md:size-5" />내가 짠 코드, 왜 이렇게 돌아가는 건지 이해 안 되진 않으셨나요?</p>
         </div>
 
-        <div className="mt-8 text-white font-semibold leading-relaxed">
+        <div className="mt-8 text-white font-semibold leading-relaxed max-md:mt-4">
           <p>그럴 땐, <span className="text-yellow-300">AI 친구 <strong>Codi</strong></span>에게 물어보세요.</p>
           <p>코드 리뷰부터 개념 설명까지, Codi가 함께 고민해드립니다.</p>
         </div>
       </div>
-      <div className="mt-12 text-left text-white text-lg leading-relaxed">
+      <div className="mt-12 text-left text-white text-lg leading-relaxed max-md:mt-6 max-md:text-base max-md:p-2">
         <p className="mb-2">이 사이트에는 <span className="text-yellow-300 font-semibold">Codi AI</span>의 답변뿐 아니라,</p>
         <p className="mb-2">여러분의 <strong className="text-indigo-300">코딩 질문</strong>, <strong className="text-indigo-300">공지사항</strong>, <strong className="text-indigo-300">내가 쓴 글</strong>도</p>
         <p className="">모두 모아서 확인할 수 있는 게시판이 준비되어 있어요.</p>
