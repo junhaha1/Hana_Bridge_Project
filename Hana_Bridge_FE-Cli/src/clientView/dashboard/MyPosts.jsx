@@ -8,14 +8,13 @@ const MyPosts = () => {
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [postType, setPostType] = useState('code'); // code or assemble
 
-  const accessToken = useSelector((state) => state.user.accessToken);
   const navigate = useNavigate();
 
   useEffect(() => {
     let funcBoard = postType === 'code' ? ApiClient.getMyBoard : ApiClient.getMyAssemble;
 
     setLoading(true); // 요청 시작 시 로딩
-    funcBoard(accessToken)
+    funcBoard()
       .then(async (res) => {
         if (!res.ok) {
           setBoards(null);

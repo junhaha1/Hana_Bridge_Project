@@ -9,7 +9,6 @@ import { FaUser } from 'react-icons/fa';
 
 
 const Comments = (props) => {
-  const accessToken = useSelector((state) => state.user.accessToken);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
 
@@ -57,7 +56,7 @@ const Comments = (props) => {
 
   //댓글 삭제
   const handleDeleteComment = (commentId) => {
-    ApiClient.deleteComment(commentId, accessToken)
+    ApiClient.deleteComment(commentId)
     .then(async(res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -85,8 +84,7 @@ const Comments = (props) => {
   //수정 댓글 저장
   const handleUpdateComment = (commentId) => {
     if (!editContent.trim()) return;
-    //commentId, accessToken, content, createAt
-    ApiClient.updateComment(commentId, accessToken, editContent, editCreateAt)
+    ApiClient.updateComment(commentId, editContent, editCreateAt)
     .then(async (res) => {
       if (!res.ok) {
         const errorData = await res.json();

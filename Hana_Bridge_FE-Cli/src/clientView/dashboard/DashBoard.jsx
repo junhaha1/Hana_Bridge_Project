@@ -19,7 +19,6 @@ const DashBoard = () => {
 
   const dispatch = useDispatch();
   const page = useSelector((state) => state.user.page);
-  let RenderContent;
 
   useEffect(() => {
     if (lottieRef.current) {

@@ -10,7 +10,6 @@ import { scrollStyle } from '../../style/CommonStyle';
 import { addBoardButton, addTitle, addContent, addCode } from '../../style/AddBoardStyle';
 
 const AddBoard = () => {
-  const accessToken = useSelector((state) => state.user.accessToken);
   const role = useSelector((state) => state.user.role);
 
   //이전으로 버튼을 위한 카테고리 
@@ -85,7 +84,7 @@ const AddBoard = () => {
     const finalCode = ["```" + language, code, "```"].join("\n");
     console.log(finalCode);
     // TODO: API 요청 처리
-    ApiClient.sendBoard(accessToken, title, category, content, finalCode, createAt, updateAt)
+    ApiClient.sendBoard(title, category, content, finalCode, createAt, updateAt)
     .then(async (res) => {
       if (!res.ok) {
         const errorData = await res.json();
