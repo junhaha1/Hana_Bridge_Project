@@ -134,12 +134,12 @@ const CodeBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
-      <div className="flex justify-between p-1">
+    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+      <div className="flex justify-between p-1 md:mt-5 max-md:flex-col">
         <h3 className={mainTitle}>코드 게시판</h3>
-        <div className="w-1/2 flex justify-end gap-6">
+        <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
           <div className={searchBox}>
-            <FaSearch className="mt-1 mr-1.5"/>
+            <FaSearch className="m-1 size-[23px] max-md:size-[17px]"/>
             <input
               className={inputBox}
               type="text"
@@ -227,7 +227,7 @@ const CodeBoard = () => {
                 />
                 {post.nickName}
               </span>
-              <span className='text-xs text-gray-300 mt-0.5'>
+              <span className='hidden md:inline text-xs text-gray-300 mt-0.5'>
                 {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
               </span>
             </div>

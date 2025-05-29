@@ -102,7 +102,7 @@ const CodeHelper = () => {
                 animationData={CodeBot}
                 loop={true}
                 autoplay={false}
-                className="w-[130px] h-[130px]"
+                className="w-[130px] h-[130px] max-md:w-[70px] max-md:h-[70px]"
               />
             </button>
           </div>

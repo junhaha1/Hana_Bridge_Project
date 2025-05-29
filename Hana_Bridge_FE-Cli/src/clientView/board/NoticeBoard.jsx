@@ -134,12 +134,12 @@ const NoticeBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
-      <div className="flex justify-between p-1 mb-4">
+    <div ref={scrollRef} className={scrollStyle +" h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+      <div className="flex justify-between p-1 md:mt-5 max-md:flex-col">
         <h3 className={mainTitle}>공지 게시판</h3>
-        <div className="w-1/2 flex justify-end gap-6">
+        <div className="w-1/2 flex justify-end gap-6 mb-2 max-md:w-full">
           <div className={searchBox}>
-            <FaSearch className="mt-1 mr-1.5"/>
+            <FaSearch className="m-1 size-[23px] max-md:size-[17px]"/>
             <input
               className={inputBox}
               type="text"
@@ -180,43 +180,43 @@ const NoticeBoard = () => {
           )}
         </div>
       )}
-        {boards !== null && boards.map((post) => (
-          <div
-            key={post.boardId}
-            className={cardStyle}
-            onClick={() => boardClick(post.boardId)}
-          >
-            <div className = {cardTopLayout}>
-              <h3
-                className= {cardTitle}
-              >
-                {post.title}
-              </h3>
+      {boards !== null && boards.map((post) => (
+        <div
+          key={post.boardId}
+          className={cardStyle}
+          onClick={() => boardClick(post.boardId)}
+        >
+          <div className = {cardTopLayout}>
+            <h3
+              className= {cardTitle}
+            >
+              {post.title}
+            </h3>
+          </div>
+          <p className={cardContent}>
+            {post.content}
+          </p>
+          <div className= {cardBottomLayout}>
+            <div className={userDate}>
+              <span className={cardAuthor}>
+                <FaUser
+                className="mt-1"
+                />
+                {post.nickName}
+              </span>
+              <span className='hidden md:inline text-xs text-gray-300 mt-0.5'>
+                {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+              </span>
             </div>
-            <p className={cardContent}>
-              {post.content}
-            </p>
-            <div className= {cardBottomLayout}>
-              <div className={userDate}>
-                <span className={cardAuthor}>
-                  <FaUser
-                  className="mt-1"
-                  />
-                  {post.nickName}
-                </span>
-                <span className='text-xs text-gray-300 mt-0.5'>
-                  {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
-                </span>
-              </div>
-              <div className="flex gap-4">
-                <span className= {cardGood}>
-                  <BiLike className="size-5 "/>
-                  {post.likeCount}
-                </span>
-              </div>
+            <div className="flex gap-4">
+              <span className= {cardGood}>
+                <BiLike className="size-5 "/>
+                {post.likeCount}
+              </span>
             </div>
           </div>
-        ))}
+        </div>
+      ))}
     </div>
     <button
       onClick={scrollToTop}
