@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import authReducer from './authSlice';
+import aiChatReducer from './aiChatSlice';
 
 //localStorage에서 불러오기
 const loadState = () => {
@@ -30,6 +31,7 @@ const store = configureStore({
   reducer: {
     user: userReducer,
     auth: authReducer,
+    aiChat: aiChatReducer,
   },
   preloadedState: loadState(), // 초기 상태에 localStorage 값 사용
 });

@@ -11,9 +11,12 @@ import { createSlice } from '@reduxjs/toolkit';
   playFlag: true,
   shouldAutoOpenHelper: false,
   aiPrompts: {
-    role: '너는 프로그래밍 강사야.',
-    format: '예시 코드를 보여주면서 설명해줘.',
-    level: '초등학생도 이해할 수 있도록 설명해줘.',
+    promptId: '',
+    name: '',
+    role: '',
+    form: '',
+    level: '',
+    option: ''
     }
  };
  
@@ -43,9 +46,12 @@ import { createSlice } from '@reduxjs/toolkit';
       state.playFlag = true;
       state.shouldAutoOpenHelper = false;
       state.aiPrompts = {
-        role: '너는 프로그래밍 강사야.',
-        format: '예시 코드를 보여주면서 설명해줘.',
-        level: '초등학생도 이해할 수 있도록 설명해줘.',
+        promptId: '',
+        name: '',
+        role: '',
+        form: '',
+        level: '',
+        option: ''
         }
     },
      setAiChat: (state, action) => {
