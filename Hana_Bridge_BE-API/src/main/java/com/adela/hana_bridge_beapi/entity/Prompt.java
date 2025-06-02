@@ -16,19 +16,19 @@ public class Prompt {
     @JoinColumn(name = "user_id")
     private Users users;
 
-    @Column(name = "name")
+    @Column(name = "prompt_name")
     private String name;
 
-    @Column(name = "role")
+    @Column(name = "prompt_role")
     private String role;
 
-    @Column(name = "form")
+    @Column(name = "prompt_form")
     private String form;
 
-    @Column(name = "level")
+    @Column(name = "prompt_level")
     private String level;
 
-    @Column(name = "option")
+    @Column(name = "prompt_option")
     private String option;
 
     @Builder

@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from '../../service/ApiClient';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAiChat, clearAiChat, setAiPrompts } from '../../store/userSlice';
+import { setAiChat, clearAiChat} from '../../store/userSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
 import { RiSendPlaneFill } from "react-icons/ri";
@@ -14,13 +14,14 @@ import { IoCopyOutline, IoSettingsSharp } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
 import { FaLightbulb } from "react-icons/fa";
 import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, 
-  loding, inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
+  inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
+import { clearUserPrompt, setUserPrompt, setUserPromptList } from '../../store/aiChatSlice';
+import SettingModal from './SettingModal';
 
 
 function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const prevMessage = useSelector((state) => state.user.chatMessages);
-  const defaultPrompt = useSelector((state) => state.user.aiPrompts)
 
   const [messages, setMessages] = useState(prevMessage);
   const [input, setInput] = useState('');  //질문 1개 
@@ -55,16 +56,27 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
 
   //프롬프트 설정 모달
   const [settingModal, setSettingModal] = useState(false);
-  //프롬프트 
-  const [prompts, setPrompts] = useState(defaultPrompt);
+  /*사용자가 작성한 프롬포트 가져오기*/
+  //사용자가 작성한 프롬포트 목록
+  const userPromptList = useSelector((state) => state.aiChat.userPromptList);
+  //사용자가 선택한 프롬포트
+  const userPrompt = useSelector((state )=> state.aiChat.userPrompt);
   //질문 tip
   const [isHovered, setIsHovered] = useState(false);
 
-  const savePrompt = () =>{
-    console.log(prompts)
-    dispatch(setAiPrompts({ aiPrompts: prompts }));
-    setSettingModal(false);
-  }
+  //사용자가 설정한 프롬포트 목록 가져오기
+  useEffect(() => {
+    ApiClient.getCustomPrompts()
+      .then((res) => {
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        dispatch(setUserPromptList({userPromptList: data}));
+      })
+      .catch((err) => console.error("API 요청 실패:", err));
+  }, [])
 
   const closeNewChatModal = () => {
     setShowNewChatModal(false);
@@ -127,7 +139,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setInput('');
     
     /* API 호출하여 스트림 연결 */
-    const res = await ApiClient.streamMessage(promptLevel, result, input);
+    console.log(userPrompt);
+    const res = await ApiClient.streamMessage(promptLevel, result, input, userPrompt);
 
     /*스트림 연결 후에 실행 흐름 -> 로딩 종료, 답변 출력*/
     const reader = res.body.getReader();
@@ -331,15 +344,17 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           
         <div className='flex flex-row gap-2 overflow-visible z-[9999] '>
           <div className='my-auto text-white text-sm font-semibold'>
-          {promptLevel === 1 ? "전문가" : "초보자"} 모드
+          {(promptLevel === -1 ? userPrompt.name : (promptLevel === 0 ? "초보자" : "전문가"))} 모드
           </div>
           <button 
             className='p-1 m-1 rounded text-white text-sm hover:bg-gray-500'
-            onClick={() => setShowNewChatModal(true)}
+            onClick={() => {
+              setShowNewChatModal(true);
+              dispatch(clearUserPrompt());
+            }}
           >
             새 대화창
           </button>
-
           <div
             className="relative z-[9999]"
             onMouseEnter={() => setIsHovered(true)}
@@ -349,7 +364,6 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
               <FaLightbulb className="m-1" />
               Tip
             </button>
-            
 
             <div
               className={`absolute top-full right-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
@@ -378,7 +392,6 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           </button>
         </div>
       </div>
-
             
       {/* 상단 대화창 */}
       <div className={`${scrollStyle} ${chatBox} relative`}>
@@ -401,23 +414,87 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
               <p className='text-orange-300 font-semibold'>
                 ⚠ 바로 대화를 시작하면 초보자로 설정됩니다.
               </p>
-              <div className='flex flex-row gap-2'>
-                {/* 초보자 프롬포트 선택 카드 */}
-                <div 
-                  className={promptButton}
-                  onClick={()=>startChatting(0)}
-                >
-                  <p className='text-lg font-semibold'>초보자</p>
-                  <p>프로그래밍을 시작하지 얼마 안된 사용자에게 추천합니다. </p>
+              <div className="flex flex-col gap-2">
+                <div className='flex flex-row gap-2'>
+                  {/* 초보자 프롬포트 선택 카드 */}
+                  <div 
+                    className={promptButton}
+                    onClick={()=>{
+                      startChatting(0);
+                      dispatch(clearUserPrompt());
+                    }}
+                  >
+                    <p className='text-lg font-semibold'>초보자</p>
+                    <p>프로그래밍을 시작하지 얼마 안된 사용자에게 추천합니다. </p>
+                  </div>
+                  {/* 전문가 프롬포트 선택 카드 */}
+                  <div 
+                    className={promptButton}
+                    onClick={()=>{
+                      startChatting(1);
+                      dispatch(clearUserPrompt());
+                    }}
+                  >
+                    <p className='text-lg font-semibold'>전문가</p>
+                    <p>프로그래밍을 시작하여 코드 해석이 익숙한 사용자에게 추천합니다. </p>
+                  </div>
                 </div>
-                {/* 전문가 프롬포트 선택 카드 */}
+                {/* 사용자 프롬포트 선택하여 시작하기 */}
+                {userPromptList.length > 0 ? (
                 <div 
-                  className={promptButton}
-                  onClick={()=>startChatting(1)}
+                  className={`${promptButton} w-full`}
+                  onClick={() => {
+                      //선택되지 않았다면 이벤트 막기
+                      if (userPrompt.name === "") return
+                      startChatting(-1)
+                    }
+                  }
                 >
-                  <p className='text-lg font-semibold'>전문가</p>
-                  <p>프로그래밍을 시작하여 코드 해석이 익숙한 사용자에게 추천합니다. </p>
+                  <p className='text-lg font-semibold'>사용자 설정 모드</p>
+                  <p>사용자가 설정한 프롬포트를 사용합니다.</p>
+                  <div>
+                    <select
+                      className="w-full p-2 rounded font-semibold text-base text-black"
+                      // 부모 div 이벤트를 막아줌. 
+                      onClick={(e) => e.stopPropagation()} 
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        console.log("프롬포트 설정: " +  e.target.value);
+                        const selected = userPromptList.find(
+                          (p) => String(p.promptId) === e.target.value
+                        );
+                        console.log(selected);
+                        dispatch(setUserPrompt({ userPrompt: selected }));
+                      }}
+                      value={userPrompt?.promptId ?? ""}
+                    >
+                      <option value="" selected disabled hidden>
+                        선택해주세요
+                      </option>
+                      {userPromptList.map((prom) => (
+                        <option
+                          className="text-black"
+                          value={prom.promptId}
+                          key={prom.promptId}
+                        >
+                          {prom.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
+                ) : (
+                  <div 
+                  className={`${promptButton} w-full`}
+                  >
+                    <p className='text-lg font-semibold'>사용자 설정 모드</p>
+                    <p>
+                      사용자가 설정한 프롬포트를 사용합니다.<br/>
+                      아직 직접 프롬포트를 입력하지 않으셨네요!<br/>
+                      필요한 경우 우측 상단 설정에서 직접 프롬포트를 입력해주세요!
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -500,9 +577,6 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         ))}
         {/* 로딩창 */}
         {isLoading && (
-          // <div className="flex justify-start my-2">
-          //    <Lottie animationData={Loading} loop={true} />
-          // </div>
           <div className="flex justify-start my-2">
             <div className={sipnning + " h-7 w-7 border-4 border-white/20 "}></div>
           </div>
@@ -537,52 +611,10 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         </div>
       </div>      
 
-       {/* 프롬프트 설정 모달 */}
-       {settingModal && (
-        <div className={upDiv}>
-          <div className={downDiv}>
-            <h2 className="text-xl font-semibold mb-4">AI 프롬프트 설정</h2>
-            <p className="mb-3 text-sm"><span className="text-yellow-400 font-semibold">Tip  </span>프롬프트란? <br />AI에게 명확한 지시를 내리는 입력값으로 좋은 답변을 받는데 기여할 수 있습니다.  </p>
-            
-            
-            <p className='font-semibold mb-1'>AI의 역할</p>
-            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 너는 친절한 프로그래밍 도우미야.</p>
-            <textarea
-              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
-              placeholder="AI의 역할을 정해주세요."
-              value={prompts.role}
-              onChange={(e) => setPrompts({role: e.target.value, format: prompts.format, level: prompts.level})}
-            />
-            
-
-            <p className='font-semibold mb-1'>AI의 답변 형식</p>
-            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 요약해서 설명해줘.</p>
-            <textarea
-              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30  placeholder-white/50'
-              placeholder="AI의 답변 형식을 정해주세요."
-              value={prompts.format}
-              onChange={(e) => setPrompts({role: prompts.role, format: e.target.value, level: prompts.level})}
-            />
-            
-
-            <p className='font-semibold mb-1'>AI의 답변 수준</p>
-             <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 전문가라고 생각하고 설명해줘. </p>   
-            <textarea
-              className='w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50'
-              placeholder="AI의 답변 수준을 정해주세요."
-              value={prompts.level}
-              onChange={(e) => setPrompts({role: prompts.role, format: prompts.format, level: e.target.value})}
-            />           
-           
-            
-            <div className="flex justify-end gap-2">              
-              <button className={okButton} onClick={savePrompt}>확인</button>
-              <button className={cancelButton} onClick={() =>{setSettingModal(false)}}>취소</button>
-            </div>
-          </div>
-        </div>
+      {/* 프롬프트 설정 모달 */}
+      {settingModal && (
+        <SettingModal onClose= {() => setSettingModal(false)}/>
       )}
-
       {/* 모달: 답변 채택 */}
       {showModal && (
         <div className={upDiv}>

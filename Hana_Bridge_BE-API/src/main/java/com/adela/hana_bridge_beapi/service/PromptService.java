@@ -23,11 +23,7 @@ public class PromptService {
     }
 
     public List<Prompt> getPromptsForUser(Long userId) {
-        List<Prompt> prompts = promptRepository.findByUsersId(userId);
-        if (prompts.isEmpty()) {
-            return null;
-        }
-        return prompts;
+        return promptRepository.findByUsersId(userId);
     }
     @Transactional
     public PromptResponse updatePrompt(PromptUpdateRequest request) {

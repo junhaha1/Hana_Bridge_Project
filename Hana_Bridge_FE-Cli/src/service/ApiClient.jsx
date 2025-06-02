@@ -15,6 +15,58 @@ class ApiClient{
   static USER = "/user";
   //Open AI
   static AIChat = "/chat"
+  
+  //사용자가 작성한 프롬포트 조회해오기
+  static getCustomPrompts(){ 
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + `/prompt`);
+  }
+
+  //사용자가 작성한 프롬포트 저장하기
+  static saveCustomPrompts(prompt){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/prompt/user', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: prompt.name,
+        role: prompt.role,
+        form: prompt.form,
+        level: prompt.level,
+        option: prompt.option,
+      }),
+    });
+  }
+
+  // 사용자 프롬포트 업데이트하기
+  static updateCustomPrompts(prompt) {
+    console.log(prompt)
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/prompt/user', {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        promptId: prompt.promptId,
+        name: prompt.name,
+        role: prompt.role,
+        form: prompt.form,
+        level: prompt.level,
+        option: prompt.option,
+      }),
+    });
+  }
+
+  //사용자 프롬포트 삭제하기
+  static deleteCustomPrompts(promptId){
+    console.log(promptId);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + `/prompt/${promptId}`,{
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 
   //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
   static getMyBoard(email){
@@ -49,7 +101,7 @@ class ApiClient{
 
   //OpenAi chat
   //스트림 기반 답변 요청
-  static streamMessage(promptLevel, preContent, question){
+  static streamMessage(promptLevel, preContent, question, prompt){
     return StreamFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer/stream',{
       method: "POST",
       headers: {
@@ -60,6 +112,11 @@ class ApiClient{
         promptLevel: promptLevel,
         preContent: preContent,
         question: question,
+
+        role: prompt?.role,
+        form: prompt?.form,
+        level: prompt?.level,
+        option: prompt?.option,
       }),
     });
   }

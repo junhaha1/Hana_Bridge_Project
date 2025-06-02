@@ -2,6 +2,7 @@ package com.adela.hana_bridge_beapi.controller;
 
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
+import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.dto.openai.ClientRequest;
 import com.adela.hana_bridge_beapi.dto.openai.ClientResponse;
 import com.adela.hana_bridge_beapi.dto.openai.ClientSummaryRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +33,25 @@ public class OpenAiApiController {
     private final PromptService promptService;
 
     @GetMapping("/prompt")
+    public ResponseEntity<List<PromptResponse>> getPrompts(@RequestHeader("Authorization") String authHeader) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        String email = tokenService.findEmailByToken(accessToken);
+
+        Users user = usersService.findByEmail(email);
+        List<PromptResponse> prompts = promptService.getPromptsForUser(user.getId())
+                .stream()
+                .map(prompt -> PromptResponse.builder()
+                        .promptId(prompt.getPromptId())
+                        .name(prompt.getName())
+                        .role(prompt.getRole())
+                        .form(prompt.getForm())
+                        .level(prompt.getLevel())
+                        .option(prompt.getOption())
+                        .build()
+                )
+                .toList();
+        return ResponseEntity.ok().body(prompts);
+    }
     @PostMapping("/prompt/user")
     public ResponseEntity<Void> addPrompt(@RequestHeader("Authorization") String authHeader, @RequestBody PromptRequest promptRequest) {
         String accessToken = authHeader.replace("Bearer ", "");

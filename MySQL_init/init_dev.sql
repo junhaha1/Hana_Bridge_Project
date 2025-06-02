@@ -1,7 +1,3 @@
-CREATE USER 'test_user'@'%' IDENTIFIED BY 'testuser!@#';
-GRANT ALL PRIVILEGES ON hana_dev_db.* TO 'test_user'@'%';
-FLUSH PRIVILEGES;
-
 CREATE TABLE `users` (
 	`id`	BIGINT	NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`email`	VARCHAR(255)	NOT NULL,
@@ -54,6 +50,16 @@ CREATE TABLE `comment` (
 	`user_id`	BIGINT	NOT NULL,
 	`content`	TEXT	NOT NULL,
 	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `prompt` (
+	`prompt_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT	NOT NULL,
+    `prompt_name` TEXT,
+    `prompt_role`	MEDIUMTEXT,
+    `prompt_form` MEDIUMTEXT,
+    `prompt_level` MEDIUMTEXT,
+    `prompt_option` MEDIUMTEXT
 );
 
 ALTER TABLE `board` ADD CONSTRAINT `FK_users_TO_board_1` FOREIGN KEY (
@@ -116,3 +122,9 @@ REFERENCES `users` (
 	`id`
 ) ON DELETE CASCADE;
 
+ALTER TABLE `prompt` ADD CONSTRAINT `FK_users_TO_prompt_1` FOREIGN KEY (
+	`user_id`
+)
+REFERENCES `users` (
+	`id`
+) ON DELETE CASCADE;
