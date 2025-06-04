@@ -1,5 +1,5 @@
 //최상단 프레임
-export const aiChatFrame = "w-full h-full flex flex-col bg-zinc-800 rounded-2xl overflow-hidden relative";
+export const aiChatFrame = "w-full h-full flex flex-col bg-zinc-800 md:rounded-2xl overflow-hidden relative";
 //상단 메뉴바 
 export const topNavi = 'flex justify-between bg-white/15 backdrop-blur-sm';
 //상단 대화창
@@ -13,7 +13,7 @@ export const userBox = 'bg-[#322776] text-white rounded-tl-2xl rounded-tr-2xl ro
 //로딩창 
 export const loding = "loader w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin";
 //하단 입력창
-export const inputBox = "w-full mx-auto bg-white/10 backdrop-blur-md rounded-bl-2xl p-4 mt-3";
+export const inputBox = "w-full mx-auto bg-white/10 backdrop-blur-md md:rounded-bl-2xl md:p-5 mt-3 max-md:p-4";
 //입력창 textarea
 export const inputTextarea = "w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none border-r-2 border-white/20";
 //입력창 보내기 버튼 
@@ -32,8 +32,8 @@ export const answerChooseButton = "text-sm bg-gray-800 text-white px-3 py-1 roun
 // - 최상단 div
 export const upDiv = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
 // - 하위 div
-export const settingDiv = "h-2/3 bg-white text-black rounded-md w-full max-w-md";
-export const downDiv = "bg-white text-black rounded-md p-6 w-full max-w-md";
+export const settingDiv = "md:h-2/3 max-md:h-full bg-white text-black md:rounded-md w-full max-w-md";
+export const downDiv = "bg-white text-black rounded-md p-6 w-full max-w-md max-md:mx-3";
 // - 확인 버튼
 export const okButton = "bg-indigo-600 text-white px-4 py-1 rounded";
 // - 취소 버튼 
