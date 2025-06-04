@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
 import LeftHeader from '../header/LeftHeader';
+import ConfirmBoardModal from "./ConfirmBoardModal";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
@@ -20,6 +21,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { setCategory } from "../../store/userSlice";
 
 
 //상세 게시글 보드
@@ -44,9 +46,15 @@ const DetailBoard = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const category = location.state?.category;
-  console.log("category(DetailBoard): " + category)
+  const myCategory = location.state?.category;  
+  const [category, setCategory] = useState(myCategory);
+  console.log("myCategory(location.state?.category): " + myCategory);
+  console.log("category(DetailBoard: useState): " + category);
+
   const [commentCount, setCommentCount] = useState(0);
+
+  const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   //textarea 높이 자동화
   const textareaRef = useRef(null);
@@ -146,6 +154,7 @@ const DetailBoard = () => {
 
   //수정 저장 버튼
   const saveBoard = (boardId) => {
+    console.log("------------: " + boardId);
     ApiClient.updateBoard(boardId, category, title, content, code, updateAt)
     .then(async(res) => {
       if (!res.ok) {
@@ -308,7 +317,7 @@ const DetailBoard = () => {
                     <div className="flex gap-2">
                       <button
                         className={buttonStyle + " bg-green-600 text-white px-3 py-1 text-sm hover:bg-green-700"}
-                        onClick={() => saveBoard(boardId)}
+                        onClick={() => setConfirmUpdateOpen(true)}
                       >
                         저장
                       </button>
@@ -416,7 +425,7 @@ const DetailBoard = () => {
                         수정하기
                       </button>
                       <button
-                        onClick={() => boardDeleteButton(boardId)}
+                        onClick={() => setConfirmDeleteOpen(true)}
                         className="text-sm text-red-400 hover:underline"
                       >
                         삭제하기
@@ -439,6 +448,29 @@ const DetailBoard = () => {
           </button>
         </main>
       </div>
+      
+      {/* 수정 확인 모달 */}
+      {confirmUpdateOpen && (
+        <ConfirmBoardModal
+          onConfirm={() => {
+            saveBoard(boardId);
+            setConfirmUpdateOpen(false);
+          }}
+          onCancel={() => setConfirmUpdateOpen(false)}
+          onMode={"update"}
+        />
+      )}
+      {/* 삭제 확인 모달 */}
+      {confirmDeleteOpen && (
+        <ConfirmBoardModal
+          onConfirm={() => {
+            boardDeleteButton(boardId);
+            setConfirmDeleteOpen(false);
+          }}
+          onCancel={() => setConfirmDeleteOpen(false)}
+          onMode={"delete"}
+        />
+      )}
     </div>
   );
 };
