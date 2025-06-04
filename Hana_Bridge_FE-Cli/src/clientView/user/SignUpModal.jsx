@@ -44,7 +44,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
 
         {/* 안쪽 콘텐츠: 스크롤 허용 */}
         <div className="p-8 overflow-y-hidden max-h-[90vh]">
-          <h2 className="text-2xl font-bold text-center mb-8">회원가입</h2>
+          <h2 className="text-2xl font-bold text-center mb-8 max-md:mt-8 max-md:mb-12">회원가입</h2>
 
           <form className="space-y-6">
             <div>
