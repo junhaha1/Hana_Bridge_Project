@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.3",
+    "@monaco-editor/react": "^4.7.0",
     "@reduxjs/toolkit": "^2.7.0",
     "bootstrap": "^5.3.5",
     "framer-motion": "^12.16.0",
     "lottie-react": "^2.4.1",
+    "monaco-editor": "^0.52.2",
+    "monaco-themes": "^0.4.5",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-confirm-alert": "^3.0.6",

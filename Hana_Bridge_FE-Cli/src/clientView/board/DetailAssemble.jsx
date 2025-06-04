@@ -9,6 +9,7 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
+import ConfirmBoardModal from "./ConfirmBoardModal";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
@@ -25,6 +26,8 @@ const DetailAssemble = () => {
   const [board, setBoard] = useState(null);
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
+
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const navigate = useNavigate();
   const scrollRef = useRef(null);
@@ -220,7 +223,9 @@ const DetailAssemble = () => {
                 </div>
 
                 {(nickName === board.nickName || role === "ROLE_ADMIN") && (
-                  <button className={buttonStyle +" text-red-400 text-sm hover:underline"} onClick={() => boardDeleteButton(assembleBoardId)}>
+                  <button 
+                    className={buttonStyle +" text-red-400 text-sm hover:underline"} 
+                    onClick={() => setConfirmDeleteOpen(true)}>
                     삭제하기
                   </button>
                 )}
@@ -235,6 +240,17 @@ const DetailAssemble = () => {
           </button>
         </main>
       </div>
+      {/* 삭제 확인 모달 */}
+      {confirmDeleteOpen && (
+        <ConfirmBoardModal
+          onConfirm={() => {
+            boardDeleteButton(assembleBoardId);
+            setConfirmDeleteOpen(false);
+          }}
+          onCancel={() => setConfirmDeleteOpen(false)}
+          onMode={"delete"}
+        />
+      )}
     </div>
   );
 };

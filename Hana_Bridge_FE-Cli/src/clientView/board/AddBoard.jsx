@@ -9,6 +9,10 @@ import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle } from '../../style/CommonStyle';
 import { addBoardButton, addTitle, addContent, addCode } from '../../style/AddBoardStyle';
 
+//입력창 코드 테마 가져오기 
+import Editor, { useMonaco } from "@monaco-editor/react";
+import tomorrowNightTheme from 'monaco-themes/themes/Tomorrow-Night.json';
+
 const AddBoard = () => {
   const role = useSelector((state) => state.user.role);
 
@@ -30,6 +34,29 @@ const AddBoard = () => {
   //언어 선택 박스
   const [language, setLanguage] = useState("");
 
+  const monaco = useMonaco();
+  // 내가 사용할 모나코 인스턴스를 생성
+
+  useEffect(() => {
+    if (!monaco) return; // Monaco 인스턴스가 로드되지 않았으면 바로 종료
+
+    //tomorrowNightTheme 테마와 색 복사하여 가져오고 
+    //포커스 시 나타나는 테두리(파랑)만 투명으로 
+    const customTheme = {
+      ...tomorrowNightTheme,
+      colors: {
+        ...tomorrowNightTheme.colors,
+        'focusBorder': '#00000000',
+        'editor.background': '#1e1e1e',
+      },
+    };
+
+    //커스텀 테마 오브젝트 완성 후 이름 등록 
+    monaco.editor.defineTheme('custom-theme', customTheme);
+    monaco.editor.setTheme('custom-theme');
+  }, [monaco]);
+
+
   const renderLanguageSelectBox = () => {
     const languages = [
       { label: "JavaScript", value: "javascript" },
@@ -42,17 +69,18 @@ const AddBoard = () => {
       { label: "TypeScript", value: "typescript" },
       { label: "Kotlin", value: "kotlin" },
       { label: "Swift", value: "swift" },
+      { label: "Bash", value: "bash" },
     ];
 
     return (
-      <div className="w-full py-2 border-t border-white/20 flex flex-row">
-        <label className="w-[100px] mb-2 text-sm text-center">
-          프로그래밍 <br />언어 선택
+      <div className="w-full py-2 border-t border-b border-b-white/10 border-t-white/40 flex flex-row">
+        <label className="my-1 mx-3 text-base text-center">
+          프로그래밍 언어 선택
         </label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-[200px] px-4 py-2 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-[200px] px-3 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">언어를 선택해주세요</option>
           {languages.map((lang) => (
@@ -79,8 +107,6 @@ const AddBoard = () => {
     console.log({ category, title, content });
     setCreateAt(new Date());
     setUpdateAt(new Date());
-    //const finalCode = `\`\`\`${language}\n${code}\n\`\`\``;
-    //const finalCode = "```" + language + "\n" + code + "\n```";
     const finalCode = ["```" + language, code, "```"].join("\n");
     console.log(finalCode);
     // TODO: API 요청 처리
@@ -150,8 +176,8 @@ const AddBoard = () => {
 
               {/* 제목 */}
               <div>
-                <label className="block font-semibold mb-2">
-                  제목<span className="text-red-500">*</span>
+                <label className="block font-semibold mb-2 text-lg">
+                  제목 <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -170,20 +196,28 @@ const AddBoard = () => {
                       onClick={() => setIsOpen(!isOpen)}
                       className="w-full text-left p-2 hover:bg-white/20 rounded-md flex justify-between items-center"
                     >
-                      <span className="font-medium">에러 코드</span>
+                      <span className="font-semibold text-lg">에러 및 코드 작성</span>
                       <span>{isOpen ? "▲" : "▼"}</span>
                     </button>
 
                     {isOpen && (
                       <div className='h-full'>
                         {renderLanguageSelectBox()}
-                      
-                        <textarea
-                          rows={7}
+                        <Editor
+                          height="200px"
+                          defaultLanguage="markdown"
+                          language={language}
                           value={code}
-                          onChange={(e) => setCode(e.target.value)}
-                          placeholder="작성할 코드/에러를 적어 주세요"
-                          className={addCode}
+                          onChange={(value) => setCode(value)}
+                          theme='custom-theme'
+                          options={{
+                            minimap: { enabled: false },            // 🔹 오른쪽 미니맵 제거
+                            fontSize: 14,
+                            wordWrap: 'on',                         // 코드 줄바꿈을 활성화
+                            scrollBeyondLastLine: false,            // 스크롤 밑 여백 제거
+                            placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
+                          }}
+                          className="my-custom-class p-1"  //스크롤바 설정 가져옴
                         />
                       </div>
                     )}

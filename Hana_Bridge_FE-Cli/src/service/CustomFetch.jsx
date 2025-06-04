@@ -14,7 +14,6 @@ const CustomFetch = async (url, options = {}) => {
       "Authorization": `Bearer ${accessToken}`,
     },
   });
-  console.log(fetchOptions);
 
   let response = await fetch(url, fetchOptions);
 
