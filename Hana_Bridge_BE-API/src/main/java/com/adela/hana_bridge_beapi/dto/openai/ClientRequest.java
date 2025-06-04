@@ -14,4 +14,9 @@ public class ClientRequest {
     private int promptLevel;
     private String preContent;
     private String question;
+    /*사용자 정의 프롬포트*/
+    private String role;
+    private String form;
+    private String level;
+    private String option;
 }

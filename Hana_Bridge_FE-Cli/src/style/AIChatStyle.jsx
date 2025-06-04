@@ -32,6 +32,7 @@ export const answerChooseButton = "text-sm bg-gray-800 text-white px-3 py-1 roun
 // - 최상단 div
 export const upDiv = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
 // - 하위 div
+export const settingDiv = "h-2/3 bg-white text-black rounded-md w-full max-w-md";
 export const downDiv = "bg-white text-black rounded-md p-6 w-full max-w-md";
 // - 확인 버튼
 export const okButton = "bg-indigo-600 text-white px-4 py-1 rounded";

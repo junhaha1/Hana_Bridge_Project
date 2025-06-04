@@ -1,5 +1,5 @@
 import store from "../store/store"
-import { updateAccessToken } from "../store/authSlice";
+import { clearAccessToken, updateAccessToken } from "../store/authSlice";
 import {clearUser, clearAiChat} from "../store/userSlice";
 
 //일반적인 Json기반 API 요청
@@ -71,7 +71,7 @@ const CustomFetch = async (url, options = {}) => {
       // 리프레시 실패 시 로그아웃 처리
       store.dispatch(clearUser());
       store.dispatch(clearAiChat());
-      store.dispatch(updateAccessToken({accessToken: ''}));
+      store.dispatch(clearAccessToken());
       alert('세션이 만료되었습니다. 다시 로그인 해주세요.');
       window.location.href = '/';
     }

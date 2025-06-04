@@ -33,7 +33,15 @@ public class OpenAiService {
     private final String apiUrl = "/chat/completions";
 
     public void streamAnswerToClient(ClientRequest clientRequest, ResponseBodyEmitter emitter){
-        PromptResult promptResult = promptFactory.createPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
+        PromptResult promptResult = null;
+        //사용자 커스텀 프롬포트 사용
+        if (clientRequest.getPromptLevel() == -1){
+            promptResult = promptFactory.createCustomPromptResult(clientRequest.getRole(),
+                    clientRequest.getForm(), clientRequest.getLevel(), clientRequest.getQuestion(), clientRequest.getQuestion());
+        }
+        else{ //기본값 사용
+            promptResult = promptFactory.createPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
+        }
 
         List<ChatGPTRequest.Message> messages = new ArrayList<>();
         messages.add(new ChatGPTRequest.Message("system", promptResult.getPrompt()));
@@ -133,7 +141,7 @@ public class OpenAiService {
         String content = total + core;
 
         List<ChatGPTRequest.Message> messages = new ArrayList<>();
-        messages.add(new ChatGPTRequest.Message("system", "[total] 내용에서 [core]내용과 관련있는 내용들만 요약해줘. "+ promptResult.getPrompt()));
+        messages.add(new ChatGPTRequest.Message("system", "[total]내용에서 [core]내용과 관련있는 내용들만 요약해줘. "+ promptResult.getPrompt()));
         messages.add(new ChatGPTRequest.Message("user", content));
 
         StringBuilder fullAnswer = new StringBuilder();

@@ -1,7 +1,3 @@
-CREATE USER 'app_user'@'%' IDENTIFIED BY 'appuser!@#';
-GRANT ALL PRIVILEGES ON hana_service_db.* TO 'app_user'@'%';
-FLUSH PRIVILEGES;
-
 CREATE TABLE `users` (
 	`id`	BIGINT	NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`email`	VARCHAR(255)	NOT NULL,
@@ -115,4 +111,3 @@ ALTER TABLE `comment` ADD CONSTRAINT `FK_board_TO_comment_2` FOREIGN KEY (
 REFERENCES `users` (
 	`id`
 ) ON DELETE CASCADE;
-
