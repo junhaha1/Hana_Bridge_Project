@@ -94,19 +94,19 @@ const BoardHeader = () => {
             </>
           ) : (
             <div className={serviceBox + "z-[9999]"}>
-              
-              <button
-                onClick={() => openModal("myinfo")}
-                className={userButton}
-              >
-                 <FaUserCircle className={userIcon}/> {nickName}
-              </button>
               <button
                 onClick={moveAddBoard}
                 className={addButton}
               >
                 글 작성
               </button>
+              
+              <button
+                onClick={() => openModal("myinfo")}
+                className={userButton}
+              >
+                 <FaUserCircle className={userIcon}/> {nickName}
+              </button>              
               <button
                 onClick={() => setConfirmLogoutOpen(true)}
                 className={logoutButton}
