@@ -109,7 +109,7 @@ const CodeHelper = () => {
       </div>
     )}
    {subTalking &&(
-      <div className="fixed bottom-0 right-0 w-[500px] h-[700px] rounded-2xl p-1 z-[9000]">
+      <div className="fixed bottom-0 right-0 w-[500px] h-[700px] rounded-2xl md:p-1 z-[9000] max-md:w-full max-md:h-full">
         <AIChat onClose={setSubTalking} onfullTalk={setFullTalking} onMode={"sub"} setLevel={setPromptLevel} level={promptLevel}/>
       </div>
    )}

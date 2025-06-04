@@ -67,7 +67,7 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
         <div className="flex flex-col md:flex-row w-full h-full">
           
           {/* 왼쪽 로고 영역 */}
-          <div className="flex flex-col gap-3 items-center justify-center basis-1/2 max-md:mt-6">
+          <div className="flex flex-col gap-3 items-center justify-center basis-1/2 max-md:basis-1/3 max-md:mt-12">
             <strong className="text-[50px] text-black font-bold leading-[45px] no-underline">
               AIssue
             </strong>

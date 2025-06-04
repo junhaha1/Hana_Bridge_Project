@@ -308,6 +308,9 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setLevel(0);
     setIsLoading(false);
     setCoreContent('');
+    if (textRef.current) {
+      textRef.current.style.height = 'auto';
+    }
   };
 
   const startChatting = (level) => {
@@ -320,27 +323,29 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     <div className={aiChatFrame}>
       {/* 상단 메뉴바 */}
       <div className={topNavi}>
-        {onMode === 'sub' ? (
-          <button 
-            className='ml-2'
-            onClick={()=>{
-              onfullTalk(true);
-              onClose(false);
-            }}
-          >
-            <AiOutlineFullscreen size={20} className='text-white'/>
-          </button>
-        ) : (
-          <button 
-            className='ml-2'
-            onClick={()=>{
-              onfullTalk(false);
-              onClose(true);
-            }}
-          >
-            <AiOutlineFullscreenExit size={20} className='text-white'/>
-          </button>
-        )}
+        <div className="max-md:invisible md:visible mt-2 ">
+          {onMode === 'sub' ? (
+            <button 
+              className='ml-2'
+              onClick={()=>{
+                onfullTalk(true);
+                onClose(false);
+              }}
+            >
+              <AiOutlineFullscreen size={20} className='text-white'/>
+            </button>
+          ) : (
+            <button 
+              className='ml-2'
+              onClick={()=>{
+                onfullTalk(false);
+                onClose(true);
+              }}
+            >
+              <AiOutlineFullscreenExit size={20} className='text-white'/>
+            </button>
+          )}
+        </div>
           
         <div className='flex flex-row gap-2 overflow-visible z-[9999] '>
           <div className='my-auto text-white text-sm font-semibold'>
@@ -411,11 +416,11 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
               <p>
                 프롬포트를 선택해주세요! 선택 시 바로 대화가 시작됩니다.
               </p>
-              <p className='text-orange-300 font-semibold'>
+              <p className='text-orange-300 font-semibold max-md:mb-8'>
                 ⚠ 바로 대화를 시작하면 초보자로 설정됩니다.
               </p>
-              <div className="flex flex-col gap-2">
-                <div className='flex flex-row gap-2'>
+              <div className="flex flex-col max-md:gap-3 md:gap-2">
+                <div className='flex flex-row max-md:gap-3 md:gap-2'>
                   {/* 초보자 프롬포트 선택 카드 */}
                   <div 
                     className={promptButton}
@@ -629,7 +634,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         </div>
       )}
 
-      {/* 모달: 지난 대화 불러오기 */}
+      {/* 모달: 새로운 대화 */}
       {showNewChatModal && (
         <div className={upDiv}>
           <div className={downDiv}>
