@@ -143,7 +143,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
   // Tailwind 적용된 JSX 코드
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade">
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade max-md:mx-3">
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
@@ -212,11 +212,11 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
                   <div className="mt-4 flex gap-2">
                     <button type="button" disabled={!checkNewPassword()} onClick={() => changePassword()}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50">
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50 max-md:text-sm max-md:py-1 max-md:px-2">
                       비밀번호 변경
                     </button>
                     <button type="button" onClick={() => cancleChangePassword()}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded max-md:text-sm max-md:py-1 max-md:px-2">
                       비밀번호 변경 취소
                     </button>
                   </div>
@@ -233,22 +233,22 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                   <div className="mt-4 flex flex-wrap gap-2">
                     {isEdit ? (
                       <>
-                        <button type="button" onClick={() => updateUser()} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        <button type="button" onClick={() => updateUser()} className="bg-green-600 hover:bg-green-700 text-white md:px-4 md:py-2 rounded max-md:text-sm max-md:py-1 max-md:px-2">
                           수정 완료
                         </button>
-                        <button type="button" onClick={() => resetEdit()} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                        <button type="button" onClick={() => resetEdit()} className="bg-gray-500 hover:bg-gray-600 text-white md:px-4 md:py-2 rounded max-md:text-sm max-md:py-1 max-md:px-2">
                           정보 수정 취소
                         </button>
                       </>
                     ) : (
                       <>
-                        <button type="button" onClick={() => setIsEdit(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded whitespace-nowrap">
+                        <button type="button" onClick={() => setIsEdit(true)} className="bg-blue-600 hover:bg-blue-700 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           정보 수정
                         </button>
-                        <button type="button" onClick={() => setIsChangePassword(true)} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded whitespace-nowrap">
+                        <button type="button" onClick={() => setIsChangePassword(true)} className="bg-red-600 hover:bg-red-700 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           비밀번호 변경
                         </button>
-                        <button type="button" onClick={() => openDeleteModal()} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded whitespace-nowrap">
+                        <button type="button" onClick={() => openDeleteModal()} className="bg-red-500 hover:bg-red-600 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           회원 탈퇴
                         </button>
                       </>
@@ -259,19 +259,19 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
             </form>
             {showDeleteModal && (
               <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-                <div className="bg-white text-black p-6 rounded-xl shadow-xl w-full max-w-sm">
+                <div className="bg-white text-black p-6 rounded-xl shadow-xl w-full max-w-sm max-md:mx-3">
                   <h3 className="text-lg font-semibold mb-4">회원 탈퇴 확인</h3>
                   <p className="mb-6">정말 회원 탈퇴하시겠습니까?<br />탈퇴하면 모든 정보가 삭제됩니다.</p>
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={closeDeleteModal}
-                      className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+                      className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded max-md:text-sm max-md:py-1 max-md:px-2"
                     >
                       취소
                     </button>
                     <button
                       onClick={confirmDeleteUser}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded max-md:text-sm max-md:py-1 max-md:px-2"
                     >
                       탈퇴하기
                     </button>
