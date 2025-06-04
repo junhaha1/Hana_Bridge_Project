@@ -155,29 +155,6 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
           <div className="w-full max-w-[450px] bg-transparent rounded-2xl p-6">
             <h2 className="text-2xl text-black font-bold text-center mt-4 mb-6">사용자 정보</h2>
             <form className="space-y-4">
-              <div>
-                <label className="block text-black font-semibold mb-1">
-                  이름<span className="text-red-500">*</span>
-                </label>
-                <input type="text" value={name} readOnly className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
-              </div>
-
-              <div>
-                <label className="block text-black font-semibold mb-1">
-                  이메일<span className="text-red-500">*</span>
-                </label>
-                <input type="email" value={tempEmail} readOnly={!isEdit} onChange={(e) => setTempEmail(e.target.value)}
-                  className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
-              </div>
-
-              <div>
-                <label className="block text-black font-semibold mb-1">
-                  닉네임<span className="text-red-500">*</span>
-                </label>
-                <input type="text" value={tempNickName} readOnly={!isEdit} onChange={(e) => setTempNickName(e.target.value)}
-                  className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
-              </div>
-
               {isChangePassword ? (
                 <>
                   <div>
@@ -210,7 +187,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                     )}
                   </div>
 
-                  <div className="mt-4 flex gap-2">
+                  <div className="mt-4 flex justify-end gap-2">
                     <button type="button" disabled={!checkNewPassword()} onClick={() => changePassword()}
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50 max-md:text-sm max-md:py-1 max-md:px-2">
                       비밀번호 변경
@@ -225,12 +202,34 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                 <>
                   <div>
                     <label className="block text-black font-semibold mb-1">
+                      이름<span className="text-red-500">*</span>
+                    </label>
+                    <input type="text" value={name} readOnly className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
+                  </div>
+
+                  <div>
+                    <label className="block text-black font-semibold mb-1">
+                      이메일<span className="text-red-500">*</span>
+                    </label>
+                    <input type="email" value={tempEmail} readOnly={!isEdit} onChange={(e) => setTempEmail(e.target.value)}
+                      className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
+                  </div>
+
+                  <div>
+                    <label className="block text-black font-semibold mb-1">
+                      닉네임<span className="text-red-500">*</span>
+                    </label>
+                    <input type="text" value={tempNickName} readOnly={!isEdit} onChange={(e) => setTempNickName(e.target.value)}
+                      className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
+                  </div>
+                  <div>
+                    <label className="block text-black font-semibold mb-1">
                       권한<span className="text-red-500">*</span>
                     </label>
                     <input type="text" value={role} readOnly className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
                   </div>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  <div className="mt-4 flex justify-end flex-wrap gap-2">
                     {isEdit ? (
                       <>
                         <button type="button" onClick={() => updateUser()} className="bg-green-600 hover:bg-green-700 text-white md:px-4 md:py-2 rounded max-md:text-sm max-md:py-1 max-md:px-2">
