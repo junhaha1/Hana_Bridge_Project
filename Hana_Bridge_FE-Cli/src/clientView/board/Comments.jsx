@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
 import AddComment from './AddComment';
@@ -22,8 +22,14 @@ const Comments = (props) => {
   //새로운 댓글 Flag
   const [newCommentFlag, setNewCommentFlag] = useState(false);
 
+  //댓글 자동 스크롤
+  const commentRef = useRef(null);
+
   useEffect(() => {
     loadComments();
+     if (newCommentFlag && commentRef.current) {
+      commentRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [props.boardId, newCommentFlag]);
 
   //전체 댓글
@@ -193,7 +199,11 @@ const Comments = (props) => {
 
       <div>
         {props.category === "code" && newCommentFlag ? (
-          <AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} />
+          <AddComment 
+            boardId={props.boardId} 
+            setNewCommentFlag={setNewCommentFlag} 
+            scrollRef={commentRef}
+          />
         ) : null}
       </div>
 

@@ -40,7 +40,6 @@ class ApiClient{
 
   // 사용자 프롬포트 업데이트하기
   static updateCustomPrompts(prompt) {
-    console.log(prompt)
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/prompt/user', {
       method: "PUT",
       headers: {
@@ -59,7 +58,6 @@ class ApiClient{
 
   //사용자 프롬포트 삭제하기
   static deleteCustomPrompts(promptId){
-    console.log(promptId);
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + `/prompt/${promptId}`,{
       method: "DELETE",
       headers: {
@@ -276,7 +274,6 @@ class ApiClient{
 
   //사용자 로그인
   static userLogin(email, password){
-    console.log("login by Email: " + email);
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.USER + '/login', {
       method: "POST",credentials: "include", 
       headers: {
@@ -300,7 +297,6 @@ class ApiClient{
   }  
   //사용자 등록
   static sendUser(email, password, name, nickName, createAt){
-    console.log("signup: " + email + password + name + nickName + createAt);
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.USER , {
       method: "POST",
       headers: {

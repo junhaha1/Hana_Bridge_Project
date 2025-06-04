@@ -58,7 +58,14 @@ const AddComment = (props) => {
 
 
   return (
-    <div ref={wrapperRef} className="mb-4">
+    <div 
+      ref={(el) => {
+        wrapperRef.current = el;
+        if (props.scrollRef) {
+          props.scrollRef.current = el;
+        }
+      }}
+      className="mb-4">
       <p className="mb-2 text-start text-white font-semibold">{nickName}</p>
 
       <div className="relative">

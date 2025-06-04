@@ -35,7 +35,7 @@ const AddBoard = () => {
   const [language, setLanguage] = useState("");
 
   const monaco = useMonaco();
-  // 내가 사용할 모나코 인스턴스를 생성한다.
+  // 내가 사용할 모나코 인스턴스를 생성
 
   useEffect(() => {
     if (!monaco) return; // Monaco 인스턴스가 로드되지 않았으면 바로 종료

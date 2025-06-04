@@ -23,6 +23,10 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { setCategory } from "../../store/userSlice";
 
+//입력창 코드 테마 가져오기 
+import Editor, { useMonaco } from "@monaco-editor/react";
+import tomorrowNightTheme from 'monaco-themes/themes/Tomorrow-Night.json';
+
 
 //상세 게시글 보드
 const DetailBoard = () => {
@@ -52,6 +56,9 @@ const DetailBoard = () => {
   console.log("category(DetailBoard: useState): " + category);
 
   const [commentCount, setCommentCount] = useState(0);
+  //전처리 된 코드 
+  const [cleanedCode, setCleanedCode] = useState('');
+  const [language, setLanguage] = useState('');
 
   const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -59,6 +66,9 @@ const DetailBoard = () => {
   //textarea 높이 자동화
   const textareaRef = useRef(null);
   const scrollRef = useRef(null);
+
+  // 내가 사용할 모나코 인스턴스를 생성
+  const monaco = useMonaco();    
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -78,6 +88,41 @@ const DetailBoard = () => {
   };
 
   useEffect(() => {
+    if (!monaco) return; // Monaco 인스턴스가 로드되지 않았으면 바로 종료
+
+    //tomorrowNightTheme 테마와 색 복사하여 가져오고 
+    //포커스 시 나타나는 테두리(파랑)만 투명으로 
+    const customTheme = {
+      ...tomorrowNightTheme,
+      colors: {
+        ...tomorrowNightTheme.colors,
+        'focusBorder': '#00000000',
+        'editor.background': '#1e1e1e',
+      },
+    };
+
+    //커스텀 테마 오브젝트 완성 후 이름 등록 
+    monaco.editor.defineTheme('custom-theme', customTheme);
+    monaco.editor.setTheme('custom-theme');
+  }, [monaco]);
+
+  //code 전처리 함수 
+  const stripCodeBlock = (codeBlock) => {
+    console.log(codeBlock);
+    // 언어 추출
+    const languageMatch = codeBlock.match(/^```(\w+)/);
+    const programLanguage = languageMatch ? languageMatch[1] : null;
+
+    setLanguage(programLanguage);
+
+    // 코드 추출: 시작 ```언어 와 끝 ``` 제거
+    return codeBlock
+      .replace(/^```[\w-]*\s*/, '')  // 앞쪽: ``` + 언어명 + 공백 제거
+      .replace(/\s*```$/, '');       // 뒤쪽: ``` 제거
+  }
+
+  useEffect(() => {
+    //자동 스크롤
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = "auto"; // 높이 초기화
@@ -122,7 +167,13 @@ const DetailBoard = () => {
       setContent(board.content);
       setCode(board.code); 
     }
+
+    //code 전처리 
+    const cleaned = stripCodeBlock(code);
+    setCleanedCode(cleaned);
+    console.log("cleaned language: " + language);
   }, [isEdit, board]);
+
 
   if (!board) return <div>로딩 중...</div>;
 
@@ -154,8 +205,8 @@ const DetailBoard = () => {
 
   //수정 저장 버튼
   const saveBoard = (boardId) => {
-    console.log("------------: " + boardId);
-    ApiClient.updateBoard(boardId, category, title, content, code, updateAt)
+    const finalCode = ["```" + language, cleanedCode, "```"].join("\n");
+    ApiClient.updateBoard(boardId, category, title, content, finalCode, updateAt)
     .then(async(res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -284,12 +335,21 @@ const DetailBoard = () => {
                   </div>
 
                   {category === "code"
-                    ? <textarea
-                      ref={textareaRef}
-                      className={scrollStyle + editContent}
-                      placeholder="코드나 에러사항을 입력해주세요"
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
+                    ? 
+                    <Editor
+                      height="200px"
+                      defaultLanguage="markdown"
+                      language={language}
+                      value={cleanedCode}
+                      onChange={(value) => setCleanedCode(value)}
+                      theme='custom-theme'
+                      options={{
+                        minimap: { enabled: false },            // 🔹 오른쪽 미니맵 제거
+                        fontSize: 14,
+                        scrollBeyondLastLine: false,            // 스크롤 밑 여백 제거
+                        placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
+                      }}
+                      className="my-custom-class p-1"  //스크롤바 설정 가져옴
                     />
                     : null}                  
 
