@@ -9,6 +9,10 @@ import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle } from '../../style/CommonStyle';
 import { addBoardButton, addTitle, addContent, addCode } from '../../style/AddBoardStyle';
 
+import Editor, { useMonaco } from "@monaco-editor/react";
+import * as monaco from 'monaco-editor';
+import tomorrowNight from 'monaco-themes/themes/Tomorrow-Night.json';
+
 const AddBoard = () => {
   const role = useSelector((state) => state.user.role);
 
@@ -29,6 +33,17 @@ const AddBoard = () => {
 
   //언어 선택 박스
   const [language, setLanguage] = useState("");
+
+  const monaco = useMonaco();
+  // 내가 사용할 모나코 인스턴스를 생성한다.
+
+  useEffect(() => {
+    if (!monaco) return;
+
+    monaco.editor.defineTheme('Tomorrow-Night', tomorrowNight);
+    monaco.editor.setTheme('Tomorrow-Night');
+  }, [monaco]);
+
 
   const renderLanguageSelectBox = () => {
     const languages = [
@@ -177,13 +192,20 @@ const AddBoard = () => {
                     {isOpen && (
                       <div className='h-full'>
                         {renderLanguageSelectBox()}
-                      
-                        <textarea
-                          rows={7}
+                        <Editor
+                          height="200px"
+                          defaultLanguage="markdown"
                           value={code}
-                          onChange={(e) => setCode(e.target.value)}
-                          placeholder="작성할 코드/에러를 적어 주세요"
-                          className={addCode}
+                          onChange={(value) => setCode(value)}
+                          theme="Tomorrow-Night" 
+                          options={{
+                            minimap: { enabled: false },            // 🔹 오른쪽 미니맵 제거
+                            fontSize: 14,
+                            wordWrap: 'on',
+                            scrollBeyondLastLine: false,
+                            placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
+                          }}
+                          className="my-custom-class p-1"
                         />
                       </div>
                     )}
