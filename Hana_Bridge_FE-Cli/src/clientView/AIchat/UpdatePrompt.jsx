@@ -122,8 +122,8 @@ const UpdatePrompt = ({onClose}) => {
       </div>
       {targetPrompt.promptId !== '' && (
         <>
-          <p className='font-semibold mb-1'>내 프롬포트 이름</p>
-          <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 파이썬 전용 도우미</p>
+          <p className='font-semibold mb-0'>내 프롬포트 이름</p>
+          <p className="mb-0 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 파이썬 전용 도우미</p>
           <input
             readOnly={!isEdit}
             className={`w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50 ${!isEdit ? 'opacity-80' : ''}`}
@@ -132,8 +132,8 @@ const UpdatePrompt = ({onClose}) => {
             onChange={(e) => setTempPrompt({ ...tempPrompt, name: e.target.value })}
           />
           
-          <p className='font-semibold mb-1'>AI의 역할</p>
-          <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 너는 친절한 프로그래밍 도우미야.</p>
+          <p className='font-semibold mb-0'>AI의 역할</p>
+          <p className="mb-0 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 너는 친절한 프로그래밍 도우미야.</p>
           <textarea
             readOnly={!isEdit}
             className={`w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50  ${!isEdit ? 'opacity-80' : ''}`}
@@ -143,8 +143,8 @@ const UpdatePrompt = ({onClose}) => {
           />
           
 
-          <p className='font-semibold mb-1'>AI의 답변 형식</p>
-          <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 요약해서 설명해줘.</p>
+          <p className='font-semibold mb-0'>AI의 답변 형식</p>
+          <p className="mb-0 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 요약해서 설명해줘.</p>
           <textarea
             readOnly={!isEdit}
             className={`w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50  ${!isEdit ? 'opacity-80' : ''}`}
@@ -154,8 +154,8 @@ const UpdatePrompt = ({onClose}) => {
           />
           
 
-          <p className='font-semibold mb-1'>AI의 답변 수준</p>
-            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 전문가라고 생각하고 설명해줘. </p>   
+          <p className='font-semibold mb-0'>AI의 답변 수준</p>
+            <p className="mb-0 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 전문가라고 생각하고 설명해줘. </p>   
           <textarea
             readOnly={!isEdit}
             className={`w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50  ${!isEdit ? 'opacity-80' : ''}`}
@@ -164,11 +164,11 @@ const UpdatePrompt = ({onClose}) => {
             onChange={(e) => setTempPrompt({ ...tempPrompt, level: e.target.value })}
           />   
 
-          <p className='font-semibold mb-1'>추가 설정</p>
-            <p className="mb-1 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 마크다운 형식으로 줘. 친근한 친구같은 반말로 해줘 </p>   
+          <p className='font-semibold mb-0'>추가 설정</p>
+            <p className="mb-0 text-sm"><span className="text-orange-500 font-semibold">예시: </span> 마크다운 형식으로 줘. 친근한 친구같은 반말로 해줘 </p>   
           <textarea
             readOnly={!isEdit}
-            className={`w-full mb-3 p-2 rounded bg-transparent border border-white/30 placeholder-white/50  ${!isEdit ? 'opacity-80' : ''}`}
+            className={`w-full mb-2 p-2 rounded bg-transparent border border-white/30 placeholder-white/50  ${!isEdit ? 'opacity-80' : ''}`}
             placeholder="AI의 답변 수준을 정해주세요."
             value={tempPrompt.option}
             onChange={(e) => setTempPrompt({ ...tempPrompt, option: e.target.value })}

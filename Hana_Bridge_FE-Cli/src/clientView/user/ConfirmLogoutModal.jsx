@@ -7,7 +7,7 @@ const ConfirmLogoutModal = ({ onConfirm, onCancel }) => {
       <div className="absolute inset-0 bg-gray-900 bg-opacity-30"></div>
 
       {/* 모달 콘텐츠 */}
-      <div className="relative bg-white shadow-xl rounded-lg border border-gray-200 w-full max-w-sm p-6 animate-fade-in text-center z-10">
+      <div className="relative bg-white shadow-xl rounded-lg border border-gray-200 w-full max-w-sm p-6 animate-fade-in text-center z-10 max-md:mx-3">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">로그아웃 하시겠습니까?</h3>
         <div className="flex justify-center space-x-4">
           <button
