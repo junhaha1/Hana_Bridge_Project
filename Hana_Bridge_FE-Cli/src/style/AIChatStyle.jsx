@@ -1,11 +1,11 @@
 //최상단 프레임
-export const aiChatFrame = "w-full h-full flex flex-col bg-zinc-800 md:rounded-2xl overflow-hidden relative";
+export const aiChatFrame = "w-full h-full flex flex-col bg-zinc-800 overflow-hidden relative";
 //상단 메뉴바 
-export const topNavi = 'flex justify-between bg-white/15 backdrop-blur-sm';
+export const topNavi = 'flex justify-between bg-white/15';
 //상단 대화창
-export const chatBox = " h-full bg-white/10 p-4  shadow-md ";
+export const chatBox = " h-full bg-white/10 p-4";
 //초보자 전문자 버튼
-export const promptButton = "w-1/2 bg-white/10 p-2 backdrop-blur-sm border rounded border-white/20 shadow cursor-pointer hover:bg-white/30";
+export const promptButton = "w-1/2 bg-white/10 p-2 border rounded border-white/20 shadow cursor-pointer hover:bg-white/30";
 //AI 메시지 박스
 export const aiBox = 'bg-white/20 text-white rounded-tl-2xl rounded-tr-2xl rounded-br-2xl';
 //User 메시지 박스 
@@ -13,7 +13,7 @@ export const userBox = 'bg-[#322776] text-white rounded-tl-2xl rounded-tr-2xl ro
 //로딩창 
 export const loding = "loader w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin";
 //하단 입력창
-export const inputBox = "w-full mx-auto bg-white/10 backdrop-blur-md md:rounded-bl-2xl md:p-5 mt-3 max-md:p-4";
+export const inputBox = "w-full mx-auto bg-white/10 border-t-2 border-white/10 md:p-5 max-md:p-4";
 //입력창 textarea
 export const inputTextarea = "w-full resize-none bg-transparent text-white placeholder-gray-400 focus:outline-none border-r-2 border-white/20";
 //입력창 보내기 버튼 
