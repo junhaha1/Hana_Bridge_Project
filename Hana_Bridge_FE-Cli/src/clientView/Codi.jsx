@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { setShouldAutoOpenHelper } from '../store/userSlice';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 
 import Lottie from "lottie-react";
 import CodeBot from '../animations/codebot.json';
@@ -108,18 +109,41 @@ const CodeHelper = () => {
           </div>
       </div>
     )}
-   {subTalking &&(
-      <div className="fixed bottom-0 right-0 w-[500px] h-[700px] rounded-2xl md:p-1 z-[9000] max-md:w-full max-md:h-full">
-        <AIChat onClose={setSubTalking} onfullTalk={setFullTalking} onMode={"sub"} setLevel={setPromptLevel} level={promptLevel}/>
-      </div>
-   )}
-   {fullTalking &&(
-      <div className="fixed top-0 left-0 flex justify-center w-screen h-screen backdrop-blur-sm rounded-2xl z-[9000]">
-        <div className='h-full w-2/3 py-4'>
-          <AIChat onClose={setSubTalking} onfullTalk={setFullTalking} onMode={"full"} setLevel={setPromptLevel} level={promptLevel}/>
-        </div>
-      </div>
-   )}
+    <LayoutGroup>
+      <AnimatePresence mode="wait">
+        {subTalking && !fullTalking && (
+          <motion.div
+            key="sub"
+            layoutId="chatBox"
+            className="fixed bottom-0 right-0 w-[500px] h-[700px] z-[9000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
+          >
+            <AIChat
+              onClose={setSubTalking}
+              onfullTalk={setFullTalking}
+              onMode={"sub"}
+              setLevel={setPromptLevel}
+              level={promptLevel}
+            />
+          </motion.div>
+        )}
+
+        {fullTalking && (
+          <motion.div
+            key="full"
+            layoutId="chatBox"
+            className="fixed bottom-0 right-0 w-1/2 h-screen z-[9000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
+          >
+            <AIChat
+              onClose={setSubTalking}
+              onfullTalk={setFullTalking}
+              onMode={"full"}
+              setLevel={setPromptLevel}
+              level={promptLevel}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </LayoutGroup>
     </>
   );
 };

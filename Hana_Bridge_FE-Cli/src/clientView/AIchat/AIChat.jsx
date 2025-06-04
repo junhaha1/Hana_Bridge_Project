@@ -9,7 +9,7 @@ import { setAiChat, clearAiChat} from '../../store/userSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
 import { RiSendPlaneFill } from "react-icons/ri";
-import { AiOutlineFullscreen, AiOutlineFullscreenExit  } from "react-icons/ai";
+import { AiFillRobot, AiOutlineFullscreen, AiOutlineFullscreenExit } from "react-icons/ai";
 import { IoCopyOutline, IoSettingsSharp } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
 import { FaLightbulb } from "react-icons/fa";
@@ -508,10 +508,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           <React.Fragment key={idx}>
             {/* 대화창 박스*/}
             <div
-              className={`flex ${msg.role === '답변' ? 'justify-start' : 'justify-end'} my-2`}
+              className={`flex gap-1 ${msg.role === '답변' ? 'justify-start items-end' : 'justify-end'} my-2`}
             > 
+              {msg.role === '답변' && (
+                <AiFillRobot className='w-7 h-7 text-white'/>
+              )}
               <div
-                className={`max-w-[80%] p-3 text-sm whitespace-pre-wrap ${
+                className={`max-w-[80%] p-3 mb-3 text-sm whitespace-pre-wrap ${
                   msg.role === '답변'
                     ? aiBox
                     : userBox
