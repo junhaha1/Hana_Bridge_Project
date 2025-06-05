@@ -60,6 +60,7 @@ const DetailBoard = () => {
   const [cleanedCode, setCleanedCode] = useState('');
   const [language, setLanguage] = useState('');
 
+  //수정 삭제 확인 모달
   const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
@@ -476,22 +477,26 @@ const DetailBoard = () => {
                     :null}                      
                   </div>
 
-                  {(nickName === board.nickName || role === "admin") && (
-                    <div className="flex gap-3">
+                  <div className="flex gap-3">
+                  {(nickName === board.nickName) && (                    
                       <button
                         onClick={() => setIsEdit(true)}
                         className="text-sm text-white hover:underline"
                       >
                         수정하기
-                      </button>
-                      <button
-                        onClick={() => setConfirmDeleteOpen(true)}
-                        className="text-sm text-red-400 hover:underline"
-                      >
-                        삭제하기
-                      </button>
-                    </div>
+                      </button>                    
                   )}
+                   {(nickName === board.nickName || role === "ROLE_ADMIN")&&(
+                    <button
+                      onClick={() => setConfirmDeleteOpen(true)}
+                      className="text-sm text-red-400 hover:underline"
+                    >
+                      삭제하기
+                    </button>
+                  )}
+                  </div>
+
+                 
                 </div>
               </div>
             )}  

@@ -20,8 +20,8 @@ export const cardBottomLayout = "flex justify-between gap-4";
 export const cardTitle = "text-white text-lg font-semibold line-clamp-1";
 export const cardContent = "text-sm text-gray-200 line-clamp-1";
 export const cardAuthor = "flex text-purple-300 gap-1";
-export const cardGood = "text-indigo-300 flex items-center gap-1";
-export const cardComment = "text-gray-300 flex items-center gap-1";
+export const cardGood = "text-indigo-300 flex gap-1";
+export const cardComment = "text-gray-300 flex gap-1";
 
 /* 위로가기 버튼 */
 export const upBottom = "fixed bottom-5 right-2 p-3 rounded-full text-white hover:bg-zinc-700 rounded-full shadow-md z-[8000]";

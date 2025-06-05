@@ -230,12 +230,10 @@ const CodeBoard = () => {
             <div className= {cardBottomLayout}>
               <div className={userDate}>
                 <span className={cardAuthor}>
-                  <FaUser
-                  className="mt-1"
-                  />
+                  <FaUser/>
                   {post.nickName}
                 </span>
-                <span className='hidden md:inline text-xs text-gray-300 mt-0.5'>
+                <span className='hidden md:inline text-xs text-gray-300 mt-1'>
                   {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                 </span>
               </div>

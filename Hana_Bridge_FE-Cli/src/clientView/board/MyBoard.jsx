@@ -16,12 +16,12 @@ const MyBoard = () => {
   const [boards, setBoards] = useState([]);
   const navigate = useNavigate();
 
-  //토글에 따라 읽어오는 게시글 변경
-  const [toggle, setToggle] = useState("code");
-
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
+
+  //토글에 따라 읽어오는 게시글 변경
+  const [toggle, setToggle] = useState("code");
 
   const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState("latest");
