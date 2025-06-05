@@ -144,7 +144,7 @@ const NoticeBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle +" h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+    <div ref={scrollRef} className={scrollStyle +" max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
       <div className="flex justify-between p-1 mb-5 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 mb-2 max-md:w-full">
@@ -181,7 +181,7 @@ const NoticeBoard = () => {
           로딩중
         </div>
       ): boards === null ? (
-        <div className={emptyDiv}>
+        <div className={`${emptyDiv} mt-4`}>
           {fixedWord.trim().length > 0 ? (
             <>
               <h3 className="text-2xl font-bold mb-2">'{fixedWord}'에 대한 검색 결과가 없습니다.</h3>

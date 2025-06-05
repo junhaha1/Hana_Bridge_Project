@@ -143,7 +143,7 @@ const DetailAssemble = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={scrollStyle + " h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             <button
               onClick={() => navigate("/board/assemble")}
               className={buttonStyle + backButton}
@@ -180,7 +180,7 @@ const DetailAssemble = () => {
                           style={prism}
                           language={match[1]}
                           PreTag="div"
-                          className="rounded-md overflow-x-auto"
+                          className="rounded overflow-x-auto"
                         >
                           {String(children).replace(/\n$/, '')}
                         </SyntaxHighlighter>
