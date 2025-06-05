@@ -134,7 +134,7 @@ const AddBoard = () => {
       <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         <main className={detailFrame}>
-          <div className={scrollStyle + " md:h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
             <p className='text-white/80'>코드 질문 게시판</p>

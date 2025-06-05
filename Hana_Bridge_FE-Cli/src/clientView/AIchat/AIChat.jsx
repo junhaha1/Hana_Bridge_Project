@@ -514,7 +514,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 <AiFillRobot className='w-7 h-7 text-white'/>
               )}
               <div
-                className={`max-w-[80%] p-3 mb-3 text-sm whitespace-pre-wrap ${
+                className={`max-w-[80%] p-3 mb-3 max-md:text-sm md:text-base whitespace-pre-wrap ${
                   msg.role === '답변'
                     ? aiBox
                     : userBox
@@ -571,7 +571,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                       게시글이 등록 되었습니다.
                     </div>
                   ) : (
-                    <button
+                  <button
                   className={answerChooseButton}
                   onClick={() => openPostModal(msg.content)}
                   >

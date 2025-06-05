@@ -146,7 +146,7 @@ const AssembleBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+    <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>AI 답변 게시판</h3>
         <div className={searchBox}>

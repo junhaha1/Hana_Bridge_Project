@@ -159,6 +159,8 @@ const Comments = (props) => {
                   </button>
                 </div>
               </div>
+              {/* 구분선 */}
+              <div className={whiteLine} />
               </>
             ) : (
               <>
