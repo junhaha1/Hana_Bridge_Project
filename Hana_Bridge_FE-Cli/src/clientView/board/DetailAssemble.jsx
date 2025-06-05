@@ -180,7 +180,7 @@ const DetailAssemble = () => {
                           style={prism}
                           language={match[1]}
                           PreTag="div"
-                          className="rounded-md overflow-x-auto"
+                          className="rounded overflow-x-auto"
                         >
                           {String(children).replace(/\n$/, '')}
                         </SyntaxHighlighter>

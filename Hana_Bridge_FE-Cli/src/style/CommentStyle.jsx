@@ -18,5 +18,5 @@ export const whiteLine = "border-t border-white/40 my-3 max-md:my-4";
 export const writeCommentButton = "px-4 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded";
 
 //댓글 추가
-export const commentInput = "custom-scroll w-full resize-none p-3 pr-10 bg-transparent text-white placeholder-white/60 rounded-md border border-white/30";
+export const commentInput = "custom-scroll w-full resize-none p-3 pr-10 bg-transparent text-white placeholder-white/60 rounded border border-white/30";
 

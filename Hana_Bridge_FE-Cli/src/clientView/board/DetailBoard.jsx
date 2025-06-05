@@ -426,7 +426,7 @@ const DetailBoard = () => {
                               style={prism}
                               language={match[1]}
                               PreTag="div"
-                              className="rounded-md overflow-x-auto max-w-[100%]"
+                              className="rounded overflow-x-auto max-w-[100%]"
                             >
                               {String(children).replace(/\n$/, '')}
                             </SyntaxHighlighter>

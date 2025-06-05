@@ -180,7 +180,7 @@ const Comments = (props) => {
 
                   {(nickName === comment.nickName || role === "admin") && (
                     <>
-                    <div className='px-2 flex flex-row'>
+                    <div className='px-2 flex flex-row md:gap-1'>
                       <button
                         className={editButton}
                         onClick={() => handleEditComment(comment.commentId, comment.content)}
