@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
 import AddComment from './AddComment';
+import ConfirmCommentModal from './ConfirmCommentModal';
 
 import { userDate } from "../../style/CommonDetail";
 import { editComment, saveCancel, saveButton, cancelButton, editButton, deleteButton, whiteLine, writeCommentButton } from '../../style/CommentStyle';
@@ -24,6 +25,12 @@ const Comments = (props) => {
 
   //댓글 자동 스크롤
   const commentRef = useRef(null);
+
+  //수정 삭제 확인 모달
+  const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [targetDeleteCommentId, setTargetDeleteCommentId] = useState(null);
+  const [targetUpdateCommentId, setTargetUpdateCommentId] = useState(null);
 
   useEffect(() => {
     loadComments();
@@ -136,7 +143,10 @@ const Comments = (props) => {
                 <div className={saveCancel}>
                   <button
                     className={saveButton}
-                    onClick={() => handleUpdateComment(comment.commentId)}
+                    onClick={() => {
+                      setTargetUpdateCommentId(comment.commentId);
+                      setConfirmUpdateOpen(true);
+                    }}
                   >
                     저장
                   </button>
@@ -175,7 +185,10 @@ const Comments = (props) => {
                       </button>
                       <button
                         className={deleteButton}
-                        onClick={() => handleDeleteComment(comment.commentId)}
+                        onClick={() => {
+                          setTargetDeleteCommentId(comment.commentId);
+                          setConfirmDeleteOpen(true);
+                        }}
                       >
                         삭제
                       </button>
@@ -183,11 +196,6 @@ const Comments = (props) => {
                     </>
                   )}
                 </div>
-                
-                {/* <div className="text-sm text-white/60 mb-2">
-                   · 👍 {comment.likes} ·{" "}
-                  <button className="hover:underline">신고</button>
-                </div> */}
                 
                 {/* 구분선 */}
                 <div className={whiteLine} />
@@ -219,6 +227,29 @@ const Comments = (props) => {
           </button>
         )}        
       </div>
+
+      {/* 수정 확인 모달 */}
+      {confirmUpdateOpen && (
+        <ConfirmCommentModal
+          onConfirm={() => {
+            handleUpdateComment(targetUpdateCommentId);
+            setConfirmUpdateOpen(false);
+          }}
+          onCancel={() => setConfirmUpdateOpen(false)}
+          onMode={"update"}
+        />
+      )}
+      {/* 삭제 확인 모달 */}
+      {confirmDeleteOpen && (
+        <ConfirmCommentModal
+          onConfirm={() => {
+            handleDeleteComment(targetDeleteCommentId);
+            setConfirmDeleteOpen(false);
+          }}
+          onCancel={() => setConfirmDeleteOpen(false)}
+          onMode={"delete"}
+        />
+      )}      
     </div>
   );
 
