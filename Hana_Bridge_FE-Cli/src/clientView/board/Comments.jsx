@@ -122,14 +122,15 @@ const Comments = (props) => {
           <div className="text-left text-white">
             {editCommentId === comment.commentId ? (
               <>
-                <div className={userDate + " font-semibold mb-2"}>
+              <div className='px-2'>
+                <div className={userDate + " font-semibold"}>
                   <span className='flex gap-1'>
                     <FaUser
                     className="mt-0.5"
                     />
                     {comment.nickName}
                   </span>
-                  <span className='text-xs text-gray-300 mt-0.5'>
+                  <span className='text-xs text-gray-300 mt-1'>
                     {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>                  
                 </div>
@@ -157,20 +158,23 @@ const Comments = (props) => {
                     취소
                   </button>
                 </div>
+              </div>
               </>
             ) : (
               <>
-                <div className={userDate + " font-semibold mb-2"}>
+              <div className='px-2'>
+                <div className={userDate + " font-semibold"}>
                   <span className='flex gap-1'>
                     <FaUser
                     className="mt-0.5"
                     />
                     {comment.nickName}
                   </span>
-                  <span className='text-xs text-gray-300 mt-0.5'>
+                  <span className='text-xs text-gray-300 mt-1'>
                     {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>                  
                 </div>
+
                 <div className='flex justify-between '>
                   <p className="mb-1">{comment.content}</p>
 
@@ -196,9 +200,10 @@ const Comments = (props) => {
                     </>
                   )}
                 </div>
-                
-                {/* 구분선 */}
-                <div className={whiteLine} />
+              </div>
+
+              {/* 구분선 */}
+              <div className={whiteLine} />
               </>
             )}
           </div>

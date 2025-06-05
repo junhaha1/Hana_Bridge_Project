@@ -18,4 +18,4 @@ export const detailTitle = "text-2xl font-bold text-white";
 //Code, Content
 export const detailContent = "text-left whitespace-pre-wrap";
 //이전 버튼 
-export const backButton = " px-4 py-1 bg-white/95 font-semibold md:mt-12 text-indigo-900 hover:!bg-[#C5BCFF] hover:text-black text-sm mb-2";
+export const backButton = " px-4 py-1 bg-white/95 font-semibold md:mt-12 text-indigo-900 hover:!bg-[#C5BCFF] hover:text-black text-sm mb-3";
