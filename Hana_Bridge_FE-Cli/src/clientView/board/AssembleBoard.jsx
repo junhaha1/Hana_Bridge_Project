@@ -174,7 +174,7 @@ const AssembleBoard = () => {
           로딩 중
         </div>
       ) : boards === null ? (
-        <div className={emptyDiv}>
+        <div className={`${emptyDiv} mt-4`}>
           {fixedWord.trim().length > 0 ? (
             <>
               <h3 className="text-2xl font-bold mb-2">'{fixedWord}'에 대한 검색 결과가 없습니다.</h3>
