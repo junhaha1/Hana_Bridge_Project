@@ -228,16 +228,10 @@ const AssembleBoard = () => {
                     {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>
                 </div>
-                <div className="flex gap-4">
-                  <span className= {cardGood}>
-                    <BiLike className="size-5 "/>
-                    {post.likeCount}
-                  </span>
-                  <span className= {cardComment}>
-                    <FaRegComment className="size-5" />
-                    {post.commentCount}
-                  </span>
-                </div>
+                <span className= {cardGood}>
+                  <BiLike className="size-5 "/>
+                  {post.likeCount}
+                </span>
               </div>
             </div>
           ))}
