@@ -19,8 +19,7 @@ const ConfirmAssembleModal = ({ onConfirm, onCancel, onMode }) => {
         <div className="flex justify-center space-x-4">
           <button
             onClick={onConfirm}
-            className={`text-white px-4 py-2 rounded transition 
-              ${onMode === 'cancel' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-500  hover:bg-red-600'}`}            
+            className={`text-white px-4 py-2 rounded transition bg-red-500  hover:bg-red-600`}            
           >
             확인
           </button>

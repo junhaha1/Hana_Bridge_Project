@@ -62,7 +62,6 @@ const AddAssemble = () => {
         setContent(data.content);     
         setNickName(data.nickName); 
         setLikeCount(data.likeCount);
-        setIsLike(data.goodCheck);
       })
       .catch((err) => {
         console.error("API 요청 실패:", err);
@@ -102,7 +101,7 @@ const AddAssemble = () => {
             <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
               <div className="flex flex-row items-center gap-2 w-1/2 md:mt-12 mb-3">
                 <button
-                  onClick={() => navigate("/board/assemble")}
+                  onClick={() => setConfirmBackOpen(true)}
                   className={buttonStyle + ' bg-white/95 font-semibold text-indigo-900 hover:!bg-[#C5BCFF] hover:text-black text-sm px-4 !py-1'}
                 >
                   이전
@@ -173,7 +172,7 @@ const AddAssemble = () => {
                     </button>
                     <button 
                       className={buttonStyle +" text-red-400 text-sm hover:underline"} 
-                      onClick={() => setConfirmDeleteOpen(true)}>
+                      onClick={() => setConfirmCancelOpen(true)}>
                       취소하기 
                     </button>
                   </div>
@@ -195,8 +194,9 @@ const AddAssemble = () => {
           onConfirm={() => {
             boardDeleteButton(assembleBoardId);
             setConfirmCancelOpen(false);
+            navigate("/board/assemble");
           }}
-          onCancel={() => setConfirmBackOpen(false)}
+          onCancel={() => setConfirmCancelOpen(false)}
           onMode={"cancel"}
         />
       )}
