@@ -127,7 +127,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
 
   const continueMessage = async (content) => {
     console.log(content);
-    const res = await ApiClient.streamMessage(promptLevel, content, "앞 문장과 자연스럽게 이어지도록 띄어쓰기, 줄바꿈을 추가하여 계속 답변 생성\n마크다운 형식 유지\n반복된 내용을 제외\n", userPrompt);
+    const res = await ApiClient.streamMessage(promptLevel, content, "앞 문장과 자연스럽게 이어지도록 띄어쓰기, 줄바꿈을 추가하여 계속 답변 생성\n마크다운 형식 유지\n앞에 나온 내용과 중복된 내용이 없도록 답변 이어가.\n", userPrompt);
 
     /*스트림 연결 후에 실행 흐름 -> 로딩 종료, 답변 출력*/
     const reader = res.body.getReader();
