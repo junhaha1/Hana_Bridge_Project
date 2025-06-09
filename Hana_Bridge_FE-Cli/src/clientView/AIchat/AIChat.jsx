@@ -174,8 +174,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         if (line.startsWith("data:")){
           const raw = line.replace("data: ", "").trim();
 
-          if (raw === "[DONE]"){
+          /*답변 종료에 대한 분기 코드 */
+          if (raw === "stop"){
             setIsAnswering(false);
+            console.log(raw);
+            return;
+          } else if (raw === "length") {
+            setIsAnswering(false);
+            console.log(raw);
             return;
           }
 
