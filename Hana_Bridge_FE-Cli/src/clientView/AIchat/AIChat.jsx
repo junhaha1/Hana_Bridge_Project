@@ -18,6 +18,8 @@ import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
 import { clearUserPrompt, setUserPrompt, setUserPromptList } from '../../store/aiChatSlice';
 import SettingModal from './SettingModal';
+import { useNavigate } from "react-router-dom";
+
 
 
 function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
@@ -28,6 +30,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   //채팅의 마지막을 가르킴
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
+
+  const navigate = useNavigate();
   
   //답변 복사
   const copyRef = useRef(null);
@@ -300,13 +304,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       return res.json();
     })
     .then((data) => {      
-      const assembleboardId  = data.assembleBoardId;
+      const assembleBoardId  = data.assembleBoardId;
       //dispatch(setPostLoading({postLoading: false}));
       setPostComplete(true);
       setIsPostLoading(false);      
       console.log("posting complete!");
       //dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
-      //navigate(`/detailAssemble/${assembleboardId}`);
+      console.log(assembleBoardId);
+      navigate(`/writeAssemble/${assembleBoardId}`);
     })
     .catch((err) => console.error("API 요청 실패:", err));
   };
