@@ -515,7 +515,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           <React.Fragment key={idx}>
             {/* 대화창 박스*/}
             <div
-              className={`flex gap-1 ${msg.role === '답변' ? 'justify-start items-end' : 'justify-end'} my-2`}
+              className={`flex gap-1 ${msg.role === '답변' ? 'justify-start items-end' : 'justify-end'} mt-2`}
             > 
               {msg.role === '답변' && (
                 <AiFillRobot className='w-7 h-7 text-white'/>
@@ -557,7 +557,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             
             {/*답변 채택 버튼 박스 */}
             {msg.role === '답변' && msg.content !== `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` &&(
-              <div className="flex justify-start gap-2">
+              <div className="flex justify-start gap-2 ml-8">
                 {/*답변 채택 버튼 */}
                 
                 <button

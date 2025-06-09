@@ -26,7 +26,7 @@ export const sipnning = "border-t-transparent rounded-full animate-spin";
 //게시글 등록 완료 div
 export const postCompleteDiv = 'text-black text-sm font-semibold bg-lime-400 px-3 py-1 rounded';
 //답변 채택 버튼 
-export const answerChooseButton = "text-sm bg-gray-800 text-white px-4 py-2 rounded";
+export const answerChooseButton = "text-sm bg-gray-800 text-white px-3 py-1 rounded";
 
 //모달창 
 // - 최상단 div
