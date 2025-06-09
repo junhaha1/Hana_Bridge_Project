@@ -52,9 +52,17 @@ public class PromptFactory {
     public PromptResult createSummaryPromptResult() {
         StringBuilder systemPrompt = new StringBuilder();
         systemPrompt.append("""
-                블로그 게시글 스타일로 요약해줘.
-                소제목, 자연스러운 문단 구성, 마크다운 포맷을 사용해서 작성해줘.
-                전체 요약 내용에 대한 제목은 작성하지마.
+                핵심 개념과 흐름을 반드시 프로그래밍 예제 코드와 함께 설명해줘.
+                
+                코드 없이 설명하는 부분이 없도록 해줘.
+
+                문서는 기술 문서 게시글 형식으로 구성하고,
+
+                소제목, 자연스러운 문단, 마크다운 문법을 사용해 정돈해줘.
+
+                문서 내에 오타(자연어 + 코드) 또는 잘못된 마크다운 문법이 있으면 수정해줘.
+
+                최종 결과에는 제목을 작성하지 마.
                 """);
 
         System.out.println(systemPrompt.toString());
