@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.auth0:java-jwt:4.4.0'
+	implementation 'com.google.guava:guava:33.0.0-jre'
 
 	// WebClient 기본 모듈 (Spring WebFlux)
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
