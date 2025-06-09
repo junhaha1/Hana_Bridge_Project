@@ -11,6 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ClientSummaryRequest {
     private int promptLevel;
-    private String totalContent;
     private String coreContent;
 }

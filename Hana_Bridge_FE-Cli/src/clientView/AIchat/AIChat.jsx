@@ -369,9 +369,11 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setIsPostLoading(true);
     //dispatch(setPostLoading({postLoading: true}));
     closePostModal();
-    const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
+    //const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
-    ApiClient.postAssemble(promptLevel, result, coreContent)
+    console.log(coreContent);
+    
+    ApiClient.postAssemble(promptLevel, coreContent)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();
@@ -385,7 +387,11 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       //dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
       //navigate(`/detailAssemble/${assembleboardId}`);
     })
-    .catch((err) => console.error("API 요청 실패:", err));
+    .catch((err) => {
+      setIsPostLoading(false);
+      alert("게시글 포스팅 실패");
+      console.error("API 요청 실패:", err)
+    });
   };
 
   //현재 대화창 초기화하기
