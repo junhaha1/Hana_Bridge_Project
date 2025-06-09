@@ -5,7 +5,7 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
-import ConfirmBoardModal from "./ConfirmBoardModal";
+import ConfirmAssembleModal from "./ConfirmAssembleModal";
 import MarkdownEditor from "./MarkdownEditor";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
@@ -14,6 +14,7 @@ import { upBottom } from "../../style/CommonBoardStyle";
 import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
 import { FaUser, FaArrowUp  } from 'react-icons/fa';
 import { BiLike, BiSolidLike } from "react-icons/bi";
+import { FaLightbulb } from "react-icons/fa";
 
 const AddAssemble = () => {
   const { assembleBoardId } = useParams();
@@ -25,8 +26,13 @@ const AddAssemble = () => {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [nickName, setNickName] = useState('guest');
   const [createAt, setCreateAt] = useState(new Date());
   const [likeCount, setLikeCount] = useState(0);
+
+  //취소, 이전 확인 모달
+  const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
+  const [confirmBackOpen, setConfirmBackOpen] = useState(false);
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -50,7 +56,8 @@ const AddAssemble = () => {
         console.log(data);
         setBoard(data);  
         setTitle(data.title);
-        setContent(data.content);      
+        setContent(data.content);     
+        setNickName(data.nickName); 
         setLikeCount(data.likeCount);
         setIsLike(data.goodCheck);
       })
@@ -62,85 +69,132 @@ const AddAssemble = () => {
       });
   }, [assembleBoardId]);
 
+  const boardDeleteButton = (assembleBoardId) => {
+    ApiClient.deleteAssembleBoard(assembleBoardId)
+    .then(async (res) => {
+      if (!res.ok) {
+        const errorData = await res.json();
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;
+      }
+      navigate("/board/notice");
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    });
+  };
+
   return (
     <div>
       <div className={mainFrame}>
-            <Header />
-            <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
-              <LeftHeader />
-              {/* 메인 콘텐츠 */}
-              <main className={detailFrame}>
-                <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-                  <button
-                    onClick={() => navigate("/board/assemble")}
-                    className={buttonStyle + backButton}
-                  >
-                    이전 나중에 수정(모달 추가)
-                  </button>
-      
-                  <div className={detailCardStyle}>
-                    <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
-      
-                    {/* <h2 className={detailTitle}>{board.title}</h2> */}
-                    <input
-                      type="text"
-                      className={editTitle}
-                      placeholder="제목을 입력해주세요"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <div className={userDate}>
-                      <span className='flex gap-1'>
-                        <FaUser
-                        className="mt-0.5"
-                        />
-                        {/* {board.nickName} */}
-                      </span>
-                      <span className='text-xs text-gray-300 mt-1'>
-                        {new Date(createAt).toISOString().slice(0, 16).replace('T', ' ')}
-                      </span>                  
-                    </div>
-                    <div className="border-t border-white/10 mb-3" />
-      
-                    <div className="text-white">
-                      <MarkdownEditor content={content} onChange={setContent} />
-                    </div>
-      
-                    {/* 좋아요, 댓글, 삭제 */}
-                    <div className={liekCommentButton}>
-                      <div className={liekComment + " text-white"}>
-                        <span
-                          className="relative cursor-pointer flex items-center gap-1"
-                          onClick={() => {}}
-                        >                    
-                          <BiLike className="size-5 "/>
-                          {likeCount}
-                        </span>
-                      </div>
-                      <div className="flex-row">
-                        <button 
-                          className={buttonStyle +" text-green-400 text-sm hover:underline mr-3"} 
-                          onClick={() => {}}>
-                          등록하기 
-                        </button>
-                        <button 
-                          className={buttonStyle +" text-red-400 text-sm hover:underline"} 
-                          onClick={() => setConfirmDeleteOpen(true)}>
-                          삭제하기
-                        </button>
-                      </div>
-                    </div>              
-                  </div>
-                </div>
+        <Header />
+        <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
+          <LeftHeader />
+          {/* 메인 콘텐츠 */}
+          <main className={detailFrame}>
+            <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+              <div className="flex flex-row gap-2 w-1/2">
                 <button
-                  onClick={scrollToTop}
-                  className={upBottom}
+                  onClick={() => navigate("/board/assemble")}
+                  className={buttonStyle + backButton}
                 >
-                  <FaArrowUp />
+                  이전
                 </button>
-              </main>
-            </div>           
-          </div>
+                <button className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+                  <FaLightbulb className="m-1" />
+                  Tip
+                </button>
+              </div>
+  
+              <div className={detailCardStyle}>
+                <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
+  
+                {/* <h2 className={detailTitle}>{board.title}</h2> */}
+                <input
+                  type="text"
+                  className={editTitle}
+                  placeholder="제목을 입력해주세요"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+                <div className={userDate}>
+                  <span className='flex gap-1'>
+                    <FaUser
+                    className="mt-0.5"
+                    />
+                    {nickName}
+                  </span>
+                  <span className='text-xs text-gray-300 mt-1'>
+                    {new Date(createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                  </span>                  
+                </div>
+                <div className="border-t border-white/10 mb-3" />
+  
+                <div className="text-white">
+                  <MarkdownEditor content={content} onChange={setContent} />
+                </div>
+  
+                {/* 좋아요, 댓글, 삭제 */}
+                <div className={liekCommentButton}>
+                  <div className={liekComment + " text-white"}>
+                    <span
+                      className="relative cursor-pointer flex items-center gap-1"
+                      onClick={() => {}}
+                    >                    
+                      <BiLike className="size-5 "/>
+                      {likeCount}
+                    </span>
+                  </div>
+                  <div className="flex-row">
+                    <button 
+                      className={buttonStyle +" text-green-400 text-sm hover:underline mr-3"} 
+                      onClick={() => {}}>
+                      등록하기 
+                    </button>
+                    <button 
+                      className={buttonStyle +" text-red-400 text-sm hover:underline"} 
+                      onClick={() => setConfirmDeleteOpen(true)}>
+                      취소하기 
+                    </button>
+                  </div>
+                </div>              
+              </div>
+            </div>
+            <button
+              onClick={scrollToTop}
+              className={upBottom}
+            >
+              <FaArrowUp />
+            </button>
+          </main>
+        </div>           
+      </div>
+      {/* 취소 확인 모달 */}
+      {confirmCancelOpen && (
+        <ConfirmAssembleModal
+          onConfirm={() => {
+            boardDeleteButton(assembleBoardId);
+            setConfirmCancelOpen(false);
+          }}
+          onCancel={() => setConfirmBackOpen(false)}
+          onMode={"cancel"}
+        />
+      )}
+      {/* 이전 확인 모달 */}
+      {confirmBackOpen && (
+        <ConfirmAssembleModal
+          onConfirm={() => {
+            boardDeleteButton(assembleBoardId);
+            setConfirmBackOpen(false);
+          }}
+          onCancel={() => setConfirmBackOpen(false)}
+          onMode={"back"}
+        />
+      )}
     </div>
   );
 };
