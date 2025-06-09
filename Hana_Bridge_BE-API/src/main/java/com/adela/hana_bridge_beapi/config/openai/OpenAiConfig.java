@@ -13,6 +13,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -29,9 +30,9 @@ public class OpenAiConfig {
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .doOnConnected(conn -> conn
                         //ChatGPT 응답 시간 10초 이내
-                        .addHandlerLast(new ReadTimeoutHandler(15000, TimeUnit.MILLISECONDS))
+                        .addHandlerLast(new ReadTimeoutHandler(30000, TimeUnit.MILLISECONDS))
                         //요청을 ChatGPT 서버로 보내는 시간 5초 이내
-                        .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
+                        .addHandlerLast(new WriteTimeoutHandler(10000, TimeUnit.MILLISECONDS)));
 
         return WebClient.builder()
                 .baseUrl("https://api.openai.com/v1")
