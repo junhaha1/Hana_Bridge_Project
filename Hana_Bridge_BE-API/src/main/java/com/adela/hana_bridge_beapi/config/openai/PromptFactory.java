@@ -49,13 +49,13 @@ public class PromptFactory {
         return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
     }
 
-    public PromptResult createSummaryPromptResult(int level, String question) {
+    public PromptResult createSummaryPromptResult() {
         StringBuilder systemPrompt = new StringBuilder();
-        //공용 프롬포트 설정
-        systemPrompt.append(promptProperties.getPromptCommon());
-        //레벨에 따른 프롬포트 설정
-        systemPrompt.append(promptProperties.getPrompts().getOrDefault(level, ""));
-        systemPrompt.append("현재 내용을 핵심내용 위주로 요약 정리하여 마크다운 형식으로 줘.");
+        systemPrompt.append("""
+                블로그 게시글 스타일로 요약해줘.
+                소제목, 자연스러운 문단 구성, 마크다운 포맷을 사용해서 작성해줘.
+                전체 요약 내용에 대한 제목은 작성하지마.
+                """);
 
         System.out.println(systemPrompt.toString());
         return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
@@ -63,8 +63,10 @@ public class PromptFactory {
 
     public PromptResult createTitlePromptResult(String question) {
         StringBuilder systemPrompt = new StringBuilder();
-        systemPrompt.append("현재 요약본을 내용으로 게시글 작성할건데 알맞은 제목을 알려줘." +
-                "혹시 마크 다운 사용할거면 앞에 제목: 이런건 없애줘.");
+        systemPrompt.append("""
+                현재 요약본을 내용으로 게시글용 제목 알려줘.
+                제목은 깔끔하고 한눈에 어떤 내용들이 담겨져 있는 글인지 나타나야 돼.
+                """);
 
         System.out.println(systemPrompt.toString());
         return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);

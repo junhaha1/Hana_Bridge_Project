@@ -229,24 +229,28 @@ public class OpenAiService {
     }
 
     public String summaryChatGPT(ClientSummaryRequest clientSummaryRequest) {
-        PromptResult promptResult = promptFactory.createSummaryPromptResult(clientSummaryRequest.getPromptLevel(), clientSummaryRequest.getCoreContent());
-        String total = "[total : " + clientSummaryRequest.getTotalContent() + "]";
-        String core = "[core : " + clientSummaryRequest.getCoreContent() + "]";
-        String content = total + core;
+        PromptResult promptResult = promptFactory.createSummaryPromptResult();
+
 
         List<ChatGPTRequest.Message> messages = new ArrayList<>();
-        messages.add(new ChatGPTRequest.Message("system", "[total]내용에서 [core]내용과 관련있는 내용들만 요약해줘. "+ promptResult.getPrompt()));
-        messages.add(new ChatGPTRequest.Message("user", content));
+        messages.add(new ChatGPTRequest.Message("system", promptResult.getPrompt()));
+        messages.add(new ChatGPTRequest.Message("user", clientSummaryRequest.getCoreContent()));
 
+        String summary = sendChatGPT(messages, promptResult);
+
+        return summary;
+    }
+
+    private String sendChatGPT(List<ChatGPTRequest.Message> messages, PromptResult promptResult) {
         StringBuilder fullAnswer = new StringBuilder();
         boolean isFinished = false;
 
-        while(!isFinished){
+        while (!isFinished) {
             ChatGPTRequest chatGPTRequest = new ChatGPTRequest(
                     model,
                     messages,
                     promptResult.getMaxTokens(),
-                    0.4,
+                    promptResult.getTemperature(),
                     false
             );
 
@@ -262,16 +266,15 @@ public class OpenAiService {
             System.out.println("GPT 응답 시간: " + elapsed + "ms");
 
             String answer = chatGPTResponse.getChoices().get(0).getMessage().getContent();
-            // "length", "stop", 등
             String finishReason = chatGPTResponse.getChoices().get(0).getFinishReason();
 
             fullAnswer.append(answer);
 
             if ("length".equals(finishReason)) {
-                // 응답이 잘린 경우 → assistant 응답을 messages에 다시 추가하여 연속 요청
                 messages.add(new ChatGPTRequest.Message("assistant", answer));
+                messages.add(new ChatGPTRequest.Message("system", "이어서 계속 요약"));
             } else {
-                isFinished = true; // 다 온 경우 반복 종료
+                isFinished = true;
             }
         }
 
@@ -299,7 +302,8 @@ public class OpenAiService {
                 .block();
 
         long elapsed = System.currentTimeMillis() - start;
-        System.out.println("GPT 응답 시간: " + elapsed + "ms");
+        System.out.println("게시글 제목 요약 GPT 응답 시간: " + elapsed + "ms");
+        System.out.println("제목  :" + chatGPTResponse.getChoices().get(0).getMessage().getContent());
 
         return chatGPTResponse.getChoices().get(0).getMessage().getContent();
     }
