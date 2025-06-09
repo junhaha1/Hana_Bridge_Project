@@ -16,12 +16,12 @@ const MyBoard = () => {
   const [boards, setBoards] = useState([]);
   const navigate = useNavigate();
 
-  //토글에 따라 읽어오는 게시글 변경
-  const [toggle, setToggle] = useState("code");
-
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
+
+  //토글에 따라 읽어오는 게시글 변경
+  const [toggle, setToggle] = useState("code");
 
   const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState("latest");
@@ -184,8 +184,8 @@ const MyBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-      <div className="flex justify-between p-1 md:mt-5 max-md:flex-col">
+    <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+      <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>내 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
           <div className={searchBox}>

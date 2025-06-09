@@ -20,21 +20,21 @@ export const inputTextarea = "w-full resize-none bg-transparent text-white place
 export const sendButton = "hover:opacity-80 hover:scale-105 transition duration-200 ease-in-out";
 
 //게시글 등록 중 div
-export const postingDiv = 'flex flex-row gap-2 justify-center items-center bg-[#C5BCFF] text-black text-sm font-semibold px-3 py-1 rounded-md';
+export const postingDiv = 'flex flex-row gap-2 justify-center items-center bg-[#C5BCFF] text-black text-sm font-semibold px-3 py-1 rounded';
 //로딩 
 export const sipnning = "border-t-transparent rounded-full animate-spin";
 //게시글 등록 완료 div
-export const postCompleteDiv = 'text-black text-sm font-semibold bg-lime-400 px-3 py-1 rounded-md';
+export const postCompleteDiv = 'text-black text-sm font-semibold bg-lime-400 px-3 py-1 rounded';
 //답변 채택 버튼 
-export const answerChooseButton = "text-sm bg-gray-800 text-white px-3 py-1 rounded-md";
+export const answerChooseButton = "text-sm bg-gray-800 text-white px-4 py-2 rounded";
 
 //모달창 
 // - 최상단 div
 export const upDiv = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
 // - 하위 div
-export const settingDiv = "md:h-2/3 max-md:h-full bg-white text-black md:rounded-md w-full max-w-md";
-export const downDiv = "bg-white text-black rounded-md p-6 w-full max-w-md max-md:mx-3";
+export const settingDiv = "md:h-2/3 max-md:h-full bg-white text-black md:rounded w-full max-w-md";
+export const downDiv = "bg-white text-black rounded p-6 w-full max-w-md max-md:mx-3";
 // - 확인 버튼
-export const okButton = "bg-indigo-600 text-white px-4 py-1 rounded";
+export const okButton = "bg-indigo-600 text-white px-4 py-2 rounded";
 // - 취소 버튼 
-export const cancelButton = "bg-gray-300 px-4 py-1 rounded";
+export const cancelButton = "bg-gray-300 px-4 py-2 rounded";

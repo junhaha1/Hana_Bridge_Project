@@ -146,8 +146,8 @@ const AssembleBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-      <div className="flex justify-between p-1 md:mt-5 max-md:flex-col">
+    <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+      <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>AI 답변 게시판</h3>
         <div className={searchBox}>
           <FaSearch className="m-1 size-[23px] max-md:size-[17px]"/>
@@ -174,7 +174,7 @@ const AssembleBoard = () => {
           로딩 중
         </div>
       ) : boards === null ? (
-        <div className={emptyDiv}>
+        <div className={`${emptyDiv} mt-4`}>
           {fixedWord.trim().length > 0 ? (
             <>
               <h3 className="text-2xl font-bold mb-2">'{fixedWord}'에 대한 검색 결과가 없습니다.</h3>
@@ -221,25 +221,17 @@ const AssembleBoard = () => {
               <div className= {cardBottomLayout}>
                 <div className={userDate}>
                   <span className={cardAuthor}>
-                    <FaUser
-                    className="mt-1"
-                    />
+                    <FaUser/>
                     {post.nickName}
                   </span>
-                  <span className='hidden md:inline text-xs text-gray-300 mt-0.5'>
+                  <span className='hidden md:inline text-xs text-gray-300 mt-1'>
                     {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>
                 </div>
-                <div className="flex gap-4">
-                  <span className= {cardGood}>
-                    <BiLike className="size-5 "/>
-                    {post.likeCount}
-                  </span>
-                  <span className= {cardComment}>
-                    <FaRegComment className="size-5" />
-                    {post.commentCount}
-                  </span>
-                </div>
+                <span className= {cardGood}>
+                  <BiLike className="size-5 "/>
+                  {post.likeCount}
+                </span>
               </div>
             </div>
           ))}

@@ -63,6 +63,9 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const userPrompt = useSelector((state )=> state.aiChat.userPrompt);
   //질문 tip
   const [isHovered, setIsHovered] = useState(false);
+  //답변중인지 체크 
+  const [isAnswering, setIsAnswering] = useState(false);
+
 
   //사용자가 설정한 프롬포트 목록 가져오기
   useEffect(() => {
@@ -125,6 +128,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const streamMessage = async () => {
     /*스트림 연결 전에 실행 흐름 -> 로딩 시작, 답변 받기 전 화면 갱신*/
     setIsLoading(true);
+    setIsAnswering(true);
     //setResponse("");
     //질문 저장
     const newMessage = { role: '질문', content: input};    
@@ -172,11 +176,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
 
           /*답변 종료에 대한 분기 코드 */
           if (raw === "stop"){
-            console.log(raw)
+            setIsAnswering(false);
+            console.log(raw);
             return;
           } else if (raw === "length") {
-            console.log(raw)
-            return 
+            setIsAnswering(false);
+            console.log(raw);
+            return;
           }
 
           try {
@@ -201,10 +207,10 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                     // 해당 답변 메시지에 새로운 응답 조각(delta)을 이어붙임
                     content: lastMsg.content + delta,              
                   };
-                  // 갱신된 메시지 배열을 반환하여 상태 변경
+                  // 갱신된 메시지 배열을 반환하여 상태 변경                  
                   return updated;                                  
                 }
-                // 조건이 맞지 않으면 기존 메시지를 그대로 유지
+                // 조건이 맞지 않으면 기존 메시지를 그대로 유지                
                 return prevMessages;                               
               });
             }
@@ -329,26 +335,28 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       {/* 상단 메뉴바 */}
       <div className={topNavi}>
         <div className="max-md:invisible md:visible mt-2 ">
-          {onMode === 'sub' ? (
-            <button 
-              className='ml-2'
-              onClick={()=>{
-                onfullTalk(true);
-                onClose(false);
-              }}
-            >
-              <AiOutlineFullscreen size={20} className='text-white'/>
-            </button>
-          ) : (
-            <button 
-              className='ml-2'
-              onClick={()=>{
-                onfullTalk(false);
-                onClose(true);
-              }}
-            >
-              <AiOutlineFullscreenExit size={20} className='text-white'/>
-            </button>
+          {isAnswering === false && (
+            onMode === 'sub' ? (
+              <button 
+                className='ml-2'
+                onClick={() => {
+                  onfullTalk(true);
+                  onClose(false);
+                }}
+              >
+                <AiOutlineFullscreen size={20} className='text-white' />
+              </button>
+            ) : (
+              <button 
+                className='ml-2'
+                onClick={() => {
+                  onfullTalk(false);
+                  onClose(true);
+                }}
+              >
+                <AiOutlineFullscreenExit size={20} className='text-white' />
+              </button>
+            )
           )}
         </div>
           
@@ -519,7 +527,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 <AiFillRobot className='w-7 h-7 text-white'/>
               )}
               <div
-                className={`max-w-[80%] p-3 mb-3 text-sm whitespace-pre-wrap ${
+                className={`max-w-[80%] px-3 py-2 mb-2 max-md:text-sm md:text-base whitespace-pre-wrap ${
                   msg.role === '답변'
                     ? aiBox
                     : userBox
@@ -576,7 +584,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                       게시글이 등록 되었습니다.
                     </div>
                   ) : (
-                    <button
+                  <button
                   className={answerChooseButton}
                   onClick={() => openPostModal(msg.content)}
                   >

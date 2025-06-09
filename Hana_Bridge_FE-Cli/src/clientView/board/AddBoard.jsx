@@ -80,7 +80,7 @@ const AddBoard = () => {
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-[200px] px-3 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-[200px] px-3 text-sm text-gray-900 font-semibold hover:bg-white rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">언어를 선택해주세요</option>
           {languages.map((lang) => (
@@ -134,7 +134,7 @@ const AddBoard = () => {
       <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         <main className={detailFrame}>
-          <div className={scrollStyle + " md:h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
             <p className='text-white/80'>코드 질문 게시판</p>
@@ -191,10 +191,10 @@ const AddBoard = () => {
               {/* 코드 작성 */}
               {category === 'notice' ? null : (
                 <div>
-                  <div className="w-full mx-auto mb-3 border rounded-lg">
+                  <div className="w-full mx-auto mb-3 border rounded">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-full text-left p-2 hover:bg-white/20 rounded-md flex justify-between items-center"
+                      className="w-full text-left p-2 hover:bg-white/20 rounded flex justify-between items-center"
                     >
                       <span className="font-semibold text-lg">에러 및 코드 작성</span>
                       <span>{isOpen ? "▲" : "▼"}</span>

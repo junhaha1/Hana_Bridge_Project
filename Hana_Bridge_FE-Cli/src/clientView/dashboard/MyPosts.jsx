@@ -53,10 +53,10 @@ const MyPosts = () => {
   return (
     <div className="custom-scroll h-[75vh] overflow-y-auto space-y-5 px-3">
       {/* 탭 */}
-      <div className="inline-flex rounded-md shadow-sm overflow-hidden border border-gray-300 mb-1">
+      <div className="inline-flex rounded shadow-sm overflow-hidden border border-gray-300 mb-1">
         <button
           onClick={() => setPostType('code')}
-          className={`w-full text-left flex items-center px-3 py-2 transition rounded-l-md ${
+          className={`w-full text-left flex items-center px-3 py-2 transition rounded-l ${
             postType === 'code'
               ? 'bg-[#C5BCFF] text-black font-bold'
               : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'

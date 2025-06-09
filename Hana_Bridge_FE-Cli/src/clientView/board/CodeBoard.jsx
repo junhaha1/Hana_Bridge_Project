@@ -142,8 +142,8 @@ const CodeBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-      <div className="flex justify-between p-1 md:mt-5 max-md:flex-col">
+    <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+      <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>코드 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
           <div className={searchBox}>
@@ -230,12 +230,10 @@ const CodeBoard = () => {
             <div className= {cardBottomLayout}>
               <div className={userDate}>
                 <span className={cardAuthor}>
-                  <FaUser
-                  className="mt-1"
-                  />
+                  <FaUser/>
                   {post.nickName}
                 </span>
-                <span className='hidden md:inline text-xs text-gray-300 mt-0.5'>
+                <span className='hidden md:inline text-xs text-gray-300 mt-1'>
                   {new Date(post.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                 </span>
               </div>
