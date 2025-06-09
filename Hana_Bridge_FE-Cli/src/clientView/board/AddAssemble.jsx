@@ -30,6 +30,9 @@ const AddAssemble = () => {
   const [createAt, setCreateAt] = useState(new Date());
   const [likeCount, setLikeCount] = useState(0);
 
+  //질문 tip
+  const [isHovered, setIsHovered] = useState(false);
+
   //취소, 이전 확인 모달
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
@@ -97,17 +100,30 @@ const AddAssemble = () => {
           {/* 메인 콘텐츠 */}
           <main className={detailFrame}>
             <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-              <div className="flex flex-row gap-2 w-1/2">
+              <div className="flex flex-row items-center gap-2 w-1/2 md:mt-12 mb-3">
                 <button
                   onClick={() => navigate("/board/assemble")}
-                  className={buttonStyle + backButton}
+                  className={buttonStyle + ' bg-white/95 font-semibold text-indigo-900 hover:!bg-[#C5BCFF] hover:text-black text-sm px-4 !py-1'}
                 >
                   이전
                 </button>
-                <button className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
-                  <FaLightbulb className="m-1" />
-                  Tip
-                </button>
+                <div
+                  className="relative z-[9999]"
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  <button className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+                    <FaLightbulb className="m-0.5" />
+                    Tip
+                  </button>
+                  <div
+                    className={`absolute top-full left-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+                    style={{ opacity: isHovered ? 1 : 0 }}
+                  >
+                    <span className="text-yellow-400 font-semibold">마크다운</span> 문법으로 글을 작성하면 <br/>  
+                    <span className="text-yellow-400 font-semibold">실시간 미리보기</span>를 통해 결과물을 볼 수 있어요!
+                  </div>
+                </div>
               </div>
   
               <div className={detailCardStyle}>
