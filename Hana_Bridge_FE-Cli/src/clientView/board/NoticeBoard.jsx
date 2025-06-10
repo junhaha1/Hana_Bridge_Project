@@ -29,6 +29,7 @@ const NoticeBoard = () => {
 
   const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
   const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
+  const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -78,6 +79,14 @@ const NoticeBoard = () => {
     setPage(1);
   }, [searchWord]);
 
+  // page가 바뀌는 경우 페이지 그룹 확인 
+  useEffect(() => {
+    const currentGroup = Math.floor((page - 1) / 5);
+    if (currentGroup !== pageGroup) {
+      setPageGroup(currentGroup);
+    }
+  }, [page]);
+
   useEffect(() => {
     const fetchBoards = async () => {
       try{
@@ -126,10 +135,31 @@ const NoticeBoard = () => {
 
   //페이지 번호 렌더링 함수 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1 ) return null;
+    if (isLoading || totalPages <= 1) return null;
 
     const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
+    const pagesPerGroup = 5;
+    const startPage = pageGroup * pagesPerGroup + 1;
+    const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+    // 이전 그룹 이동 버튼
+    if (startPage > 1) {
+      pages.push(
+        <button
+          key="prev"
+          onClick={() => {
+            const newGroup = pageGroup - 1;
+            setPageGroup(newGroup);
+            setPage(newGroup * pagesPerGroup + 1);
+          }}
+          className="px-3 py-1 mx-1 rounded bg-transparent text-white"
+        >
+          &lt;
+        </button>
+      );
+    }
+    // 현재 그룹의 페이지 번호
+    for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <button
           key={i}
@@ -137,6 +167,22 @@ const NoticeBoard = () => {
           onClick={() => setPage(i)}
         >
           {i}
+        </button>
+      );
+    }
+    // 다음 그룹 이동 버튼
+    if (endPage < totalPages) {
+      pages.push(
+        <button
+          key="next"
+          onClick={() => {
+            const newGroup = pageGroup + 1;
+            setPageGroup(newGroup);
+            setPage(newGroup * pagesPerGroup + 1);
+          }}
+          className="px-3 py-1 mx-1 rounded-full bg-transparent text-white"
+        >
+          &gt;
         </button>
       );
     }

@@ -494,9 +494,7 @@ const DetailBoard = () => {
                       삭제하기
                     </button>
                   )}
-                  </div>
-
-                 
+                  </div>                 
                 </div>
               </div>
             )}  

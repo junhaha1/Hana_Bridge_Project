@@ -34,6 +34,7 @@ const MyBoard = () => {
 
   const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
   const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
+  const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
 
 
   //맨 위로가기 버튼 
@@ -88,6 +89,14 @@ const MyBoard = () => {
     setPage(1);
   }, [sortType, searchWord, toggle]);
 
+  // page가 바뀌는 경우 페이지 그룹 확인 
+  useEffect(() => {
+    const currentGroup = Math.floor((page - 1) / 5);
+    if (currentGroup !== pageGroup) {
+      setPageGroup(currentGroup);
+    }
+  }, [page]);
+
   if(nickName === 'guest'){
     return (
       <div className="md:mt-32 ml-20 pr-40 max-md:mt-2 max-md:ml-2.5 max-md:pr-1">
@@ -133,6 +142,7 @@ const MyBoard = () => {
           } else if(toggle === "assemble" && data.assembleBoards.length === 0){
             setBoards(null);
           } else {
+            console.log(data.boards);
             setBoards(toggle === "code" ? data.boards : data.assembleBoards);
             setTotalPages(data.totalPages);
           }
@@ -157,10 +167,31 @@ const MyBoard = () => {
 
   //페이지 번호 렌더링 함수 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1 ) return null;
+    if (isLoading || totalPages <= 1) return null;
 
     const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
+    const pagesPerGroup = 5;
+    const startPage = pageGroup * pagesPerGroup + 1;
+    const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+    // 이전 그룹 이동 버튼
+    if (startPage > 1) {
+      pages.push(
+        <button
+          key="prev"
+          onClick={() => {
+            const newGroup = pageGroup - 1;
+            setPageGroup(newGroup);
+            setPage(newGroup * pagesPerGroup + 1);
+          }}
+          className="px-3 py-1 mx-1 rounded bg-transparent text-white"
+        >
+          &lt;
+        </button>
+      );
+    }
+    // 현재 그룹의 페이지 번호
+    for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <button
           key={i}
@@ -171,9 +202,24 @@ const MyBoard = () => {
         </button>
       );
     }
+    // 다음 그룹 이동 버튼
+    if (endPage < totalPages) {
+      pages.push(
+        <button
+          key="next"
+          onClick={() => {
+            const newGroup = pageGroup + 1;
+            setPageGroup(newGroup);
+            setPage(newGroup * pagesPerGroup + 1);
+          }}
+          className="px-3 py-1 mx-1 rounded-full bg-transparent text-white"
+        >
+          &gt;
+        </button>
+      );
+    }
     return <div className="mt-6 flex justify-center">{pages}</div>;
   };
-
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {
@@ -336,10 +382,13 @@ const MyBoard = () => {
                     <BiLike className="size-5 "/>
                     {post.likeCount}
                   </span>
-                  <span className={cardComment}>
-                    <FaRegComment className="size-5" />
-                    {post.commentCount}
-                  </span>
+                  {toggle === 'code' && (
+                    <span className={cardComment}>
+                      <FaRegComment className="size-5" />
+                      {post.commentCount}
+                    </span>
+                  )}
+                  
                 </div>
               </div>
             </div>
