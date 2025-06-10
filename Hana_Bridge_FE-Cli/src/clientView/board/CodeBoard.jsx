@@ -24,6 +24,11 @@ const CodeBoard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState("latest");
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
+
+  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
+  const [totalPages, setTotalPages] = useState(10); //
+  const [totalCount, setTotalCount] = useState(0);
+  const [size, setSize] = useState(0); 
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -33,7 +38,7 @@ const CodeBoard = () => {
   };
 
   const getSearch = (word) => {
-    ApiClient.getSearchBoards(category, word, sortType)
+    ApiClient.getSearchBoards(category, word, sortType, page)
     .then(async  (res) => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
@@ -75,7 +80,7 @@ const CodeBoard = () => {
           getSearch(searchWord);
         } else { //검색어가 없는 경우
           const getBoard = sortType === "latest" ? ApiClient.getBoards : ApiClient.getSortBoards;
-          const res = await getBoard(category);
+          const res = await getBoard(category, page);
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -91,7 +96,9 @@ const CodeBoard = () => {
             console.log("게시글이 없습니다.");
             setBoards(null);
           } else {
-            setBoards(data);
+            setBoards(data.boards);
+            setTotalCount(data.totalCount);
+            setTotalPages(Math.ceil(data.totalCount / POSTS_PER_PAGE));
           }
         } 
       } catch (err) {
@@ -110,8 +117,29 @@ const CodeBoard = () => {
     };
 
     fetchBoards();
-  }, [redirect, sortType]);
+  }, [page, redirect, sortType]);
 
+
+  //페이지 번호 렌더링 함수 
+  const renderPagination = () => {
+    if (isLoading || totalPages <= 1 || searchWord.trim()) return null;
+
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`px-3 py-1 mx-1 rounded-md border ${i === page ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
+          onClick={() => setPage(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return <div className="mt-6 flex justify-center">{pages}</div>;
+  };
+
+  //상세보기로 
   const boardClick = (boardId) => {
     navigate(`/detailBoard/${boardId}`, { state: { category: category } });
   };
@@ -250,8 +278,10 @@ const CodeBoard = () => {
             </div>
           </div>
         ))}
+        {renderPagination()}
       </>
-      )}
+      )}      
+      {renderPagination()}   {/*디자인 확인 후 삭제 */}
       <button
         onClick={scrollToTop}
         className={upBottom}
