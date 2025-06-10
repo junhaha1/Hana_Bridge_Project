@@ -32,6 +32,9 @@ const MyBoard = () => {
 
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
+  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
+
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -44,7 +47,7 @@ const MyBoard = () => {
   const getMySearch = (word) => {
     const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchUserAssembleBoards;
 
-    getSearchmyBoards(toggle, word, sortType, email)
+    getSearchmyBoards(toggle, word, sortType, email, page)
     .then(async  (res) => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
@@ -57,10 +60,14 @@ const MyBoard = () => {
     return res.json();
     })
     .then((data) => {
-      if (data === null || (Array.isArray(data) && data.length === 0)) {
+      console.log(data);
+      if (toggle === "code" && data.boards.length === 0) {
         setBoards(null);
-      } else {
-        setBoards(data);
+      } else if(toggle === "assemble" && data.assembleBoards.length === 0){
+        setBoards(null);
+      }else {
+        setBoards(toggle === "code" ? data.boards : data.assembleBoards);
+        setTotalPages(data.totalPages);
       }
     })
     .catch((err) => {
@@ -75,6 +82,11 @@ const MyBoard = () => {
       }
     });
   }
+
+  // 정렬 방법이나 검색어가 바뀌면 페이지 1
+  useEffect(() =>{
+    setPage(1);
+  }, [sortType, searchWord, toggle]);
 
   if(nickName === 'guest'){
     return (
@@ -98,23 +110,12 @@ const MyBoard = () => {
           let getSortMyboard = null;
           //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
           if (toggle === "code"){
-            if (sortType === "latest"){
-              getSortMyboard = ApiClient.getMyBoard
-            } 
-            if (sortType === "like"){
-              getSortMyboard = ApiClient.getSortMyBoards
-            }
+            getSortMyboard = ApiClient.getMyBoard
           }
-
           if (toggle === "assemble"){
-            if (sortType === "latest"){
-              getSortMyboard = ApiClient.getMyAssemble
-            } 
-            if (sortType === "like"){
-              getSortMyboard = ApiClient.getSortMyAssembleBoards
-            }
+            getSortMyboard = ApiClient.getMyAssemble
           }
-          const res = await getSortMyboard(email);
+          const res = await getSortMyboard(email, page, sortType);
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -127,11 +128,13 @@ const MyBoard = () => {
           }
 
           const data = await res.json();
-          if (data === null || (Array.isArray(data) && data.length === 0)) {
-            console.log("게시글이 없습니다.");
+          if (toggle === "code" && data.boards.length === 0) {
+            setBoards(null);
+          } else if(toggle === "assemble" && data.assembleBoards.length === 0){
             setBoards(null);
           } else {
-            setBoards(data);
+            setBoards(toggle === "code" ? data.boards : data.assembleBoards);
+            setTotalPages(data.totalPages);
           }
         }
       } catch(err) {
@@ -150,7 +153,27 @@ const MyBoard = () => {
     };  
     
     fetchBoards();
-  }, [toggle, sortType, redirect]);
+  }, [toggle, sortType, redirect, page]);
+
+  //페이지 번호 렌더링 함수 
+  const renderPagination = () => {
+    if (isLoading || totalPages <= 1 ) return null;
+
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
+          onClick={() => setPage(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return <div className="mt-6 flex justify-center">{pages}</div>;
+  };
+
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {
@@ -322,6 +345,7 @@ const MyBoard = () => {
             </div>
           );
         })}
+        {renderPagination()}
         </>
       )}
       <button

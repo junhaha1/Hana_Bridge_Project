@@ -25,6 +25,9 @@ const AssembleBoard = () => {
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
   const scrollRef = useRef(null);
+
+  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -34,7 +37,7 @@ const AssembleBoard = () => {
   };
 
   const getSearch = (word) => {
-    ApiClient.getSearchAssembleBoards(word, sortType)
+    ApiClient.getSearchAssembleBoards(word, sortType, page)
     .then(async  (res) => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
@@ -48,11 +51,12 @@ const AssembleBoard = () => {
     return res.json();
     })
     .then((data) => {
-      if (data === null || (Array.isArray(data) && data.length === 0)) {
+      if (data.assembleBoards.length === 0) {
         console.log("해당 게시글이 없습니다.");
         setBoards(null);
       } else {
-        setBoards(data);
+        setBoards(data.assembleBoards);
+        setTotalPages(data.totalPages);
       }
     })
     .catch((err) => {
@@ -68,6 +72,10 @@ const AssembleBoard = () => {
     });
   }
 
+  // 정렬 방법이나 검색어가 바뀌면 페이지 1
+  useEffect(() =>{
+    setPage(1);
+  }, [sortType, searchWord]);
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -76,8 +84,8 @@ const AssembleBoard = () => {
         if (searchWord.trim() !== ""){ //검색어가 존재하는 경우
           getSearch(searchWord);
         } else {
-          const getAssemble = sortType === "latest" ? ApiClient.getAssembleBoards : ApiClient.getSortAssembleBoards;
-          const res = await getAssemble();
+          const getAssemble = ApiClient.getAssembleBoards;
+          const res = await getAssemble(page, sortType);
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -90,11 +98,12 @@ const AssembleBoard = () => {
           }
 
           const data = await res.json();
-          if (data === null || (Array.isArray(data) && data.length === 0)) {
+          if (data.assembleBoards.length === 0) {
             console.log("게시글이 없습니다.");
             setBoards(null);
           } else {
-            setBoards(data);
+            setBoards(data.assembleBoards);
+            setTotalPages(data.totalPages);
           }
         }
       } catch(err) {
@@ -113,7 +122,26 @@ const AssembleBoard = () => {
     };
 
     fetchBoards();
-  }, [redirect, sortType]);
+  }, [redirect, sortType, page]);
+
+  //페이지 번호 렌더링 함수 
+  const renderPagination = () => {
+    if (isLoading || totalPages <= 1 ) return null;
+
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
+          onClick={() => setPage(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return <div className="mt-6 flex justify-center">{pages}</div>;
+  };
 
   //enter로 전송
   const handleKeyDown = (e) => {
@@ -235,6 +263,7 @@ const AssembleBoard = () => {
               </div>
             </div>
           ))}
+          {renderPagination()}
         </>
       )}
     </div>
