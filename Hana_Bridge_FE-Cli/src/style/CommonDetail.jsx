@@ -6,7 +6,7 @@ export const editContent = " w-full mb-3 p-2 rounded bg-transparent border borde
 
 
 //좋아요, 댓글 - 버튼 묶기
-export const liekCommentButton =  "flex justify-between items-center mt-4";
+export const liekCommentButton = "flex justify-between items-center mt-4";
 //좋아요, 댓글 묶기
 export const liekComment = "flex items-center space-x-6";
 //사용자 - 날짜 묶기

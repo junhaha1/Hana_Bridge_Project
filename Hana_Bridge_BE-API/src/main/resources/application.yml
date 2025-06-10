@@ -4,6 +4,9 @@ spring:
   server:
     port: 8080
     address: 0.0.0.0
+  mvc:
+    async:
+      request-timeout: 60000
   jpa:
     properties:
       hibernate:

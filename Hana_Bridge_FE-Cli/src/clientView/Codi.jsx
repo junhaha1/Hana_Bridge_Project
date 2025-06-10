@@ -71,7 +71,7 @@ const CodeHelper = () => {
             <div
               className={`
                 absolute bottom-1/2 right-0 translate-y-1/2
-                w-[170px] px-4 py-3 rounded-2xl bg-white/80 backdrop-blur-sm
+                w-[170px] px-3 py-2 rounded-2xl bg-white/80 backdrop-blur-sm
                 text-[13px] font-semibold text-gray-900 text-center
                 shadow-xl border border-gray-200
                 transition-all duration-700 ease-in-out

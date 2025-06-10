@@ -18,6 +18,8 @@ import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
 import { clearUserPrompt, setUserPrompt, setUserPromptList } from '../../store/aiChatSlice';
 import SettingModal from './SettingModal';
+import { useNavigate } from "react-router-dom";
+
 
 
 function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
@@ -28,6 +30,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   //채팅의 마지막을 가르킴
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
+
+  const navigate = useNavigate();
   
   //답변 복사
   const copyRef = useRef(null);
@@ -63,6 +67,10 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const userPrompt = useSelector((state )=> state.aiChat.userPrompt);
   //질문 tip
   const [isHovered, setIsHovered] = useState(false);
+  //답변중인지 체크 
+  const [isAnswering, setIsAnswering] = useState(false);
+
+  const [isCreated, setIsCreated] = useState(false);
 
   //사용자가 설정한 프롬포트 목록 가져오기
   useEffect(() => {
@@ -121,10 +129,84 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     
   };
 
-  //사용자 질문 보낸 뒤 스트림방식으로 답변 받아오기
+  const continueMessage = async (content) => {
+    console.log(content);
+    const res = await ApiClient.streamMessage(promptLevel, content, "앞 문장과 자연스럽게 이어지도록 띄어쓰기, 줄바꿈을 추가하여 계속 답변 생성\n마크다운 형식 유지\n앞에 나온 내용과 중복된 내용이 없도록 답변 이어가.\n", userPrompt);
+
+    /*스트림 연결 후에 실행 흐름 -> 로딩 종료, 답변 출력*/
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let partial = "";
+
+    setIsCreated(false); //답변 이어받기 비활성화
+    while(true){
+      const {done, value} = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, {stream: true});
+      partial += chunk;
+
+      const lines = partial.split("\n\n");
+      partial = lines.pop() || "";
+
+      for (const line of lines){
+        if (line.startsWith("data:")){
+          const raw = line.replace("data: ", "").trim();
+
+          /*답변 종료에 대한 분기 코드 */
+          if (raw === "stop"){ //답변이 완전히 종료
+            setIsAnswering(false);
+            console.log(raw);
+            return;
+          } else if (raw === "length") {//답변이 중간에 끊김 -> 해당 답변 div에 재생성 버튼 추가
+            setIsAnswering(false);
+            setIsCreated(true); //계속 이어받을 수 있게 초기화
+            console.log(raw);
+            return;
+          }
+
+          try {
+            const parsed = JSON.parse(raw);
+            const delta = parsed.choices?.[0]?.delta?.content;
+
+            if (delta) {
+              //setResponse(prev => prev + delta) //로그 출력용
+              //setMessages 초기화 방식 정의
+              setMessages(prevMessages => {
+                // 마지막 메시지의 인덱스를 구함
+                const lastIndex = prevMessages.length - 1;  
+                // 마지막 메시지 객체를 가져옴       
+                const lastMsg = prevMessages[lastIndex];           
+
+                 // 마지막 메시지가 AI의 답변이면
+                if (lastMsg.role === '답변') { 
+                  // 기존 메시지를 복사한 새 배열을 만들고                   
+                  const updated = [...prevMessages];               
+                  updated[lastIndex] = {
+                    ...lastMsg,
+                    // 해당 답변 메시지에 새로운 응답 조각(delta)을 이어붙임
+                    content: lastMsg.content + delta,              
+                  };
+                  // 갱신된 메시지 배열을 반환하여 상태 변경                  
+                  return updated;                                  
+                }
+                // 조건이 맞지 않으면 기존 메시지를 그대로 유지                
+                return prevMessages;                               
+              });
+            }
+          } catch (err) {
+            console.error("JSON parse error", err);
+          }
+        }
+      }
+    }
+  }
+
+  /*사용자 질문 보낸 뒤 스트림방식으로 답변 받아오기*/
   const streamMessage = async () => {
     /*스트림 연결 전에 실행 흐름 -> 로딩 시작, 답변 받기 전 화면 갱신*/
     setIsLoading(true);
+    setIsAnswering(true);
     //setResponse("");
     //질문 저장
     const newMessage = { role: '질문', content: input};    
@@ -156,6 +238,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     //로딩 종료
     setIsLoading(false);
 
+    setIsCreated(false); //답변 이어받기 비활성화
+
     while(true){
       const {done, value} = await reader.read();
       if (done) break;
@@ -170,7 +254,15 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         if (line.startsWith("data:")){
           const raw = line.replace("data: ", "").trim();
 
-          if (raw === "[DONE]"){
+          /*답변 종료에 대한 분기 코드 */
+          if (raw === "stop"){ //답변이 완전히 종료
+            setIsAnswering(false);
+            console.log(raw);
+            return;
+          } else if (raw === "length") {//답변이 중간에 끊김 -> 해당 답변 div에 재생성 버튼 추가
+            setIsAnswering(false);
+            setIsCreated(true); //답변 이어받기 활성화
+            console.log(raw);
             return;
           }
 
@@ -196,10 +288,10 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                     // 해당 답변 메시지에 새로운 응답 조각(delta)을 이어붙임
                     content: lastMsg.content + delta,              
                   };
-                  // 갱신된 메시지 배열을 반환하여 상태 변경
+                  // 갱신된 메시지 배열을 반환하여 상태 변경                  
                   return updated;                                  
                 }
-                // 조건이 맞지 않으면 기존 메시지를 그대로 유지
+                // 조건이 맞지 않으면 기존 메시지를 그대로 유지                
                 return prevMessages;                               
               });
             }
@@ -281,23 +373,30 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setIsPostLoading(true);
     //dispatch(setPostLoading({postLoading: true}));
     closePostModal();
-    const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
+    //const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
-    ApiClient.postAssemble(promptLevel, result, coreContent)
+    console.log(coreContent);
+    
+    ApiClient.postAssemble(promptLevel, coreContent)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();
     })
     .then((data) => {      
-      const assembleboardId  = data.assembleBoardId;
+      const assembleBoardId  = data.assembleBoardId;
       //dispatch(setPostLoading({postLoading: false}));
       setPostComplete(true);
       setIsPostLoading(false);      
       console.log("posting complete!");
       //dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
-      //navigate(`/detailAssemble/${assembleboardId}`);
+      console.log(assembleBoardId);
+      navigate(`/writeAssemble/${assembleBoardId}`);
     })
-    .catch((err) => console.error("API 요청 실패:", err));
+    .catch((err) => {
+      setIsPostLoading(false);
+      alert("게시글 포스팅 실패");
+      console.error("API 요청 실패:", err)
+    });
   };
 
   //현재 대화창 초기화하기
@@ -324,26 +423,28 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       {/* 상단 메뉴바 */}
       <div className={topNavi}>
         <div className="max-md:invisible md:visible mt-2 ">
-          {onMode === 'sub' ? (
-            <button 
-              className='ml-2'
-              onClick={()=>{
-                onfullTalk(true);
-                onClose(false);
-              }}
-            >
-              <AiOutlineFullscreen size={20} className='text-white'/>
-            </button>
-          ) : (
-            <button 
-              className='ml-2'
-              onClick={()=>{
-                onfullTalk(false);
-                onClose(true);
-              }}
-            >
-              <AiOutlineFullscreenExit size={20} className='text-white'/>
-            </button>
+          {isAnswering === false && (
+            onMode === 'sub' ? (
+              <button 
+                className='ml-2'
+                onClick={() => {
+                  onfullTalk(true);
+                  onClose(false);
+                }}
+              >
+                <AiOutlineFullscreen size={20} className='text-white' />
+              </button>
+            ) : (
+              <button 
+                className='ml-2'
+                onClick={() => {
+                  onfullTalk(false);
+                  onClose(true);
+                }}
+              >
+                <AiOutlineFullscreenExit size={20} className='text-white' />
+              </button>
+            )
           )}
         </div>
           
@@ -508,13 +609,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           <React.Fragment key={idx}>
             {/* 대화창 박스*/}
             <div
-              className={`flex gap-1 ${msg.role === '답변' ? 'justify-start items-end' : 'justify-end'} my-2`}
+              className={`flex gap-1 ${msg.role === '답변' ? 'justify-start items-end' : 'justify-end'} mt-2`}
             > 
               {msg.role === '답변' && (
                 <AiFillRobot className='w-7 h-7 text-white'/>
               )}
               <div
-                className={`max-w-[80%] p-3 mb-3 text-sm whitespace-pre-wrap ${
+                className={`max-w-[80%] px-3 py-2 mb-2 max-md:text-sm md:text-base whitespace-pre-wrap ${
                   msg.role === '답변'
                     ? aiBox
                     : userBox
@@ -524,6 +625,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
+                    // 코드 블록 렌더링
                     code({ node, inline, className, children, ...props }) {
                       const match = /language-(\w+)/.exec(className || '');
                       return !inline && match ? (
@@ -543,14 +645,26 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                     },
                   }}
                 >
-                  {msg.content}
+                  {msg.content.replace(/([ \t]*\n){3,}/g, '\n\n')}
                 </ReactMarkdown>
+                
+                {msg.role === "답변" && messages.length - 1 === idx && isCreated &&(
+                  <div className='mt-2 flex flex-col'>
+                    <a
+                      className="no-underline cursor-pointer font-semibold text-blue-100 text-sm hover:text-blue-300"
+                      onClick={() => continueMessage(msg.content)}
+                    >
+                      답변 이어 생성하기 ...
+                    </a>
+                    <p className='text-sm text-yellow-400 font-semibold'><span className='text-red-500'>* </span>새 질문은 입력할 시 해당 답변은 이어받을 수 없습니다. </p>
+                </div>
+                )}
               </div>
             </div>
             
             {/*답변 채택 버튼 박스 */}
             {msg.role === '답변' && msg.content !== `CodeHelper에 오신 걸 환영합니다! \n 에러 코드와 사용 언어를 입력해보세요.` &&(
-              <div className="flex justify-start gap-2">
+              <div className="flex justify-start gap-2 ml-8">
                 {/*답변 채택 버튼 */}
                 
                 <button
@@ -571,7 +685,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                       게시글이 등록 되었습니다.
                     </div>
                   ) : (
-                    <button
+                  <button
                   className={answerChooseButton}
                   onClick={() => openPostModal(msg.content)}
                   >

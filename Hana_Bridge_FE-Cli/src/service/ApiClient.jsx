@@ -136,17 +136,16 @@ class ApiClient{
   // }
 
   //assemble게시글 등록(AI)
-  static postAssemble(promptLevel, messages, coreContent){
+  static postAssemble(promptLevel, messages){
     console.log("make Assemble board");
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/summary',{
+    return StreamFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/summary',{
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         promptLevel: promptLevel,
-        totalContent: messages,
-        coreContent: coreContent,
+        coreContent: messages,
       })
     })
   }
