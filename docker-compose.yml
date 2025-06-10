@@ -36,6 +36,8 @@ services:
     container_name: redis-container
     ports:
       - "6379:6379"
+    volumes:
+      - dev_redis_test:/data  # Redis는 /data에 데이터 저장
       
   mysql: #MySQL 서비스명
     image: mysql:8.0
@@ -48,8 +50,9 @@ services:
     env_file:
       - .env
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./MySQL_init/${INIT_DB}:/docker-entrypoint-initdb.d/init.sql
+      - dev_mysql_test:/var/lib/mysql
+      - ./MySQL_init/${INIT_DB_TEST}:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
-  mysql_data:
+  dev_mysql_test:
+  dev_redis_test:
