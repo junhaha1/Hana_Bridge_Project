@@ -32,6 +32,9 @@ public class AssembleBoard {
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 
+    @Column(name = "like_count", nullable = false)
+    private Long likeCount;
+
     @Builder
     public AssembleBoard(Users users, String title, String category, String content, LocalDateTime createAt) {
         this.users = users;

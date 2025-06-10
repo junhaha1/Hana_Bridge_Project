@@ -216,12 +216,12 @@ public class BoardApiController {
         goodService.goodSave(request);
         boardService.upCommentCount(request.getBoardId());
 
-        return ResponseEntity.ok().body(new GoodResponse(goodService.goodCount(request.getBoardId()), true));
+        return ResponseEntity.ok().body(new GoodResponse(boardService.goodCount(request.getBoardId()), true));
     }
     //좋아요 조회
     @GetMapping("/good/{boardId}")
     public ResponseEntity<Long> CountGood(@PathVariable("boardId") long boardId){
-        Long likeCount = goodService.goodCount(boardId);
+        Long likeCount = boardService.goodCount(boardId);
         return ResponseEntity.ok().body(likeCount);
     }
     //좋아요 삭제
@@ -233,6 +233,6 @@ public class BoardApiController {
         goodService.goodRemove(boardId, userId);
         boardService.downCommentCount(boardId);
 
-        return ResponseEntity.ok().body(new GoodResponse(goodService.goodCount(boardId), false));
+        return ResponseEntity.ok().body(new GoodResponse(boardService.goodCount(boardId), false));
     }
 }
