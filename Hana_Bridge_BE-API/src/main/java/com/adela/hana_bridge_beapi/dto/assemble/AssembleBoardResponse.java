@@ -16,7 +16,7 @@ public class AssembleBoardResponse {
     private String category;
     private String content;
     private LocalDateTime createAt;
-    private Long likeCount;
+    private int likeCount;
 
     private boolean goodCheck;
 

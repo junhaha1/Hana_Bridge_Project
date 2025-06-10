@@ -6,6 +6,7 @@ import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.dto.openai.ClientRequest;
 import com.adela.hana_bridge_beapi.dto.openai.ClientResponse;
 import com.adela.hana_bridge_beapi.dto.openai.ClientSummaryRequest;
+import com.adela.hana_bridge_beapi.dto.openai.SummaryResponse;
 import com.adela.hana_bridge_beapi.dto.prompt.PromptRequest;
 import com.adela.hana_bridge_beapi.dto.prompt.PromptResponse;
 import com.adela.hana_bridge_beapi.dto.prompt.PromptUpdateRequest;
@@ -110,7 +111,7 @@ public class OpenAiApiController {
     }
 
     @PostMapping("/summary")
-    public ResponseEntity<AssembleSummaryResponse> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientSummaryRequest clientSummaryRequest){
+    public ResponseEntity<SummaryResponse> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientSummaryRequest clientSummaryRequest){
         String accessToken = authHeader.replace("Bearer ", "");
         String email = tokenService.findEmailByToken(accessToken);
 
@@ -140,14 +141,7 @@ public class OpenAiApiController {
             summary = summary.replace("내용:", "").trim();
         }
 
-        AssembleAddRequest assembleAddRequest = AssembleAddRequest.builder()
-                .users(usersService.findByEmail(email))
-                .title(title)
-                .content(summary)
-                .category("assemble")
-                .createAt(LocalDateTime.now())
-                .build();
-        AssembleSummaryResponse assembleSummaryResponse =  assembleBoardService.save(assembleAddRequest);
-        return ResponseEntity.ok().body(assembleSummaryResponse);
+        SummaryResponse summaryResponse = new SummaryResponse(title, summary);
+        return ResponseEntity.ok().body(summaryResponse);
     }
 }

@@ -33,7 +33,7 @@ public class AssembleBoard {
     private LocalDateTime createAt;
 
     @Column(name = "like_count", nullable = false)
-    private Long likeCount;
+    private int likeCount = 0;
 
     @Builder
     public AssembleBoard(Users users, String title, String category, String content, LocalDateTime createAt) {

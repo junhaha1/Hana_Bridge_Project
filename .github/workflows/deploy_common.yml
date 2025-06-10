@@ -258,7 +258,7 @@ jobs:
           echo "DATABASE_DB=${{ secrets.DATABASE_DB_DEV }}" >> .env
           echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
           echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
-          echo "INIT_DB=init_dev.sql" >> .env
+          echo "INIT_DB_TEST=init_dev.sql" >> .env
           echo "MYSQL_HOST=mysql" >> .env
           echo "REDIS_HOST=redis" >> .env
 
