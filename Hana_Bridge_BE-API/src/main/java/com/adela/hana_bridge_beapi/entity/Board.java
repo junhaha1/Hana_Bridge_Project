@@ -40,10 +40,10 @@ public class Board {
     private LocalDateTime updateAt;
 
     @Column(name = "like_count", nullable = false)
-    private int likeCount;
+    private int likeCount = 0;
 
     @Column(name = "comment_count", nullable = false)
-    private int commentCount;
+    private int commentCount = 0;
 
     @Builder
     public Board(Users users, String title, String category, String code, String content, LocalDateTime createAt, LocalDateTime updateAt) {
