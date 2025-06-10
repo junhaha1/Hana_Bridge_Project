@@ -51,7 +51,7 @@ const AssembleBoard = () => {
     return res.json();
     })
     .then((data) => {
-      if (data === null || (Array.isArray(data) && data.length === 0)) {
+      if (data.assembleBoards.length === 0) {
         console.log("해당 게시글이 없습니다.");
         setBoards(null);
       } else {
@@ -98,7 +98,7 @@ const AssembleBoard = () => {
           }
 
           const data = await res.json();
-          if (data === null || (Array.isArray(data) && data.length === 0)) {
+          if (data.assembleBoards.length === 0) {
             console.log("게시글이 없습니다.");
             setBoards(null);
           } else {

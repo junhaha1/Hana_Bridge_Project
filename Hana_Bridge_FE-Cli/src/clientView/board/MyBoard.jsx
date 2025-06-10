@@ -60,9 +60,12 @@ const MyBoard = () => {
     return res.json();
     })
     .then((data) => {
-      if (data === null || (Array.isArray(data) && data.length === 0)) {
+      console.log(data);
+      if (toggle === "code" && data.boards.length === 0) {
         setBoards(null);
-      } else {
+      } else if(toggle === "assemble" && data.assembleBoards.length === 0){
+        setBoards(null);
+      }else {
         setBoards(toggle === "code" ? data.boards : data.assembleBoards);
         setTotalPages(data.totalPages);
       }
@@ -125,8 +128,9 @@ const MyBoard = () => {
           }
 
           const data = await res.json();
-          if (data === null || (Array.isArray(data) && data.length === 0)) {
-            console.log("게시글이 없습니다.");
+          if (toggle === "code" && data.boards.length === 0) {
+            setBoards(null);
+          } else if(toggle === "assemble" && data.assembleBoards.length === 0){
             setBoards(null);
           } else {
             setBoards(toggle === "code" ? data.boards : data.assembleBoards);
@@ -150,6 +154,26 @@ const MyBoard = () => {
     
     fetchBoards();
   }, [toggle, sortType, redirect, page]);
+
+  //페이지 번호 렌더링 함수 
+  const renderPagination = () => {
+    if (isLoading || totalPages <= 1 ) return null;
+
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
+          onClick={() => setPage(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return <div className="mt-6 flex justify-center">{pages}</div>;
+  };
+
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {
@@ -321,6 +345,7 @@ const MyBoard = () => {
             </div>
           );
         })}
+        {renderPagination()}
         </>
       )}
       <button

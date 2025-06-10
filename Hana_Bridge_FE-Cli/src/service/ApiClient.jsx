@@ -68,12 +68,12 @@ class ApiClient{
 
   //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
   static getMyBoard(email, page, sortType){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}/${page}`);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}/${page}/${sortType}`);
   }
 
   //사용자 본인 게시글 조회 (AssembleBoard)
   static getMyAssemble(email, page, sortType){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${email}/${page}`);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${email}/${page}/${sortType}`);
   }
 
 

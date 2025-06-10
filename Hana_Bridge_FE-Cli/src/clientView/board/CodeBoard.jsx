@@ -50,7 +50,7 @@ const CodeBoard = () => {
     return res.json();
     })
     .then((data) => {
-      if (data === null || (Array.isArray(data) && data.length === 0)) {
+      if (data.boards.length === 0) {
         console.log("해당 게시글이 없습니다.");
         setBoards(null);
       } else {
@@ -96,7 +96,7 @@ const CodeBoard = () => {
           }
           const data = await res.json();
           
-          if (data === null || (Array.isArray(data) && data.length === 0)) {
+          if (data.boards.length === 0) {
             console.log("게시글이 없습니다.");
             setBoards(null);
           } else {
