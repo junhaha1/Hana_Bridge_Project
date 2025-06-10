@@ -1,8 +1,10 @@
 package com.adela.hana_bridge_beapi.controller;
 
+import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardList;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodAddRequest;
 import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodResponse;
+import com.adela.hana_bridge_beapi.dto.board.BoardList;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
@@ -11,6 +13,7 @@ import com.adela.hana_bridge_beapi.service.TokenService;
 import com.adela.hana_bridge_beapi.service.UsersService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,103 +30,76 @@ public class AssembleApiController {
     private final TokenService tokenService;
     private final UsersService usersService;
 
-    //좋아요 갯수 상위 5개 게시글 가져오기
-    @GetMapping("/top")
-    public ResponseEntity<List<AssembleBoardResponse>> findTopBoards(){
-        List<Long> assembleBoardIds = assembleGoodService.findTop5BoardIds();
-
-        List<AssembleBoardResponse> boards = assembleBoardService.findByBoardIds(assembleBoardIds)
+    //게시글 전체 조회
+    @GetMapping("/{page}/{sortType}")
+    public ResponseEntity<AssembleBoardList> findAllAssembleBoards(@PathVariable int page, @PathVariable String sortType) {
+        //추후 확장을 위해 assembleBoard를 직접 전달
+        Page<AssembleBoard> boardInfos = assembleBoardService.findAllAssembleBoards(page, sortType);
+        List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
                 .stream()
-                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard))
                 .toList();
-        if (boards.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return ResponseEntity.ok().body(boards);
-    }
+        AssembleBoardList boardList = new AssembleBoardList(assembleBoardResponses, boardInfos.getTotalPages(),
+                boardInfos.getTotalElements(), boardInfos.getSize(), boardInfos.getNumber());
 
-    //검색어가 포함 되어 있는 게시글 조회하기
-    @GetMapping("/search/{searchWord}/orderBy/{sortType}")
-    public ResponseEntity<List<AssembleBoardResponse>> searchAssembleBoards(@PathVariable String searchWord, @PathVariable String sortType) {
-        List<AssembleBoardResponse> boards = assembleBoardService.getSearchAssembleBoards(searchWord, sortType)
-                .stream()
-                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
-                .toList();
-        return ResponseEntity.ok().body(boards);
-    }
-
-    @GetMapping("/search/{searchWord}/orderBy/{sortType}/user/{email}")
-    public ResponseEntity<List<AssembleBoardResponse>> searchUserAssembleBoards(@PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email) {
-        Long userId = usersService.findByEmail(email).getId();
-
-        List<AssembleBoardResponse> boards = assembleBoardService.getSearchAssembleBoards(searchWord, sortType, userId)
-                .stream()
-                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
-                .toList();
-        return ResponseEntity.ok().body(boards);
-    }
-
-    //좋아요순으로 정렬하기
-    @GetMapping("/sort/good")
-    public ResponseEntity<List<AssembleBoardResponse>> sortGoodAssemble() {
-        List<AssembleBoardResponse> boards = assembleBoardService.getAssemblesSortedByLike();
-        return ResponseEntity.ok().body(boards);
-    }
-
-    //해당 사용자 좋아요순으로 정렬하기
-    @GetMapping("/sort/good/user/{email}")
-    public ResponseEntity<List<AssembleBoardResponse>> sortGoodUserAssemble(@PathVariable String email) {
-        Long userId = usersService.findByEmail(email).getId();
-        List<AssembleBoardResponse> boards = assembleBoardService.getAssemblesSortedByLike(userId);
-        return ResponseEntity.ok().body(boards);
+        return ResponseEntity.ok().body(boardList);
     }
 
     //사용자가 작성한 게시글 전체 조회
-    @GetMapping("/user/{email}")
-    public ResponseEntity<List<AssembleBoardResponse>> findAssembleByEmail(@PathVariable String email){
+    @GetMapping("/user/{email}/{page}/{sortType}")
+    public ResponseEntity<AssembleBoardList> findAssembleByEmail(@PathVariable String email, @PathVariable int page, @PathVariable String sortType){
         Long userId = usersService.findByEmail(email).getId();
-        List<AssembleBoardResponse> assembleBoards = assembleBoardService.findByUserId(userId)
+        Page<AssembleBoard> boardInfos = assembleBoardService.findByUserId(userId, page, sortType);
+
+        List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
                 .stream()
-                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard))
                 .toList();
-        return ResponseEntity.ok().body(assembleBoards);
+        AssembleBoardList boardList = new AssembleBoardList(assembleBoardResponses, boardInfos.getTotalPages(),
+                boardInfos.getTotalElements(), boardInfos.getSize(), boardInfos.getNumber());
+
+        return ResponseEntity.ok().body(boardList);
     }
 
-    //사용자가 최근에 작성한 게시글 5개 조회
-    @GetMapping("/me/recent")
-    public ResponseEntity<List<AssembleBoardResponse>> findRecentAssemblesByMe(@RequestHeader("Authorization") String authHeader){
-        String accessToken = authHeader.replace("Bearer ", "");
-        Long userId = tokenService.findUsersIdByToken(accessToken);
+    //검색어가 포함 되어 있는 게시글 조회하기
+    @GetMapping("/search/{searchWord}/orderBy/{sortType}/{page}")
+    public ResponseEntity<AssembleBoardList> searchAssembleBoards(@PathVariable String searchWord, @PathVariable String sortType, @PathVariable int page) {
+        Page<AssembleBoard> boardInfos = assembleBoardService.getSearchAssembleBoards(searchWord, sortType, page);
 
-        List<AssembleBoardResponse> assembleBoards = assembleBoardService.findRecentByUserId(userId)
+        List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
                 .stream()
-                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard))
                 .toList();
-        return ResponseEntity.ok().body(assembleBoards);
+        AssembleBoardList boardList = new AssembleBoardList(assembleBoardResponses, boardInfos.getTotalPages(),
+                boardInfos.getTotalElements(), boardInfos.getSize(), boardInfos.getNumber());
+
+        return ResponseEntity.ok().body(boardList);
     }
 
+    //검색어가 포함되어 있는 현재 유저 게시글 조회하기
+    @GetMapping("/search/{searchWord}/orderBy/{sortType}/user/{email}/{page}")
+    public ResponseEntity<AssembleBoardList> searchUserAssembleBoards(@PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email, @PathVariable int page) {
+        Long userId = usersService.findByEmail(email).getId();
+        Page<AssembleBoard> boardInfos = assembleBoardService.getSearchAssembleBoards(searchWord, sortType, userId, page);
 
-    //게시글 전체 조회
-    @GetMapping("")
-    public ResponseEntity<List<AssembleBoardResponse>> findAllAssembleBoards() {
-        //추후 확장을 위해 assembleBoard를 직접 전달
-        List<AssembleBoardResponse> assembleBoardResponses = assembleBoardService.findAllAssembleBoards()
+        List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
                 .stream()
-                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard, assembleGoodService.countAssembleBoardGood(assembleBoard.getAssembleBoardId())))
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard))
                 .toList();
-        return ResponseEntity.ok().body(assembleBoardResponses);
+        AssembleBoardList boardList = new AssembleBoardList(assembleBoardResponses, boardInfos.getTotalPages(),
+                boardInfos.getTotalElements(), boardInfos.getSize(), boardInfos.getNumber());
+
+        return ResponseEntity.ok().body(boardList);
     }
+
 
     //게시글 상세 조회
     @GetMapping("/{assembleboard_id}")
     public ResponseEntity<AssembleBoardResponse> findAssembleBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
-
         String accessToken = authHeader.replace("Bearer ", "");
         AssembleBoard assembleBoard = assembleBoardService.findAssembleBoardById(assembleBoardId);
 
-        Long likeCount = assembleGoodService.countAssembleBoardGood(assembleBoardId);
-
-        AssembleBoardResponse detailBoard = new AssembleBoardResponse(assembleBoard, likeCount);
+        AssembleBoardResponse detailBoard = new AssembleBoardResponse(assembleBoard);
 
         //게스트가 아니라면 해당 게시글에 좋아요를 눌렀는지 안 눌렀는지 체크
         if (!accessToken.equals("guest")){
@@ -147,7 +123,7 @@ public class AssembleApiController {
     //게시글 좋아요 조회
     @GetMapping("/good/{assembleboard_id}")
     public ResponseEntity<Long> findAssembleBoardGood(@PathVariable("assembleboard_id") Long assembleBoardId) {
-        long likeCount = assembleGoodService.countAssembleBoardGood(assembleBoardId);
+        long likeCount = assembleBoardService.countAssembleBoardGood(assembleBoardId);
         return ResponseEntity.ok().body(likeCount);
     }
 
@@ -160,9 +136,11 @@ public class AssembleApiController {
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
         request.setUserId(userId);
-        assembleGoodService.registAssembleBoardGood(request);
 
-        return ResponseEntity.ok().body(new AssembleGoodResponse(assembleGoodService.countAssembleBoardGood(request.getAssembleBoardId()), true ));
+        assembleGoodService.registAssembleBoardGood(request);
+        assembleBoardService.upLikeCount(request.getAssembleBoardId());
+
+        return ResponseEntity.ok().body(new AssembleGoodResponse(assembleBoardService.countAssembleBoardGood(request.getAssembleBoardId()), true ));
     }
 
     //게시글 좋아요 삭제
@@ -173,6 +151,8 @@ public class AssembleApiController {
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
         assembleGoodService.deleteAssembleBoardGood(assembleBoardId, userId);
-        return ResponseEntity.ok().body(new AssembleGoodResponse(assembleGoodService.countAssembleBoardGood(assembleBoardId), false ));
+        assembleBoardService.downLikeCount(assembleBoardId);
+
+        return ResponseEntity.ok().body(new AssembleGoodResponse(assembleBoardService.countAssembleBoardGood(assembleBoardId), false ));
     }
 }
