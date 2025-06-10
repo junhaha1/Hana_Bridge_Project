@@ -1,9 +1,7 @@
 package com.adela.hana_bridge_beapi.controller;
 
-import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardList;
-import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
-import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodAddRequest;
-import com.adela.hana_bridge_beapi.dto.assemble.AssembleGoodResponse;
+import com.adela.hana_bridge_beapi.dto.assemble.*;
+import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
 import com.adela.hana_bridge_beapi.dto.board.BoardList;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
@@ -107,6 +105,22 @@ public class AssembleApiController {
             detailBoard.setGoodCheck(assembleGoodService.checkAssembleBoardGood(assembleBoardId, usersId));
         }
         return ResponseEntity.ok().body(detailBoard);
+    }
+
+    @PostMapping("/article")
+    public ResponseEntity<AssembleSummaryResponse> addAssembleBoard(@RequestHeader("Authorization") String authHeader,
+                                         @RequestBody AssembleAddRequest request) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        String role = tokenService.findRoleByToken(accessToken);
+        String email = tokenService.findEmailByToken(accessToken);
+
+        if (request.getCategory().equals("notice") && !role.equals("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            request.connectionUserEntity(usersService.findByEmail(email));
+            AssembleSummaryResponse assembleSummaryResponse = assembleBoardService.save(request);
+            return ResponseEntity.ok().body(assembleSummaryResponse);
+        }
     }
 
     //게시글 삭제

@@ -19,6 +19,10 @@ public class AssembleAddRequest {
     private String content;
     private LocalDateTime createAt;
 
+    public void connectionUserEntity(Users users){
+        this.users = users;
+    }
+
     public AssembleBoard toEntity(){
         return AssembleBoard.builder()
                 .users(users)
