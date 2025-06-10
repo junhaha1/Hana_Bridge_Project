@@ -1,3 +1,5 @@
+/*데이터베이스 테이블 추가 파일*/
+
 CREATE TABLE `prompt` (
 	`prompt_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `user_id` BIGINT	NOT NULL,

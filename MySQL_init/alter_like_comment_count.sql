@@ -1,3 +1,5 @@
+/*데이터베이스 컬럼 추가 파일*/
+
 ALTER TABLE board ADD COLUMN like_count BIGINT default 0;
 ALTER TABLE board ADD COLUMN comment_count BIGINT default 0;
 
