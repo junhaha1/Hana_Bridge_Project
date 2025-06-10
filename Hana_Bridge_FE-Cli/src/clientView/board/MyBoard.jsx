@@ -32,6 +32,9 @@ const MyBoard = () => {
 
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
+  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
+
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -44,7 +47,7 @@ const MyBoard = () => {
   const getMySearch = (word) => {
     const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchUserAssembleBoards;
 
-    getSearchmyBoards(toggle, word, sortType, email)
+    getSearchmyBoards(toggle, word, sortType, email, page)
     .then(async  (res) => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
@@ -60,7 +63,8 @@ const MyBoard = () => {
       if (data === null || (Array.isArray(data) && data.length === 0)) {
         setBoards(null);
       } else {
-        setBoards(data);
+        setBoards(toggle === "code" ? data.boards : data.assembleBoards);
+        setTotalPages(data.totalPages);
       }
     })
     .catch((err) => {
@@ -75,6 +79,11 @@ const MyBoard = () => {
       }
     });
   }
+
+  // 정렬 방법이나 검색어가 바뀌면 페이지 1
+  useEffect(() =>{
+    setPage(1);
+  }, [sortType, searchWord, toggle]);
 
   if(nickName === 'guest'){
     return (
@@ -98,23 +107,12 @@ const MyBoard = () => {
           let getSortMyboard = null;
           //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
           if (toggle === "code"){
-            if (sortType === "latest"){
-              getSortMyboard = ApiClient.getMyBoard
-            } 
-            if (sortType === "like"){
-              getSortMyboard = ApiClient.getSortMyBoards
-            }
+            getSortMyboard = ApiClient.getMyBoard
           }
-
           if (toggle === "assemble"){
-            if (sortType === "latest"){
-              getSortMyboard = ApiClient.getMyAssemble
-            } 
-            if (sortType === "like"){
-              getSortMyboard = ApiClient.getSortMyAssembleBoards
-            }
+            getSortMyboard = ApiClient.getMyAssemble
           }
-          const res = await getSortMyboard(email);
+          const res = await getSortMyboard(email, page, sortType);
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -131,7 +129,8 @@ const MyBoard = () => {
             console.log("게시글이 없습니다.");
             setBoards(null);
           } else {
-            setBoards(data);
+            setBoards(toggle === "code" ? data.boards : data.assembleBoards);
+            setTotalPages(data.totalPages);
           }
         }
       } catch(err) {
@@ -150,7 +149,7 @@ const MyBoard = () => {
     };  
     
     fetchBoards();
-  }, [toggle, sortType, redirect]);
+  }, [toggle, sortType, redirect, page]);
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {

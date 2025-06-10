@@ -67,34 +67,15 @@ class ApiClient{
   }
 
   //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
-  static getMyBoard(email){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}`);
-  }
-  //사용자 본인 code게시글 좋아요순으로 조회
-  static getSortMyBoards(email){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/code/user/${email}`);
-  }
-
-  //좋아요 갯수 상위 5개 게시글 조회 (CodeBoard, NoticeBoard)
-  static getBestBoard(){
-    console.log("get Best Board");
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/top',{
-      method: "GET", 
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
+  static getMyBoard(email, page, sortType){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}/${page}`);
   }
 
   //사용자 본인 게시글 조회 (AssembleBoard)
-  static getMyAssemble(email){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${email}`);
+  static getMyAssemble(email, page, sortType){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${email}/${page}`);
   }
 
-  //사용자 본인 assemble 게시글 좋아요순으로 조회
-  static getSortMyAssembleBoards(email){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/sort/good/user/${email}`);
-  }
 
 
   //OpenAi chat
@@ -118,22 +99,6 @@ class ApiClient{
       }),
     });
   }
-
-
-  // static sendMessage(promptLevel, preContent, question){
-  //   console.log("send Message to AI: " + question);
-  //   return CustomFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/answer',{
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       promptLevel: promptLevel,
-  //       preContent: preContent,
-  //       question: question,
-  //     }),
-  //   });
-  // }
 
   //assemble게시글 등록(AI)
   static postAssemble(promptLevel, messages){
@@ -169,25 +134,20 @@ class ApiClient{
     });
   }
   //Board 전체 조회
-  static getBoards(category){
-    console.log("Get Boards By category: " + category);
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category);
+  static getBoards(category, page, sortType){
+    console.log("Get Boards By category: " + category + page + sortType);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + '/category/' + category + "/" + page + "/" + sortType);
   }
 
   //검색어를 통해 Board 조회
-  static getSearchBoards(category, searchWord, sortType){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}`);
+  static getSearchBoards(category, searchWord, sortType, page){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/${page}`);
   }
 
   //검색어를 통해 Board 조회
-  static getSearchUserBoards(category, searchWord, sortType, email){
+  static getSearchUserBoards(category, searchWord, sortType, email, page){
     console.log(`검색 : ${category}, ${searchWord}, ${sortType}, ${email}`);
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/user/${email}`);
-  }
-
-  //좋아요순으로 정렬하여 전체 조회
-  static getSortBoards(category){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/sort/good/${category}`);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/user/${email}/${page}`);
   }
 
   //Board 상세 조회
@@ -231,22 +191,17 @@ class ApiClient{
   }
       
   //Assemble 전체 조회
-  static getAssembleBoards(){
-    console.log("Get AssembleBoard");
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD);
+  static getAssembleBoards(page, sortType){
+    console.log("Get AssembleBoard" + page + "/" + sortType);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + "/" + page + "/" + sortType);
   }
 
-  //좋아요순으로 조회
-  static getSortAssembleBoards(){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/sort/good`);
+  static getSearchAssembleBoards(word, sortType, page){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/${page}`);
   }
 
-  static getSearchAssembleBoards(word, sortType){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}`);
-  }
-
-  static getSearchUserAssembleBoards(toggle, word, sortType, email){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/user/${email}`);
+  static getSearchUserAssembleBoards(toggle, word, sortType, email, page){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/user/${email}/${page}`);
   }
 
   //Assemble 상세 조회

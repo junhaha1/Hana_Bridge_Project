@@ -26,9 +26,7 @@ const CodeBoard = () => {
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
   const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
-  const [totalPages, setTotalPages] = useState(10); //
-  const [totalCount, setTotalCount] = useState(0);
-  const [size, setSize] = useState(0); 
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -56,7 +54,8 @@ const CodeBoard = () => {
         console.log("해당 게시글이 없습니다.");
         setBoards(null);
       } else {
-        setBoards(data);
+        setBoards(data.boards);
+        setTotalPages(data.totalPages);
       }
     })
     .catch((err) => {
@@ -72,6 +71,11 @@ const CodeBoard = () => {
     });
   }
 
+  // 정렬 방법이나 검색어가 바뀌면 페이지 1
+  useEffect(() =>{
+    setPage(1);
+  }, [sortType, searchWord]);
+
   useEffect(() => {
     const fetchBoards = async () => {
       setIsLoading(true);
@@ -79,8 +83,8 @@ const CodeBoard = () => {
         if (searchWord.trim() !== ""){ //검색어가 존재하는 경우
           getSearch(searchWord);
         } else { //검색어가 없는 경우
-          const getBoard = sortType === "latest" ? ApiClient.getBoards : ApiClient.getSortBoards;
-          const res = await getBoard(category, page);
+          const getBoard = ApiClient.getBoards;
+          const res = await getBoard(category, page, sortType);
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -97,8 +101,7 @@ const CodeBoard = () => {
             setBoards(null);
           } else {
             setBoards(data.boards);
-            setTotalCount(data.totalCount);
-            setTotalPages(Math.ceil(data.totalCount / POSTS_PER_PAGE));
+            setTotalPages(data.totalPages);
           }
         } 
       } catch (err) {
@@ -122,14 +125,14 @@ const CodeBoard = () => {
 
   //페이지 번호 렌더링 함수 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1 || searchWord.trim()) return null;
+    if (isLoading || totalPages <= 1 ) return null;
 
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
       pages.push(
         <button
           key={i}
-          className={`px-3 py-1 mx-1 rounded-md border ${i === page ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
+          className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
           onClick={() => setPage(i)}
         >
           {i}
@@ -281,7 +284,6 @@ const CodeBoard = () => {
         {renderPagination()}
       </>
       )}      
-      {renderPagination()}   {/*디자인 확인 후 삭제 */}
       <button
         onClick={scrollToTop}
         className={upBottom}

@@ -26,6 +26,9 @@ const NoticeBoard = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
+
+  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -35,7 +38,7 @@ const NoticeBoard = () => {
   };
 
   const getSearch = (word) => {
-    ApiClient.getSearchBoards(category, word, "latest")
+    ApiClient.getSearchBoards(category, word, "latest", page)
     .then(async  (res) => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
@@ -53,7 +56,8 @@ const NoticeBoard = () => {
         console.log("해당 게시글이 없습니다.");
         setBoards(null);
       } else {
-        setBoards(data);
+        setBoards(data.boards);
+        setTotalPages(data.totalPages);
       }
     })
     .catch((err) => {
@@ -69,6 +73,11 @@ const NoticeBoard = () => {
     });
   }
 
+  // 검색어가 바뀌면 페이지 1
+  useEffect(() =>{
+    setPage(1);
+  }, [searchWord]);
+
   useEffect(() => {
     const fetchBoards = async () => {
       try{
@@ -76,7 +85,7 @@ const NoticeBoard = () => {
         if (searchWord.trim() !== ""){ //검색어가 존재하는 경우
           getSearch(searchWord);
         } else {
-          const res = await ApiClient.getBoards(category);
+          const res = await ApiClient.getBoards(category, page, "latest");
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -93,7 +102,8 @@ const NoticeBoard = () => {
             console.log("게시글이 없습니다.");
             setBoards(null);
           } else {
-            setBoards(data);
+            setBoards(data.boards);
+            setTotalPages(data.totalPages);
           }
         }
       }catch(err){
@@ -112,8 +122,26 @@ const NoticeBoard = () => {
     };
     
     fetchBoards();
-  }, [redirect]); // 의존성 배열에 category 추가 추천
+  }, [redirect, page]); // 의존성 배열에 category 추가 추천
 
+  //페이지 번호 렌더링 함수 
+  const renderPagination = () => {
+    if (isLoading || totalPages <= 1 ) return null;
+
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
+          onClick={() => setPage(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return <div className="mt-6 flex justify-center">{pages}</div>;
+  };
 
   //상세 화면으로 
   const boardClick = (boardId) =>{
@@ -231,6 +259,7 @@ const NoticeBoard = () => {
             </div>
           </div>
         ))}
+        {renderPagination()}
         </>
       )}
     </div>
