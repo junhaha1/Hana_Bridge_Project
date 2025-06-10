@@ -19,13 +19,12 @@ public class BoardResponse {
     private final String code;
     private final LocalDateTime createAt;
     private final LocalDateTime updateAt;
+    private final int likeCount;
+    private final int commentCount;
 
-    private final Long likeCount;
-    private final Long commentCount;
+    private boolean goodCheck; //좋아요 눌렀는지 여부
 
-    private boolean goodCheck;
-
-    public BoardResponse(Board board, Long likeCount, Long commentCount) {
+    public BoardResponse(Board board) {
         this.boardId = board.getBoardId();
         this.nickName = board.getUsers().getNickName();
         this.title = board.getTitle();
@@ -34,24 +33,9 @@ public class BoardResponse {
         this.code = board.getCode();
         this.createAt = board.getCreateAt();
         this.updateAt = board.getUpdateAt();
+        this.likeCount = board.getLikeCount();
+        this.commentCount = board.getCommentCount();
 
-        this.likeCount = likeCount;
-        this.commentCount = commentCount;
         this.goodCheck = false;
-    }
-
-    @Builder
-    public BoardResponse(Long boardId, String nickName, String title, String category, String content, String code, LocalDateTime createAt, LocalDateTime updateAt, Long likeCount, Long commentCount, boolean goodCheck) {
-        this.boardId = boardId;
-        this.nickName = nickName;
-        this.title = title;
-        this.category = category;
-        this.content = content;
-        this.code = code;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
-        this.likeCount = likeCount;
-        this.commentCount = commentCount;
-        this.goodCheck = goodCheck;
     }
 }

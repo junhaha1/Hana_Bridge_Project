@@ -39,6 +39,12 @@ public class Board {
     @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
 
+    @Column(name = "like_count", nullable = false)
+    private int likeCount;
+
+    @Column(name = "comment_count", nullable = false)
+    private int commentCount;
+
     @Builder
     public Board(Users users, String title, String category, String code, String content, LocalDateTime createAt, LocalDateTime updateAt) {
         this.users = users;
