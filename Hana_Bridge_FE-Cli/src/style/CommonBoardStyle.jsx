@@ -13,12 +13,12 @@ export const sortCheckLayout = "flex gap-3 justify-end mt-3 mb-2";
 export const sortCheckBox = "text-white pr-1 py-2 text-base bg-transparent rounded focus:outline-none focus:ring-0 focus:border-transparent";
 
 /* Card 게시글 위치*/
-export const cardTopLayout = "flex justify-between items-start";
+export const cardTopLayout = "flex justify-between items-start w-full min-w-0";
 export const cardBottomLayout = "flex justify-between gap-4";
 
 /* Card 게시글 내부 요소*/
-export const cardTitle = "text-white text-lg font-semibold line-clamp-1";
-export const cardContent = "text-sm text-gray-200 line-clamp-1";
+export const cardTitle = "w-full text-white text-lg font-semibold line-clamp-1 overflow-hidden";
+export const cardContent = "w-full text-sm text-gray-200 line-clamp-1 overflow-hidden";
 export const cardAuthor = "flex text-purple-300 gap-1";
 export const cardGood = "text-indigo-300 flex gap-1";
 export const cardComment = "text-gray-300 flex gap-1";
