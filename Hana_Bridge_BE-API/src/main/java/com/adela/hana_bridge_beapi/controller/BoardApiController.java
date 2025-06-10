@@ -161,7 +161,7 @@ public class BoardApiController {
         request.connectionUserEntity(usersService.findByEmail(email));
 
         commentService.save(request);
-        boardService.upLikeCount(boardId);
+        boardService.upCommentCount(boardId);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -174,7 +174,7 @@ public class BoardApiController {
         String email = tokenService.findEmailByToken(accessToken);
 
         commentService.delete(email, commentId);
-        boardService.downLikeCount(commentId);
+        boardService.downCommentCount(commentId);
 
         return ResponseEntity.ok()
                 .build();
@@ -214,7 +214,7 @@ public class BoardApiController {
 
         request.setUserId(userId);
         goodService.goodSave(request);
-        boardService.upCommentCount(request.getBoardId());
+        boardService.upLikeCount(request.getBoardId());
 
         return ResponseEntity.ok().body(new GoodResponse(boardService.goodCount(request.getBoardId()), true));
     }
@@ -231,7 +231,7 @@ public class BoardApiController {
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
         goodService.goodRemove(boardId, userId);
-        boardService.downCommentCount(boardId);
+        boardService.downLikeCount(boardId);
 
         return ResponseEntity.ok().body(new GoodResponse(boardService.goodCount(boardId), false));
     }
