@@ -123,6 +123,11 @@ public class BoardService {
     }
 
     /*좋아요 갯수 관련*/
+    public Long goodCount(Long boardId){
+        return boardRepository.findLikeCountById(boardId);
+    }
+
+
     //좋아요 수 + 1
     @Transactional
     public void upLikeCount(long boardId){

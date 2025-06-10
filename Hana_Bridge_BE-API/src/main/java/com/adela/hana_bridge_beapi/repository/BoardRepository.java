@@ -13,6 +13,10 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByCategory(String category, Pageable pageable);
     Page<Board> findByUsers_Id(Long userId, Pageable pageable);
+
+    @Query("SELECT b.likeCount FROM Board b WHERE b.boardId = :boardId")
+    Long findLikeCountById(@Param("boardId") Long boardId);
+
     @Modifying
     @Query("UPDATE Board b SET b.likeCount = b.likeCount + 1 WHERE b.boardId = :boardId")
     void incrementLikeCount(@Param("boardId") Long boardId);
