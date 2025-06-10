@@ -1,5 +1,6 @@
 package com.adela.hana_bridge_beapi.controller;
 
+import com.adela.hana_bridge_beapi.dto.assemble.AssembleBoardResponse;
 import com.adela.hana_bridge_beapi.dto.board.*;
 import com.adela.hana_bridge_beapi.dto.comment.CommentAddRequest;
 import com.adela.hana_bridge_beapi.dto.comment.CommentResponse;
@@ -9,6 +10,8 @@ import com.adela.hana_bridge_beapi.entity.Comment;
 import com.adela.hana_bridge_beapi.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,66 +29,61 @@ public class BoardApiController {
     private final CommentService commentService;
     private final GoodService goodService;
 
-    //검색어가 포함 되어 있는 게시글 조회하기
-    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}")
-    public ResponseEntity<List<BoardResponse>> searchBoards(@PathVariable String category, @PathVariable String searchWord, @PathVariable String sortType) {
-        List<BoardResponse> boards = boardService.getSearchBoards(category, searchWord, sortType)
+    //카데고리별 글 전체 조회 -> sortType으로 정렬 조건 변경 가능
+    @GetMapping("/category/{category}/{page}/{sortType}")
+    public ResponseEntity<BoardList> findAllBoard(@PathVariable("category") String category, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
+        Page<Board> boards = boardService.findByCategory(category, page, sortType);
+        List<BoardResponse> boardInfos = boards.getContent()
                 .stream()
-                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
+                .map(board -> new BoardResponse(board))
                 .toList();
-        return ResponseEntity.ok().body(boards);
+
+        BoardList boardList = new BoardList(boardInfos, boards.getTotalPages(), boards.getTotalElements(), boards.getSize(), boards.getNumber());
+        return ResponseEntity.ok().body(boardList);
     }
 
-    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}/user/{email}")
-    public ResponseEntity<List<BoardResponse>> searchUserCodeBoards(@PathVariable String category, @PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email) {
+    //현재 사용자가 작성한 글 목록 가져오기 -> sortType으로 정렬 조건 변경 가능
+    @GetMapping("/user/{email}/{page}/{sortType}")
+    public ResponseEntity<BoardList> findBoardByEmail(@PathVariable String email, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
         Long userId = usersService.findByEmail(email).getId();
 
-        List<BoardResponse> boards = boardService.getSearchBoards(category, searchWord, sortType, userId)
+        Page<Board> boards = boardService.findByUserId(userId, page, sortType);
+
+        List<BoardResponse> boardInfos = boards.getContent()
                 .stream()
-                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
+                .map(board -> new BoardResponse(board))
                 .toList();
-        return ResponseEntity.ok().body(boards);
+
+        BoardList boardList = new BoardList(boardInfos, boards.getTotalPages(), boards.getTotalElements(), boards.getSize(), boards.getNumber());
+        return ResponseEntity.ok().body(boardList);
     }
 
-    //좋아요순으로 정렬하기
-    @GetMapping("/sort/good/{category}")
-    public ResponseEntity<List<BoardResponse>> sortGoodBoards(@PathVariable("category") String category) {
+    //검색어가 포함되어 있는 게시글 조회
+    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}/{page}")
+    public ResponseEntity<BoardList> searchBoards(@PathVariable String category, @PathVariable int page, @PathVariable String searchWord, @PathVariable String sortType) {
+        Page<Board> boards = boardService.getSearchBoards(category, searchWord, page, sortType);
+        List<BoardResponse> boardInfos = boards.getContent()
+                .stream()
+                .map(board -> new BoardResponse(board))
+                .toList();
 
-        List<BoardResponse> boards = boardService.getBoardsSortedByLikeWithGoodCheck(category);
-        return ResponseEntity.ok().body(boards);
+        BoardList boardList = new BoardList(boardInfos, boards.getTotalPages(), boards.getTotalElements(), boards.getSize(), boards.getNumber());
+        return ResponseEntity.ok().body(boardList);
     }
 
-    @GetMapping("/sort/good/code/user/{email}")
-    public ResponseEntity<List<BoardResponse>> sortGoodCodeBoardsByEmail(@PathVariable("email") String email) {
+    //검색어가 포함되어 있는 사용자 게시글 조회
+    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}/user/{email}/{page}")
+    public ResponseEntity<BoardList> searchUserCodeBoards(@PathVariable String category, @PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email, @PathVariable int page) {
         Long userId = usersService.findByEmail(email).getId();
+        Page<Board> boards = boardService.getSearchBoards(category, searchWord, sortType, userId, page);
 
-        List<BoardResponse> boards = boardService.getMyCodeBoardsSortedByLike(userId);
-        return ResponseEntity.ok().body(boards);
-    }
-
-    //좋아요 갯수 상위 5개 게시글 가져오기
-    @GetMapping("/top")
-    public ResponseEntity<List<BoardResponse>> findTopBoards(){
-        List<Long> boardIds = goodService.findTop5BoardIds();
-
-        List<BoardResponse> boards = boardService.findByBoardIds(boardIds)
+        List<BoardResponse> boardInfos = boards.getContent()
                 .stream()
-                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
+                .map(board -> new BoardResponse(board))
                 .toList();
-        return ResponseEntity.ok().body(boards);
-    }
 
-
-    //현재 사용자가 작성한 글 목록 가져오기
-    @GetMapping("/user/{email}")
-    public ResponseEntity<List<BoardResponse>> findBoardByEmail(@PathVariable String email){
-        Long userId = usersService.findByEmail(email).getId();
-
-        List<BoardResponse> boards = boardService.findByUserId(userId)
-                .stream()
-                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
-                .toList();
-        return ResponseEntity.ok().body(boards);
+        BoardList boardList = new BoardList(boardInfos, boards.getTotalPages(), boards.getTotalElements(), boards.getSize(), boards.getNumber());
+        return ResponseEntity.ok().body(boardList);
     }
 
     //글 등록
@@ -105,32 +103,18 @@ public class BoardApiController {
         }
     }
 
-    //카데고리별 글 전체 조회
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<BoardResponse>> findAllBoard(@PathVariable("category") String category) {
-        List<BoardResponse> boards = boardService.findByCategory(category)
-                .stream()
-                .map(board -> new BoardResponse(board, goodService.goodCount(board.getBoardId()), commentService.countComment(board.getBoardId())))
-                .toList();
-        return ResponseEntity.ok().body(boards);
-    }
-
     //글 상세 조회
     @GetMapping("/{boardId}")
     public ResponseEntity<BoardResponse> findBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("boardId") long boardId){
         String accessToken = authHeader.replace("Bearer ", "");
         Board board = boardService.findById(boardId);
-        Long likeCount = goodService.goodCount(boardId);
-        Long commentCount = commentService.countComment(board.getBoardId());
-
-        BoardResponse detailBoard = new BoardResponse(board, likeCount, commentCount);
+        BoardResponse detailBoard = new BoardResponse(board);
 
         //게스트가 아니라면 해당 게시글에 좋아요를 눌렀는지 안 눌렀는지 체크
         if (!accessToken.equals("guest")){
             Long usersId = tokenService.findUsersIdByToken(accessToken);
             detailBoard.setGoodCheck(goodService.goodCheck(boardId, usersId));
         }
-
         return ResponseEntity.ok().body(detailBoard);
     }
 
@@ -166,7 +150,6 @@ public class BoardApiController {
         }
     }
 
-
     //--------------------댓글---------------------------
     //댓글 추가
     @PostMapping("/comment/{boardId}")
@@ -178,6 +161,7 @@ public class BoardApiController {
         request.connectionUserEntity(usersService.findByEmail(email));
 
         commentService.save(request);
+        boardService.upLikeCount(boardId);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -190,6 +174,8 @@ public class BoardApiController {
         String email = tokenService.findEmailByToken(accessToken);
 
         commentService.delete(email, commentId);
+        boardService.downLikeCount(commentId);
+
         return ResponseEntity.ok()
                 .build();
     }
@@ -219,7 +205,6 @@ public class BoardApiController {
         return ResponseEntity.ok("댓글이 수정되었습니다.");
     }
 
-
     //--------------------code  게시판 좋아요 ---------------------------
     //좋아요 생성
     @PostMapping("/good")
@@ -229,6 +214,7 @@ public class BoardApiController {
 
         request.setUserId(userId);
         goodService.goodSave(request);
+        boardService.upCommentCount(request.getBoardId());
 
         return ResponseEntity.ok().body(new GoodResponse(goodService.goodCount(request.getBoardId()), true));
     }
@@ -245,6 +231,8 @@ public class BoardApiController {
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
         goodService.goodRemove(boardId, userId);
+        boardService.downCommentCount(boardId);
+
         return ResponseEntity.ok().body(new GoodResponse(goodService.goodCount(boardId), false));
     }
 }
