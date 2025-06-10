@@ -21,8 +21,8 @@ CREATE TABLE `board` (
 	`content`	MEDIUMTEXT	NULL,
 	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`update_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-    `like_count` BIGINT NOT NULL DEFAULT 0,
-    `comment_count` BIGINT NOT NULL DEFAULT 0
+  `like_count` BIGINT NOT NULL DEFAULT 0,
+  `comment_count` BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `assembleboard` (
@@ -32,7 +32,7 @@ CREATE TABLE `assembleboard` (
 	`category`	VARCHAR(50)	NOT NULL	DEFAULT 'assemble',
 	`content`	MEDIUMTEXT	NULL,
 	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-    `like_count` BIGINT NOT NULL DEFAULT 0
+  `like_count` BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `assemblegood` (
