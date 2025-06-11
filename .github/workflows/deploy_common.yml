@@ -299,8 +299,8 @@ jobs:
           mkdir -p deploy/Hana_Bridge_FE-Cli
       
           cp -r Hana_Bridge_FE-Cli/dist deploy/Hana_Bridge_FE-Cli/
-          cp Hana_Bridge_FE-Cli/entrypoint.sh deploy/Hana_Bridge_BE-API/
-          cp Hana_Bridge_FE-Cli/zabbix_agentd.conf deploy/Hana_Bridge_BE-API/
+          cp Hana_Bridge_FE-Cli/entrypoint.sh deploy/Hana_Bridge_FE-Cli/
+          cp Hana_Bridge_FE-Cli/zabbix_agentd.conf deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_FE-Cli/nginx.conf deploy/Hana_Bridge_FE-Cli/
           cp Hana_Bridge_FE-Cli/Dockerfile deploy/Hana_Bridge_FE-Cli/
 
