@@ -383,14 +383,18 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       return res.json();
     })
     .then((data) => {      
-      const assembleBoardId  = data.assembleBoardId;
+      //const assembleBoardId  = data.assembleBoardId;
+      const assembleTitle = data.title;
+      const assembleContent = data.content;
       //dispatch(setPostLoading({postLoading: false}));
       setPostComplete(true);
       setIsPostLoading(false);      
       console.log("posting complete!");
       //dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
-      console.log(assembleBoardId);
-      navigate(`/writeAssemble/${assembleBoardId}`);
+      //console.log(assembleBoardId);
+      navigate('/writeAssemble', { state: {assembleTitle: assembleTitle, assembleContent: assembleContent}});
+      onfullTalk(false);
+      onClose(false);
     })
     .catch((err) => {
       setIsPostLoading(false);
@@ -682,7 +686,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                     </div>
                   ) : postComplete ? (
                     <div className={postCompleteDiv}>
-                      게시글이 등록 되었습니다.
+                      게시글이 등록화면으로 이동합니다. 
                     </div>
                   ) : (
                   <button

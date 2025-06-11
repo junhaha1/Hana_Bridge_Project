@@ -100,7 +100,7 @@ class ApiClient{
     });
   }
 
-  //assemble게시글 등록(AI)
+  //assemble게시글 내용 요약(AI)
   static postAssemble(promptLevel, messages){
     console.log("make Assemble board");
     return StreamFetch(ApiClient.SERVER_URL + ApiClient.AIChat + '/summary',{
@@ -113,6 +113,22 @@ class ApiClient{
         coreContent: messages,
       })
     })
+  }
+
+  //assemble게시글 내용 저장(AI)
+  static saveAssemble(title, category, content, createAt){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/article', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: title,
+        category: category,
+        content: content,
+        createAt: createAt,
+      }),
+    });
   }
   
   //Board 등록 

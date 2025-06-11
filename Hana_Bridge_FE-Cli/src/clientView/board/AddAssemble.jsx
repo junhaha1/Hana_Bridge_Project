@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from 'react-redux';
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, useLocation , useParams } from "react-router-dom";
 
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
@@ -18,17 +18,18 @@ import { FaLightbulb } from "react-icons/fa";
 
 const AddAssemble = () => {
   const { assembleBoardId } = useParams();
-  const [board, setBoard] = useState(null);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const location = useLocation();
+  const { assembleTitle, assembleContent } = location.state || {};
+  //const [board, setBoard] = useState(null);
 
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [nickName, setNickName] = useState('guest');
+  const [title, setTitle] = useState(assembleTitle);
+  const [content, setContent] = useState(assembleContent);
   const [createAt, setCreateAt] = useState(new Date());
   const [likeCount, setLikeCount] = useState(0);
+  const nickName = useSelector((state) => state.user.nickName);
 
   //질문 tip
   const [isHovered, setIsHovered] = useState(false);
@@ -44,51 +45,68 @@ const AddAssemble = () => {
     }
   };
 
-  useEffect(() => {
-    ApiClient.getAssembleBoard(assembleBoardId)
-      .then(async (res) => {
-        if (!res.ok) {
-          const errorData = await res.json();
-          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-          error.code = errorData.code;
-          throw error;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setBoard(data);  
-        setTitle(data.title);
-        setContent(data.content);     
-        setNickName(data.nickName); 
-        setLikeCount(data.likeCount);
-      })
-      .catch((err) => {
-        console.error("API 요청 실패:", err);
-        if (err.code && err.code.includes('NOT_FOUND')) {
-          navigate("/error");
-        }
-      });
-  }, [assembleBoardId]);
+  // useEffect(() => {
+  //   ApiClient.getAssembleBoard(assembleBoardId)
+  //     .then(async (res) => {
+  //       if (!res.ok) {
+  //         const errorData = await res.json();
+  //         const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+  //         error.code = errorData.code;
+  //         throw error;
+  //       }
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       console.log(data);
+  //       setBoard(data);  
+  //       setTitle(data.title);
+  //       setContent(data.content);     
+  //       setNickName(data.nickName); 
+  //       setLikeCount(data.likeCount);
+  //     })
+  //     .catch((err) => {
+  //       console.error("API 요청 실패:", err);
+  //       if (err.code && err.code.includes('NOT_FOUND')) {
+  //         navigate("/error");
+  //       }
+  //     });
+  // }, [assembleBoardId]);
 
-  const boardDeleteButton = (assembleBoardId) => {
-    ApiClient.deleteAssembleBoard(assembleBoardId)
+  // const boardDeleteButton = (assembleBoardId) => {
+  //   ApiClient.deleteAssembleBoard(assembleBoardId)
+  //   .then(async (res) => {
+  //     if (!res.ok) {
+  //       const errorData = await res.json();
+  //       const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+  //       error.code = errorData.code;
+  //       throw error;
+  //     }
+  //     navigate("/board/notice");
+  //   })
+  //   .catch((err) => {
+  //     console.error("API 요청 실패:", err);
+  //     if (err.code && err.code.includes('NOT_FOUND')) {
+  //       navigate("/error");
+  //     }
+  //   });
+  // };
+
+  const saveAssemble =() =>{
+    ApiClient.saveAssemble(title, 'assemble', content, createAt)
     .then(async (res) => {
-      if (!res.ok) {
-        const errorData = await res.json();
-        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-        error.code = errorData.code;
-        throw error;
-      }
-      navigate("/board/notice");
+      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+      return res.json();      
+    })
+    .then((data) => {      
+      const assembleBoardId  = data.assembleBoardId;
+      //console.log(assembleBoardId);
+      navigate(`/detailAssemble/${assembleBoardId}`);
     })
     .catch((err) => {
-      console.error("API 요청 실패:", err);
-      if (err.code && err.code.includes('NOT_FOUND')) {
-        navigate("/error");
-      }
-    });
-  };
+      alert("게시글 포스팅 실패");
+      console.error("API 요청 실패:", err)
+    });    
+  }
 
   return (
     <div>
@@ -167,7 +185,7 @@ const AddAssemble = () => {
                   <div className="flex-row">
                     <button 
                       className={buttonStyle +" text-green-400 text-sm hover:underline mr-3"} 
-                      onClick={() => {}}>
+                      onClick={() => saveAssemble()}>
                       등록하기 
                     </button>
                     <button 
@@ -192,7 +210,7 @@ const AddAssemble = () => {
       {confirmCancelOpen && (
         <ConfirmAssembleModal
           onConfirm={() => {
-            boardDeleteButton(assembleBoardId);
+            //boardDeleteButton(assembleBoardId);
             setConfirmCancelOpen(false);
             navigate("/board/assemble");
           }}
@@ -204,8 +222,9 @@ const AddAssemble = () => {
       {confirmBackOpen && (
         <ConfirmAssembleModal
           onConfirm={() => {
-            boardDeleteButton(assembleBoardId);
+            //boardDeleteButton(assembleBoardId);
             setConfirmBackOpen(false);
+            navigate("/board/assemble");
           }}
           onCancel={() => setConfirmBackOpen(false)}
           onMode={"back"}
