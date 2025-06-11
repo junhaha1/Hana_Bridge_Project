@@ -296,7 +296,7 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] w-full max-w-full break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             {!board ? 
             (
               <div className="text-white text-center mt-10">불러오는 중...</div>
@@ -352,7 +352,7 @@ const DetailBoard = () => {
                           scrollBeyondLastLine: false,            // 스크롤 밑 여백 제거
                           placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
                         }}
-                        className="my-custom-class p-1"  //스크롤바 설정 가져옴
+                        className="my-custom-class p-1 overflow-x-auto max-w-full"  //스크롤바 설정 가져옴
                       />
                       : null}                  
 
@@ -429,6 +429,7 @@ const DetailBoard = () => {
                                 language={match[1]}
                                 PreTag="div"
                                 className="rounded overflow-x-auto max-w-[100%]"
+                                wrapLongLines={true} // ✅ 긴 줄 wrap 처리
                               >
                                 {String(children).replace(/\n$/, '')}
                               </SyntaxHighlighter>
