@@ -33,6 +33,8 @@ const AddAssemble = () => {
 
   //질문 tip
   const [isHovered, setIsHovered] = useState(false);
+  //초기 안내 메시지
+  const [showMessage, setShowMessage] = useState(false);
 
   //취소, 이전 확인 모달
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
@@ -45,51 +47,14 @@ const AddAssemble = () => {
     }
   };
 
-  // useEffect(() => {
-  //   ApiClient.getAssembleBoard(assembleBoardId)
-  //     .then(async (res) => {
-  //       if (!res.ok) {
-  //         const errorData = await res.json();
-  //         const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-  //         error.code = errorData.code;
-  //         throw error;
-  //       }
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       console.log(data);
-  //       setBoard(data);  
-  //       setTitle(data.title);
-  //       setContent(data.content);     
-  //       setNickName(data.nickName); 
-  //       setLikeCount(data.likeCount);
-  //     })
-  //     .catch((err) => {
-  //       console.error("API 요청 실패:", err);
-  //       if (err.code && err.code.includes('NOT_FOUND')) {
-  //         navigate("/error");
-  //       }
-  //     });
-  // }, [assembleBoardId]);
-
-  // const boardDeleteButton = (assembleBoardId) => {
-  //   ApiClient.deleteAssembleBoard(assembleBoardId)
-  //   .then(async (res) => {
-  //     if (!res.ok) {
-  //       const errorData = await res.json();
-  //       const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-  //       error.code = errorData.code;
-  //       throw error;
-  //     }
-  //     navigate("/board/notice");
-  //   })
-  //   .catch((err) => {
-  //     console.error("API 요청 실패:", err);
-  //     if (err.code && err.code.includes('NOT_FOUND')) {
-  //       navigate("/error");
-  //     }
-  //   });
-  // };
+  //안내 메시지 시간
+  useEffect(() => {
+    setShowMessage(true);
+    const timer = setTimeout(() => {
+      setShowMessage(false);
+    }, 3000); // 3000ms = 3초 후 메시지 숨김
+    return () => clearTimeout(timer);
+  }, []);
 
   const saveAssemble =() =>{
     ApiClient.saveAssemble(title, 'assemble', content, createAt)
@@ -116,8 +81,13 @@ const AddAssemble = () => {
           <LeftHeader />
           {/* 메인 콘텐츠 */}
           <main className={detailFrame}>
+            {showMessage && (
+              <div className="absolute top-[7%] left-1/2 ml-40 transform -translate-x-1/2 bg-red-300 rounded-full text-black font-semibold p-2 z-50">
+                해당 화면을 나가면 내용이 사라집니다
+              </div>
+            )}
             <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-              <div className="flex flex-row items-center gap-2 w-1/2 md:mt-12 mb-3">
+              <div className="flex flex-row items-center gap-2 w-1/2 md:mt-12 mb-3 relative">
                 <button
                   onClick={() => setConfirmBackOpen(true)}
                   className={buttonStyle + ' bg-white/95 font-semibold text-indigo-900 hover:!bg-[#C5BCFF] hover:text-black text-sm px-4 !py-1'}

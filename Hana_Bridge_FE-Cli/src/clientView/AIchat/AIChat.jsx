@@ -382,19 +382,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();
     })
-    .then((data) => {      
-      //const assembleBoardId  = data.assembleBoardId;
+    .then((data) => {     
       const assembleTitle = data.title;
       const assembleContent = data.content;
-      //dispatch(setPostLoading({postLoading: false}));
       setPostComplete(true);
       setIsPostLoading(false);      
       console.log("posting complete!");
-      //dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
-      //console.log(assembleBoardId);
       navigate('/writeAssemble', { state: {assembleTitle: assembleTitle, assembleContent: assembleContent}});
-      onfullTalk(false);
-      onClose(false);
     })
     .catch((err) => {
       setIsPostLoading(false);
@@ -679,14 +673,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 </button>
                   {isPostLoading ? (
                     <div className={postingDiv}>
-                      게시글 등록 중입니다. 
+                      게시글 요약 중입니다. 
                       <div className="flex items-center justify-center ">
                         <div className={sipnning + " h-5 w-5 border-3 border-zinc-700"}></div>
                       </div>
                     </div>
                   ) : postComplete ? (
                     <div className={postCompleteDiv}>
-                      게시글이 등록화면으로 이동합니다. 
+                      게시글 등록 화면으로 이동합니다. 
                     </div>
                   ) : (
                   <button
