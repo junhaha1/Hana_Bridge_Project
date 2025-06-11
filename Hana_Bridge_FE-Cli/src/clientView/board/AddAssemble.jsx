@@ -86,7 +86,7 @@ const AddAssemble = () => {
           {/* 메인 콘텐츠 */}
           <main className={detailFrame}>
             {showMessage && (
-              <div className="absolute top-[100px] left-1/2 ml-40 transform -translate-x-1/2 bg-zinc-900 rounded-full text-sm text-white font-semibold py-1 px-2 z-50">
+              <div className="absolute md:top-[100px] md:left-1/2 md:ml-40 max-md:left-1/2 max-md:whitespace-nowrap transform -translate-x-1/2 bg-zinc-900 rounded-full text-sm text-white font-semibold py-1 px-2 z-50">
                 해당 화면을 나가면 내용이 사라집니다
               </div>
             )}

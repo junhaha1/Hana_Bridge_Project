@@ -115,7 +115,7 @@ const CodeHelper = () => {
           <motion.div
             key="sub"
             layoutId="chatBox"
-            className="fixed bottom-0 right-0 w-[500px] h-[700px] z-[9000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
+            className="fixed bottom-0 right-0 w-[500px] h-[700px] z-[8000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
           >
             <AIChat
               onClose={setSubTalking}
@@ -131,7 +131,7 @@ const CodeHelper = () => {
           <motion.div
             key="full"
             layoutId="chatBox"
-            className="fixed bottom-0 right-0 w-1/2 h-screen z-[9000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
+            className="fixed bottom-0 right-0 w-1/2 h-screen z-[8000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
           >
             <AIChat
               onClose={setSubTalking}

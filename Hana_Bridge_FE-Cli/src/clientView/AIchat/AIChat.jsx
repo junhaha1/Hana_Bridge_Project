@@ -446,7 +446,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           )}
         </div>
           
-        <div className='flex flex-row gap-2 overflow-visible z-[9999] '>
+        <div className='flex flex-row gap-2 overflow-visible z-[9000] '>
           <div className='my-auto text-white text-sm font-semibold'>
           {(promptLevel === -1 ? userPrompt.name : (promptLevel === 0 ? "초보자" : "전문가"))} 모드
           </div>
@@ -460,7 +460,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             새 대화창
           </button>
           <div
-            className="relative z-[9999]"
+            className="relative z-[9000]"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
