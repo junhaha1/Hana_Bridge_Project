@@ -6,6 +6,7 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from '../../service/ApiClient';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat} from '../../store/userSlice';
+import { setPostLoading, setPostComplete, resetPostState } from '../../store/postSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
 import { RiSendPlaneFill } from "react-icons/ri";
@@ -55,8 +56,9 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   //새 대화창 초기화
   const [showNewChatModal, setShowNewChatModal] = useState(false);
 
-  const [isPostLoading, setIsPostLoading] = useState(false);
-  const [postComplete, setPostComplete] = useState(false);
+  const [isPostLoading, setIsPostLoading] = useState(useSelector((state) => state.post.isPostLoading));
+  const [isPostComplete, setIsPostComplete] = useState(useSelector((state) => state.post.isPostComplete));
+  console.log("isPostLoding: " + isPostLoading + "  isPostComplete: " + isPostComplete);
 
   //프롬프트 설정 모달
   const [settingModal, setSettingModal] = useState(false);
@@ -116,9 +118,9 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   }, [messages]);
 
   useEffect(() =>{
-    if(postComplete)
-      setTimeout(() => setPostComplete(false), 2000);
-  }, [postComplete]);
+    if(isPostComplete)
+      setTimeout(() => setIsPostComplete(false), 3000);
+  }, [isPostComplete]);
 
   //사용자 입력창 크기 조절절
   const handleResizeHeight = () => {
@@ -371,7 +373,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   //Assemble Board만들기
   const postAssemble = () =>{
     setIsPostLoading(true);
-    //dispatch(setPostLoading({postLoading: true}));
+    dispatch(setPostLoading({isPostLoading: true}));
     closePostModal();
     //const result = messages.slice(0).map(msg => msg.role + ": " + msg.content).join('\n');
 
@@ -382,15 +384,15 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();
     })
-    .then((data) => {      
-      const assembleBoardId  = data.assembleBoardId;
-      //dispatch(setPostLoading({postLoading: false}));
-      setPostComplete(true);
+    .then((data) => {     
+      const assembleTitle = data.title;
+      const assembleContent = data.content;
+      setIsPostComplete(true);
+      dispatch(setPostComplete({isPostComplete: true}));
       setIsPostLoading(false);      
+      dispatch(resetPostState());
       console.log("posting complete!");
-      //dispatch(setPostAssembleId({postAssembleId: assembleboardId}));
-      console.log(assembleBoardId);
-      navigate(`/writeAssemble/${assembleBoardId}`);
+      navigate('/writeAssemble', { state: {assembleTitle: assembleTitle, assembleContent: assembleContent}});
     })
     .catch((err) => {
       setIsPostLoading(false);
@@ -448,7 +450,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           )}
         </div>
           
-        <div className='flex flex-row gap-2 overflow-visible z-[9999] '>
+        <div className='flex flex-row gap-2 overflow-visible z-[9000] '>
           <div className='my-auto text-white text-sm font-semibold'>
           {(promptLevel === -1 ? userPrompt.name : (promptLevel === 0 ? "초보자" : "전문가"))} 모드
           </div>
@@ -462,7 +464,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             새 대화창
           </button>
           <div
-            className="relative z-[9999]"
+            className="relative z-[9000]"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
@@ -675,14 +677,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 </button>
                   {isPostLoading ? (
                     <div className={postingDiv}>
-                      게시글 등록 중입니다. 
+                      게시글 요약 중입니다. 
                       <div className="flex items-center justify-center ">
                         <div className={sipnning + " h-5 w-5 border-3 border-zinc-700"}></div>
                       </div>
                     </div>
-                  ) : postComplete ? (
+                  ) : isPostComplete ? (
                     <div className={postCompleteDiv}>
-                      게시글이 등록 되었습니다.
+                      게시글 등록 화면으로 이동합니다. 
                     </div>
                   ) : (
                   <button

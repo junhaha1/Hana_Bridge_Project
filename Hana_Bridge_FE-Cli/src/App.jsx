@@ -29,7 +29,7 @@ function App() {
         <Route path="/detailBoard/:boardId" element={<DetailBoard/>} /> {/* 게시글 상세 화면 */}
         <Route path="/detailAssemble/:assembleBoardId" element={<DetailAssemble/>} />{/* Assemble 게시글 상세 화면 */}
         <Route path="/write" element={<AddBoard/>} />  {/* 게시글 작성 화면 */}
-        <Route path="/writeAssemble/:assembleBoardId" element={<AddAssemble/>} />  {/* Assemble 작성 화면 */}
+        <Route path="/writeAssemble" element={<AddAssemble/>} />  {/* Assemble 작성 화면 */}
         <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
         <Route path="/error" element={<NotFound/>} /> {/* 404 화면 */}
         <Route path="/renderError" element={<RenderError/>} />  {/* 렌더링 오류 화면 */}

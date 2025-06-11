@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from 'react-redux';
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, useLocation , useParams } from "react-router-dom";
 
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
 import ConfirmAssembleModal from "./ConfirmAssembleModal";
 import MarkdownEditor from "./MarkdownEditor";
+import TipModal from "./TipModal";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
@@ -18,24 +19,30 @@ import { FaLightbulb } from "react-icons/fa";
 
 const AddAssemble = () => {
   const { assembleBoardId } = useParams();
-  const [board, setBoard] = useState(null);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const location = useLocation();
+  const { assembleTitle, assembleContent } = location.state || {};
+  //const [board, setBoard] = useState(null);
 
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [nickName, setNickName] = useState('guest');
+  const [title, setTitle] = useState(assembleTitle);
+  const [content, setContent] = useState(assembleContent);
   const [createAt, setCreateAt] = useState(new Date());
   const [likeCount, setLikeCount] = useState(0);
+  const nickName = useSelector((state) => state.user.nickName);
 
   //질문 tip
   const [isHovered, setIsHovered] = useState(false);
+  //초기 안내 메시지
+  const [showMessage, setShowMessage] = useState(false);
 
   //취소, 이전 확인 모달
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
+
+  //tip 설명 모달
+  const [tipModal, setTipModal] = useState(false);
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -44,51 +51,31 @@ const AddAssemble = () => {
     }
   };
 
+  //안내 메시지 시간
   useEffect(() => {
-    ApiClient.getAssembleBoard(assembleBoardId)
-      .then(async (res) => {
-        if (!res.ok) {
-          const errorData = await res.json();
-          const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-          error.code = errorData.code;
-          throw error;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setBoard(data);  
-        setTitle(data.title);
-        setContent(data.content);     
-        setNickName(data.nickName); 
-        setLikeCount(data.likeCount);
-      })
-      .catch((err) => {
-        console.error("API 요청 실패:", err);
-        if (err.code && err.code.includes('NOT_FOUND')) {
-          navigate("/error");
-        }
-      });
-  }, [assembleBoardId]);
+    setShowMessage(true);
+    const timer = setTimeout(() => {
+      setShowMessage(false);
+    }, 3000); // 3000ms = 3초 후 메시지 숨김
+    return () => clearTimeout(timer);
+  }, []);
 
-  const boardDeleteButton = (assembleBoardId) => {
-    ApiClient.deleteAssembleBoard(assembleBoardId)
+  const saveAssemble =() =>{
+    ApiClient.saveAssemble(title, 'assemble', content, createAt)
     .then(async (res) => {
-      if (!res.ok) {
-        const errorData = await res.json();
-        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-        error.code = errorData.code;
-        throw error;
-      }
-      navigate("/board/notice");
+      if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+      return res.json();      
+    })
+    .then((data) => {      
+      const assembleBoardId  = data.assembleBoardId;
+      //console.log(assembleBoardId);
+      navigate(`/detailAssemble/${assembleBoardId}`);
     })
     .catch((err) => {
-      console.error("API 요청 실패:", err);
-      if (err.code && err.code.includes('NOT_FOUND')) {
-        navigate("/error");
-      }
-    });
-  };
+      alert("게시글 포스팅 실패");
+      console.error("API 요청 실패:", err)
+    });    
+  }
 
   return (
     <div>
@@ -98,8 +85,13 @@ const AddAssemble = () => {
           <LeftHeader />
           {/* 메인 콘텐츠 */}
           <main className={detailFrame}>
+            {showMessage && (
+              <div className="absolute md:top-[100px] md:left-1/2 md:ml-40 max-md:left-1/2 max-md:whitespace-nowrap transform -translate-x-1/2 bg-zinc-900 rounded-full text-sm text-white font-semibold py-1 px-2 z-50">
+                해당 화면을 나가면 내용이 사라집니다
+              </div>
+            )}
             <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-              <div className="flex flex-row items-center gap-2 w-1/2 md:mt-12 mb-3">
+              <div className="flex flex-row items-center gap-2 w-1/2 md:mt-12 mb-3 relative">
                 <button
                   onClick={() => setConfirmBackOpen(true)}
                   className={buttonStyle + ' bg-white/95 font-semibold text-indigo-900 hover:!bg-[#C5BCFF] hover:text-black text-sm px-4 !py-1'}
@@ -107,21 +99,17 @@ const AddAssemble = () => {
                   이전
                 </button>
                 <div
-                  className="relative z-[9999]"
+                  className="relative "
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
                 >
-                  <button className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+                  <button 
+                    onClick={() => setTipModal(true)}
+                    className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md"
+                  >
                     <FaLightbulb className="m-0.5" />
                     Tip
                   </button>
-                  <div
-                    className={`absolute top-full left-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
-                    style={{ opacity: isHovered ? 1 : 0 }}
-                  >
-                    <span className="text-yellow-400 font-semibold">마크다운</span> 문법으로 글을 작성하면 <br/>  
-                    <span className="text-yellow-400 font-semibold">실시간 미리보기</span>를 통해 결과물을 볼 수 있어요!
-                  </div>
                 </div>
               </div>
   
@@ -167,7 +155,7 @@ const AddAssemble = () => {
                   <div className="flex-row">
                     <button 
                       className={buttonStyle +" text-green-400 text-sm hover:underline mr-3"} 
-                      onClick={() => {}}>
+                      onClick={() => saveAssemble()}>
                       등록하기 
                     </button>
                     <button 
@@ -188,11 +176,16 @@ const AddAssemble = () => {
           </main>
         </div>           
       </div>
+      {/* tip 설명 모달 */}
+      {tipModal && (
+        <TipModal onClose= {() => setTipModal(false)}/>
+      )}
+
       {/* 취소 확인 모달 */}
       {confirmCancelOpen && (
         <ConfirmAssembleModal
           onConfirm={() => {
-            boardDeleteButton(assembleBoardId);
+            //boardDeleteButton(assembleBoardId);
             setConfirmCancelOpen(false);
             navigate("/board/assemble");
           }}
@@ -204,8 +197,9 @@ const AddAssemble = () => {
       {confirmBackOpen && (
         <ConfirmAssembleModal
           onConfirm={() => {
-            boardDeleteButton(assembleBoardId);
+            //boardDeleteButton(assembleBoardId);
             setConfirmBackOpen(false);
+            navigate("/board/assemble");
           }}
           onCancel={() => setConfirmBackOpen(false)}
           onMode={"back"}
