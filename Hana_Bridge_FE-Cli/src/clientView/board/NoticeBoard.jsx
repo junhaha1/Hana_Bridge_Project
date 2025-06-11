@@ -219,7 +219,7 @@ const NoticeBoard = () => {
   return (
     <>
     <div ref={scrollRef} className={scrollStyle +" max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-      <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
+      <div className="flex justify-between p-1 md:mt-11 max-md:flex-col mb-2">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
           <div className={searchBox}>
