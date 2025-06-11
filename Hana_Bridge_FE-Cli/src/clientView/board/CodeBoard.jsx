@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurPage, setCurPageGroup, resetPage } from "../../store/postSlice";
 
 //디자인 
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
@@ -15,6 +16,7 @@ import { IoMdClose } from "react-icons/io";
 const CodeBoard = () => {
   const [boards, setBoards] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const category = useSelector((state) => state.user.category);
   const nickName = useSelector((state) => state.user.nickName);
   const scrollRef = useRef(null);
@@ -25,8 +27,12 @@ const CodeBoard = () => {
   const [sortType, setSortType] = useState("latest");
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
-  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
-  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
+
+  const curPage = useSelector((state) => state.post.curPage);
+  const curPageGroup = useSelector((state) => state.post.curPageGroup);
+  const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
+  console.log(page);
+  const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
   
   //맨 위로가기 버튼 
@@ -75,6 +81,8 @@ const CodeBoard = () => {
   // 정렬 방법이나 검색어가 바뀌면 페이지 1
   useEffect(() =>{
     setPage(1);
+    setPageGroup(0);
+    dispatch(resetPage());
   }, [sortType, searchWord]);
 
   // page가 바뀌는 경우 페이지 그룹 확인 
@@ -149,6 +157,8 @@ const CodeBoard = () => {
             const newGroup = pageGroup - 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage(newGroup * pagesPerGroup + 1));
+            dispatch(setCurPageGroup(newGroup));
           }}
           className="px-3 py-1 mx-1 rounded bg-transparent text-white"
         >
@@ -162,7 +172,11 @@ const CodeBoard = () => {
         <button
           key={i}
           className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
-          onClick={() => setPage(i)}
+          onClick={() => {
+            setPage(i);
+            console.log("print i: " + i);
+            dispatch(setCurPage(i));
+          }}
         >
           {i}
         </button>
@@ -177,6 +191,8 @@ const CodeBoard = () => {
             const newGroup = pageGroup + 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage(newGroup * pagesPerGroup + 1 ));
+            dispatch(setCurPageGroup(newGroup));
           }}
           className="px-3 py-1 mx-1 rounded-full bg-transparent text-white"
         >
