@@ -175,9 +175,6 @@ const DetailBoard = () => {
     console.log("cleaned language: " + language);
   }, [isEdit, board]);
 
-
-  if (!board) return <div>로딩 중...</div>;
-
   //삭제 버튼
   const boardDeleteButton = (boardId) => {
     ApiClient.deleteBoard(boardId, category)
@@ -300,29 +297,111 @@ const DetailBoard = () => {
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
           <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-            <button
-              onClick={() => navigate("/board/" + category)}
-              className={buttonStyle + backButton}
-            >
-              이전
-            </button>     
-            {isEdit ? (              
-              <div className={detailCardStyle}>
-                {/* 게시글 수정 폼 */}
-                  <div className={detailCategory}>
+            {!board ? 
+            (
+              <div className="text-white text-center mt-10">불러오는 중...</div>
+            ):(
+              <>
+              <button
+                onClick={() => navigate("/board/" + category)}
+                className={buttonStyle + backButton}
+              >
+                이전
+              </button>     
+              {isEdit ? (              
+                <div className={detailCardStyle}>
+                  {/* 게시글 수정 폼 */}
+                    <div className={detailCategory}>
+                      {category === "code"
+                        ? "코드/질문 게시판 > 상세글"
+                        : "공지 게시판 > 상세글"}
+                    </div>
+
+                    <input
+                      type="text"
+                      className={editTitle}
+                      placeholder="제목을 입력해주세요"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+
+                    <div className={userDate}>
+                      <span className='flex gap-1'>
+                        <FaUser
+                        className="mt-0.5"
+                        />
+                        {board.nickName}
+                      </span>
+                      <span className='text-xs text-gray-300 mt-1'>
+                        {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                      </span>                  
+                    </div>
+
+                    {category === "code"
+                      ? 
+                      <Editor
+                        height="200px"
+                        defaultLanguage="markdown"
+                        language={language}
+                        value={cleanedCode}
+                        onChange={(value) => setCleanedCode(value)}
+                        theme='custom-theme'
+                        options={{
+                          minimap: { enabled: false },            // 🔹 오른쪽 미니맵 제거
+                          fontSize: 14,
+                          scrollBeyondLastLine: false,            // 스크롤 밑 여백 제거
+                          placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
+                        }}
+                        className="my-custom-class p-1"  //스크롤바 설정 가져옴
+                      />
+                      : null}                  
+
+                    <textarea
+                      className={editContent}
+                      placeholder="내용을 입력해주세요"
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                    />
+
+                    <div className={liekCommentButton}>
+                      <div className={liekComment}>
+                        <span className="flex items-center">
+                          <BiLike className="size-5 mr-1"/>
+                          {board.likeCount}
+                        </span>
+                        {category === 'code' ?
+                        <span className="flex items-center">
+                          <FaRegComment className="size-5 mr-1" />
+                          {board.commentCount}
+                        </span>
+                        :null}
+                        
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          className={buttonStyle + " bg-green-600 text-white px-3 py-1 text-sm hover:bg-green-700"}
+                          onClick={() => setConfirmUpdateOpen(true)}
+                        >
+                          저장
+                        </button>
+                        <button
+                          className={buttonStyle + " bg-red-500 text-white px-3 py-1 text-sm hover:bg-red-600"}
+                          onClick={() => setIsEdit(false)}
+                        >
+                          취소
+                        </button>
+                      </div>
+                    </div>
+                </div>
+              ) : (
+                <div className={detailCardStyle}>
+                  {/* 게시글 보기 (테두리 없이 투명 배경) */}
+                  <div  className={detailCategory}>
                     {category === "code"
                       ? "코드/질문 게시판 > 상세글"
                       : "공지 게시판 > 상세글"}
                   </div>
-
-                  <input
-                    type="text"
-                    className={editTitle}
-                    placeholder="제목을 입력해주세요"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-
+                  <h2 className={detailTitle}>{board.title}</h2>
                   <div className={userDate}>
                     <span className='flex gap-1'>
                       <FaUser
@@ -334,170 +413,96 @@ const DetailBoard = () => {
                       {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                     </span>                  
                   </div>
-
+                  <div className="border-t border-white/10 mb-3" />
                   {category === "code"
                     ? 
-                    <Editor
-                      height="200px"
-                      defaultLanguage="markdown"
-                      language={language}
-                      value={cleanedCode}
-                      onChange={(value) => setCleanedCode(value)}
-                      theme='custom-theme'
-                      options={{
-                        minimap: { enabled: false },            // 🔹 오른쪽 미니맵 제거
-                        fontSize: 14,
-                        scrollBeyondLastLine: false,            // 스크롤 밑 여백 제거
-                        placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
-                      }}
-                      className="my-custom-class p-1"  //스크롤바 설정 가져옴
-                    />
-                    : null}                  
-
-                  <textarea
-                    className={editContent}
-                    placeholder="내용을 입력해주세요"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                  />
+                    <div className="text-white">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          code({ inline, className, children, ...props }) {
+                            const match = /language-(\w+)/.exec(className || '');
+                            return !inline && match ? (
+                              <SyntaxHighlighter
+                                {...props}
+                                style={prism}
+                                language={match[1]}
+                                PreTag="div"
+                                className="rounded overflow-x-auto max-w-[100%]"
+                              >
+                                {String(children).replace(/\n$/, '')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
+                                {children}
+                              </code>
+                            );
+                          },
+                        }}
+                      >
+                        {board.code}
+                      </ReactMarkdown>
+                      </div>
+                    : null}
+                  <p className={detailContent}>{board.content}</p>
 
                   <div className={liekCommentButton}>
                     <div className={liekComment}>
-                      <span className="flex items-center">
-                        <BiLike className="size-5 mr-1"/>
-                        {board.likeCount}
+                      <span
+                        className="relative cursor-pointer flex items-center"
+                        onClick={() => {
+                          if (nickName === 'guest') {
+                            handleGuestClick();
+                          } else {
+                            isLike ? handleCancelLike(boardId) : handleLike(boardId);
+                          }
+                        }}
+                      >
+                        {isLike ? <BiSolidLike  className="size-5 mr-1"/> : <BiLike className="size-5 mr-1"/>}
+                        {likeCount}
+
+                        {showGuestMessage && (
+                          <div className="absolute bottom-full mb-2
+                            w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
+                            text-center">
+                            ⚠ 비회원은 이용할 수 없는 기능입니다.
+                          </div>
+                        )}
                       </span>
-                      {category === 'code' ?
+
+
+                      {category === 'code'?
                       <span className="flex items-center">
                         <FaRegComment className="size-5 mr-1" />
-                        {board.commentCount}
+                        {commentCount}
                       </span>
-                      :null}
-                      
+                      :null}                      
                     </div>
-                    <div className="flex gap-2">
+
+                    <div className="flex gap-3">
+                    {(nickName === board.nickName) && (                    
+                        <button
+                          onClick={() => setIsEdit(true)}
+                          className="text-sm text-white hover:underline"
+                        >
+                          수정하기
+                        </button>                    
+                    )}
+                    {(nickName === board.nickName || role === "ROLE_ADMIN")&&(
                       <button
-                        className={buttonStyle + " bg-green-600 text-white px-3 py-1 text-sm hover:bg-green-700"}
-                        onClick={() => setConfirmUpdateOpen(true)}
+                        onClick={() => setConfirmDeleteOpen(true)}
+                        className="text-sm text-red-400 hover:underline"
                       >
-                        저장
+                        삭제하기
                       </button>
-                      <button
-                        className={buttonStyle + " bg-red-500 text-white px-3 py-1 text-sm hover:bg-red-600"}
-                        onClick={() => setIsEdit(false)}
-                      >
-                        취소
-                      </button>
-                    </div>
+                    )}
+                    </div>                 
                   </div>
-              </div>
-            ) : (
-              <div className={detailCardStyle}>
-                {/* 게시글 보기 (테두리 없이 투명 배경) */}
-                <div  className={detailCategory}>
-                  {category === "code"
-                    ? "코드/질문 게시판 > 상세글"
-                    : "공지 게시판 > 상세글"}
                 </div>
-                <h2 className={detailTitle}>{board.title}</h2>
-                <div className={userDate}>
-                  <span className='flex gap-1'>
-                    <FaUser
-                    className="mt-0.5"
-                    />
-                    {board.nickName}
-                  </span>
-                  <span className='text-xs text-gray-300 mt-1'>
-                    {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
-                  </span>                  
-                </div>
-                <div className="border-t border-white/10 mb-3" />
-                {category === "code"
-                  ? 
-                  <div className="text-white">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code({ inline, className, children, ...props }) {
-                          const match = /language-(\w+)/.exec(className || '');
-                          return !inline && match ? (
-                            <SyntaxHighlighter
-                              {...props}
-                              style={prism}
-                              language={match[1]}
-                              PreTag="div"
-                              className="rounded overflow-x-auto max-w-[100%]"
-                            >
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
-                              {children}
-                            </code>
-                          );
-                        },
-                      }}
-                    >
-                      {board.code}
-                    </ReactMarkdown>
-                    </div>
-                  : <></>}
-                <p className={detailContent}>{board.content}</p>
-
-                <div className={liekCommentButton}>
-                  <div className={liekComment}>
-                    <span
-                      className="relative cursor-pointer flex items-center"
-                      onClick={() => {
-                        if (nickName === 'guest') {
-                          handleGuestClick();
-                        } else {
-                          isLike ? handleCancelLike(boardId) : handleLike(boardId);
-                        }
-                      }}
-                    >
-                      {isLike ? <BiSolidLike  className="size-5 mr-1"/> : <BiLike className="size-5 mr-1"/>}
-                      {likeCount}
-
-                      {showGuestMessage && (
-                        <div className="absolute bottom-full mb-2
-                          w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
-                          text-center">
-                          ⚠ 비회원은 이용할 수 없는 기능입니다.
-                        </div>
-                      )}
-                    </span>
-
-
-                    {category === 'code'?
-                    <span className="flex items-center">
-                      <FaRegComment className="size-5 mr-1" />
-                      {commentCount}
-                    </span>
-                    :null}                      
-                  </div>
-
-                  <div className="flex gap-3">
-                  {(nickName === board.nickName) && (                    
-                      <button
-                        onClick={() => setIsEdit(true)}
-                        className="text-sm text-white hover:underline"
-                      >
-                        수정하기
-                      </button>                    
-                  )}
-                   {(nickName === board.nickName || role === "ROLE_ADMIN")&&(
-                    <button
-                      onClick={() => setConfirmDeleteOpen(true)}
-                      className="text-sm text-red-400 hover:underline"
-                    >
-                      삭제하기
-                    </button>
-                  )}
-                  </div>                 
-                </div>
-              </div>
-            )}  
+              )}  
+              </>
+            )}
+            
             <div className="max-md:p-1">
               <Comments boardId={boardId} category={category} />  
             </div>          
