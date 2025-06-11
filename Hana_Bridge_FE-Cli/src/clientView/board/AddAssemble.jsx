@@ -7,6 +7,7 @@ import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
 import ConfirmAssembleModal from "./ConfirmAssembleModal";
 import MarkdownEditor from "./MarkdownEditor";
+import TipModal from "./TipModal";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
@@ -39,6 +40,9 @@ const AddAssemble = () => {
   //취소, 이전 확인 모달
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
+
+  //tip 설명 모달
+  const [tipModal, setTipModal] = useState(false);
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -82,7 +86,7 @@ const AddAssemble = () => {
           {/* 메인 콘텐츠 */}
           <main className={detailFrame}>
             {showMessage && (
-              <div className="absolute top-[7%] left-1/2 ml-40 transform -translate-x-1/2 bg-red-300 rounded-full text-black font-semibold p-2 z-50">
+              <div className="absolute top-[100px] left-1/2 ml-40 transform -translate-x-1/2 bg-zinc-900 rounded-full text-sm text-white font-semibold py-1 px-2 z-50">
                 해당 화면을 나가면 내용이 사라집니다
               </div>
             )}
@@ -95,21 +99,17 @@ const AddAssemble = () => {
                   이전
                 </button>
                 <div
-                  className="relative z-[9999]"
+                  className="relative "
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
                 >
-                  <button className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+                  <button 
+                    onClick={() => setTipModal(true)}
+                    className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md"
+                  >
                     <FaLightbulb className="m-0.5" />
                     Tip
                   </button>
-                  <div
-                    className={`absolute top-full left-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
-                    style={{ opacity: isHovered ? 1 : 0 }}
-                  >
-                    <span className="text-yellow-400 font-semibold">마크다운</span> 문법으로 글을 작성하면 <br/>  
-                    <span className="text-yellow-400 font-semibold">실시간 미리보기</span>를 통해 결과물을 볼 수 있어요!
-                  </div>
                 </div>
               </div>
   
@@ -176,6 +176,11 @@ const AddAssemble = () => {
           </main>
         </div>           
       </div>
+      {/* tip 설명 모달 */}
+      {tipModal && (
+        <TipModal onClose= {() => setTipModal(false)}/>
+      )}
+
       {/* 취소 확인 모달 */}
       {confirmCancelOpen && (
         <ConfirmAssembleModal
