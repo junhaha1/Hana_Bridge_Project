@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useDispatch } from "react-redux";
-import { setUser, setPage } from "../../store/userSlice";
+import { setUser } from "../../store/userSlice";
+//import { setPage } from "../../store/userSlice";
 import { updateAccessToken } from "../../store/authSlice";
 
 const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
@@ -64,7 +65,7 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
           updateAccessToken({accessToken: data.accessToken})
         )
         onClose(); //모달 닫기
-        dispatch(setPage({page: 'home'}));
+        //dispatch(setPage({page: 'home'}));
         onSuccess();
       })
       .catch((error) => {

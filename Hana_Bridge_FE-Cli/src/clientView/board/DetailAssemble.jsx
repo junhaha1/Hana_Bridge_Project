@@ -27,8 +27,8 @@ const DetailAssemble = () => {
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
 
-  const myCategory = location.state?.category; 
-
+  const myCategory = useSelector((state) => state.user.category);
+  console.log("myCategory: "  + myCategory);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -147,7 +147,7 @@ const DetailAssemble = () => {
             ):(
               <>
               <button
-                onClick={() => navigate(`/board/${myCategory}`, { state: { from: "back" } })}
+                onClick={() => navigate(`/board/${myCategory}`, { state: { from: "back", toggle: "assemble" } })}
                 className={buttonStyle + backButton}
               >
                 이전

@@ -19,13 +19,15 @@ const MyBoard = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const isBack = location.state?.from === "back";
+  const backToggle = location.state?.toggle ?? "code";
+  console.log('backToggle: ' + backToggle);
 
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
 
   //토글에 따라 읽어오는 게시글 변경
-  const [toggle, setToggle] = useState("code");
+  const [toggle, setToggle] = useState(backToggle);
 
   const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState("latest");
@@ -181,7 +183,7 @@ const MyBoard = () => {
           } else if(toggle === "assemble" && data.assembleBoards.length === 0){
             setBoards(null);
           } else {
-            console.log(data.boards);
+            // console.log(data.boards);
             setBoards(toggle === "code" ? data.boards : data.assembleBoards);
             setTotalPages(data.totalPages);
           }
