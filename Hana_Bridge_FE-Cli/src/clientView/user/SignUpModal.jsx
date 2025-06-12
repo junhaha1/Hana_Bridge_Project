@@ -47,12 +47,12 @@ const SignUpModal = ({ onClose, onSwitch }) => {
       isValid = false;
     }
 
-    // if (!isValidPassword(password)) {
-    //   setPasswordError("비밀번호는 최소 8자 이상이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
-    //   setShakePassword(true);
-    //   setTimeout(() => setShakePassword(false), 500);
-    //   isValid = false;
-    // }
+    if (!isValidPassword(password)) {
+      setPasswordError("비밀번호는 최소 8자 이상이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
+      setShakePassword(true);
+      setTimeout(() => setShakePassword(false), 500);
+      isValid = false;
+    }
 
     if (password !== checkPwd) {
       setPasswordError("비밀번호가 일치하지 않습니다.");
@@ -72,6 +72,15 @@ const SignUpModal = ({ onClose, onSwitch }) => {
         onSwitch("login");
       })
       .catch((err) => console.error("회원가입 실패:", err));
+  };
+
+  //enter로 전송
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      // 전송하고 줄바꿈 막기
+      e.preventDefault();
+      handleSignup();
+    }
   };
 
   return (
@@ -217,6 +226,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
                 onFocus={() => {
                   if (passwordError) setPasswordError("");
                 }}
+                onKeyDown={handleKeyDown}
               />
               {passwordError && (
                 <p className="text-red-500 text-sm mt-1">{passwordError}</p>

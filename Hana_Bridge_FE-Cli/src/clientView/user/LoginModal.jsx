@@ -80,7 +80,6 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
       // 전송하고 줄바꿈 막기
       e.preventDefault();
       loginButton(email, pwd);
-
     }
   };
 
