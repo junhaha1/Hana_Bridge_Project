@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { setPage } from "../../store/userSlice";
+//import { setPage } from "../../store/userSlice";
 import { setCategory } from '../../store/userSlice';
 import { FaFolder} from 'react-icons/fa';
 
@@ -23,7 +23,7 @@ export default function LeftHeader() {
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
-    dispatch(setPage({ page: "" }));
+    //dispatch(setPage({ page: "" }));
     navigate("/board/" + id);
   };
 

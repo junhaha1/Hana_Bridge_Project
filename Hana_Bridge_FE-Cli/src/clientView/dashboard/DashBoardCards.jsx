@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setPage, setCategory } from '../../store/userSlice';
+import { setCategory } from '../../store/userSlice';
+//import { setPage } from '../../store/userSlice';
+
 
 import { scrollStyle } from "../../style/CommonStyle";
 import { FaQuestionCircle} from "react-icons/fa";
@@ -21,7 +23,7 @@ const DashboardCards = () => {
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
-    dispatch(setPage({ page: "" }));
+    // dispatch(setPage({ page: "" }));
     navigate("/board/" + id);
   }; 
 

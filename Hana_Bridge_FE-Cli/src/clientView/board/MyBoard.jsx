@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurPage, setCurPageGroup, resetPage } from "../../store/postSlice";
 
 //디자인 
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
@@ -15,13 +16,18 @@ import { IoMdClose } from "react-icons/io";
 const MyBoard = () => {
   const [boards, setBoards] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const isBack = location.state?.from === "back";
+  const backToggle = location.state?.toggle ?? "code";
+  console.log('backToggle: ' + backToggle);
 
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
 
   //토글에 따라 읽어오는 게시글 변경
-  const [toggle, setToggle] = useState("code");
+  const [toggle, setToggle] = useState(backToggle);
 
   const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState("latest");
@@ -32,8 +38,11 @@ const MyBoard = () => {
 
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
-  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
-  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
+  const curPage = useSelector((state) => state.post.curMyPage);
+  const curPageGroup = Math.floor((curPage -1) / 5 );
+  const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
+  console.log("curPage: " + curPage + "  page: "+ page);
+  const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
 
 
@@ -43,6 +52,27 @@ const MyBoard = () => {
       scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  //페이지 동기화 검사
+  useEffect(() => {
+    if (page !== curPage) {
+      setPage(curPage);
+    }
+    if(pageGroup !== curPageGroup){
+      setPageGroup(curPageGroup);
+    }
+  }, [curPage, curPageGroup]);
+
+  //이전 버튼이 아니라면 초기화
+  useEffect(() => {
+    console.log("isBack: "+isBack);
+    if (!isBack) {
+      dispatch(resetPage('My'));
+    } else {
+      // from 상태 초기화
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
 
   //검색어로 검색하기
   const getMySearch = (word) => {
@@ -86,8 +116,19 @@ const MyBoard = () => {
 
   // 정렬 방법이나 검색어가 바뀌면 페이지 1
   useEffect(() =>{
+    if (searchWord === "" && sortType === "latest") return;
+
     setPage(1);
-  }, [sortType, searchWord, toggle]);
+    setPageGroup(0);
+    dispatch(resetPage('my'));
+  }, [sortType, searchWord]);
+
+  // toggle 바뀌면 페이지 1
+  useEffect(() =>{
+    setPage(1);
+    setPageGroup(0);
+    dispatch(resetPage('my'));
+  }, [toggle]);
 
   // page가 바뀌는 경우 페이지 그룹 확인 
   useEffect(() => {
@@ -142,7 +183,7 @@ const MyBoard = () => {
           } else if(toggle === "assemble" && data.assembleBoards.length === 0){
             setBoards(null);
           } else {
-            console.log(data.boards);
+            // console.log(data.boards);
             setBoards(toggle === "code" ? data.boards : data.assembleBoards);
             setTotalPages(data.totalPages);
           }
@@ -183,6 +224,7 @@ const MyBoard = () => {
             const newGroup = pageGroup - 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage({curMyPage: newGroup * pagesPerGroup + 1}));
           }}
           className="px-3 py-1 mx-1 rounded bg-transparent text-white"
         >
@@ -196,8 +238,12 @@ const MyBoard = () => {
         <button
           key={i}
           className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
-          onClick={() => setPage(i)}
-        >
+          onClick={() => {
+            setPage(i);
+            console.log("print i: " + i);
+            dispatch(setCurPage({curMyPage: i}));
+          }}
+>
           {i}
         </button>
       );
@@ -207,10 +253,11 @@ const MyBoard = () => {
       pages.push(
         <button
           key="next"
-          onClick={() => {
+         onClick={() => {
             const newGroup = pageGroup + 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage({curMyPage: newGroup * pagesPerGroup + 1 }));
           }}
           className="px-3 py-1 mx-1 rounded-full bg-transparent text-white"
         >
@@ -249,6 +296,9 @@ const MyBoard = () => {
     setIsLoading(true);
     setSearchWord("");
     setFixedWord("");
+    setPage(1);
+    setPageGroup(0);
+    dispatch(resetPage('my'));
   }
 
   return (

@@ -1,8 +1,8 @@
 import ApiClient from '../../service/ApiClient';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
+import { setCurPage, setCurPageGroup, resetPage } from "../../store/postSlice";
 import { useEffect, useState, useRef } from "react";
-import { useNavigate} from "react-router-dom";
-
+import { useNavigate, useLocation} from "react-router-dom";
 
 import { scrollStyle } from "../../style/CommonStyle";
 import { emptyDiv, writeButton } from '../../style/CommonEmptyBoard';
@@ -17,9 +17,12 @@ const NoticeBoard = () => {
   const [boards, setBoards] = useState(null);
   const category = useSelector((state) => state.user.category);
   const role = useSelector((state) => state.user.role);
-  console.log(role);
+ 
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();
   const scrollRef = useRef(null);
+  const location = useLocation();
+  const isBack = location.state?.from === "back";
 
   const [searchWord, setSearchWord] = useState(""); //검색창에 입력된 단어를 갱신하는 변수
   const [fixedWord, setFixedWord] = useState(""); //검색이 확정된 단어
@@ -27,8 +30,11 @@ const NoticeBoard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
-  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
-  const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
+  const curPage = useSelector((state) => state.post.curNoticePage);
+  const curPageGroup = Math.floor((curPage -1) / 5 );
+  const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
+  console.log("curPage: " + curPage + "  page: "+ page);
+  const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
   
   //맨 위로가기 버튼 
@@ -37,6 +43,26 @@ const NoticeBoard = () => {
       scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  //페이지 동기화 검사 
+  useEffect(() => {
+    if (page !== curPage) {
+      setPage(curPage);
+    }
+    if(pageGroup !== curPageGroup){
+      setPageGroup(curPageGroup);
+    }
+  }, [curPage, curPageGroup]);
+  //이전 버튼이 아니라면 초기화
+  useEffect(() => {
+    console.log("isBack: "+isBack);
+    if (!isBack) {
+      dispatch(resetPage('notice'));
+    } else {
+      // from 상태 초기화
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
 
   const getSearch = (word) => {
     ApiClient.getSearchBoards(category, word, "latest", page)
@@ -74,9 +100,13 @@ const NoticeBoard = () => {
     });
   }
 
-  // 검색어가 바뀌면 페이지 1
+  // 정렬 방법이나 검색어가 바뀌면 페이지 1
   useEffect(() =>{
+    if (searchWord === "" && searchWord === "") return;
+
     setPage(1);
+    setPageGroup(0);
+    dispatch(resetPage('notice'));
   }, [searchWord]);
 
   // page가 바뀌는 경우 페이지 그룹 확인 
@@ -151,6 +181,7 @@ const NoticeBoard = () => {
             const newGroup = pageGroup - 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage({curNoticePage: newGroup * pagesPerGroup + 1}));
           }}
           className="px-3 py-1 mx-1 rounded bg-transparent text-white"
         >
@@ -164,7 +195,11 @@ const NoticeBoard = () => {
         <button
           key={i}
           className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
-          onClick={() => setPage(i)}
+          onClick={() => {
+            setPage(i);
+            console.log("print i: " + i);
+            dispatch(setCurPage({curNoticePage: i}));
+          }}
         >
           {i}
         </button>
@@ -179,6 +214,7 @@ const NoticeBoard = () => {
             const newGroup = pageGroup + 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage({curNoticePage: newGroup * pagesPerGroup + 1 }));
           }}
           className="px-3 py-1 mx-1 rounded-full bg-transparent text-white"
         >
@@ -214,12 +250,14 @@ const NoticeBoard = () => {
     setIsLoading(true);
     setSearchWord("");
     setFixedWord("");
+    setPage(1);
+    setPageGroup(0);
   }
 
   return (
     <>
     <div ref={scrollRef} className={scrollStyle +" max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
-      <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
+      <div className="flex justify-between p-1 md:mt-11 max-md:flex-col mb-2">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
           <div className={searchBox}>

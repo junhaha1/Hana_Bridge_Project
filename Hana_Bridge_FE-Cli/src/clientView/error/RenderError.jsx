@@ -15,20 +15,21 @@ const RenderError = () => {
 
   //이전 버튼 
   const Back = () => {
-    switch(page){
-      case "home":
-        navigate("/dashboard/home");
-        break;
-      case "myPage":
-        navigate("/dashboard/myPage");
-        break;
-      case "myPosts":
-        navigate("/dashboard/myPosts");
-        break;
-      default:
-        navigate("/board/" + category);
-        break;
-    }
+    // switch(page){
+    //   case "home":
+    //     navigate("/dashboard/home");
+    //     break;
+    //   case "myPage":
+    //     navigate("/dashboard/myPage");
+    //     break;
+    //   case "myPosts":
+    //     navigate("/dashboard/myPosts");
+    //     break;
+    //   default:
+    //     navigate("/board/" + category);
+    //     break;
+    // }
+    navigate(-1);
   }
 
   return (

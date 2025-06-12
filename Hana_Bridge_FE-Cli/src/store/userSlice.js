@@ -7,7 +7,7 @@ import { createSlice } from '@reduxjs/toolkit';
   role: 'guest',
   chatMessages: [],
   category: '',
-  page: '',
+  //page: '',
   playFlag: true,
   shouldAutoOpenHelper: false,
   aiPrompts: {
@@ -42,7 +42,7 @@ import { createSlice } from '@reduxjs/toolkit';
       state.accessToken = 'guest';
       state.role = 'guest';
       state.category = '';
-      state.page = '';
+      //state.page = '';
       state.playFlag = true;
       state.shouldAutoOpenHelper = false;
       state.aiPrompts = {
@@ -67,9 +67,9 @@ import { createSlice } from '@reduxjs/toolkit';
     setCategory: (state, action) => {
       state.category = action.payload.category;
     },
-    setPage: (state, action) =>{
-      state.page = action.payload.page;
-    },
+    // setPage: (state, action) =>{
+    //   state.page = action.payload.page;
+    // },
     setPlayFlag: (state, action) => {
       state.playFlag = action.payload.playFlag;
     },
@@ -82,6 +82,6 @@ import { createSlice } from '@reduxjs/toolkit';
    },
  });
  
- export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, 
+ export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, //setPage, 
   setPlayFlag, setShouldAutoOpenHelper, setAiPrompts } = userSlice.actions;
  export default userSlice.reducer;
