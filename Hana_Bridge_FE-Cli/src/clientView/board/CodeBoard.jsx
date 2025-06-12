@@ -31,7 +31,7 @@ const CodeBoard = () => {
   const curPage = useSelector((state) => state.post.curPage);
   const curPageGroup = useSelector((state) => state.post.curPageGroup);
   const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
-  console.log(page);
+  console.log("curPage: " + curPage + "  page: "+ page);
   const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
   
@@ -41,6 +41,15 @@ const CodeBoard = () => {
       scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  useEffect(() => {
+    if (page !== curPage) {
+      setPage(curPage);
+    }
+    if(pageGroup !== curPageGroup){
+      setPageGroup(curPageGroup);
+    }
+  }, [curPage, curPageGroup]);
 
   const getSearch = (word) => {
     ApiClient.getSearchBoards(category, word, sortType, page)
@@ -80,6 +89,8 @@ const CodeBoard = () => {
 
   // 정렬 방법이나 검색어가 바뀌면 페이지 1
   useEffect(() =>{
+    if (searchWord === "" && sortType === "latest") return;
+
     setPage(1);
     setPageGroup(0);
     dispatch(resetPage());
