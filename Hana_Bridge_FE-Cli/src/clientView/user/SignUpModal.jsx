@@ -10,13 +10,59 @@ const SignUpModal = ({ onClose, onSwitch }) => {
   const [nickName, setNickName] = useState("");
   const [createAt] = useState(new Date());
 
-  const navigate = useNavigate();
+  const [passwordError, setPasswordError] = useState("");
+  const [shakePassword, setShakePassword] = useState(false);
+
+  const [nameError, setNameError] = useState("");
+  const [shakeName, setShakeName] = useState(false);
+  const [nickNameError, setNickNameError] = useState("");
+  const [shakeNickName, setShakeNickName] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [shakeEmail, setShakeEmail] = useState(false);
+
+  const isValidPassword = (password) => {
+    const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=-]).{8,}$/;
+    return regex.test(password);
+  };
 
   const handleSignup = () => {
-    if (password !== checkPwd) {
-      alert("비밀번호가 일치하지 않습니다.");
-      return;
+    let isValid = true;
+    if (!name.trim()) {
+      setNameError("이름을 입력해 주세요.");
+      setShakeName(true);
+      setTimeout(() => setShakeName(false), 500);
+      isValid = false;
     }
+
+    if (!nickName.trim()) {
+      setNickNameError("닉네임을 입력해 주세요.");
+      setShakeNickName(true);
+      setTimeout(() => setShakeNickName(false), 500);
+      isValid = false;
+    }
+
+    if (!email.trim()) {
+      setEmailError("이메일을 입력해 주세요.");
+      setShakeEmail(true);
+      setTimeout(() => setShakeEmail(true), 500);
+      isValid = false;
+    }
+
+    if (!isValidPassword(password)) {
+      setPasswordError("비밀번호는 최소 8자 이상이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
+      setShakePassword(true);
+      setTimeout(() => setShakePassword(false), 500);
+      isValid = false;
+    }
+
+    if (password !== checkPwd) {
+      setPasswordError("비밀번호가 일치하지 않습니다.");
+      setShakePassword(true);
+      setTimeout(() => setShakePassword(false), 500);
+      isValid = false;
+    }
+
+    if (!isValid) return;
 
     ApiClient.sendUser(email, password, name, nickName, createAt)
       .then((res) => {
@@ -53,11 +99,19 @@ const SignUpModal = ({ onClose, onSwitch }) => {
               </label>
               <input
                 type="text"
-                placeholder="이름을 입력해 주세요"
-                className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="이름을 입력해주세요"
+                className={`w-full border-b py-2 focus:outline-none focus:border-blue-500
+                  ${nameError ? 'border-red-500' : 'border-gray-300'}
+                  ${shakePassword ? 'animate-shake' : ''}`}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onFocus={() => {
+                  if (nameError) setNameError("");
+                }}
               />
+              {nameError && (
+                <p className="text-red-500 text-sm mt-1">{nameError}</p>
+              )}                
             </div>
 
             {/* 이메일 + 인증 */}
@@ -68,18 +122,26 @@ const SignUpModal = ({ onClose, onSwitch }) => {
               <div className="flex gap-2 mb-2">
                 <input
                   type="email"
-                  placeholder="이메일 입력"
-                  className="flex-1 border-b border-gray-300 py-2 focus:outline-none focus:border-blue-500"
+                  placeholder="이메일을 입력해주세요"
+                  className={`flex-1 border-b py-2 focus:outline-none focus:border-blue-500
+                    ${emailError ? 'border-red-500' : 'border-gray-300'}
+                    ${shakePassword ? 'animate-shake' : ''}`}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                />
+                  onFocus={() => {
+                    if (emailError) setEmailError("");
+                  }}
+                />                
                 <button
                   type="button"
                   className="bg-gray-200 px-3 py-1 text-sm rounded hover:bg-gray-300"
                 >
                   코드발송
-                </button>
+                </button>                
               </div>
+              {emailError && (
+                  <p className="text-red-500 text-sm mt-0">{emailError}</p>
+                )}
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -101,11 +163,19 @@ const SignUpModal = ({ onClose, onSwitch }) => {
               </label>
               <input
                 type="text"
-                placeholder="닉네임을 입력해 주세요"
-                className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="닉네임을 입력해주세요"
+                className={`w-full border-b py-2 focus:outline-none focus:border-blue-500
+                  ${nickNameError ? 'border-red-500' : 'border-gray-300'}
+                  ${shakePassword ? 'animate-shake' : ''}`}
                 value={nickName}
                 onChange={(e) => setNickName(e.target.value)}
+                onFocus={() => {
+                  if (nickNameError) setNickNameError("");
+                }}
               />
+              {nickNameError && (
+                <p className="text-red-500 text-sm mt-1">{nickNameError}</p>
+              )}
             </div>
 
             <div>
@@ -114,11 +184,21 @@ const SignUpModal = ({ onClose, onSwitch }) => {
               </label>
               <input
                 type="password"
-                placeholder="비밀번호 입력"
-                className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="비밀번호를 입력해주세요"
+                className={`w-full border-b py-2 focus:outline-none focus:border-blue-500
+                  ${passwordError ? 'border-red-500' : 'border-gray-300'} 
+                  ${shakePassword ? 'animate-shake' : ''}`}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                onFocus={() => {
+                  if (passwordError) setPasswordError("");
+                }}
               />
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+              )}
             </div>
 
             <div>
@@ -127,11 +207,21 @@ const SignUpModal = ({ onClose, onSwitch }) => {
               </label>
               <input
                 type="password"
-                placeholder="비밀번호 재입력"
-                className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="비밀번호를 확인해주세요"
                 value={checkPwd}
-                onChange={(e) => setCheckPwd(e.target.value)}
+                className={`w-full border-b py-2 focus:outline-none focus:border-blue-500
+                  ${passwordError ? 'border-red-500' : 'border-gray-300'} 
+                  ${shakePassword ? 'animate-shake' : ''}`}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                onFocus={() => {
+                  if (passwordError) setPasswordError("");
+                }}
               />
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+              )}
             </div>
 
             <button

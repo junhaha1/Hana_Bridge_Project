@@ -11,7 +11,7 @@ module.exports = {
       },
       screens: {
         'max-md': {'max': '767px'},  // 767px 이하 (모바일 기준)
-        'md-md' : {'max': '1200px'}, //1200px 이하 (컴퓨터 반 이하)
+        'md-md' : {'max': '1200px'}, //1200px 이하 (컴퓨터 반 이하 적용X)
       },
       animation: {
         'modal-fade': 'fadeInScale 0.3s ease-out forwards',
@@ -27,6 +27,14 @@ module.exports = {
             transform: 'scale(1)',
           },
         },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%, 60%': { transform: 'translateX(-6px)' },
+          '40%, 80%': { transform: 'translateX(6px)' },
+        },
+      },
+      animation: {
+        shake: 'shake 0.5s ease-in-out',
       },
     },
   },
