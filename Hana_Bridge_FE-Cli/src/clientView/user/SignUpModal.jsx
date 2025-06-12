@@ -47,12 +47,12 @@ const SignUpModal = ({ onClose, onSwitch }) => {
       isValid = false;
     }
 
-    if (!isValidPassword(password)) {
-      setPasswordError("비밀번호는 최소 8자 이상이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
-      setShakePassword(true);
-      setTimeout(() => setShakePassword(false), 500);
-      isValid = false;
-    }
+    // if (!isValidPassword(password)) {
+    //   setPasswordError("비밀번호는 최소 8자 이상이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
+    //   setShakePassword(true);
+    //   setTimeout(() => setShakePassword(false), 500);
+    //   isValid = false;
+    // }
 
     if (password !== checkPwd) {
       setPasswordError("비밀번호가 일치하지 않습니다.");
@@ -212,7 +212,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
                   ${passwordError ? 'border-red-500' : 'border-gray-300'} 
                   ${shakePassword ? 'animate-shake' : ''}`}
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setCheckPwd(e.target.value);
                 }}
                 onFocus={() => {
                   if (passwordError) setPasswordError("");
