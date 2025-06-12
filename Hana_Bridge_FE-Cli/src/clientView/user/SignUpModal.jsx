@@ -12,7 +12,6 @@ const SignUpModal = ({ onClose, onSwitch }) => {
 
   const [passwordError, setPasswordError] = useState("");
   const [shakePassword, setShakePassword] = useState(false);
-
   const [nameError, setNameError] = useState("");
   const [shakeName, setShakeName] = useState(false);
   const [nickNameError, setNickNameError] = useState("");
@@ -28,7 +27,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
   const handleSignup = () => {
     let isValid = true;
     if (!name.trim()) {
-      setNameError("이름을 입력해 주세요.");
+      setNameError("아이디는 피");
       setShakeName(true);
       setTimeout(() => setShakeName(false), 500);
       isValid = false;
@@ -44,7 +43,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
     if (!email.trim()) {
       setEmailError("이메일을 입력해 주세요.");
       setShakeEmail(true);
-      setTimeout(() => setShakeEmail(true), 500);
+      setTimeout(() => setShakeEmail(false), 500);
       isValid = false;
     }
 
@@ -102,7 +101,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
                 placeholder="이름을 입력해주세요"
                 className={`w-full border-b py-2 focus:outline-none focus:border-blue-500
                   ${nameError ? 'border-red-500' : 'border-gray-300'}
-                  ${shakePassword ? 'animate-shake' : ''}`}
+                  ${shakeName ? 'animate-shake' : ''}`}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onFocus={() => {
@@ -125,7 +124,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
                   placeholder="이메일을 입력해주세요"
                   className={`flex-1 border-b py-2 focus:outline-none focus:border-blue-500
                     ${emailError ? 'border-red-500' : 'border-gray-300'}
-                    ${shakePassword ? 'animate-shake' : ''}`}
+                    ${shakeEmail ? 'animate-shake' : ''}`}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onFocus={() => {
@@ -140,8 +139,8 @@ const SignUpModal = ({ onClose, onSwitch }) => {
                 </button>                
               </div>
               {emailError && (
-                  <p className="text-red-500 text-sm mt-0">{emailError}</p>
-                )}
+                <p className="text-red-500 text-sm mt-0">{emailError}</p>
+              )}
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -166,7 +165,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
                 placeholder="닉네임을 입력해주세요"
                 className={`w-full border-b py-2 focus:outline-none focus:border-blue-500
                   ${nickNameError ? 'border-red-500' : 'border-gray-300'}
-                  ${shakePassword ? 'animate-shake' : ''}`}
+                  ${shakeNickName ? 'animate-shake' : ''}`}
                 value={nickName}
                 onChange={(e) => setNickName(e.target.value)}
                 onFocus={() => {
