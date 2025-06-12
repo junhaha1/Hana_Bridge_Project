@@ -18,7 +18,6 @@ import { BiLike, BiSolidLike } from "react-icons/bi";
 import { FaLightbulb } from "react-icons/fa";
 
 const AddAssemble = () => {
-  const { assembleBoardId } = useParams();
   const location = useLocation();
   const { assembleTitle, assembleContent } = location.state || {};
   //const [board, setBoard] = useState(null);
@@ -29,7 +28,7 @@ const AddAssemble = () => {
   const [title, setTitle] = useState(assembleTitle);
   const [content, setContent] = useState(assembleContent);
   const [createAt, setCreateAt] = useState(new Date());
-  const [likeCount, setLikeCount] = useState(0);
+  const likeCount = 0;
   const nickName = useSelector((state) => state.user.nickName);
 
   //질문 tip
@@ -43,6 +42,10 @@ const AddAssemble = () => {
 
   //tip 설명 모달
   const [tipModal, setTipModal] = useState(false);
+
+  //유효성 검사 
+  const [titleError, setTitleError] = useState("");
+  const [contentError, setContentError] = useState("");
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -61,6 +64,23 @@ const AddAssemble = () => {
   }, []);
 
   const saveAssemble =() =>{
+    let isValid = true;
+
+    if (!title.trim()) {
+      setTitleError("제목은 필수 입력항목입니다.");
+      isValid = false;
+    }
+
+    if (!content.trim()) {
+      setContentError("내용은 필수 입력항목입니다.");
+      isValid = false;
+    }
+
+    console.log("titleError: " + titleError + " contentError: " + contentError + "  isVaild: " + isValid);
+
+    if (!isValid) return;
+
+
     ApiClient.saveAssemble(title, 'assemble', content, createAt)
     .then(async (res) => {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
@@ -117,13 +137,21 @@ const AddAssemble = () => {
                 <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
   
                 {/* <h2 className={detailTitle}>{board.title}</h2> */}
-                <input
-                  type="text"
-                  className={editTitle}
-                  placeholder="제목을 입력해주세요"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className={editTitle}
+                    placeholder="제목을 입력해주세요"
+                    value={title}
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                      if (titleError) setTitleError(""); // 수정 시 에러 제거
+                    }}
+                  />
+                  {titleError && (
+                    <p className="text-red-500 text-sm mt-1">{titleError}</p>
+                  )}
+                </div>
                 <div className={userDate}>
                   <span className='flex gap-1'>
                     <FaUser
@@ -138,7 +166,17 @@ const AddAssemble = () => {
                 <div className="border-t border-white/10 mb-3" />
   
                 <div className="text-white">
-                  <MarkdownEditor content={content} onChange={setContent} />
+                  {/* <MarkdownEditor content={content} onChange={setContent} /> */}
+                  <MarkdownEditor
+                    content={content}
+                    onChange={(value) => {
+                      setContent(value);
+                      if (contentError) setContentError("");
+                    }}
+                  />
+                  {contentError && (
+                    <p className="text-red-500 text-sm mt-1">{contentError}</p>
+                  )}
                 </div>
   
                 {/* 좋아요, 댓글, 삭제 */}

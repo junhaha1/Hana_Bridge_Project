@@ -34,8 +34,13 @@ const AddBoard = () => {
   //언어 선택 박스
   const [language, setLanguage] = useState("");
 
-  const monaco = useMonaco();
   // 내가 사용할 모나코 인스턴스를 생성
+  const monaco = useMonaco();
+  
+  //유효성 검사
+  const [titleError, setTitleError] = useState("");
+  const [contentError, setContentError] = useState("");
+
 
   useEffect(() => {
     if (!monaco) return; // Monaco 인스턴스가 로드되지 않았으면 바로 종료
@@ -104,12 +109,28 @@ const AddBoard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ category, title, content });
+
+    let isValid = true;
+
+    if (!title.trim()) {
+      setTitleError("제목은 필수 입력항목입니다.");
+      isValid = false;
+    }
+
+    if (!content.trim()) {
+      setContentError("내용은 필수 입력항목입니다.");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
+
     setCreateAt(new Date());
     setUpdateAt(new Date());
+
     const finalCode = ["```" + language, code, "```"].join("\n");
-    console.log(finalCode);
-    // TODO: API 요청 처리
+
+    // API 요청 처리
     ApiClient.sendBoard(title, category, content, finalCode, createAt, updateAt)
     .then(async (res) => {
       if (!res.ok) {
@@ -175,17 +196,26 @@ const AddBoard = () => {
               
 
               {/* 제목 */}
-              <div>
+              <div className='mb-3'>
                 <label className="block font-semibold mb-2 text-lg">
                   제목 <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                    if (titleError) setTitleError(""); // 수정 시 에러 제거
+                  }}
+                  // onFocus={() => {
+                  //   if (titleError) setPasswordError("");
+                  // }}
                   placeholder="게시글 제목을 적어 주세요"
-                  className={addTitle}
+                  className={`${addTitle} ${titleError ? 'border-white' : 'border-white'}`}
                 />
+                {titleError && (
+                  <p className="text-red-500 text-sm mt-1">{titleError}</p>
+                )}
               </div>
 
               {/* 코드 작성 */}
@@ -226,20 +256,26 @@ const AddBoard = () => {
               )}
 
               {/* 본문 작성 */}
-              <div>
+              <div className='mb-2'>
                 <textarea
                   rows={7}
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={(e) => {
+                    setContent(e.target.value);
+                    if (contentError) setContentError(""); // 수정 시 에러 제거
+                  }}
                   placeholder="작성할 글을 적어 주세요"
-                  className={addContent}
+                  className={`${addContent} ${contentError ? '!border-red-500' : 'border-white'}`}
                 />
+                {contentError && (
+                  <p className="text-red-500 text-sm mt-0">{contentError}</p>
+                )}
               </div>
 
               {/* 버튼 */}
               <div className="flex justify-center gap-4">
                 <button 
-                  onClick={() => navigate(`/board/${toCategory}`)}
+                  onClick={() => navigate(-1)}
                   className={addBoardButton}
                 >
                   처음으로

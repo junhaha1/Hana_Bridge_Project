@@ -113,9 +113,6 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                 <input
                   type="text"
                   placeholder="아이디를 입력해 주세요"
-                  // className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 py-2 text-sm"
-                  // value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
                   className={`w-full flex-1 border-b py-2 focus:outline-none focus:border-blue-500 text-sm
                     ${emailError ? 'border-red-500' : 'border-gray-300'}
                     ${shakeEmail ? 'animate-shake' : ''}`}
@@ -138,9 +135,6 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                 <input
                   type="password"
                   placeholder="비밀번호를 입력해 주세요"
-                  // className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 py-2 text-sm"
-                  // value={pwd}
-                  // onChange={(e) => setPwd(e.target.value)}
                   className={`w-full border-b py-2 focus:outline-none focus:border-blue-500 text-sm
                     ${passwordError ? 'border-red-500' : 'border-gray-300'} 
                     ${shakePassword ? 'animate-shake' : ''}`}

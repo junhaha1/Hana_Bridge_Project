@@ -1,6 +1,6 @@
 //수정 폼
 // - title 수정
-export const editTitle = "w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50 font-bold";
+export const editTitle = "w-full p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50 font-bold";
 // - code, content 수정
 export const editContent = " w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50";
 
