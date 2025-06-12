@@ -8,6 +8,11 @@ RUN apk update && \
 # Zabbix 설정파일 복사
 COPY zabbix_agentd.conf /etc/zabbix/zabbix_agentd.conf
 
+RUN mkdir -p /var/log/zabbix && \
+    touch /var/log/zabbix/zabbix_agentd.log && \
+    chown -R zabbix:zabbix /var/log/zabbix && \
+    chmod 644 /var/log/zabbix/zabbix_agentd.log
+
 # React 빌드 파일 복사
 COPY dist/ /usr/share/nginx/html
 
