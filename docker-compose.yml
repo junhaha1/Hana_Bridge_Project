@@ -9,6 +9,7 @@ services:
     container_name: hana-frontend-container
     ports:
       - "3000:80"
+      - "10053:10053"
     depends_on:
       - backend
       
@@ -17,6 +18,7 @@ services:
       context: ./Hana_Bridge_BE-API
     ports:
       - "8080:8080"
+      - "10052:10052"
     image: hana-backend
     container_name: hana-backend-container
     environment:
