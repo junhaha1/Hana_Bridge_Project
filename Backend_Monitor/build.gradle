@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'de.codecentric:spring-boot-admin-starter-server'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

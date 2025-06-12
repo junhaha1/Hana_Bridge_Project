@@ -9,3 +9,7 @@ endpoints:
   web:
     exposure:
       include: "*"
+metrics:
+  export:
+    prometheus:
+      enabled: true
