@@ -8,8 +8,8 @@ RUN apt-get update && \
 
 RUN mkdir -p /var/log/zabbix && \
     touch /var/log/zabbix/zabbix_agentd.log && \
+    chown -R zabbix:zabbix /var/log/zabbix && \
     chmod 644 /var/log/zabbix/zabbix_agentd.log
-
 # Zabbix 설정파일 덮어쓰기 (필요 시)
 COPY zabbix_agentd.conf /etc/zabbix/zabbix_agentd.conf
 
