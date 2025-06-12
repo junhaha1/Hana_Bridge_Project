@@ -6,8 +6,8 @@ RUN apt-get update && \
     apt-get install -y zabbix-agent && \
     apt-get clean
 
-RUN mkdir -p /var/log/zabbix
-    touch /var/log/zabbix/zabbix_agentd.log
+RUN mkdir -p /var/log/zabbix && \
+    touch /var/log/zabbix/zabbix_agentd.log && \
     chmod 644 /var/log/zabbix/zabbix_agentd.log
 
 # Zabbix 설정파일 덮어쓰기 (필요 시)
