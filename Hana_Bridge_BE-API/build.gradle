@@ -4,6 +4,10 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
+ext {
+	springBootAdminVersion = "3.1.5"
+}
+
 group = 'com.adela'
 version = '0.0.1'
 
@@ -37,14 +41,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	// Reactor Netty (타임아웃 등 커스터마이징용, 선택적 명시)
 	implementation("io.projectreactor.netty:reactor-netty")
-	//OpenAI RestTemplate 타임아웃 환경설정을 위한 의존성
-	implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.4'
 
 	//JWT 의존성
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation 'de.codecentric:spring-boot-admin-starter-client'
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -56,6 +59,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "de.codecentric:spring-boot-admin-dependencies:$springBootAdminVersion"
+	}
 }
 
 tasks.named('test') {
