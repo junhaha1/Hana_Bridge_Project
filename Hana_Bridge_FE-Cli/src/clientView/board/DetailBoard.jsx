@@ -303,7 +303,7 @@ const DetailBoard = () => {
             ):(
               <>
               <button
-                onClick={() => navigate("/board/" + category)}
+                onClick={() => navigate(`/board/ ${category}`, { state: { from: "back" } })}
                 className={buttonStyle + backButton}
               >
                 이전

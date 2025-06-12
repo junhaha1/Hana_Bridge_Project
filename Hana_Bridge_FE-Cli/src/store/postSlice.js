@@ -4,8 +4,10 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isPostLoading: false,
   isPostComplete: false,
-  curPage: 1,
-  curPageGroup: 0,
+  curCodePage: 1,
+  curNoticePage: 1,
+  curAssemblePage: 1,
+  curMyPage: 1,
 };
 
 const postSlice = createSlice({
@@ -23,15 +25,33 @@ const postSlice = createSlice({
       state.isPostComplete = false;
     },
     setCurPage: (state, action) => {
-      console.log("slice: " + action.payload)
-      state.curPage = action.payload;
+      const payload = action.payload;
+
+      if (payload.curCodePage !== undefined) {
+        state.curCodePage = payload.curCodePage;
+      }
+      if (payload.curNoticePage !== undefined) {
+        state.curNoticePage = payload.curNoticePage;
+      }
+      if (payload.curAssemblePage !== undefined) {
+        state.curAssemblePage = payload.curAssemblePage;
+      }
+      if (payload.curMyPage !== undefined) {
+        state.curMyPage = payload.curMyPage;
+      }
     },
-    setCurPageGroup: (state, action) => {
-      state.curPageGroup = action.payload;
-    },
-    resetPage: (state) => {
-      state.curPage = 1;
-      state.curPageGroup = 0;
+    resetPage: (state, action) => {
+      const category = action.payload;
+
+      if (category === 'code') {
+        state.curCodePage = 1;
+      } else if (category === 'notice') {
+        state.curNoticePage = 1;
+      } else if (category === 'assemble') {
+        state.curAssemblePage = 1;
+      } else if (category === 'my') {
+        state.curMyPage = 1;
+      }
     }
   }
 });

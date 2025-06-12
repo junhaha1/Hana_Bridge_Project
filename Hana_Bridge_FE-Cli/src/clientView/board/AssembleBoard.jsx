@@ -1,7 +1,8 @@
 import ApiClient from '../../service/ApiClient';
 import { useEffect, useState, useRef } from "react";
-import { useNavigate} from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurPage, setCurPageGroup, resetPage } from "../../store/postSlice";
 
 import { scrollStyle } from "../../style/CommonStyle";
 import { cardStyle } from "../../style/CommonStyle";
@@ -17,6 +18,9 @@ const AssembleBoard = () => {
   const [sortType, setSortType] = useState("latest");
 
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const isBack = location.state?.from === "back";
 
   const [searchWord, setSearchWord] = useState(""); //검색창에 입력된 단어를 갱신하는 변수
   const [fixedWord, setFixedWord] = useState(""); //검색이 확정된 단어
@@ -26,9 +30,12 @@ const AssembleBoard = () => {
 
   const scrollRef = useRef(null);
 
-  const [page, setPage] = useState(1); // 현재 페이지 (1부터 시작)
+  const curPage = useSelector((state) => state.post.curAssemblePage);
+  const curPageGroup = Math.floor((curPage -1) / 5 );
+  const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
+  console.log("curPage: " + curPage + "  page: "+ page);
   const [totalPages, setTotalPages] = useState(0); // 총 페이지 갯수 
-  const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
+  const [pageGroup, setPageGroup] = useState(curPageGroup); // 현재 5개 단위 페이지 그룹 인덱스
 
   
   //맨 위로가기 버튼 
@@ -37,6 +44,28 @@ const AssembleBoard = () => {
       scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  //페이지 동기화 처리 
+  useEffect(() => {
+    if (page !== curPage) {
+      setPage(curPage);
+    }
+    if(pageGroup !== curPageGroup){
+      setPageGroup(curPageGroup);
+    }
+  }, [curPage, curPageGroup]);
+
+  //이전 버튼이 아니라면 초기화
+  useEffect(() => {
+    console.log("isBack: "+isBack);
+    if (!isBack) {
+      dispatch(resetPage('assemble'));
+    } else {
+      // from 상태 초기화
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
+
 
   const getSearch = (word) => {
     ApiClient.getSearchAssembleBoards(word, sortType, page)
@@ -76,7 +105,11 @@ const AssembleBoard = () => {
 
   // 정렬 방법이나 검색어가 바뀌면 페이지 1
   useEffect(() =>{
-    setPage(1);    
+    if (sortType === "latest") return;
+
+    setPage(1);
+    setPageGroup(0);
+    dispatch(resetPage('assemble'));
   }, [sortType, searchWord]);
 
   // page가 바뀌는 경우 페이지 그룹 확인 
@@ -151,6 +184,7 @@ const AssembleBoard = () => {
             const newGroup = pageGroup - 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage({curAssemblePage: newGroup * pagesPerGroup + 1}));
           }}
           className="px-3 py-1 mx-1 rounded bg-transparent text-white"
         >
@@ -164,7 +198,10 @@ const AssembleBoard = () => {
         <button
           key={i}
           className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
-          onClick={() => setPage(i)}
+          onClick={() => {
+            setPage(i);          
+            dispatch(setCurPage({curAssemblePage: i}));
+          }}
         >
           {i}
         </button>
@@ -179,6 +216,7 @@ const AssembleBoard = () => {
             const newGroup = pageGroup + 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
+            dispatch(setCurPage({curAssemblePage: newGroup * pagesPerGroup + 1 }));
           }}
           className="px-3 py-1 mx-1 rounded-full bg-transparent text-white"
         >
@@ -216,6 +254,8 @@ const AssembleBoard = () => {
     setSortType("latest");
     setSearchWord("");
     setFixedWord("");
+    setPage(1);
+    setPageGroup(0);
   }
 
   return (

@@ -27,6 +27,8 @@ const DetailAssemble = () => {
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
 
+  const myCategory = location.state?.category; 
+
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -145,7 +147,7 @@ const DetailAssemble = () => {
             ):(
               <>
               <button
-                onClick={() => navigate("/board/assemble")}
+                onClick={() => navigate(`/board/${myCategory}`, { state: { from: "back" } })}
                 className={buttonStyle + backButton}
               >
                 이전

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurPage, setCurPageGroup, resetPage } from "../../store/postSlice";
@@ -17,6 +17,8 @@ const CodeBoard = () => {
   const [boards, setBoards] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const isBack = location.state?.from === "back";
   const category = useSelector((state) => state.user.category);
   const nickName = useSelector((state) => state.user.nickName);
   const scrollRef = useRef(null);
@@ -28,8 +30,8 @@ const CodeBoard = () => {
   const [redirect, setRedirect] = useState(false); //화면 새로고침 판단 토글변수
 
 
-  const curPage = useSelector((state) => state.post.curPage);
-  const curPageGroup = useSelector((state) => state.post.curPageGroup);
+  const curPage = useSelector((state) => state.post.curCodePage);
+  const curPageGroup = Math.floor((curPage -1) / 5 );
   const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
   console.log("curPage: " + curPage + "  page: "+ page);
   const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
@@ -42,6 +44,7 @@ const CodeBoard = () => {
     }
   };
 
+  //페이지 동기화 검사
   useEffect(() => {
     if (page !== curPage) {
       setPage(curPage);
@@ -50,6 +53,17 @@ const CodeBoard = () => {
       setPageGroup(curPageGroup);
     }
   }, [curPage, curPageGroup]);
+
+  //이전 버튼이 아니라면 초기화
+  useEffect(() => {
+    console.log("isBack: "+isBack);
+    if (!isBack) {
+      dispatch(resetPage('code'));
+    } else {
+      // from 상태 초기화
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
 
   const getSearch = (word) => {
     ApiClient.getSearchBoards(category, word, sortType, page)
@@ -90,10 +104,9 @@ const CodeBoard = () => {
   // 정렬 방법이나 검색어가 바뀌면 페이지 1
   useEffect(() =>{
     if (searchWord === "" && sortType === "latest") return;
-
     setPage(1);
     setPageGroup(0);
-    dispatch(resetPage());
+    dispatch(resetPage('code'));
   }, [sortType, searchWord]);
 
   // page가 바뀌는 경우 페이지 그룹 확인 
@@ -168,8 +181,7 @@ const CodeBoard = () => {
             const newGroup = pageGroup - 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
-            dispatch(setCurPage(newGroup * pagesPerGroup + 1));
-            dispatch(setCurPageGroup(newGroup));
+            dispatch(setCurPage({curCodePage: newGroup * pagesPerGroup + 1}));
           }}
           className="px-3 py-1 mx-1 rounded bg-transparent text-white"
         >
@@ -186,7 +198,7 @@ const CodeBoard = () => {
           onClick={() => {
             setPage(i);
             console.log("print i: " + i);
-            dispatch(setCurPage(i));
+            dispatch(setCurPage({curCodePage: i}));
           }}
         >
           {i}
@@ -202,8 +214,7 @@ const CodeBoard = () => {
             const newGroup = pageGroup + 1;
             setPageGroup(newGroup);
             setPage(newGroup * pagesPerGroup + 1);
-            dispatch(setCurPage(newGroup * pagesPerGroup + 1 ));
-            dispatch(setCurPageGroup(newGroup));
+            dispatch(setCurPage({curCodePage: newGroup * pagesPerGroup + 1 }));
           }}
           className="px-3 py-1 mx-1 rounded-full bg-transparent text-white"
         >
@@ -241,6 +252,8 @@ const CodeBoard = () => {
     setIsLoading(true);
     setSearchWord("");
     setFixedWord("");
+    setPage(1);
+    setPageGroup(0);
   }
 
   return (
