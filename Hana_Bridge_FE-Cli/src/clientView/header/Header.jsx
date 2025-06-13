@@ -87,7 +87,7 @@ const BoardHeader = () => {
                 로그인
               </button>
               <button
-                onClick={() => openModal("signup")}
+                // onClick={() => openModal("signup")}
                 className={commonButton}
               >
                 회원가입
