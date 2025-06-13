@@ -204,7 +204,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                     <label className="block text-black font-semibold mb-1">
                       이름<span className="text-red-500">*</span>
                     </label>
-                    <input type="text" value={name} readOnly className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
+                    <input type="text" value={name} readOnly={!isEdit} className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
                   </div>
 
                   <div>
