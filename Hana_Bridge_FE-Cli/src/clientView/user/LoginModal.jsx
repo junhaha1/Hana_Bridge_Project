@@ -170,10 +170,10 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                   |{" "}
                   <span
                     className="text-blue-600 hover:underline cursor-pointer"
-                    // onClick={() => {
-                    //   onClose();
-                    //   onSwitch("signup");
-                    // }}
+                    onClick={() => {
+                      onClose();
+                      onSwitch("signup");
+                    }}
                   >
                     회원가입
                   </span>
