@@ -59,8 +59,11 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
             name: data.name,
             nickName: data.nickName,
             role: data.role,
+            questionCount: data.questionCount,
+            summaryCount: data.summaryCount
           })
         );
+        console.log(data.questionCount, data.summaryCount);
         dispatch(
           updateAccessToken({accessToken: data.accessToken})
         )

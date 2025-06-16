@@ -7,7 +7,9 @@ CREATE TABLE `users` (
 	`oauth_provider`	VARCHAR(50)	NULL,
 	`oauth_id`	VARCHAR(255)	NULL,
 	`role`	VARCHAR(50)	NOT NULL	DEFAULT 'ROLE_USER',
-	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+    `qeustion_count` INT NOT NULL DEFAULT 30,
+    `summary_count` INT NOT NULL DEFAULT 5
 );
 
 CREATE TABLE `board` (

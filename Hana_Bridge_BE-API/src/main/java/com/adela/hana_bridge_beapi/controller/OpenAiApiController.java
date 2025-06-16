@@ -99,21 +99,19 @@ public class OpenAiApiController {
     @PostMapping(value = "/answer/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseBodyEmitter streamAnswer(@RequestHeader("Authorization") String authHeader, @RequestBody ClientRequest clientRequest) {
         String accessToken = authHeader.replace("Bearer ", "");
-        String email = tokenService.findEmailByToken(accessToken);
-
-        //해당 사용자가 맞는지 검증
-        usersService.findByEmail(email);
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+        usersService.updateQuestionCount(userId);
 
         ResponseBodyEmitter emitter = new ResponseBodyEmitter();
         openAiService.streamAnswerToClient(clientRequest, emitter);
-
         return emitter;
     }
 
     @PostMapping("/summary")
     public ResponseEntity<SummaryResponse> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientSummaryRequest clientSummaryRequest){
         String accessToken = authHeader.replace("Bearer ", "");
-        String email = tokenService.findEmailByToken(accessToken);
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
 
         //질문과 답변들을 이용하여 요약본 생성
         String summary = openAiService.summaryChatGPT(clientSummaryRequest);
@@ -142,6 +140,7 @@ public class OpenAiApiController {
         }
 
         SummaryResponse summaryResponse = new SummaryResponse(title, summary);
+        usersService.updateSummaryCount(userId);
         return ResponseEntity.ok().body(summaryResponse);
     }
 }

@@ -34,3 +34,12 @@ JOIN (
 SET b.like_count = t.cnt;
 
 SELECT * FROM assembleboard;
+
+
+
+
+ALTER TABLE users ADD COLUMN question_count INT NOT NULL default 30;
+ALTER TABLE users ADD COLUMN summary_count INT NOT NULL default 5;
+UPDATE users SET question_count = 1, summary_count = 0 WHERE id = 15;
+
+select * from users;

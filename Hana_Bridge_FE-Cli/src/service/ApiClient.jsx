@@ -15,6 +15,10 @@ class ApiClient{
   static USER = "/user";
   //Open AI
   static AIChat = "/chat"
+
+  static getQuestionAndSummaryCount(){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.USER + `/question`);
+  }
   
   //사용자가 작성한 프롬포트 조회해오기
   static getCustomPrompts(){ 
