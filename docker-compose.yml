@@ -9,7 +9,6 @@ services:
     container_name: hana-frontend-container
     ports:
       - "3000:80"
-      - "10053:10053"
     depends_on:
       - backend
       
@@ -18,7 +17,6 @@ services:
       context: ./Hana_Bridge_BE-API
     ports:
       - "8080:8080"
-      - "10052:10052"
     image: hana-backend
     container_name: hana-backend-container
     environment:
@@ -38,6 +36,8 @@ services:
     container_name: redis-container
     ports:
       - "6379:6379"
+    environment:
+      - TZ=Asia/Seoul  # ✅ 시스템 시간대 설정
     volumes:
       - redis_test:/data  # Redis는 /data에 데이터 저장
       
@@ -49,8 +49,11 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_DB}
+      - TZ=Asia/Seoul
     env_file:
       - .env
+    command:
+      --default-time-zone='Asia/Seoul'
     volumes:
       - mysql_test:/var/lib/mysql
       - ./MySQL_init/${INIT_DB_TEST}:/docker-entrypoint-initdb.d/init.sql
