@@ -7,7 +7,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://14.63.178.152:8081  # Admin 서버 주소
+        url: http://14.63.178.151:8081  # Admin 서버 주소
         instance:
           prefer-ip: true
   mvc:
