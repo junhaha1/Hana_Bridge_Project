@@ -135,3 +135,13 @@ ALTER TABLE `prompt` ADD CONSTRAINT `FK_users_TO_prompt_1` FOREIGN KEY (
 REFERENCES `users` (
 	`id`
 ) ON DELETE CASCADE;
+
+
+CREATE EVENT reset_question_summary_count
+ON SCHEDULE
+    EVERY 1 DAY
+    STARTS '2025-06-17 06:00:00'
+DO
+    UPDATE users
+    SET question_count = 30,
+        summary_count = 5;
