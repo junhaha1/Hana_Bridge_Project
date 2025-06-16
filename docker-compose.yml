@@ -56,7 +56,7 @@ services:
       --default-time-zone='Asia/Seoul'
     volumes:
       - mysql_service:/var/lib/mysql
-      - ./MySQL_init/${INIT_DB_TEST}:/docker-entrypoint-initdb.d/init.sql
+      - ./MySQL_init/${INIT_DB}:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   #자동으로 프로젝트 폴더명이 앞에 붙음
