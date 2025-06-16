@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from '../../service/ApiClient';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAiChat, clearAiChat} from '../../store/userSlice';
+import { setAiChat, clearAiChat, setQuestionCount, setSummaryCount} from '../../store/userSlice';
 import { setPostLoading, setPostComplete, resetPostState } from '../../store/postSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
@@ -14,6 +14,7 @@ import { AiFillRobot, AiOutlineFullscreen, AiOutlineFullscreenExit } from "react
 import { IoCopyOutline, IoSettingsSharp } from "react-icons/io5";
 import { FaCheck } from 'react-icons/fa6';
 import { FaLightbulb } from "react-icons/fa";
+import { MdGeneratingTokens } from "react-icons/md";
 import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox, 
   inputBox, inputTextarea, sendButton, upDiv, downDiv, okButton, cancelButton,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
@@ -71,9 +72,28 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const [isHovered, setIsHovered] = useState(false);
   //답변중인지 체크 
   const [isAnswering, setIsAnswering] = useState(false);
-
   const [isCreated, setIsCreated] = useState(false);
 
+  /* 사용자 질문 횟수 및 요약 횟수*/
+  const questionCount = useSelector((state) => state.user.questionCount);
+  const summaryCount = useSelector((state) => state.user.summaryCount);
+  const [isCountInfo, setIsCountInfo] = useState(false);
+
+  //질문, 요약 횟수 갱신
+  const updateQuestionAndSummaryCount = () => {
+    ApiClient.getQuestionAndSummaryCount()
+    .then((res) => {
+        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        dispatch(setQuestionCount({ questionCount: data.questionCount }));
+        dispatch(setSummaryCount({ summaryCount: data.summaryCount }));
+      })
+      .catch((err) => console.error("API 요청 실패:", err));
+  };
+    
   //사용자가 설정한 프롬포트 목록 가져오기
   useEffect(() => {
     ApiClient.getCustomPrompts()
@@ -159,11 +179,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           if (raw === "stop"){ //답변이 완전히 종료
             setIsAnswering(false);
             console.log(raw);
+            updateQuestionAndSummaryCount();
             return;
           } else if (raw === "length") {//답변이 중간에 끊김 -> 해당 답변 div에 재생성 버튼 추가
             setIsAnswering(false);
             setIsCreated(true); //계속 이어받을 수 있게 초기화
             console.log(raw);
+            updateQuestionAndSummaryCount();
             return;
           }
 
@@ -260,11 +282,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           if (raw === "stop"){ //답변이 완전히 종료
             setIsAnswering(false);
             console.log(raw);
+            updateQuestionAndSummaryCount();
             return;
           } else if (raw === "length") {//답변이 중간에 끊김 -> 해당 답변 div에 재생성 버튼 추가
             setIsAnswering(false);
             setIsCreated(true); //답변 이어받기 활성화
             console.log(raw);
+            updateQuestionAndSummaryCount();
             return;
           }
 
@@ -299,45 +323,11 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             }
           } catch (err) {
             console.error("JSON parse error", err);
-          }
+          } 
         }
       }
     }
   };
-
-  //사용자 질문 보내기 -> 추후 사용될 수도 있으므로 남겨둠. 
-  const sendMessage = () => {
-    if (!input.trim()) return;
-
-    const newMessage = { role: '질문', content: input};    
-    const updatedMessages = [...messages, newMessage]; // 사용자 메시지까지 포함한 배열
-  
-    setMessages(updatedMessages);
-    setInput('');
-  
-    if (textRef.current) {
-      textRef.current.style.height = 'auto';
-    }
-
-    const result = updatedMessages.map(msg => msg.role + ": " + msg.content).join('\n');
-  
-    setIsLoading(true); 
-    ApiClient.sendMessage(promptLevel, result, input)
-      .then((res) => {
-        if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        const aiResponse = { role: '답변', content: data.answer };
-        const finalMessages = [...updatedMessages, aiResponse]; // 사용자 + AI 메시지 모두 포함
-  
-        setMessages(finalMessages);
-        dispatch(setAiChat({ chatMessages: finalMessages }));
-        setIsLoading(false);
-      })
-      .catch((err) => console.error("API 요청 실패:", err));
-  };
-  
 
   //enter로 전송
   const handleKeyDown = (e) => {
@@ -363,9 +353,12 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
               }
             });
         } else {
-            // 전송하고 줄바꿈 막기
+          if(questionCount === 0) {
+            alert("현재 질문 횟수를 전부 사용하였습니다!")
+          } else{
             e.preventDefault();
             streamMessage();
+          }
         }
     }
   };
@@ -398,6 +391,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       setIsPostLoading(false);
       alert("게시글 포스팅 실패");
       console.error("API 요청 실패:", err)
+    }).finally(() => {
+       updateQuestionAndSummaryCount();
     });
   };
 
@@ -449,8 +444,26 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             )
           )}
         </div>
-          
         <div className='flex flex-row gap-2 overflow-visible z-[9000] '>
+          <div
+            className="relative z-[9000]"
+            onMouseEnter={() => setIsCountInfo(true)}
+            onMouseLeave={() => setIsCountInfo(false)}
+          >
+            <button className="flex flex-row items-center m-1 p-1 text-sm text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+              <MdGeneratingTokens  className="m-1" />
+              잔여량 확인
+            </button>
+
+            <div
+              className={`absolute top-full right-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+              style={{ opacity: isCountInfo ? 1 : 0 }}
+            >
+              <span className="text-yellow-400 font-semibold">남은 질문 횟수 : </span>{questionCount}<br/>
+              <span className="text-yellow-400 font-semibold">남은 요약 횟수 : </span>{summaryCount} <br/>
+              <span>매일 오전 6시에 초기화됩니다!</span>
+            </div>
+          </div>
           <div className='my-auto text-white text-sm font-semibold'>
           {(promptLevel === -1 ? userPrompt.name : (promptLevel === 0 ? "초보자" : "전문가"))} 모드
           </div>
@@ -654,7 +667,12 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                   <div className='mt-2 flex flex-col'>
                     <a
                       className="no-underline cursor-pointer font-semibold text-blue-100 text-sm hover:text-blue-300"
-                      onClick={() => continueMessage(msg.content)}
+                      onClick={() => {
+                        if(questionCount === 0){
+                          alert("현재 질문 횟수를 전부 사용하였습니다!");
+                        }
+                        continueMessage(msg.content)
+                      }}
                     >
                       답변 이어 생성하기 ...
                     </a>
@@ -689,7 +707,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                   ) : (
                   <button
                   className={answerChooseButton}
-                  onClick={() => openPostModal(msg.content)}
+                  onClick={() => {
+                    if (summaryCount === 0) {
+                      alert("현재 요약 횟수를 전부 사용하였습니다!");
+                    } else{
+                      openPostModal(msg.content);
+                    }
+                  }}
                   >
                     답변 채택
                   </button>
@@ -727,7 +751,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             }}
           />
           <button
-            onClick={streamMessage}
+            onClick={() => {
+              console.log(questionCount);
+              if(questionCount === 0){
+                alert("현재 질문 횟수를 전부 사용하였습니다!");
+              } else{
+                streamMessage();
+              }
+            }}
             className={sendButton}
           >
             <RiSendPlaneFill className='size-7 text-black'/>
@@ -745,6 +776,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           <div className={downDiv}>
             <h2 className="text-xl font-semibold mb-4">답변 채택</h2>
             <p className="mb-4">해당 질문과 답변을 채택 하시겠습니까?<br />채택하시면 질문과 내용이 요약되어 게시됩니다.</p>
+            <p className="mb-4">남은 요약 횟수 : {summaryCount}</p>
             <div className="flex justify-end gap-2">              
               <button className={okButton} onClick={postAssemble}>확인</button>
               <button className={cancelButton} onClick={closePostModal}>취소</button>

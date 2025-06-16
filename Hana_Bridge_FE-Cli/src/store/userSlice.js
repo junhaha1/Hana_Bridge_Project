@@ -10,6 +10,8 @@ import { createSlice } from '@reduxjs/toolkit';
   //page: '',
   playFlag: true,
   shouldAutoOpenHelper: false,
+  questionCount: 0,
+  summaryCount: 0,
   aiPrompts: {
     promptId: '',
     name: '',
@@ -29,6 +31,8 @@ import { createSlice } from '@reduxjs/toolkit';
       state.name = action.payload.name;
       state.nickName = action.payload.nickName;
       state.role = action.payload.role;
+      state.questionCount = action.payload.questionCount;
+      state.summaryCount = action.payload.summaryCount;
     },
     modifyUser: (state, action) => {
     state.email = action.payload.email;
@@ -45,6 +49,8 @@ import { createSlice } from '@reduxjs/toolkit';
       //state.page = '';
       state.playFlag = true;
       state.shouldAutoOpenHelper = false;
+      state.questionCount = 0;
+      state.summaryCount = 0;
       state.aiPrompts = {
         promptId: '',
         name: '',
@@ -54,15 +60,21 @@ import { createSlice } from '@reduxjs/toolkit';
         option: ''
         }
     },
-     setAiChat: (state, action) => {
-        state.chatMessages = action.payload.chatMessages;
-     },
-     clearAiChat: (state) =>{
-      state.chatMessages = [];
-     },
-     // 전체 상태 초기화
-     resetAll: (state) => {
-      Object.assign(state, initialState); 
+    setQuestionCount: (state, action) => {
+      state.questionCount = action.payload.questionCount;
+    },
+    setSummaryCount: (state, action) => {
+      state.summaryCount = action.payload.summaryCount;
+    },
+    setAiChat: (state, action) => {
+      state.chatMessages = action.payload.chatMessages;
+    },
+    clearAiChat: (state) =>{
+    state.chatMessages = [];
+    },
+    // 전체 상태 초기화
+    resetAll: (state) => {
+    Object.assign(state, initialState); 
     },
     setCategory: (state, action) => {
       state.category = action.payload.category;
@@ -83,5 +95,5 @@ import { createSlice } from '@reduxjs/toolkit';
  });
  
  export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, //setPage, 
-  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts } = userSlice.actions;
+  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts, setQuestionCount, setSummaryCount } = userSlice.actions;
  export default userSlice.reducer;
