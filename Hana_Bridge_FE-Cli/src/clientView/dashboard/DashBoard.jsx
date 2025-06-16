@@ -64,7 +64,7 @@ const DashBoard = () => {
         <>
         <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
           <LeftHeader />
-          <div className="w-4/5 max-md:w-full">
+          <div className="w-4/5 max-md:w-full md:mt-4">
             <DashboardCards />
           </div>
         </div>
