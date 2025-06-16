@@ -287,19 +287,6 @@ jobs:
           mkdir -p deploy/MySQL_init
       
           cp -r Hana_Bridge_BE-API/build deploy/Hana_Bridge_BE-API/
-          cp Hana_Bridge_BE-API/entrypoint.sh deploy/Hana_Bridge_BE-API/
-          cp Hana_Bridge_BE-API/zabbix_agentd.conf deploy/Hana_Bridge_BE-API/
-          cp Hana_Bridge_BE-API/Dockerfile deploy/Hana_Bridge_BE-API/
-          cp -r MySQL_init/* deploy/MySQL_init/
-          cp .env deploy/
-
-      - name: 📂 Prepare deploy folder for BackendMore actions
-        if: steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'
-        run: |
-          mkdir -p deploy/Hana_Bridge_BE-API
-          mkdir -p deploy/MySQL_init
-      
-          cp -r Hana_Bridge_BE-API/build deploy/Hana_Bridge_BE-API/
           cp Hana_Bridge_BE-API/Dockerfile deploy/Hana_Bridge_BE-API/
           cp -r MySQL_init/* deploy/MySQL_init/
           cp .env deploy/
