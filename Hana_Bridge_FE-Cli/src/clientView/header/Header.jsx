@@ -25,6 +25,7 @@ const BoardHeader = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("login");
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const openModal = (type) => {
     setModalType(type);
@@ -102,12 +103,34 @@ const BoardHeader = () => {
                 글 작성
               </button>
               
+              {/* <button
+                onClick={() => openModal("myinfo")}
+                className={userButton}
+              >
+                 <FaUserCircle className={userIcon}/> {nickName}
+              </button>      */}
+
+
+            <div
+              className="relative z-[9000]"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
               <button
                 onClick={() => openModal("myinfo")}
                 className={userButton}
               >
                  <FaUserCircle className={userIcon}/> {nickName}
-              </button>              
+              </button>   
+              <div
+                className={`absolute top-full right-0 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+                style={{ opacity: isHovered ? 1 : 0 }}
+              >
+                사용자 정보를 확인하고 수정할 수 있습니다. 
+              </div>
+            </div>
+
+
               <button
                 onClick={() => setConfirmLogoutOpen(true)}
                 className={logoutButton}
