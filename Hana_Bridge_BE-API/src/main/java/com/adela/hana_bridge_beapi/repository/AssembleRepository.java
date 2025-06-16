@@ -2,51 +2,28 @@ package com.adela.hana_bridge_beapi.repository;
 
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.entity.Board;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
-    List<AssembleBoard> findByUsers_IdOrderByCreateAtDesc(Long userId);
-    List<AssembleBoard> findByAssembleBoardIdIn(List<Long> boardIds);
-    List<AssembleBoard> findByUsers_IdOrderByCreateAtDesc(Long userId, Pageable pageable);
-    List<AssembleBoard> findAllByOrderByCreateAtDesc();
+    Page<AssembleBoard> findByUsers_Id(Long userId, Pageable pageable);
 
-    @Query(value = """
-    SELECT 
-      b.assembleboard_id,
-      u.nickname AS nickname,
-      b.title,
-      b.content,
-      b.create_at,
-      COUNT(DISTINCT g.assemblegood_id) AS like_count
-    FROM assembleboard b
-    JOIN users u ON b.user_id = u.id
-    LEFT JOIN assemblegood g ON b.assembleboard_id = g.assembleboard_id
-    GROUP BY b.assembleboard_id
-    ORDER BY like_count DESC
-    """, nativeQuery = true)
-    List<Object[]> findAssembleBoardsWithAllStats();
+    @Query("SELECT b.likeCount FROM AssembleBoard b WHERE b.assembleBoardId = :assembleBoardId")
+    Long findLikeCountById(@Param("assembleBoardId") Long assembleBoardId);
 
-    @Query(value = """
-    SELECT 
-      b.assembleboard_id,
-      u.nickname AS nickname,
-      b.title,
-      b.content,
-      b.create_at,
-      COUNT(DISTINCT g.assemblegood_id) AS like_count
-    FROM assembleboard b
-    JOIN users u ON b.user_id = u.id
-    LEFT JOIN assemblegood g ON b.assembleboard_id = g.assembleboard_id
-    WHERE b.user_id = :userId
-    GROUP BY b.assembleboard_id
-    ORDER BY like_count DESC
-    """, nativeQuery = true)
-    List<Object[]> findAssembleBoardsWithAllStats(@Param("userId") Long userId);
+    @Modifying
+    @Query("UPDATE AssembleBoard b SET b.likeCount = b.likeCount + 1 WHERE b.assembleBoardId = :assembleBoardId")
+    void incrementLikeCount(@Param("assembleBoardId") Long assembleBoardId);
+
+    @Modifying
+    @Query("UPDATE AssembleBoard b SET b.likeCount = b.likeCount - 1 WHERE b.assembleBoardId = :assembleBoardId")
+    void decrementLikeCount(@Param("assembleBoardId") Long assembleBoardId);
 
     @Query("""
       SELECT b 
@@ -55,7 +32,9 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
       OR b.content LIKE %:word%
       ORDER BY :sort DESC
     """)
-    List<AssembleBoard> searchAssembleBoardsByWord(@Param("word") String word, @Param("sort") String sort);
+    Page<AssembleBoard> searchAssembleBoardsByWord(@Param("word") String word,
+                                                   @Param("sort") String sort,
+                                                   Pageable pageable);
 
     @Query("""
       SELECT b 
@@ -64,5 +43,8 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
         AND (b.title LIKE %:word% OR b.content LIKE %:word%)
       ORDER BY :sort DESC
     """)
-    List<AssembleBoard> searchAssembleBoardsByWordAndUserId(@Param("word") String word, @Param("userId") Long userId, @Param("sort") String sort);
+    Page<AssembleBoard> searchAssembleBoardsByWordAndUserId(@Param("word") String word,
+                                                            @Param("userId") Long userId,
+                                                            @Param("sort") String sort,
+                                                            Pageable pageable);
 }

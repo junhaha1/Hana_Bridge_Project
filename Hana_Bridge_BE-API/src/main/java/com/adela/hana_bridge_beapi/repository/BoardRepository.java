@@ -1,63 +1,50 @@
 package com.adela.hana_bridge_beapi.repository;
 
 import com.adela.hana_bridge_beapi.entity.Board;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    List<Board> findByCategoryOrderByCreateAtDesc(String category);
-    List<Board> findByCategoryAndUsers_IdOrderByCreateAtDesc(String category, Long userId);
-    List<Board> findByBoardIdIn(List<Long> boardIds);
+    Page<Board> findByCategory(String category, Pageable pageable);
+    Page<Board> findByUsers_Id(Long userId, Pageable pageable);
 
-    @Query(value = """
-    SELECT 
-      b.board_id,
-      u.nickname AS nickname,
-      b.title,
-      b.category,
-      b.code,
-      b.content,
-      b.create_at,
-      b.update_at,
-      COUNT(DISTINCT g.good_id) AS like_count,
-      COUNT(DISTINCT c.comment_id) AS comment_count
-    FROM board b
-    JOIN users u ON b.user_id = u.id
-    LEFT JOIN good g ON b.board_id = g.board_id
-    LEFT JOIN comment c ON b.board_id = c.board_id
-    WHERE b.category = :category
-    GROUP BY b.board_id
-    ORDER BY like_count DESC
-    """, nativeQuery = true)
-    List<Object[]> findBoardsWithAllStats(@Param("category") String category);
+    @Query("SELECT b.likeCount FROM Board b WHERE b.boardId = :boardId")
+    Long findLikeCountById(@Param("boardId") Long boardId);
 
-    @Query(value = """
-    SELECT 
-      b.board_id,
-      u.nickname AS nickname,
-      b.title,
-      b.category,
-      b.code,
-      b.content,
-      b.create_at,
-      b.update_at,
-      COUNT(DISTINCT g.good_id) AS like_count,
-      COUNT(DISTINCT c.comment_id) AS comment_count
-    FROM board b
-    JOIN users u ON b.user_id = u.id
-    LEFT JOIN good g ON b.board_id = g.board_id
-    LEFT JOIN comment c ON b.board_id = c.board_id
-    WHERE b.category = "code" AND b.user_id = :userId
-    GROUP BY b.board_id
-    ORDER BY like_count DESC
-    """, nativeQuery = true)
-    List<Object[]> findBoardsWithAllStats(@Param("userId") Long userId);
+    @Modifying
+    @Query("UPDATE Board b SET b.likeCount = b.likeCount + 1 WHERE b.boardId = :boardId")
+    void incrementLikeCount(@Param("boardId") Long boardId);
 
-    @Query("SELECT b FROM Board b WHERE b.category = :category AND (b.title LIKE %:word% OR b.content LIKE %:word%) ORDER BY :sort DESC")
-    List<Board> searchBoardsByCategoryAndWord(@Param("category") String category, @Param("word") String word, @Param("sort") String sort);
+    @Modifying
+    @Query("UPDATE Board b SET b.likeCount = b.likeCount - 1 WHERE b.boardId = :boardId")
+    void decrementLikeCount(@Param("boardId") Long boardId);
+
+    @Modifying
+    @Query("UPDATE Board b SET b.commentCount = b.commentCount + 1 WHERE b.boardId = :boardId")
+    void incrementCommentCount(@Param("boardId") Long boardId);
+
+    @Modifying
+    @Query("UPDATE Board b SET b.commentCount = b.commentCount - 1 WHERE b.boardId = :boardId")
+    void decrementCommentCount(@Param("boardId") Long boardId);
+
+
+    @Query("""
+        SELECT b
+        FROM Board b
+        WHERE b.category = :category
+        AND (b.title LIKE %:word% OR b.content LIKE %:word%)
+        ORDER BY :sort DESC
+    """)
+    Page<Board> searchBoardsByCategoryAndWord(@Param("category") String category,
+                                              @Param("word") String word,
+                                              @Param("sort") String sort,
+                                              Pageable pageable);
 
     @Query("""
       SELECT b FROM Board b
@@ -66,5 +53,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         AND (b.title LIKE %:word% OR b.content LIKE %:word%)
       ORDER BY :sort DESC
     """)
-    List<Board> searchBoardsByCategoryAndWordAndUserId(@Param("category") String category, @Param("userId") Long userId, @Param("word") String word, @Param("sort") String sort);
+    Page<Board> searchBoardsByCategoryAndWordAndUserId(@Param("category") String category,
+                                                       @Param("userId") Long userId,
+                                                       @Param("word") String word,
+                                                       @Param("sort") String sort,
+                                                       Pageable pageable);
 }

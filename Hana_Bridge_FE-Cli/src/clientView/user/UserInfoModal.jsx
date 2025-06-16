@@ -6,7 +6,6 @@ import { useNavigate} from "react-router-dom";
 import { modifyUser, clearUser, clearAiChat } from '../../store/userSlice';
 
 const UserInfoModal = ({ onClose, onSwitch }) => {
-  const accessToken = useSelector((state) => state.user.accessToken);
   
   //이메일 관련
   const email = useSelector((state) => state.user.email);
@@ -67,7 +66,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
   //비밀번호 변경
   const changePassword = () => {
-    ApiClient.changePassword(accessToken, oldPassword, newPassword)
+    ApiClient.changePassword(oldPassword, newPassword)
     .then(async (res) => {
       if (!res.ok) {
         const data = await res.json();
@@ -88,7 +87,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
   //정보 수정
   const updateUser = () => {
-    ApiClient.updateUser(accessToken, tempEmail, name, tempNickName)
+    ApiClient.updateUser(tempEmail, name, tempNickName)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류 [${res.status}]`);
       return res.json();
@@ -97,10 +96,18 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
       console.log("정보 수정 완료 ! ");
       setIsEdit(false);
       dispatch(modifyUser({email: data.email, name: data.name, nickName: data.nickName}));
+      if (data.email !== email){
+        alert("이메일이 수정되었습니다. 다시 로그인 해주십시오.");
+        ApiClient.userLogout();
+        dispatch(clearUser());
+        dispatch(clearAiChat());
+        localStorage.removeItem('userState');
+        navigate('/');
+      }
     })
     .catch((err) => {
       console.error("API 요청 실패:", err);
-      alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+      alert("회원 정보 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
     });
   };
 
@@ -111,27 +118,22 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
   //회원 탈퇴
   const deleteUser = () => {
-    ApiClient.deleteUser(accessToken)
+    ApiClient.deleteUser()
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류 [${res.status}]`);
-      alert("정상적으로 탈퇴되었습니다.");
+
+      alert("회원 탈퇴되었습니다.");
       ApiClient.userLogout();
       dispatch(clearUser());
       dispatch(clearAiChat());
       localStorage.removeItem('userState');
       navigate('/');
     })
-    .catch((err) => console.error("API 요청 실패:", err));
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+    });
   }
-
-  //이메일 수정 시에 로그인 화면으로 이동
-  useEffect(() => {
-    if (accessToken && initialEmail.current && initialEmail.current !== email) {
-      ApiClient.userLogout();
-      alert("이메일이 변경되었습니다. 다시 로그인 해주십시오.");
-      navigate('/login');
-    }
-  }, [email, accessToken]);
 
   //닉네임만 수정 시에 화면에 닉네임을 바꾸어줌
   useEffect(() => {
@@ -141,7 +143,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
   // Tailwind 적용된 JSX 코드
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade">
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade max-md:mx-3">
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
@@ -153,29 +155,6 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
           <div className="w-full max-w-[450px] bg-transparent rounded-2xl p-6">
             <h2 className="text-2xl text-black font-bold text-center mt-4 mb-6">사용자 정보</h2>
             <form className="space-y-4">
-              <div>
-                <label className="block text-black font-semibold mb-1">
-                  이름<span className="text-red-500">*</span>
-                </label>
-                <input type="text" value={name} readOnly className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
-              </div>
-
-              <div>
-                <label className="block text-black font-semibold mb-1">
-                  이메일<span className="text-red-500">*</span>
-                </label>
-                <input type="email" value={tempEmail} readOnly={!isEdit} onChange={(e) => setTempEmail(e.target.value)}
-                  className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
-              </div>
-
-              <div>
-                <label className="block text-black font-semibold mb-1">
-                  닉네임<span className="text-red-500">*</span>
-                </label>
-                <input type="text" value={tempNickName} readOnly={!isEdit} onChange={(e) => setTempNickName(e.target.value)}
-                  className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
-              </div>
-
               {isChangePassword ? (
                 <>
                   <div>
@@ -208,13 +187,13 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                     )}
                   </div>
 
-                  <div className="mt-4 flex gap-2">
+                  <div className="mt-4 flex justify-end gap-2">
                     <button type="button" disabled={!checkNewPassword()} onClick={() => changePassword()}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50">
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50 max-md:text-sm max-md:py-1 max-md:px-2">
                       비밀번호 변경
                     </button>
                     <button type="button" onClick={() => cancleChangePassword()}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded max-md:text-sm max-md:py-1 max-md:px-2">
                       비밀번호 변경 취소
                     </button>
                   </div>
@@ -223,30 +202,52 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                 <>
                   <div>
                     <label className="block text-black font-semibold mb-1">
+                      이름<span className="text-red-500">*</span>
+                    </label>
+                    <input type="text" value={name} readOnly className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
+                  </div>
+
+                  <div>
+                    <label className="block text-black font-semibold mb-1">
+                      이메일<span className="text-red-500">*</span>
+                    </label>
+                    <input type="email" value={tempEmail} readOnly/*={!isEdit}*/ onChange={(e) => setTempEmail(e.target.value)}
+                      className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
+                  </div>
+
+                  <div>
+                    <label className="block text-black font-semibold mb-1">
+                      닉네임<span className="text-red-500">*</span>
+                    </label>
+                    <input type="text" value={tempNickName} readOnly={!isEdit} onChange={(e) => setTempNickName(e.target.value)}
+                      className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
+                  </div>
+                  <div>
+                    <label className="block text-black font-semibold mb-1">
                       권한<span className="text-red-500">*</span>
                     </label>
                     <input type="text" value={role} readOnly className="w-full px-3 py-2 rounded bg-gray-300 text-black" />
                   </div>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  <div className="mt-4 flex justify-end flex-wrap gap-2">
                     {isEdit ? (
                       <>
-                        <button type="button" onClick={() => updateUser()} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        <button type="button" onClick={() => updateUser()} className="bg-green-600 hover:bg-green-700 text-white md:px-4 md:py-2 rounded max-md:text-sm max-md:py-1 max-md:px-2">
                           수정 완료
                         </button>
-                        <button type="button" onClick={() => resetEdit()} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                        <button type="button" onClick={() => resetEdit()} className="bg-gray-500 hover:bg-gray-600 text-white md:px-4 md:py-2 rounded max-md:text-sm max-md:py-1 max-md:px-2">
                           정보 수정 취소
                         </button>
                       </>
                     ) : (
                       <>
-                        <button type="button" onClick={() => setIsEdit(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded whitespace-nowrap">
+                        <button type="button" onClick={() => setIsEdit(true)} className="bg-blue-600 hover:bg-blue-700 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           정보 수정
                         </button>
-                        <button type="button" onClick={() => setIsChangePassword(true)} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded whitespace-nowrap">
+                        <button type="button" /*onClick={() => setIsChangePassword(true)}*/ className="bg-red-600 hover:bg-red-700 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           비밀번호 변경
                         </button>
-                        <button type="button" onClick={() => openDeleteModal()} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded whitespace-nowrap">
+                        <button type="button" /*onClick={() => openDeleteModal()}*/ className="bg-red-500 hover:bg-red-600 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           회원 탈퇴
                         </button>
                       </>
@@ -257,19 +258,19 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
             </form>
             {showDeleteModal && (
               <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-                <div className="bg-white text-black p-6 rounded-xl shadow-xl w-full max-w-sm">
+                <div className="bg-white text-black p-6 rounded-xl shadow-xl w-full max-w-sm max-md:mx-3">
                   <h3 className="text-lg font-semibold mb-4">회원 탈퇴 확인</h3>
                   <p className="mb-6">정말 회원 탈퇴하시겠습니까?<br />탈퇴하면 모든 정보가 삭제됩니다.</p>
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={closeDeleteModal}
-                      className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+                      className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded max-md:text-sm max-md:py-1 max-md:px-2"
                     >
                       취소
                     </button>
                     <button
                       onClick={confirmDeleteUser}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded max-md:text-sm max-md:py-1 max-md:px-2"
                     >
                       탈퇴하기
                     </button>

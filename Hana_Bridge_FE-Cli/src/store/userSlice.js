@@ -4,17 +4,21 @@ import { createSlice } from '@reduxjs/toolkit';
   email: 'guest@email.com',
   name: 'guest',
   nickName: 'guest',
-  accessToken: 'guest',
   role: 'guest',
   chatMessages: [],
   category: '',
-  page: '',
+  //page: '',
   playFlag: true,
   shouldAutoOpenHelper: false,
+  questionCount: 0,
+  summaryCount: 0,
   aiPrompts: {
-    role: '너는 프로그래밍 강사야.',
-    format: '예시 코드를 보여주면서 설명해줘.',
-    level: '초등학생도 이해할 수 있도록 설명해줘.',
+    promptId: '',
+    name: '',
+    role: '',
+    form: '',
+    level: '',
+    option: ''
     }
  };
  
@@ -26,8 +30,9 @@ import { createSlice } from '@reduxjs/toolkit';
       state.email = action.payload.email;
       state.name = action.payload.name;
       state.nickName = action.payload.nickName;
-      state.accessToken = action.payload.accessToken;
       state.role = action.payload.role;
+      state.questionCount = action.payload.questionCount;
+      state.summaryCount = action.payload.summaryCount;
     },
     modifyUser: (state, action) => {
     state.email = action.payload.email;
@@ -41,36 +46,47 @@ import { createSlice } from '@reduxjs/toolkit';
       state.accessToken = 'guest';
       state.role = 'guest';
       state.category = '';
-      state.page = '';
+      //state.page = '';
       state.playFlag = true;
       state.shouldAutoOpenHelper = false;
+      state.questionCount = 0;
+      state.summaryCount = 0;
       state.aiPrompts = {
-        role: '너는 프로그래밍 강사야.',
-        format: '예시 코드를 보여주면서 설명해줘.',
-        level: '초등학생도 이해할 수 있도록 설명해줘.',
+        promptId: '',
+        name: '',
+        role: '',
+        form: '',
+        level: '',
+        option: ''
         }
     },
-     setAiChat: (state, action) => {
-        state.chatMessages = action.payload.chatMessages;
-     },
-     clearAiChat: (state) =>{
-      state.chatMessages = [];
-     },
-     // 전체 상태 초기화
-     resetAll: (state) => {
-      Object.assign(state, initialState); 
+    setQuestionCount: (state, action) => {
+      state.questionCount = action.payload.questionCount;
+    },
+    setSummaryCount: (state, action) => {
+      state.summaryCount = action.payload.summaryCount;
+    },
+    setAiChat: (state, action) => {
+      state.chatMessages = action.payload.chatMessages;
+    },
+    clearAiChat: (state) =>{
+    state.chatMessages = [];
+    },
+    // 전체 상태 초기화
+    resetAll: (state) => {
+    Object.assign(state, initialState); 
     },
     setCategory: (state, action) => {
       state.category = action.payload.category;
     },
-    setPage: (state, action) =>{
-      state.page = action.payload.page;
-    },
+    // setPage: (state, action) =>{
+    //   state.page = action.payload.page;
+    // },
     setPlayFlag: (state, action) => {
       state.playFlag = action.payload.playFlag;
     },
     setShouldAutoOpenHelper: (state, action) => {
-      state.shouldAutoOpenHelper = action.payload.setShouldAutoOpenHelper;
+      state.shouldAutoOpenHelper = action.payload.shouldAutoOpenHelper;
     },
     setAiPrompts: (state, action) =>{
       state.aiPrompts = action.payload.aiPrompts;
@@ -78,6 +94,6 @@ import { createSlice } from '@reduxjs/toolkit';
    },
  });
  
- export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, setPage, 
-  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts } = userSlice.actions;
+ export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, //setPage, 
+  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts, setQuestionCount, setSummaryCount } = userSlice.actions;
  export default userSlice.reducer;

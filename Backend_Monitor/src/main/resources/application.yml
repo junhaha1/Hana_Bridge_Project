@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: Backend_Monitor
+
+server:
+  port: 8082  # ??? ??
+
+endpoints:
+  web:
+    exposure:
+      include: "*"
+metrics:
+  export:
+    prometheus:
+      enabled: true

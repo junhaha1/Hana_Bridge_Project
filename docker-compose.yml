@@ -8,7 +8,7 @@ services:
     image: hana-frontend
     container_name: hana-frontend-container
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend
       
@@ -36,6 +36,10 @@ services:
     container_name: redis-container
     ports:
       - "6379:6379"
+    environment:
+      - TZ=Asia/Seoul  # ✅ 시스템 시간대 설정
+    volumes:
+      - redis_test:/data  # Redis는 /data에 데이터 저장
       
   mysql: #MySQL 서비스명
     image: mysql:8.0
@@ -45,11 +49,18 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_DB}
+      - TZ=Asia/Seoul
     env_file:
       - .env
+    command:
+      --default-time-zone='Asia/Seoul'
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./MySQL_init/${INIT_DB}:/docker-entrypoint-initdb.d/init.sql
+      - mysql_test:/var/lib/mysql
+      - ./MySQL_init/${INIT_DB_TEST}:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
-  mysql_data:
+  #자동으로 프로젝트 폴더명이 앞에 붙음
+  #프로젝트폴더명_볼륨명
+  #dev 폴더에 있으므로 dev_mysql_test로 생성되는 것
+  mysql_test:
+  redis_test:

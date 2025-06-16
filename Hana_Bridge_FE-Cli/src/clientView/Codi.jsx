@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { setShouldAutoOpenHelper } from '../store/userSlice';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 
 import Lottie from "lottie-react";
 import CodeBot from '../animations/codebot.json';
@@ -16,6 +17,7 @@ const CodeHelper = () => {
 
   //홈 화면에서 AIChat 열기 
   const shouldAutoOpenHelper = useSelector((state) => state.user.shouldAutoOpenHelper);
+  console.log("shouldAutoOpenHelper: " + shouldAutoOpenHelper);
 
   const lottieRef = useRef();
   const [isHovered, setIsHovered] = useState(false);
@@ -48,7 +50,7 @@ const CodeHelper = () => {
   useEffect(() => {
     if (shouldAutoOpenHelper) {
       setFullTalking(true);
-      dispatch(setShouldAutoOpenHelper(false)); // 한 번만 작동하도록 상태 초기화
+      dispatch(setShouldAutoOpenHelper({shouldAutoOpenHelper: false})); // 한 번만 작동하도록 상태 초기화
     }
   }, [shouldAutoOpenHelper, dispatch]);
 
@@ -69,7 +71,7 @@ const CodeHelper = () => {
             <div
               className={`
                 absolute bottom-1/2 right-0 translate-y-1/2
-                w-[170px] px-4 py-3 rounded-2xl bg-white/80 backdrop-blur-sm
+                w-[170px] px-3 py-2 rounded-2xl bg-white/80 backdrop-blur-sm
                 text-[13px] font-semibold text-gray-900 text-center
                 shadow-xl border border-gray-200
                 transition-all duration-700 ease-in-out
@@ -101,24 +103,47 @@ const CodeHelper = () => {
                 animationData={CodeBot}
                 loop={true}
                 autoplay={false}
-                className="w-[130px] h-[130px]"
+                className="w-[130px] h-[130px] max-md:w-[70px] max-md:h-[70px]"
               />
             </button>
           </div>
       </div>
     )}
-   {subTalking &&(
-      <div className="fixed bottom-0 right-0 w-[500px] h-[700px] rounded-2xl p-1 z-[9999]">
-        <AIChat onClose={setSubTalking} onfullTalk={setFullTalking} onMode={"sub"} setLevel={setPromptLevel} level={promptLevel}/>
-      </div>
-   )}
-   {fullTalking &&(
-      <div className="fixed top-0 left-0 flex justify-center w-screen h-screen backdrop-blur-sm rounded-2xl z-[9999]">
-        <div className='h-full w-2/3 py-4'>
-          <AIChat onClose={setSubTalking} onfullTalk={setFullTalking} onMode={"full"} setLevel={setPromptLevel} level={promptLevel}/>
-        </div>
-      </div>
-   )}
+    <LayoutGroup>
+      <AnimatePresence mode="wait">
+        {subTalking && !fullTalking && (
+          <motion.div
+            key="sub"
+            layoutId="chatBox"
+            className="fixed bottom-0 right-0 w-[500px] h-[700px] z-[8000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
+          >
+            <AIChat
+              onClose={setSubTalking}
+              onfullTalk={setFullTalking}
+              onMode={"sub"}
+              setLevel={setPromptLevel}
+              level={promptLevel}
+            />
+          </motion.div>
+        )}
+
+        {fullTalking && (
+          <motion.div
+            key="full"
+            layoutId="chatBox"
+            className="fixed bottom-0 right-0 w-1/2 h-screen z-[8000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
+          >
+            <AIChat
+              onClose={setSubTalking}
+              onfullTalk={setFullTalking}
+              onMode={"full"}
+              setLevel={setPromptLevel}
+              level={promptLevel}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </LayoutGroup>
     </>
   );
 };

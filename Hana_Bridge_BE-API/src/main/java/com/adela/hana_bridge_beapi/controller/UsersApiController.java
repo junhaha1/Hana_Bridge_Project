@@ -43,6 +43,19 @@ public class UsersApiController {
         );
     }
 
+    //사용자 질문, 요약 횟수 조회
+    @GetMapping("/user/question")
+    public ResponseEntity<UserQuestionInfoResponse> getUserQuestion(@RequestHeader("Authorization") String authHeader) {
+        String email = getEmailFromHeader(authHeader);
+        Users users = usersService.findByEmail(email);
+        return ResponseEntity.ok().body(
+                new UserQuestionInfoResponse(
+                        users.getQuestionCount(),
+                        users.getSummaryCount()
+                )
+        );
+    }
+
     //사용자 정보 수정 API
     @PutMapping("/user/me")
     public ResponseEntity<UserResponse> updateUser(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody UserUpdateRequest userRequest) {

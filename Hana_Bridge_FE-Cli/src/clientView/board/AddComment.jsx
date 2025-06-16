@@ -6,7 +6,6 @@ import { RiSendPlaneFill } from "react-icons/ri";
 
 
 const AddComment = (props) => {
-  const accessToken = useSelector((state) => state.user.accessToken);
   const nickName = useSelector((state) => state.user.nickName);
   // 새로 작성하는 댓글
   const [content, setContent] = useState('');
@@ -39,7 +38,7 @@ const AddComment = (props) => {
 
   const handleAddComment = () => {
     console.log("addComment with boardId:  " + props.boardId );
-    ApiClient.sendComment(props.boardId, accessToken, content, createAt)
+    ApiClient.sendComment(props.boardId, content, createAt)
     .then(async(res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -59,7 +58,14 @@ const AddComment = (props) => {
 
 
   return (
-    <div ref={wrapperRef} className="mb-4">
+    <div 
+      ref={(el) => {
+        wrapperRef.current = el;
+        if (props.scrollRef) {
+          props.scrollRef.current = el;
+        }
+      }}
+      className="mb-4">
       <p className="mb-2 text-start text-white font-semibold">{nickName}</p>
 
       <div className="relative">

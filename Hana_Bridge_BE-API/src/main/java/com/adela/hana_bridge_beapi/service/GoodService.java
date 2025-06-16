@@ -21,17 +21,6 @@ public class GoodService {
     private final BoardRepository boardRepository;
     private final UsersRepository usersRepository;
 
-    public List<Long> findTop5BoardIds() {
-        return goodRepository.findTop5BoardIdsByGoodCountNative();
-    }
-
-    public Long goodCount(Long boardId){
-        if (!boardRepository.existsById(boardId)) {
-            throw new BoardNotFoundException(boardId);
-        }
-        return (long) goodRepository.countByBoard_BoardId(boardId);
-    }
-
     public boolean goodCheck(Long boardId, Long userId){
         return goodRepository.existsByBoard_BoardIdAndUsers_Id(boardId, userId);
     }

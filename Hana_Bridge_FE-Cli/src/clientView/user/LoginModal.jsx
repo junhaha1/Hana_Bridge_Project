@@ -2,16 +2,42 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useDispatch } from "react-redux";
-import { setUser, setPage } from "../../store/userSlice";
+import { setUser } from "../../store/userSlice";
+//import { setPage } from "../../store/userSlice";
+import { updateAccessToken } from "../../store/authSlice";
 
 const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
 
+  const [passwordError, setPasswordError] = useState("");
+  const [shakePassword, setShakePassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [shakeEmail, setShakeEmail] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const loginButton = (email, pw) => {
+    let isValid = true;
+
+    if (!email.trim()) {
+      setEmailError("아이디를 입력해 주세요.");
+      setShakeEmail(true);
+      setTimeout(() => setShakeEmail(false), 500);
+      isValid = false;
+    }
+
+    if (!pwd.trim()) {
+      setPasswordError("비밀번호를 입력해 주세요");
+      setShakePassword(true);
+      setTimeout(() => setShakePassword(false), 500);
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
+
     ApiClient.userLogin(email, pw)
       .then(async  (res) => {
         if (!res.ok) {
@@ -32,12 +58,17 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
             email: data.email,
             name: data.name,
             nickName: data.nickName,
-            accessToken: data.accessToken,
             role: data.role,
+            questionCount: data.questionCount,
+            summaryCount: data.summaryCount
           })
         );
+        console.log(data.questionCount, data.summaryCount);
+        dispatch(
+          updateAccessToken({accessToken: data.accessToken})
+        )
         onClose(); //모달 닫기
-        dispatch(setPage({page: 'home'}));
+        //dispatch(setPage({page: 'home'}));
         onSuccess();
       })
       .catch((error) => {
@@ -52,19 +83,18 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
       // 전송하고 줄바꿈 막기
       e.preventDefault();
       loginButton(email, pwd);
-
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-modal-fade">
-        
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-modal-fade
+          md:h-auto max-md:h-full max-md:h-screen max-md:max-h-screen max-md:rounded-none">        
         {/* 내부 2단 구조 */}
         <div className="flex flex-col md:flex-row w-full h-full">
           
           {/* 왼쪽 로고 영역 */}
-          <div className="flex flex-col gap-3 items-center justify-center basis-1/2 ">
+          <div className="flex flex-col gap-3 items-center justify-center basis-1/2 max-md:basis-1/3 max-md:mt-12">
             <strong className="text-[50px] text-black font-bold leading-[45px] no-underline">
               AIssue
             </strong>
@@ -85,11 +115,19 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                 <input
                   type="text"
                   placeholder="아이디를 입력해 주세요"
-                  className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 py-2 text-sm"
+                  className={`w-full flex-1 border-b py-2 focus:outline-none focus:border-blue-500 text-sm
+                    ${emailError ? 'border-red-500' : 'border-gray-300'}
+                    ${shakeEmail ? 'animate-shake' : ''}`}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => {
+                    if (emailError) setEmailError("");
+                  }}
                   onKeyDown={handleKeyDown}
                 />
+                {emailError && (
+                  <p className="text-red-500 text-sm mt-0">{emailError}</p>
+                )}
               </div>
 
               <div>
@@ -99,11 +137,21 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                 <input
                   type="password"
                   placeholder="비밀번호를 입력해 주세요"
-                  className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 py-2 text-sm"
+                  className={`w-full border-b py-2 focus:outline-none focus:border-blue-500 text-sm
+                    ${passwordError ? 'border-red-500' : 'border-gray-300'} 
+                    ${shakePassword ? 'animate-shake' : ''}`}
                   value={pwd}
-                  onChange={(e) => setPwd(e.target.value)}
+                  onChange={(e) => {
+                    setPwd(e.target.value);
+                  }}
+                  onFocus={() => {
+                    if (passwordError) setPasswordError("");
+                  }}
                   onKeyDown={handleKeyDown}
                 />
+                {passwordError && (
+                  <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+                )}
               </div>
 
               <button

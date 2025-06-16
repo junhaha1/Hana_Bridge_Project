@@ -1,5 +1,6 @@
 package com.adela.hana_bridge_beapi.service;
 
+import com.adela.hana_bridge_beapi.dto.user.UserQuestionInfoResponse;
 import com.adela.hana_bridge_beapi.dto.user.UserUpdateRequest;
 import com.adela.hana_bridge_beapi.dto.user.UserResponse;
 import com.adela.hana_bridge_beapi.dto.user.UsersRegistRequest;
@@ -65,6 +66,27 @@ public class UsersService {
                 .build();
     }
 
+    //사용자 질문 횟수 수정
+    @Transactional
+    public UserQuestionInfoResponse updateQuestionCount(Long userId) {
+        Users users = usersRepository.findById(userId)
+                .orElseThrow(()-> new UserIdNotFoundException(userId));
+
+        users.updateQuestionCount(users.getQuestionCount());
+
+        return new UserQuestionInfoResponse(users.getQuestionCount(), users.getSummaryCount());
+    }
+    //사용자 요약 횟수 수정
+    @Transactional
+    public UserQuestionInfoResponse updateSummaryCount(Long userId) {
+        Users users = usersRepository.findById(userId)
+                .orElseThrow(()-> new UserIdNotFoundException(userId));
+
+        users.updateSummaryCount(users.getSummaryCount());
+
+        return new UserQuestionInfoResponse(users.getQuestionCount(), users.getSummaryCount());
+    }
+
     //사용자 탈퇴
     @Transactional
     public void deleteUser(Long userId) {
@@ -81,6 +103,8 @@ public class UsersService {
                     .name(users.getName())
                     .role(users.getRole())
                     .nickName(users.getNickName())
+                    .questionCount(users.getQuestionCount())
+                    .summaryCount(users.getSummaryCount())
                     .build();
         } else{
             throw new IllegalArgumentException("Invalid Password Your Email : " + email);

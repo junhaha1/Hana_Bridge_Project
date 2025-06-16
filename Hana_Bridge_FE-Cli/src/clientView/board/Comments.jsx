@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../service/ApiClient';
 import AddComment from './AddComment';
+import ConfirmCommentModal from './ConfirmCommentModal';
 
 import { userDate } from "../../style/CommonDetail";
 import { editComment, saveCancel, saveButton, cancelButton, editButton, deleteButton, whiteLine, writeCommentButton } from '../../style/CommentStyle';
@@ -9,7 +10,6 @@ import { FaUser } from 'react-icons/fa';
 
 
 const Comments = (props) => {
-  const accessToken = useSelector((state) => state.user.accessToken);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
 
@@ -23,8 +23,20 @@ const Comments = (props) => {
   //새로운 댓글 Flag
   const [newCommentFlag, setNewCommentFlag] = useState(false);
 
+  //댓글 자동 스크롤
+  const commentRef = useRef(null);
+
+  //수정 삭제 확인 모달
+  const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [targetDeleteCommentId, setTargetDeleteCommentId] = useState(null);
+  const [targetUpdateCommentId, setTargetUpdateCommentId] = useState(null);
+
   useEffect(() => {
     loadComments();
+     if (newCommentFlag && commentRef.current) {
+      commentRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [props.boardId, newCommentFlag]);
 
   //전체 댓글
@@ -57,7 +69,7 @@ const Comments = (props) => {
 
   //댓글 삭제
   const handleDeleteComment = (commentId) => {
-    ApiClient.deleteComment(commentId, accessToken)
+    ApiClient.deleteComment(commentId)
     .then(async(res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -85,8 +97,7 @@ const Comments = (props) => {
   //수정 댓글 저장
   const handleUpdateComment = (commentId) => {
     if (!editContent.trim()) return;
-    //commentId, accessToken, content, createAt
-    ApiClient.updateComment(commentId, accessToken, editContent, editCreateAt)
+    ApiClient.updateComment(commentId, editContent, editCreateAt)
     .then(async (res) => {
       if (!res.ok) {
         const errorData = await res.json();
@@ -111,14 +122,15 @@ const Comments = (props) => {
           <div className="text-left text-white">
             {editCommentId === comment.commentId ? (
               <>
-                <div className={userDate + " font-semibold mb-2"}>
+              <div className='px-2'>
+                <div className={userDate + " font-semibold"}>
                   <span className='flex gap-1'>
                     <FaUser
                     className="mt-0.5"
                     />
                     {comment.nickName}
                   </span>
-                  <span className='text-xs text-gray-300 mt-0.5'>
+                  <span className='text-xs text-gray-300 mt-1'>
                     {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>                  
                 </div>
@@ -132,7 +144,10 @@ const Comments = (props) => {
                 <div className={saveCancel}>
                   <button
                     className={saveButton}
-                    onClick={() => handleUpdateComment(comment.commentId)}
+                    onClick={() => {
+                      setTargetUpdateCommentId(comment.commentId);
+                      setConfirmUpdateOpen(true);
+                    }}
                   >
                     저장
                   </button>
@@ -143,26 +158,31 @@ const Comments = (props) => {
                     취소
                   </button>
                 </div>
+              </div>
+              {/* 구분선 */}
+              <div className={whiteLine} />
               </>
             ) : (
               <>
-                <div className={userDate + " font-semibold mb-2"}>
+              <div className='px-2'>
+                <div className={userDate + " font-semibold"}>
                   <span className='flex gap-1'>
                     <FaUser
                     className="mt-0.5"
                     />
                     {comment.nickName}
                   </span>
-                  <span className='text-xs text-gray-300 mt-0.5'>
+                  <span className='text-xs text-gray-300 mt-1'>
                     {new Date(comment.createAt).toISOString().slice(0, 16).replace('T', ' ')}
                   </span>                  
                 </div>
+
                 <div className='flex justify-between '>
                   <p className="mb-1">{comment.content}</p>
 
                   {(nickName === comment.nickName || role === "admin") && (
                     <>
-                    <div className='px-2 flex flex-row'>
+                    <div className='px-2 flex flex-row md:gap-1'>
                       <button
                         className={editButton}
                         onClick={() => handleEditComment(comment.commentId, comment.content)}
@@ -171,7 +191,10 @@ const Comments = (props) => {
                       </button>
                       <button
                         className={deleteButton}
-                        onClick={() => handleDeleteComment(comment.commentId)}
+                        onClick={() => {
+                          setTargetDeleteCommentId(comment.commentId);
+                          setConfirmDeleteOpen(true);
+                        }}
                       >
                         삭제
                       </button>
@@ -179,14 +202,10 @@ const Comments = (props) => {
                     </>
                   )}
                 </div>
-                
-                {/* <div className="text-sm text-white/60 mb-2">
-                   · 👍 {comment.likes} ·{" "}
-                  <button className="hover:underline">신고</button>
-                </div> */}
-                
-                {/* 구분선 */}
-                <div className={whiteLine} />
+              </div>
+
+              {/* 구분선 */}
+              <div className={whiteLine} />
               </>
             )}
           </div>
@@ -195,7 +214,11 @@ const Comments = (props) => {
 
       <div>
         {props.category === "code" && newCommentFlag ? (
-          <AddComment boardId={props.boardId} setNewCommentFlag={setNewCommentFlag} />
+          <AddComment 
+            boardId={props.boardId} 
+            setNewCommentFlag={setNewCommentFlag} 
+            scrollRef={commentRef}
+          />
         ) : null}
       </div>
 
@@ -211,6 +234,29 @@ const Comments = (props) => {
           </button>
         )}        
       </div>
+
+      {/* 수정 확인 모달 */}
+      {confirmUpdateOpen && (
+        <ConfirmCommentModal
+          onConfirm={() => {
+            handleUpdateComment(targetUpdateCommentId);
+            setConfirmUpdateOpen(false);
+          }}
+          onCancel={() => setConfirmUpdateOpen(false)}
+          onMode={"update"}
+        />
+      )}
+      {/* 삭제 확인 모달 */}
+      {confirmDeleteOpen && (
+        <ConfirmCommentModal
+          onConfirm={() => {
+            handleDeleteComment(targetDeleteCommentId);
+            setConfirmDeleteOpen(false);
+          }}
+          onCancel={() => setConfirmDeleteOpen(false)}
+          onMode={"delete"}
+        />
+      )}      
     </div>
   );
 

@@ -1,11 +1,14 @@
 package com.adela.hana_bridge_beapi.errorhandler;
 
+import com.adela.hana_bridge_beapi.config.jwt.JwtValidationException;
 import com.adela.hana_bridge_beapi.dto.error.ErrorResponse;
 import com.adela.hana_bridge_beapi.errorhandler.error.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,5 +53,16 @@ public class GlobalExceptionHandler {
         String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse("VALIDATION_FAILED", errorMessage));
+    }
+
+    //accessToken 처리 시에 발생하는 401오류
+    @ExceptionHandler(JwtValidationException.class)
+    public ResponseEntity<?> handleJwtValidationException(JwtValidationException ex) {
+        return ResponseEntity
+                .status(ex.getStatus())
+                .body(Map.of(
+                        "code", "UNAUTHORIZED",
+                        "message", ex.getMessage()
+                ));
     }
 }
