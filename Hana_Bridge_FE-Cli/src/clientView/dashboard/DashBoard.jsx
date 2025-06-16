@@ -18,7 +18,7 @@ const DashBoard = () => {
   const playFlag = useSelector((state) => state.user.playFlag);
 
   const dispatch = useDispatch();
-  const page = useSelector((state) => state.user.page);
+  const page = useSelector((state) => state.user.page);  
 
   useEffect(() => {
     if (lottieRef.current) {
@@ -64,9 +64,9 @@ const DashBoard = () => {
         <>
         <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
           <LeftHeader />
-          <div className="w-4/5 max-md:w-full">
+          <div className="w-4/5 max-md:w-full md:mt-4">
             <DashboardCards />
-          </div>
+          </div>          
         </div>
         </>
       )}

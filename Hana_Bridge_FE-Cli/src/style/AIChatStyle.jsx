@@ -5,7 +5,7 @@ export const topNavi = 'flex justify-between bg-white/15';
 //상단 대화창
 export const chatBox = " h-full bg-white/10 p-4";
 //초보자 전문자 버튼
-export const promptButton = "w-1/2 bg-white/10 p-2 border rounded border-white/20 shadow cursor-pointer hover:bg-white/30";
+export const promptButton = "w-full bg-white/10 p-2 border rounded border-white/20 shadow-md cursor-pointer hover:bg-white/30";
 //AI 메시지 박스
 export const aiBox = 'bg-white/20 text-white rounded-tl-2xl rounded-tr-2xl rounded-br-2xl';
 //User 메시지 박스 
@@ -33,7 +33,7 @@ export const answerChooseButton = "text-sm bg-gray-800 text-white px-3 py-1 roun
 export const upDiv = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9000]";
 // - 하위 div
 export const settingDiv = "md:h-2/3 max-md:h-full bg-white text-black md:rounded w-full max-w-md";
-export const downDiv = "bg-white text-black rounded p-6 w-full max-w-md max-md:mx-3";
+export const downDiv = "bg-white text-black rounded p-6 w-full md:w-[600px] max-md:max-w-md max-md:mx-3";
 // - 확인 버튼
 export const okButton = "bg-indigo-600 text-white px-4 py-2 rounded";
 // - 취소 버튼 

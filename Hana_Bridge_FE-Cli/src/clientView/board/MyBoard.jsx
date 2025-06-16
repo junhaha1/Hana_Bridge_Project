@@ -360,7 +360,7 @@ const MyBoard = () => {
             <select
               id="sort"
               name="sort"
-              className={sortCheckBox}
+              className={`${sortCheckBox} cursor-pointer`}
               value={sortType}
               onChange={(e) => {
                 setSortType(e.target.value)
@@ -420,7 +420,7 @@ const MyBoard = () => {
               <div className={cardBottomLayout}>
                 <div className={userDate}>
                   <span className={cardAuthor}>
-                    <FaUser className="mt-1" />
+                    <FaUser className='mt-0.5' />
                     {post.nickName}
                   </span>
                   <span className="hidden md:inline  text-xs text-gray-300 mt-0.5">

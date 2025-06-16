@@ -2,6 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCategory } from '../../store/userSlice';
 //import { setPage } from '../../store/userSlice';
+import { useRef } from "react";
+
+import { FaArrowUp  } from 'react-icons/fa';
+import { upBottom } from "../../style/CommonBoardStyle";
 
 
 import { scrollStyle } from "../../style/CommonStyle";
@@ -12,6 +16,14 @@ import {dashCardContent, dashCardStyle, dashCardTitle, dashCardTopLayout} from "
 const DashboardCards = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const scrollRef = useRef(null);
+  
+  //맨 위로가기 버튼 
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const boards = [
     { id: 'me', title: "내 게시판", content: '내가 쓴 글을 모아볼 수 있어요.' },
@@ -28,7 +40,7 @@ const DashboardCards = () => {
   }; 
 
   return (
-    <div className={scrollStyle + " max-md:h-[65vh] md:h-full pt-8 pb-8 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+    <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-full pt-8 pb-8 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
       <div className="backdrop-blur-sm bg-white/10 border p-5 border-white/20 rounded-2xl text-center text-white shadow-2xl max-md:!p-3">
         <div className="mb-6 text-left space-y-4 text-xl font-semibold leading-snug max-md:space-y-3">
           <p className="flex items-center gap-2 max-md:text-base"><FaQuestionCircle className="text-yellow-300 size-6 shrink-0 max-md:size-5" />혼자 공부하는 게 막막하지 않으셨나요?</p>
@@ -65,6 +77,12 @@ const DashboardCards = () => {
           </p>
         </div>
       ))}
+      <button
+        onClick={scrollToTop}
+        className={upBottom}
+      >
+        <FaArrowUp />
+      </button>
     </div>
   );
 };

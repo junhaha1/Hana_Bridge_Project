@@ -311,11 +311,11 @@ const DetailBoard = () => {
               {isEdit ? (              
                 <div className={detailCardStyle}>
                   {/* 게시글 수정 폼 */}
-                    <div className={detailCategory}>
+                    {/* <div className={detailCategory}>
                       {category === "code"
                         ? "코드/질문 게시판 > 상세글"
                         : "공지 게시판 > 상세글"}
-                    </div>
+                    </div> */}
 
                     <input
                       type="text"
@@ -396,11 +396,11 @@ const DetailBoard = () => {
               ) : (
                 <div className={detailCardStyle}>
                   {/* 게시글 보기 (테두리 없이 투명 배경) */}
-                  <div  className={detailCategory}>
+                  {/* <div  className={detailCategory}>
                     {category === "code"
                       ? "코드/질문 게시판 > 상세글"
                       : "공지 게시판 > 상세글"}
-                  </div>
+                  </div> */}
                   <h2 className={detailTitle}>{board.title}</h2>
                   <div className={userDate}>
                     <span className='flex gap-1'>
