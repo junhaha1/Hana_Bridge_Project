@@ -1,6 +1,5 @@
-CREATE USER 'app_user'@'%' IDENTIFIED BY 'appuser!@#';
-GRANT ALL PRIVILEGES ON hana_service_db.* TO 'app_user'@'%';
-FLUSH PRIVILEGES;
+/*실제 서비스용 데이터베이스 생성 파일*/
+/*조회 성능 향상을 위한 인덱스 추가 예정*/
 
 CREATE TABLE `users` (
 	`id`	BIGINT	NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -22,7 +21,9 @@ CREATE TABLE `board` (
 	`code`	MEDIUMTEXT	NULL,
 	`content`	MEDIUMTEXT	NULL,
 	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-	`update_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	`update_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+  `like_count` BIGINT NOT NULL DEFAULT 0,
+  `comment_count` BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `assembleboard` (
@@ -31,14 +32,17 @@ CREATE TABLE `assembleboard` (
 	`title`	VARCHAR(255)	NOT NULL,
 	`category`	VARCHAR(50)	NOT NULL	DEFAULT 'assemble',
 	`content`	MEDIUMTEXT	NULL,
-	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+  `like_count` BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `assemblegood` (
 	`assemblegood_id`	BIGINT	NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`assembleboard_id`	BIGINT	NOT NULL,
 	`user_id`	BIGINT	NOT NULL,
-	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	`question_count` INT NOT NULL DEFAULT 30,
+    `summary_count` INT NOT NULL DEFAULT 5
 );
 
 CREATE TABLE `good` (
@@ -54,6 +58,16 @@ CREATE TABLE `comment` (
 	`user_id`	BIGINT	NOT NULL,
 	`content`	TEXT	NOT NULL,
 	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `prompt` (
+	`prompt_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT	NOT NULL,
+    `prompt_name` TEXT,
+    `prompt_role`	MEDIUMTEXT,
+    `prompt_form` MEDIUMTEXT,
+    `prompt_level` MEDIUMTEXT,
+    `prompt_option` MEDIUMTEXT
 );
 
 ALTER TABLE `board` ADD CONSTRAINT `FK_users_TO_board_1` FOREIGN KEY (
@@ -116,3 +130,19 @@ REFERENCES `users` (
 	`id`
 ) ON DELETE CASCADE;
 
+ALTER TABLE `prompt` ADD CONSTRAINT `FK_users_TO_prompt_1` FOREIGN KEY (
+	`user_id`
+)
+REFERENCES `users` (
+	`id`
+) ON DELETE CASCADE;
+
+
+CREATE EVENT reset_question_summary_count
+ON SCHEDULE
+    EVERY 1 DAY
+    STARTS '2025-06-17 06:00:00'
+DO
+    UPDATE users
+    SET question_count = 30,
+        summary_count = 5;

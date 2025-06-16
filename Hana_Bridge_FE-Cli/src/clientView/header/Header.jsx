@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setCategory, setPage } from "../../store/userSlice";
+import { setCategory } from "../../store/userSlice";
+//import { setPage } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 import { clearUser, clearAiChat } from "../../store/userSlice.js";
 import ApiClient from "../../service/ApiClient.jsx";
@@ -62,8 +63,8 @@ const BoardHeader = () => {
           className={titleBox}
           onClick={() => {
             if (email && email !== "guest@email.com") {
-              dispatch(setPage({page:'home'}));
-              dispatch(setCategory({category:''}));
+              //dispatch(setPage({page:'home'}));
+              dispatch(setCategory({category:'dash'}));
               navigate("/dashboard/home");
             } else {
               navigate("/");
@@ -94,19 +95,19 @@ const BoardHeader = () => {
             </>
           ) : (
             <div className={serviceBox + "z-[9999]"}>
-              
-              <button
-                onClick={() => openModal("myinfo")}
-                className={userButton}
-              >
-                 <FaUserCircle className={userIcon}/> {nickName}
-              </button>
               <button
                 onClick={moveAddBoard}
                 className={addButton}
               >
                 글 작성
               </button>
+              
+              <button
+                onClick={() => openModal("myinfo")}
+                className={userButton}
+              >
+                 <FaUserCircle className={userIcon}/> {nickName}
+              </button>              
               <button
                 onClick={() => setConfirmLogoutOpen(true)}
                 className={logoutButton}

@@ -8,14 +8,13 @@ const MyPosts = () => {
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [postType, setPostType] = useState('code'); // code or assemble
 
-  const accessToken = useSelector((state) => state.user.accessToken);
   const navigate = useNavigate();
 
   useEffect(() => {
     let funcBoard = postType === 'code' ? ApiClient.getMyBoard : ApiClient.getMyAssemble;
 
     setLoading(true); // 요청 시작 시 로딩
-    funcBoard(accessToken)
+    funcBoard()
       .then(async (res) => {
         if (!res.ok) {
           setBoards(null);
@@ -54,10 +53,10 @@ const MyPosts = () => {
   return (
     <div className="custom-scroll h-[75vh] overflow-y-auto space-y-5 px-3">
       {/* 탭 */}
-      <div className="inline-flex rounded-md shadow-sm overflow-hidden border border-gray-300 mb-1">
+      <div className="inline-flex rounded shadow-sm overflow-hidden border border-gray-300 mb-1">
         <button
           onClick={() => setPostType('code')}
-          className={`w-full text-left flex items-center px-3 py-2 transition rounded-l-md ${
+          className={`w-full text-left flex items-center px-3 py-2 transition rounded-l ${
             postType === 'code'
               ? 'bg-[#C5BCFF] text-black font-bold'
               : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'

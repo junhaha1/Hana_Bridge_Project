@@ -9,8 +9,11 @@ import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle } from '../../style/CommonStyle';
 import { addBoardButton, addTitle, addContent, addCode } from '../../style/AddBoardStyle';
 
+//입력창 코드 테마 가져오기 
+import Editor, { useMonaco } from "@monaco-editor/react";
+import tomorrowNightTheme from 'monaco-themes/themes/Tomorrow-Night.json';
+
 const AddBoard = () => {
-  const accessToken = useSelector((state) => state.user.accessToken);
   const role = useSelector((state) => state.user.role);
 
   //이전으로 버튼을 위한 카테고리 
@@ -31,6 +34,34 @@ const AddBoard = () => {
   //언어 선택 박스
   const [language, setLanguage] = useState("");
 
+  // 내가 사용할 모나코 인스턴스를 생성
+  const monaco = useMonaco();
+  
+  //유효성 검사
+  const [titleError, setTitleError] = useState("");
+  const [contentError, setContentError] = useState("");
+
+
+  useEffect(() => {
+    if (!monaco) return; // Monaco 인스턴스가 로드되지 않았으면 바로 종료
+
+    //tomorrowNightTheme 테마와 색 복사하여 가져오고 
+    //포커스 시 나타나는 테두리(파랑)만 투명으로 
+    const customTheme = {
+      ...tomorrowNightTheme,
+      colors: {
+        ...tomorrowNightTheme.colors,
+        'focusBorder': '#00000000',
+        'editor.background': '#1e1e1e',
+      },
+    };
+
+    //커스텀 테마 오브젝트 완성 후 이름 등록 
+    monaco.editor.defineTheme('custom-theme', customTheme);
+    monaco.editor.setTheme('custom-theme');
+  }, [monaco]);
+
+
   const renderLanguageSelectBox = () => {
     const languages = [
       { label: "JavaScript", value: "javascript" },
@@ -43,17 +74,18 @@ const AddBoard = () => {
       { label: "TypeScript", value: "typescript" },
       { label: "Kotlin", value: "kotlin" },
       { label: "Swift", value: "swift" },
+      { label: "Bash", value: "bash" },
     ];
 
     return (
-      <div className="w-full py-2 border-t border-white/20 flex flex-row">
-        <label className="w-[100px] mb-2 text-sm text-center">
-          프로그래밍 <br />언어 선택
+      <div className="w-full py-2 border-t border-b border-b-white/10 border-t-white/40 flex flex-row">
+        <label className="my-1 mx-3 text-base text-center">
+          프로그래밍 언어 선택
         </label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-[200px] px-4 py-2 text-sm text-gray-900 font-semibold hover:bg-white rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-[200px] px-3 text-sm text-gray-900 font-semibold hover:bg-white rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">언어를 선택해주세요</option>
           {languages.map((lang) => (
@@ -77,15 +109,29 @@ const AddBoard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ category, title, content });
+
+    let isValid = true;
+
+    if (!title.trim()) {
+      setTitleError("제목은 필수 입력항목입니다.");
+      isValid = false;
+    }
+
+    if (!content.trim()) {
+      setContentError("내용은 필수 입력항목입니다.");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
+
     setCreateAt(new Date());
     setUpdateAt(new Date());
-    //const finalCode = `\`\`\`${language}\n${code}\n\`\`\``;
-    //const finalCode = "```" + language + "\n" + code + "\n```";
+
     const finalCode = ["```" + language, code, "```"].join("\n");
-    console.log(finalCode);
-    // TODO: API 요청 처리
-    ApiClient.sendBoard(accessToken, title, category, content, finalCode, createAt, updateAt)
+
+    // API 요청 처리
+    ApiClient.sendBoard(title, category, content, finalCode, createAt, updateAt)
     .then(async (res) => {
       if (!res.ok) {
         const errorData = await res.json();
@@ -106,10 +152,10 @@ const AddBoard = () => {
     <div className={mainFrame}>
       <Header />
 
-      <div className="w-full flex flex-row mt-20">
+      <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         <main className={detailFrame}>
-          <div className={scrollStyle + " h-[80vh] mt-5 ml-20 pr-40"}>
+          <div className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
             <p className='text-white/80'>코드 질문 게시판</p>
@@ -150,41 +196,58 @@ const AddBoard = () => {
               
 
               {/* 제목 */}
-              <div>
-                <label className="block font-semibold mb-2">
-                  제목<span className="text-red-500">*</span>
+              <div className='mb-3'>
+                <label className="block font-semibold mb-2 text-lg">
+                  제목 <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                    if (titleError) setTitleError(""); // 수정 시 에러 제거
+                  }}
+                  // onFocus={() => {
+                  //   if (titleError) setPasswordError("");
+                  // }}
                   placeholder="게시글 제목을 적어 주세요"
-                  className={addTitle}
+                  className={`${addTitle} ${titleError ? 'border-white' : 'border-white'}`}
                 />
+                {titleError && (
+                  <p className="text-red-500 text-sm mt-1">{titleError}</p>
+                )}
               </div>
 
               {/* 코드 작성 */}
               {category === 'notice' ? null : (
                 <div>
-                  <div className="w-full mx-auto mb-3 border rounded-lg">
+                  <div className="w-full mx-auto mb-3 border rounded">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-full text-left p-2 hover:bg-white/20 rounded-md flex justify-between items-center"
+                      className="w-full text-left p-2 hover:bg-white/20 rounded flex justify-between items-center"
                     >
-                      <span className="font-medium">에러 코드</span>
+                      <span className="font-semibold text-lg">에러 및 코드 작성</span>
                       <span>{isOpen ? "▲" : "▼"}</span>
                     </button>
 
                     {isOpen && (
                       <div className='h-full'>
                         {renderLanguageSelectBox()}
-                      
-                        <textarea
-                          rows={7}
+                        <Editor
+                          height="200px"
+                          defaultLanguage="markdown"
+                          language={language}
                           value={code}
-                          onChange={(e) => setCode(e.target.value)}
-                          placeholder="작성할 코드/에러를 적어 주세요"
-                          className={addCode}
+                          onChange={(value) => setCode(value)}
+                          theme='custom-theme'
+                          options={{
+                            minimap: { enabled: false },            // 🔹 오른쪽 미니맵 제거
+                            fontSize: 14,
+                            wordWrap: 'on',                         // 코드 줄바꿈을 활성화
+                            scrollBeyondLastLine: false,            // 스크롤 밑 여백 제거
+                            placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
+                          }}
+                          className="my-custom-class p-1"  //스크롤바 설정 가져옴
                         />
                       </div>
                     )}
@@ -193,20 +256,26 @@ const AddBoard = () => {
               )}
 
               {/* 본문 작성 */}
-              <div>
+              <div className='mb-2'>
                 <textarea
                   rows={7}
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={(e) => {
+                    setContent(e.target.value);
+                    if (contentError) setContentError(""); // 수정 시 에러 제거
+                  }}
                   placeholder="작성할 글을 적어 주세요"
-                  className={addContent}
+                  className={`${addContent} ${contentError ? '!border-red-500' : 'border-white'}`}
                 />
+                {contentError && (
+                  <p className="text-red-500 text-sm mt-0">{contentError}</p>
+                )}
               </div>
 
               {/* 버튼 */}
               <div className="flex justify-center gap-4">
                 <button 
-                  onClick={() => navigate(`/board/${toCategory}`)}
+                  onClick={() => navigate(-1)}
                   className={addBoardButton}
                 >
                   처음으로

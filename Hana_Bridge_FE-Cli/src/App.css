@@ -5,3 +5,19 @@ html, body {
   overflow-x: hidden;
 }
 
+
+
+/* 글 작성 코드 입력창 스크롤바 css */
+.my-custom-class .monaco-scrollable-element {
+  scrollbar-width: thin;
+  scrollbar-color: #444 #222;
+}
+
+.my-custom-class .monaco-scrollable-element::-webkit-scrollbar {
+  width: 5px;
+}
+
+.my-custom-class .monaco-scrollable-element::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 4px;
+}

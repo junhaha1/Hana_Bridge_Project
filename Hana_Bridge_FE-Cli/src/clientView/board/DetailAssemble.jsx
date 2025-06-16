@@ -9,6 +9,7 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import LeftHeader from "../header/LeftHeader";
+import ConfirmBoardModal from "./ConfirmBoardModal";
 
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
@@ -21,12 +22,14 @@ const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
-  const accessToken = useSelector((state) => state.user.accessToken);
-
   const { assembleBoardId } = useParams();
   const [board, setBoard] = useState(null);
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
+
+  const myCategory = useSelector((state) => state.user.category);
+  console.log("myCategory: "  + myCategory);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const navigate = useNavigate();
   const scrollRef = useRef(null);
@@ -48,7 +51,7 @@ const DetailAssemble = () => {
   };
 
   useEffect(() => {
-    ApiClient.getAssembleBoard(assembleBoardId, accessToken)
+    ApiClient.getAssembleBoard(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
@@ -72,7 +75,7 @@ const DetailAssemble = () => {
   }, [assembleBoardId]);
 
   const boardDeleteButton = (assembleBoardId) => {
-    ApiClient.deleteAssembleBoard(assembleBoardId, accessToken)
+    ApiClient.deleteAssembleBoard(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
@@ -91,7 +94,7 @@ const DetailAssemble = () => {
   };
 
   const handleLike = (assembleBoardId) => {
-    ApiClient.sendAssembleGood(assembleBoardId, accessToken)
+    ApiClient.sendAssembleGood(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
@@ -111,7 +114,7 @@ const DetailAssemble = () => {
   };
 
   const handleCancelLike = (assembleBoardId) => {
-    ApiClient.deleteAssembleGood(assembleBoardId, accessToken)
+    ApiClient.deleteAssembleGood(assembleBoardId)
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
@@ -130,104 +133,108 @@ const DetailAssemble = () => {
       });
   };
 
-  if (!board){
-    navigate("/error");
-    return null;
-  }
-
   return (
     <div className={mainFrame}>
       <Header />
-      <div className="w-full flex flex-row mt-20">
+      <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={scrollStyle + " h-[80vh] mt-5 pl-20 pr-40"}>
-            <button
-              onClick={() => navigate("/board/assemble")}
-              className={buttonStyle + backButton}
-            >
-              이전
-            </button>
+          <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+            {!board ? 
+            (
+              <div className="text-white text-center mt-10">불러오는 중...</div>
+            ):(
+              <>
+              <button
+                onClick={() => navigate(`/board/${myCategory}`, { state: { from: "back", toggle: "assemble" } })}
+                className={buttonStyle + backButton}
+              >
+                이전
+              </button>
 
-            <div className={detailCardStyle}>
-              <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
+              <div className={detailCardStyle}>
+                <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
 
-              <h2 className={detailTitle}>{board.title}</h2>
-              <div className={userDate}>
-                <span className='flex gap-1'>
-                  <FaUser
-                  className="mt-0.5"
-                  />
-                  {board.nickName}
-                </span>
-                <span className='text-xs text-gray-300 mt-0.5'>
-                  {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
-                </span>                  
-              </div>
-              <div className="border-t border-white/10 mb-3" />
-
-              <div className="text-white">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    code({ inline, className, children, ...props }) {
-                      const match = /language-(\w+)/.exec(className || '');
-                      return !inline && match ? (
-                        <SyntaxHighlighter
-                          {...props}
-                          style={prism}
-                          language={match[1]}
-                          PreTag="div"
-                          className="rounded-md overflow-x-auto"
-                        >
-                          {String(children).replace(/\n$/, '')}
-                        </SyntaxHighlighter>
-                      ) : (
-                        <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
-                          {children}
-                        </code>
-                      );
-                    },
-                  }}
-                >
-                  {board.content}
-                </ReactMarkdown>
-              </div>
-
-              {/* 좋아요, 댓글, 삭제 */}
-              <div className={liekCommentButton}>
-                <div className={liekComment + " text-white"}>
-                  <span
-                    className="relative cursor-pointer flex items-center gap-1"
-                    onClick={() => {
-                      if (nickName === 'guest') {
-                        handleGuestClick();
-                      } else {
-                        isLike ? handleCancelLike(assembleBoardId) : handleLike(assembleBoardId);
-                      }
-                    }}
-                  >                    
-                    {isLike ? <BiSolidLike className="size-5 "/> : <BiLike  className="size-5 "/>}
-                    {likeCount}
-
-                    {showGuestMessage && (
-                      <div className="absolute bottom-full mb-2
-                        w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
-                        text-center">
-                        ⚠ 비회원은 이용할 수 없는 기능입니다.
-                      </div>
-                    )}
+                <h2 className={detailTitle}>{board.title}</h2>
+                <div className={userDate}>
+                  <span className='flex gap-1'>
+                    <FaUser
+                    className="mt-0.5"
+                    />
+                    {board.nickName}
                   </span>
+                  <span className='text-xs text-gray-300 mt-1'>
+                    {new Date(board.createAt).toISOString().slice(0, 16).replace('T', ' ')}
+                  </span>                  
+                </div>
+                <div className="border-t border-white/10 mb-3" />
+
+                <div className="text-white">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({ inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                          <SyntaxHighlighter
+                            {...props}
+                            style={prism}
+                            language={match[1]}
+                            PreTag="div"
+                            className="rounded overflow-x-auto"
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code {...props} className={`${className} bg-gray-800 text-white px-1 rounded`}>
+                            {children}
+                          </code>
+                        );
+                      },
+                    }}
+                  >
+                    {board.content}
+                  </ReactMarkdown>
                 </div>
 
-                {(nickName === board.nickName || role === "ROLE_ADMIN") && (
-                  <button className={buttonStyle +" text-red-400 text-sm hover:underline"} onClick={() => boardDeleteButton(assembleBoardId)}>
-                    삭제하기
-                  </button>
-                )}
-              </div>              
-            </div>
+                {/* 좋아요, 댓글, 삭제 */}
+                <div className={liekCommentButton}>
+                  <div className={liekComment + " text-white"}>
+                    <span
+                      className="relative cursor-pointer flex items-center gap-1"
+                      onClick={() => {
+                        if (nickName === 'guest') {
+                          handleGuestClick();
+                        } else {
+                          isLike ? handleCancelLike(assembleBoardId) : handleLike(assembleBoardId);
+                        }
+                      }}
+                    >                    
+                      {isLike ? <BiSolidLike className="size-5 "/> : <BiLike  className="size-5 "/>}
+                      {likeCount}
+
+                      {showGuestMessage && (
+                        <div className="absolute bottom-full mb-2
+                          w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
+                          text-center">
+                          ⚠ 비회원은 이용할 수 없는 기능입니다.
+                        </div>
+                      )}
+                    </span>
+                  </div>
+
+                  {(nickName === board.nickName || role === "ROLE_ADMIN") && (
+                    <button 
+                      className={buttonStyle +" text-red-400 text-sm hover:underline"} 
+                      onClick={() => setConfirmDeleteOpen(true)}>
+                      삭제하기
+                    </button>
+                  )}
+                </div>              
+              </div>
+              </>
+            )}            
           </div>
           <button
             onClick={scrollToTop}
@@ -237,6 +244,17 @@ const DetailAssemble = () => {
           </button>
         </main>
       </div>
+      {/* 삭제 확인 모달 */}
+      {confirmDeleteOpen && (
+        <ConfirmBoardModal
+          onConfirm={() => {
+            boardDeleteButton(assembleBoardId);
+            setConfirmDeleteOpen(false);
+          }}
+          onCancel={() => setConfirmDeleteOpen(false)}
+          onMode={"delete"}
+        />
+      )}
     </div>
   );
 };

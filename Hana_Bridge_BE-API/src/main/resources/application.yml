@@ -4,6 +4,15 @@ spring:
   server:
     port: 8080
     address: 0.0.0.0
+  boot:
+    admin:
+      client:
+        url: http://14.63.178.152:8081  # Admin 서버 주소
+        instance:
+          prefer-ip: true
+  mvc:
+    async:
+      request-timeout: 60000
   jpa:
     properties:
       hibernate:
@@ -21,6 +30,15 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: 6379
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
 
 openai:
   api-key: ${OPENAI_API_KEY}

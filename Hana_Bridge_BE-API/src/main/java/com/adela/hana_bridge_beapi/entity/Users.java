@@ -44,6 +44,12 @@ public class Users implements UserDetails {
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "question_count", nullable = false)
+    private int questionCount;
+
+    @Column(name = "summary_count", nullable = false)
+    private int summaryCount;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(this.role));
@@ -92,6 +98,22 @@ public class Users implements UserDetails {
     public void updateUsers(String email, String nickName) {
         this.email = email;
         this.nickName = nickName;
+    }
+
+    public void updateQuestionCount(int questionCount) {
+        if(questionCount == 0){
+            this.questionCount = 0;
+        } else {
+            this.questionCount = questionCount - 1;
+        }
+    }
+
+    public void updateSummaryCount(int summaryCount) {
+        if(summaryCount == 0){
+            this.summaryCount = 0;
+        }else {
+            this.summaryCount = summaryCount - 1;
+        }
     }
 
     public void updatePassword(String password) {

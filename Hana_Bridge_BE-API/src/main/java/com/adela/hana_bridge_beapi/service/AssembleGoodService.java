@@ -30,11 +30,6 @@ public class AssembleGoodService {
         return assembleGoodRepository.existsByAssembleBoard_AssembleBoardIdAndUsers_Id(assembleBoardId, userId);
     }
 
-    //해당 게시글의 모든 좋아요 수 조회
-    public Long countAssembleBoardGood(Long assembleBoardId) {
-        return (long) assembleGoodRepository.countByAssembleBoard_AssembleBoardId(assembleBoardId);
-    }
-
     //해당 게시글의 좋아요 등록
     @Transactional
     public void registAssembleBoardGood(AssembleGoodAddRequest request) {
