@@ -318,7 +318,7 @@ const CodeBoard = () => {
             id="sort"
             name="sort"
             value={sortType}
-            className={sortCheckBox}
+            className={`${sortCheckBox} cursor-pointer`}
             onChange={(e) => {
               setSortType(e.target.value)
             }}
@@ -346,7 +346,7 @@ const CodeBoard = () => {
             <div className= {cardBottomLayout}>
               <div className={userDate}>
                 <span className={cardAuthor}>
-                  <FaUser/>
+                  <FaUser className='mt-0.5'/>
                   {post.nickName}
                 </span>
                 <span className='hidden md:inline text-xs text-gray-300 mt-1'>
