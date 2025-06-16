@@ -39,7 +39,9 @@ CREATE TABLE `assemblegood` (
 	`assemblegood_id`	BIGINT	NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`assembleboard_id`	BIGINT	NOT NULL,
 	`user_id`	BIGINT	NOT NULL,
-	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	`create_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	`question_count` INT NOT NULL DEFAULT 30,
+    `summary_count` INT NOT NULL DEFAULT 5
 );
 
 CREATE TABLE `good` (
