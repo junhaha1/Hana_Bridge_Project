@@ -265,7 +265,7 @@ const AddBoard = () => {
                     if (contentError) setContentError(""); // 수정 시 에러 제거
                   }}
                   placeholder="작성할 글을 적어 주세요"
-                  className={`${addContent} ${contentError ? '!border-red-500' : 'border-white'}`}
+                  className={`${addContent} ${scrollStyle} ${contentError ? '!border-red-500' : 'border-white'}`}
                 />
                 {contentError && (
                   <p className="text-red-500 text-sm mt-0">{contentError}</p>
@@ -273,7 +273,7 @@ const AddBoard = () => {
               </div>
 
               {/* 버튼 */}
-              <div className="flex justify-center gap-4 mb-12">
+              <div className="flex justify-center gap-4 mb-24">
                 <button 
                   onClick={() => navigate(-1)}
                   className={addBoardButton}
