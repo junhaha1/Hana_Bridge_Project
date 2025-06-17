@@ -36,9 +36,16 @@ management:
     web:
       exposure:
         include: "*"
+
   endpoint:
     health:
       show-details: always
+
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
 
 openai:
   api-key: ${OPENAI_API_KEY}
