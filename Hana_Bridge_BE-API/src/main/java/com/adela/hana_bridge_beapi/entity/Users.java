@@ -92,6 +92,8 @@ public class Users implements UserDetails {
         this.oauthId = oauthId;
         this.role = role;
         this.createdAt = LocalDateTime.now();
+        this.questionCount = 30;
+        this.summaryCount = 5;
     }
 
     //사용자 정보 갱신 시에 해당 필드 값만 변경
