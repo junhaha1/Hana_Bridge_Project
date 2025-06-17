@@ -175,7 +175,7 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                     className="text-blue-600 hover:underline cursor-pointer"
                     onClick={() => {
                       onClose();
-                      onSwitch("signup");
+                      //onSwitch("signup");
                     }}
                   >
                     회원가입
