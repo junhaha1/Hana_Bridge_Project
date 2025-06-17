@@ -1,4 +1,4 @@
-import { useState, useRef} from 'react';
+import { useState, useEffect, useRef} from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { setCategory, setShouldAutoOpenHelper } from '../store/userSlice';
@@ -21,6 +21,7 @@ const Home = () => {
   const topSectionRef = useRef(null);
   const name = useSelector((state) => state.user.name);
   const nickName = useSelector((state) => state.user.nickName);
+  const [currentIndex, setCurrentIndex] = useState(0); // 현재 섹션 인덱스 (방향키)
 
   //code helper 클릭 시 로그인 모달 이동여부
   const [modalOpen, setModalOpen] = useState(false);
@@ -29,6 +30,28 @@ const Home = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  //키보드 이벤트 등록
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowDown') {
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = Math.min(prevIndex + 1, sectionRefs.current.length - 1);
+          scrollToIndex(nextIndex);
+          return nextIndex;
+        });
+      } else if (e.key === 'ArrowUp') {
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = Math.max(prevIndex - 1, 0);
+          scrollToIndex(nextIndex);
+          return nextIndex;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [scrollToIndex]);
 
   //code helper 클릭 시에 로그인 확인
   const handleCodeHeplerClick= () => {
