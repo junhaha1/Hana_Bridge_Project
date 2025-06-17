@@ -13,6 +13,9 @@ public class WebConfiguration implements WebMvcConfigurer {
                         "http://localhost:5173",
                         "https://aissue-dev.kro.kr",
                         "http://aissue-dev.kro.kr",
+                        "http://aissue.kr",
+                        "https://aissue.kr",
+                        "https://www.aissue.kr",
                         "http://14.63.178.152",
                         "http://14.63.178.151"
                 ) // React 개발 서버 주소
