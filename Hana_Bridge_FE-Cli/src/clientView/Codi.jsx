@@ -111,35 +111,39 @@ const CodeHelper = () => {
     )}
     <LayoutGroup>
       <AnimatePresence mode="wait">
-        {subTalking && !fullTalking && (
+         {(subTalking || fullTalking) && (
           <motion.div
-            key="sub"
-            layoutId="chatBox"
-            className="fixed bottom-0 right-0 w-[500px] h-[700px] z-[8000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
+            key="chatBox"
+            initial={{
+              width: subTalking ? 500 : "50vw",
+              height: subTalking ? 700 : "100vh",
+            }}
+            animate={{
+              width: fullTalking ? "50vw" : 500,
+              height: fullTalking ? "100vh" : 700,
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.95,
+              transition: { duration: 0.2 },
+            }}
+            transition={{
+              duration: 0.5,
+              ease: "easeInOut",
+            }}
+            className="fixed bottom-0 right-0 z-[8000] overflow-hidden
+              md:border-2 md:border-white/50 md:rounded-2xl bg-black
+              max-md:w-full max-md:h-full"
           >
-            <AIChat
-              onClose={setSubTalking}
-              onfullTalk={setFullTalking}
-              onMode={"sub"}
-              setLevel={setPromptLevel}
-              level={promptLevel}
-            />
-          </motion.div>
-        )}
-
-        {fullTalking && (
-          <motion.div
-            key="full"
-            layoutId="chatBox"
-            className="fixed bottom-0 right-0 w-1/2 h-screen z-[8000] overflow-hidden md:border-2 md:border-white/50 md:rounded-2xl max-md:w-full max-md:h-full"
-          >
-            <AIChat
-              onClose={setSubTalking}
-              onfullTalk={setFullTalking}
-              onMode={"full"}
-              setLevel={setPromptLevel}
-              level={promptLevel}
-            />
+            <div className="w-full h-full overflow-y-auto">
+              <AIChat
+                onClose={setSubTalking}
+                onfullTalk={setFullTalking}
+                onMode={fullTalking ? "full" : "sub"}
+                setLevel={setPromptLevel}
+                level={promptLevel}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
