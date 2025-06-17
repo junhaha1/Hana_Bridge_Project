@@ -12,6 +12,8 @@ import com.adela.hana_bridge_beapi.dto.prompt.PromptResponse;
 import com.adela.hana_bridge_beapi.dto.prompt.PromptUpdateRequest;
 import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.service.*;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +29,10 @@ import java.util.List;
 @RequestMapping("/chat")
 public class OpenAiApiController {
 
+    private final MeterRegistry meterRegistry;
     private final OpenAiService openAiService;
     private final TokenService tokenService;
     private final UsersService usersService;
-    private final AssembleBoardService assembleBoardService;
     private final PromptService promptService;
 
     @GetMapping("/prompt")
@@ -109,38 +111,49 @@ public class OpenAiApiController {
 
     @PostMapping("/summary")
     public ResponseEntity<SummaryResponse> askQuestionSummary(@RequestHeader("Authorization") String authHeader, @RequestBody ClientSummaryRequest clientSummaryRequest){
-        String accessToken = authHeader.replace("Bearer ", "");
-        Long userId = tokenService.findUsersIdByToken(accessToken);
+        Timer.Sample sample = Timer.start(meterRegistry); // ⏱️ 측정 시작
+
+        try{
+            String accessToken = authHeader.replace("Bearer ", "");
+            Long userId = tokenService.findUsersIdByToken(accessToken);
 
 
-        //질문과 답변들을 이용하여 요약본 생성
-        String summary = openAiService.summaryChatGPT(clientSummaryRequest);
-        //요약본을 바탕으로 제목 생성
-        String title = openAiService.titleChatGPT(summary);
+            //질문과 답변들을 이용하여 요약본 생성
+            String summary = openAiService.summaryChatGPT(clientSummaryRequest);
+            //요약본을 바탕으로 제목 생성
+            String title = openAiService.titleChatGPT(summary);
 
-        //양끝에 ""문자 없애기
-        if (title.startsWith("\"") && title.endsWith("\"")) {
-            title = title.substring(1, title.length() - 1);
+            //양끝에 ""문자 없애기
+            if (title.startsWith("\"") && title.endsWith("\"")) {
+                title = title.substring(1, title.length() - 1);
+            }
+
+            if (title.startsWith("###")) {
+                title = title.replace("###", "").trim();
+            }
+
+            if (title.startsWith("제목:")) {
+                title = title.replace("제목:", "").trim();
+            }
+
+            if (summary.startsWith("요약:")){
+                summary = summary.replace("요약:", "").trim();
+            }
+
+            if (summary.startsWith("내용:")){
+                summary = summary.replace("내용:", "").trim();
+            }
+
+            SummaryResponse summaryResponse = new SummaryResponse(title, summary);
+            usersService.updateSummaryCount(userId);
+            return ResponseEntity.ok().body(summaryResponse);
+        } finally {
+            sample.stop( // ⏹️ 측정 종료 + 메트릭 등록
+                    Timer.builder("custom.summary.response.time")
+                            .description("응답 시간 측정용 타이머")
+                            .tag("uri", "/summary")
+                            .register(meterRegistry)
+            );
         }
-
-        if (title.startsWith("###")) {
-            title = title.replace("###", "").trim();
-        }
-
-        if (title.startsWith("제목:")) {
-            title = title.replace("제목:", "").trim();
-        }
-
-        if (summary.startsWith("요약:")){
-            summary = summary.replace("요약:", "").trim();
-        }
-
-        if (summary.startsWith("내용:")){
-            summary = summary.replace("내용:", "").trim();
-        }
-
-        SummaryResponse summaryResponse = new SummaryResponse(title, summary);
-        usersService.updateSummaryCount(userId);
-        return ResponseEntity.ok().body(summaryResponse);
     }
 }
