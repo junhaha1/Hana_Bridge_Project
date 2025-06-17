@@ -243,6 +243,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setMessages(updatedMessages);
     //입력창 초기화
     setInput('');
+    // 입력창 높이 초기화 (1줄로 복귀) 번외: 함수로 감싸는 이유: DOM 반영 후 안전하게 실행하기 위해 
+    requestAnimationFrame(() => { 
+      if (textRef.current) {
+        textRef.current.style.height = 'auto';
+      }
+    });
+
+    
     
     /* API 호출하여 스트림 연결 */
     console.log(userPrompt);
