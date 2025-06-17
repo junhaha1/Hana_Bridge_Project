@@ -174,7 +174,7 @@ const LoginModal = ({ onClose, onSwitch , onSuccess}) => {
                   <span
                     className="text-blue-600 hover:underline cursor-pointer"
                     onClick={() => {
-                      onClose();
+                      //onClose();
                       //onSwitch("signup");
                     }}
                   >
