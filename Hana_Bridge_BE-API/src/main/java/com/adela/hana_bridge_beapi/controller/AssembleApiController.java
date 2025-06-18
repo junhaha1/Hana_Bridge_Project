@@ -5,6 +5,7 @@ import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
 import com.adela.hana_bridge_beapi.dto.board.BoardList;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
+import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
 import com.adela.hana_bridge_beapi.service.AssembleGoodService;
 import com.adela.hana_bridge_beapi.service.TokenService;
@@ -28,6 +29,23 @@ public class AssembleApiController {
     private final TokenService tokenService;
     private final UsersService usersService;
 
+    //사용자가 좋아요 누른 게시글 조회
+    @GetMapping("/good/{page}/{sortType}")
+    public ResponseEntity<AssembleBoardList> findByGoodWithBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
+        Page<AssembleBoard> boardInfos = assembleBoardService.findWithGood(page, sortType, userId);
+        List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
+                .stream()
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard))
+                .toList();
+        AssembleBoardList boardList = new AssembleBoardList(assembleBoardResponses, boardInfos.getTotalPages(),
+                boardInfos.getTotalElements(), boardInfos.getSize(), boardInfos.getNumber());
+
+        return ResponseEntity.ok().body(boardList);
+    }
+
     //게시글 전체 조회
     @GetMapping("/{page}/{sortType}")
     public ResponseEntity<AssembleBoardList> findAllAssembleBoards(@PathVariable int page, @PathVariable String sortType) {
@@ -44,9 +62,11 @@ public class AssembleApiController {
     }
 
     //사용자가 작성한 게시글 전체 조회
-    @GetMapping("/user/{email}/{page}/{sortType}")
-    public ResponseEntity<AssembleBoardList> findAssembleByEmail(@PathVariable String email, @PathVariable int page, @PathVariable String sortType){
-        Long userId = usersService.findByEmail(email).getId();
+    @GetMapping("/user/{page}/{sortType}")
+    public ResponseEntity<AssembleBoardList> findAssembleByEmail(@RequestHeader("Authorization") String authHeader, @PathVariable int page, @PathVariable String sortType){
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
         Page<AssembleBoard> boardInfos = assembleBoardService.findByUserId(userId, page, sortType);
 
         List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
@@ -75,9 +95,10 @@ public class AssembleApiController {
     }
 
     //검색어가 포함되어 있는 현재 유저 게시글 조회하기
-    @GetMapping("/search/{searchWord}/orderBy/{sortType}/user/{email}/{page}")
-    public ResponseEntity<AssembleBoardList> searchUserAssembleBoards(@PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email, @PathVariable int page) {
-        Long userId = usersService.findByEmail(email).getId();
+    @GetMapping("/search/{searchWord}/orderBy/{sortType}/user/{page}")
+    public ResponseEntity<AssembleBoardList> searchUserAssembleBoards(@RequestHeader("Authorization") String authHeader, @PathVariable String searchWord, @PathVariable String sortType, @PathVariable int page) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
         Page<AssembleBoard> boardInfos = assembleBoardService.getSearchAssembleBoards(searchWord, sortType, userId, page);
 
         List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
