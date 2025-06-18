@@ -203,7 +203,7 @@ class ApiClient{
 
   //검색어를 통해 Board 조회
   static getSearchUserBoards(category, searchWord, sortType, page){
-    console.log(`검색 : ${category}, ${searchWord}, ${sortType}, ${email}`);
+    console.log(`검색 : ${category}, ${searchWord}, ${sortType}`);
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/user/${page}`);
   }
 
@@ -257,8 +257,8 @@ class ApiClient{
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/${page}`);
   }
 
-  static getSearchUserAssembleBoards(toggle, word, sortType, email, page){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/user/${email}/${page}`);
+  static getSearchUserAssembleBoards(toggle, word, sortType, page){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/search/${word}/orderBy/${sortType}/user/${page}`);
   }
 
   //Assemble 상세 조회
