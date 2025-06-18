@@ -95,6 +95,7 @@ jobs:
           echo "DATABASE_DB=${{ secrets.DATABASE_DB_SERVICE }}" >> .env
           echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
           echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
+          echo "APP_EMAIL_PASSWORD=${{ secrets.APP_EMAIL_PASSWORD }}" >> .env
           echo "INIT_DB=init.sql" >> .env
           echo "MYSQL_HOST=mysql" >> .env
           echo "REDIS_HOST=redis" >> .env
@@ -258,6 +259,7 @@ jobs:
           echo "DATABASE_DB=${{ secrets.DATABASE_DB_DEV }}" >> .env
           echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
           echo "JWT_SECRETKEY=${{ secrets.JWT_SECRETKEY }}" >> .env
+          echo "APP_EMAIL_PASSWORD=${{ secrets.APP_EMAIL_PASSWORD }}" >> .env
           echo "INIT_DB_TEST=init_dev.sql" >> .env
           echo "MYSQL_HOST=mysql" >> .env
           echo "REDIS_HOST=redis" >> .env
