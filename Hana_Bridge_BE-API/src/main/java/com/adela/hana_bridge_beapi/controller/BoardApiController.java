@@ -30,9 +30,10 @@ public class BoardApiController {
     private final GoodService goodService;
 
     //사용자가 좋아요 누른 게시글 조회
-    @GetMapping("/good/category/{category}/{page}/{sortType}/{email}")
-    public ResponseEntity<BoardList> findByGoodWithBoard(@PathVariable String email, @PathVariable("category") String category, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
-        long userId = usersService.findByEmail(email).getId();
+    @GetMapping("/good/category/{category}/{page}/{sortType}")
+    public ResponseEntity<BoardList> findByGoodWithBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("category") String category, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
 
         Page<Board> boards = boardService.findByCategoryWithGood(category, page, sortType, userId);
         List<BoardResponse> boardInfos = boards.getContent()
@@ -58,9 +59,10 @@ public class BoardApiController {
     }
 
     //현재 사용자가 작성한 글 목록 가져오기 -> sortType으로 정렬 조건 변경 가능
-    @GetMapping("/user/{email}/{page}/{sortType}")
-    public ResponseEntity<BoardList> findBoardByEmail(@PathVariable String email, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
-        Long userId = usersService.findByEmail(email).getId();
+    @GetMapping("/user/{page}/{sortType}")
+    public ResponseEntity<BoardList> findBoardByEmail(@RequestHeader("Authorization") String authHeader, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
 
         Page<Board> boards = boardService.findByUserId(userId, page, sortType);
 
@@ -87,9 +89,10 @@ public class BoardApiController {
     }
 
     //검색어가 포함되어 있는 사용자 게시글 조회
-    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}/user/{email}/{page}")
-    public ResponseEntity<BoardList> searchUserCodeBoards(@PathVariable String category, @PathVariable String searchWord, @PathVariable String sortType, @PathVariable String email, @PathVariable int page) {
-        Long userId = usersService.findByEmail(email).getId();
+    @GetMapping("/category/{category}/search/{searchWord}/orderBy/{sortType}/user/{page}")
+    public ResponseEntity<BoardList> searchUserCodeBoards(@RequestHeader("Authorization") String authHeader, @PathVariable String category, @PathVariable String searchWord, @PathVariable String sortType, @PathVariable int page) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
         Page<Board> boards = boardService.getSearchBoards(category, searchWord, sortType, userId, page);
 
         List<BoardResponse> boardInfos = boards.getContent()
