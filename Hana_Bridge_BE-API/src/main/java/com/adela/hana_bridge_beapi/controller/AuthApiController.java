@@ -1,5 +1,6 @@
 package com.adela.hana_bridge_beapi.controller;
 
+import com.adela.hana_bridge_beapi.dto.email.RequestEmailCode;
 import com.adela.hana_bridge_beapi.dto.token.TokenResponse;
 import com.adela.hana_bridge_beapi.service.EmailAuthService;
 import com.adela.hana_bridge_beapi.service.TokenService;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,13 +36,17 @@ public class AuthApiController {
     }
 
     @PostMapping("/auth/email/send")
-    public ResponseEntity<String> sendEmail(@RequestParam String email){
-        emailAuthService.sendVerificationCode(email);
+    public ResponseEntity<String> sendEmail(@RequestBody RequestEmailCode requestEmailCode){
+        System.out.println(requestEmailCode.getEmail());
+        emailAuthService.sendVerificationCode(requestEmailCode.getEmail());
         return ResponseEntity.ok("인증번호가 이메일로 전송되었습니다.");
     }
 
     @PostMapping("/auth/email/verify")
-    public ResponseEntity<String> verifyCode(@RequestParam String email, @RequestParam String code){
+    public ResponseEntity<String> verifyCode(@RequestBody RequestEmailCode requestEmailCode){
+        String email = requestEmailCode.getEmail();
+        String code = requestEmailCode.getCode();
+
         boolean verified = emailAuthService.verifyCode(email, code);
         if (verified) {
             return ResponseEntity.ok("이메일 인증 성공");
