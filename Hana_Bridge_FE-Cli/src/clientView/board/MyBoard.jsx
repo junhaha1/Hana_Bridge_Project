@@ -81,7 +81,7 @@ const MyBoard = () => {
   const getMySearch = (word) => {
     const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchUserAssembleBoards;
 
-    getSearchmyBoards(toggle, word, sortType, email, page)
+    getSearchmyBoards(toggle, word, sortType, page)
     .then(async  (res) => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
@@ -161,14 +161,17 @@ const MyBoard = () => {
         }
         else{
           let getSortMyboard = null;
+          let res = null;
           //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
           if (toggle === "code"){
-            getSortMyboard = ApiClient.getMyBoard
+            res = await ApiClient.getMyBoard(page, sortType);
+          } else if (toggle === "assemble"){
+            res = await ApiClient.getMyAssemble(page, sortType);
+          } else if (toggle === "goodAssemble"){
+            res = await ApiClient.getMyGoodAssemble(page);
+          } else if (toggle === "goodCode"){
+            res = await ApiClient.getMyGoodBoard(page);
           }
-          if (toggle === "assemble"){
-            getSortMyboard = ApiClient.getMyAssemble
-          }
-          const res = await getSortMyboard(email, page, sortType);
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
