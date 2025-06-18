@@ -26,14 +26,24 @@ const defaultUserState = {
   }
 };
 
-// localStorage에서 불러오기 (Immer 오류 방지용 병합 포함)
+// localStorage에서 불러오기
+// 불러올 때 1시간 지나면 삭제
 const loadState = () => {
   try {
     const serializedState = localStorage.getItem('userState');
     if (serializedState === null) {
       return undefined;
     }
+
     const parsed = JSON.parse(serializedState);
+    const now = new Date().getTime();
+    const EXPIRATION_TIME = 60 * 60 * 1000; // 1시간
+
+    if (parsed.savedAt && now - parsed.savedAt > EXPIRATION_TIME) {
+      localStorage.clear(); // 모든 localStorage 삭제
+      console.log("⏰ 1시간 경과: localStorage 초기화됨");
+      return undefined;
+    }
 
     return {
       user: {
@@ -51,17 +61,23 @@ const loadState = () => {
   }
 };
 
-//localStorage에 저장하기
+// localStorage에 저장하기
 const saveState = (state) => {
   try {
-    const { chatMessages, aiPrompts, category } = state.user;
-    const serializedState = JSON.stringify({ chatMessages, aiPrompts, category });
-    //const serializedState = JSON.stringify(state.user.chatMessages);  // user slice만 저장
+    const { chatMessages, aiPrompts, category, nickName } = state.user;
+    const serializedState = JSON.stringify({
+      chatMessages,
+      aiPrompts,
+      category,
+      nickName,
+      savedAt: new Date().getTime() // 저장 시간 추가
+    });
     localStorage.setItem('userState', serializedState);
   } catch (err) {
     console.error("저장 실패", err);
   }
 };
+
 
 // Redux store 생성
 const store = configureStore({
@@ -85,7 +101,8 @@ let previousState = {
     level: '',
     option: ''
   },
-  category: ''
+  category: '',
+  nickName: 'guest'
 };
 
 // 상태 변경 감지해서 일부만 저장
@@ -95,19 +112,19 @@ store.subscribe(() => {
   const hasChanged =
     JSON.stringify(previousState.chatMessages) !== JSON.stringify(current.chatMessages) ||
     JSON.stringify(previousState.aiPrompts) !== JSON.stringify(current.aiPrompts) ||
-    previousState.category !== current.category;
+    previousState.category !== current.category ||
+    previousState.nickName !== current.nickName;
 
   if (hasChanged) {
     previousState = {
       chatMessages: current.chatMessages,
       aiPrompts: current.aiPrompts,
       category: current.category,
+      nickName: current.nickName
     };
 
     saveState({ user: previousState });
   }
 });
-
-
 
 export default store;
