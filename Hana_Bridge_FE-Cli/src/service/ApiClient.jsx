@@ -105,7 +105,7 @@ class ApiClient{
 
   //사용자가 좋아요 누른 게시글 조회
   static getMyGoodBoard(page){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/good/category/code/${page}`);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/good/category/code/${page}/latest`);
   }
 
   //사용자 본인 게시글 조회 (AssembleBoard)
@@ -115,7 +115,7 @@ class ApiClient{
 
   //사용자가 좋아요 누른 게시글 조회 (AssembleBoard)
   static getMyGoodAssemble(page){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}`);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}/latest`);
   }
   
 

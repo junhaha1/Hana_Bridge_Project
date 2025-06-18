@@ -20,7 +20,6 @@ const MyBoard = () => {
   const location = useLocation();
   const isBack = location.state?.from === "back";
   const backToggle = location.state?.toggle ?? "code";
-  console.log('backToggle: ' + backToggle);
 
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
@@ -42,7 +41,6 @@ const MyBoard = () => {
   const curPage = useSelector((state) => state.post.curMyPage);
   const curPageGroup = Math.floor((curPage -1) / 5 );
   const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
-  console.log("curPage: " + curPage + "  page: "+ page);
   const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
 
@@ -68,7 +66,6 @@ const MyBoard = () => {
 
   //이전 버튼이 아니라면 초기화
   useEffect(() => {
-    console.log("isBack: "+isBack);
     if (!isBack) {
       dispatch(resetPage('My'));
     } else {
@@ -172,6 +169,7 @@ const MyBoard = () => {
           } else if (toggle === "goodCode"){
             res = await ApiClient.getMyGoodBoard(page);
           }
+          
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -184,13 +182,18 @@ const MyBoard = () => {
           }
 
           const data = await res.json();
-          if (toggle === "code" && data.boards.length === 0) {
+          if ((toggle === "code" || toggle === "goodCode" ) && data.boards.length === 0) {
             setBoards(null);
-          } else if(toggle === "assemble" && data.assembleBoards.length === 0){
+          }
+          if ((toggle === "code" || toggle === "goodCode" ) && data.boards.length != 0) {
+            setBoards(data.boards);
+            setTotalPages(data.totalPages);
+          }
+          if((toggle === "assemble" || toggle === "goodAssemble") && data.assembleBoards.length === 0){
             setBoards(null);
-          } else {
-            // console.log(data.boards);
-            setBoards(toggle === "code" ? data.boards : data.assembleBoards);
+          }
+          if((toggle === "assemble" || toggle === "goodAssemble") && data.assembleBoards.length != 0){
+            setBoards(data.assembleBoards);
             setTotalPages(data.totalPages);
           }
         }
@@ -246,7 +249,7 @@ const MyBoard = () => {
           className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
           onClick={() => {
             setPage(i);
-            console.log("print i: " + i);
+            // console.log("print i: " + i);
             dispatch(setCurPage({curMyPage: i}));
           }}
 >
@@ -276,16 +279,22 @@ const MyBoard = () => {
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {
-    const address = toggle === "code" ? `/detailBoard/${boardId}` : `/detailAssemble/${boardId}`;
+    let address = null;
+    if (toggle === "code" || toggle === "goodCode"){
+      address = `/detailBoard/${boardId}`;
+    } 
+    if (toggle === "assemble" || toggle === "goodAssemble"){
+      address = `/detailAssemble/${boardId}`;
+    }
     navigate(address, { state: { category: category } });
-    console.log(category);
+    // console.log(category);
   };
 
   //enter로 전송
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       const word = e.target.value.trim();
-      console.log(word);
+      // console.log(word);
       if (word !== ""){
         getMySearch(word);
         setFixedWord(word);
@@ -359,6 +368,24 @@ const MyBoard = () => {
           >
             AI 답변
           </button>
+          <button
+          onClick={() => {
+              setToggle("goodAssemble");
+              resetBoards();
+            }}
+            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodAssemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+          >
+            좋아요 누른 AI 답변
+          </button>
+          <button
+            onClick={() => {
+              setToggle("goodCode");
+              resetBoards();
+            }}
+            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+          >
+            좋아요 누른 코드/질문
+          </button>
         </div>
         {boards !== null && (
           <>
@@ -408,7 +435,13 @@ const MyBoard = () => {
       ) : (
         <>
         {boards.map((post) => {
-          const boardId = toggle === "code" ? post.boardId : post.assembleBoardId;
+          let boardId = null;
+          if (toggle === "code" || toggle === "goodCode"){
+            boardId = post.boardId
+          } 
+          if (toggle === "assemble" || toggle === "goodAssemble"){
+            boardId = post.assembleBoardId;
+          }
           return (
             <div
               key={boardId}
