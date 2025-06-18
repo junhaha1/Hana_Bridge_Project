@@ -6,15 +6,41 @@ import { useNavigate} from "react-router-dom";
 import { modifyUser, clearUser, clearAiChat } from '../../store/userSlice';
 
 const UserInfoModal = ({ onClose, onSwitch }) => {
+   //이메일 관련
+  const [email,setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  useEffect(() => {
+
+    ApiClient.getUser()
+    .then((res) => {
+      console.log(res)
+      if (!res.ok) {
+        //error handler 받음 
+        const errorData = res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;   
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data.email);
+      setEmail(data.email);
+      setName(data.name);
+      setRole(data.role);
+    })
+    .catch((error) => {
+      console.error("내정보 불러오기 에러", error);
+    });
+  }, []);
   
-  //이메일 관련
-  const email = useSelector((state) => state.user.email);
-  const initialEmail = useRef(email);
+ 
 
   //사용자 정보 관련
-  const name = useSelector((state) => state.user.name);
   const nickName = useSelector((state) => state.user.nickName);
-  const role = useSelector((state) => state.user.role);
 
   //사용자 정보 수정용 temp 변수
   const [tempEmail, setTempEmail] = useState(email);
@@ -87,23 +113,15 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
 
   //정보 수정
   const updateUser = () => {
-    ApiClient.updateUser(tempEmail, name, tempNickName)
+    ApiClient.updateUser(email, name, tempNickName)
     .then((res) => {
       if (!res.ok) throw new Error(`서버 오류 [${res.status}]`);
       return res.json();
     })
     .then((data)=>{
-      console.log("정보 수정 완료 ! ");
+      alert("닉네임 수정 완료!");
       setIsEdit(false);
       dispatch(modifyUser({email: data.email, name: data.name, nickName: data.nickName}));
-      if (data.email !== email){
-        alert("이메일이 수정되었습니다. 다시 로그인 해주십시오.");
-        ApiClient.userLogout();
-        dispatch(clearUser());
-        dispatch(clearAiChat());
-        localStorage.removeItem('userState');
-        navigate('/');
-      }
     })
     .catch((err) => {
       console.error("API 요청 실패:", err);
@@ -211,7 +229,7 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                     <label className="block text-black font-semibold mb-1">
                       이메일<span className="text-red-500">*</span>
                     </label>
-                    <input type="email" value={tempEmail} readOnly
+                    <input type="email" value={email} readOnly
                       className={`w-full px-3 py-2 rounded text-black bg-gray-300`} />
                   </div>
 
