@@ -463,18 +463,24 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         {/* </div> */}
         <div className='flex flex-row gap-2 overflow-visible z-[9000] '>
           <div
-            className="relative z-[9000]"
-            onMouseEnter={() => setIsCountInfo(true)}
-            onMouseLeave={() => setIsCountInfo(false)}
+            className="relative z-[9000]"            
           >
-            <button className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mx-1 text-sm text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+            <button 
+              className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mx-1 
+              text-sm text-white rounded-full hover:bg-zinc-600 hover:shadow-md"
+              onMouseEnter={() => setIsCountInfo(true)}
+              onMouseLeave={() => setIsCountInfo(false)}
+            >
               <MdGeneratingTokens  className="m-1" />
               잔여량 확인
             </button>
 
             <div
               className={`absolute top-full left-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
-              style={{ opacity: isCountInfo ? 1 : 0 }}
+              style={{ 
+                opacity: isCountInfo ? 1 : 0,
+                pointerEvents: isHovered ? "auto" : "none",
+               }}
             >
               <span className="text-yellow-400 font-semibold">남은 질문 횟수 : </span>{questionCount}<br/>
               <span className="text-yellow-400 font-semibold">남은 요약 횟수 : </span>{summaryCount} <br/>
@@ -494,18 +500,24 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             새 대화창
           </button>
           <div
-            className="relative z-[9000]"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            className="relative z-[9000]"            
           >
-            <button className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mr-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+            <button 
+              className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mr-1 text-white 
+                rounded-full hover:bg-zinc-600 hover:shadow-md"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
               <FaLightbulb className="m-1" />
               Tip
             </button>
 
             <div
               className={`absolute top-full right-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
-              style={{ opacity: isHovered ? 1 : 0 }}
+              style={{ 
+                opacity: isHovered ? 1 : 0,
+                pointerEvents: isHovered ? "auto" : "none",
+             }}
             >
               설정에서 <span className="text-yellow-400 font-semibold">프롬프트</span>를 명확히 설정하고 <br/>
               <span className="text-yellow-400 font-semibold">질문을 구체적</span>으로 할수록 <br/>
