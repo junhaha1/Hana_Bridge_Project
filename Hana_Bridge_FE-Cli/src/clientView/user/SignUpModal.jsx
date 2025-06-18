@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import ApiClient from "../../service/ApiClient";
 
 const SignUpModal = ({ onClose, onSwitch }) => {
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [checkPwd, setCheckPwd] = useState("");
   const [name, setName] = useState("");
@@ -19,15 +19,79 @@ const SignUpModal = ({ onClose, onSwitch }) => {
   const [emailError, setEmailError] = useState("");
   const [shakeEmail, setShakeEmail] = useState(false);
 
+  const [isChecking, setIsChecking] = useState(false);
+  const [isVerfied, setIsVerified] = useState(false);
+  const [receiving, setReceiving] = useState(false);
+  //인증 코드 입력 타이머
+  const [timeLeft, setTimeLeft] = useState(300);
+
+  useEffect(() => {
+  if (!isChecking || isVerfied) return;
+
+  const timer = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev < 1) {
+        clearInterval(timer);
+        setIsChecking(false);
+        setIsVerified(false);
+        alert("인증 시간이 만료되었습니다.\n다시 시도해주십시오.");
+        return 300;
+      }
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [isChecking, isVerfied]);
+
   const isValidPassword = (password) => {
     const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=-]).{8,}$/;
     return regex.test(password);
   };
 
+  const sendEmailCode = (email) => {
+    setReceiving(true);
+    ApiClient.requestEmailCode(email)
+    .then((res) => {
+      if (!res.ok) 
+        throw new Error(`서버 오류: ${res.status}`);
+      setIsChecking(true);
+      alert("인증번호가 발급되었습니다.");
+    })
+    .catch((err) => {
+      console.error("인증 메일 실패:", err);
+      setIsChecking(false);
+      alert("다시 시도해주십시오.");
+    })
+    .finally(()=>{
+      setReceiving(false);
+    })
+  }
+
+  const responseEmailCode = (email, code) => {
+    ApiClient.verifyCode(email, code)
+    .then((res) => {
+      if (!res.ok) 
+          throw new Error(res.status);
+
+      setIsVerified(true);
+      alert("인증되었습니다!");
+    })
+    .catch((errCode) => {
+      if (errCode.message === "400"){
+        console.error("인증 실패:", errCode);
+        alert("인증번호가 틀렸거나 만료되었습니다.\n다시 시도해주십시오.");
+      } else {
+        console.error("서버 오류:", errCode);
+        alert("잠시 후 다시 시도해주십시오.");
+      }
+    });
+  }
+
   const handleSignup = () => {
     let isValid = true;
     if (!name.trim()) {
-      setNameError("아이디는 피");
+      setNameError("아이디는 필수입니다.");
       setShakeName(true);
       setTimeout(() => setShakeName(false), 500);
       isValid = false;
@@ -58,6 +122,13 @@ const SignUpModal = ({ onClose, onSwitch }) => {
       setPasswordError("비밀번호가 일치하지 않습니다.");
       setShakePassword(true);
       setTimeout(() => setShakePassword(false), 500);
+      isValid = false;
+    }
+
+    if (!isVerfied) {
+      setEmailError("이메일 인증을 진행해주세요!");
+      setShakeEmail(true);
+      setTimeout(() => setShakeEmail(false), 500);
       isValid = false;
     }
 
@@ -143,6 +214,14 @@ const SignUpModal = ({ onClose, onSwitch }) => {
                 <button
                   type="button"
                   className="bg-gray-200 px-3 py-1 text-sm rounded hover:bg-gray-300"
+                  disabled = {isChecking}
+                  onClick={() => {
+                    if (email.trim() === ""){
+                      alert("이메일을 입력해주세요!");
+                    } else {
+                      sendEmailCode(email);
+                    }
+                  }}  
                 >
                   코드발송
                 </button>                
@@ -150,19 +229,34 @@ const SignUpModal = ({ onClose, onSwitch }) => {
               {emailError && (
                 <p className="text-red-500 text-sm mt-0">{emailError}</p>
               )}
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="인증코드"
-                  className="flex-1 border-b border-gray-300 py-2 focus:outline-none focus:border-blue-500"
-                />
-                <button
-                  type="button"
-                  className="bg-gray-200 px-3 py-1 text-sm rounded hover:bg-gray-300"
-                >
-                  인증하기
-                </button>
-              </div>
+              {receiving && (
+                <p className="text-red-500 text-sm mt-0">인증코드 발급 중...</p>
+              )}
+              {isChecking && !isVerfied && (
+                <>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="인증코드"
+                    className="flex-1 border-b border-gray-300 py-2 focus:outline-none focus:border-blue-500"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="bg-gray-200 px-3 py-1 text-sm rounded hover:bg-gray-300"
+                    onClick={() => responseEmailCode(email, code.trim())}
+                  >
+                    인증하기
+                  </button>
+                </div>
+                <p className="text-red-500 text-sm mt-1">
+                  {`${Math.floor(timeLeft / 60)
+                    .toString()
+                    .padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`}
+                </p>
+                </>
+              )}
             </div>
 
             <div>

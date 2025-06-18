@@ -16,6 +16,34 @@ class ApiClient{
   //Open AI
   static AIChat = "/chat"
 
+  //해당 이메일로 인증번호 받아오기
+  static requestEmailCode(requestEmail){
+    return fetch(ApiClient.SERVER_URL + "/auth/email/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: requestEmail 
+      }),
+    });
+  }
+
+  //인증번호 인증하기
+  static verifyCode(requestEmail, inputCode) {
+    return fetch(ApiClient.SERVER_URL + "/auth/email/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: requestEmail,
+        code: inputCode
+      }),
+    });
+  }
+
+  //현재 사용자의 질문, 요약 횟수 조회
   static getQuestionAndSummaryCount(){
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.USER + `/question`);
   }

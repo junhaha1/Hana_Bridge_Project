@@ -211,8 +211,8 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                     <label className="block text-black font-semibold mb-1">
                       이메일<span className="text-red-500">*</span>
                     </label>
-                    <input type="email" value={tempEmail} readOnly/*={!isEdit}*/ onChange={(e) => setTempEmail(e.target.value)}
-                      className={`w-full px-3 py-2 rounded text-black ${isEdit ? 'bg-gray-100 cursor-text' : 'bg-gray-300'}`} />
+                    <input type="email" value={tempEmail} readOnly
+                      className={`w-full px-3 py-2 rounded text-black bg-gray-300`} />
                   </div>
 
                   <div>
@@ -244,10 +244,10 @@ const UserInfoModal = ({ onClose, onSwitch }) => {
                         <button type="button" onClick={() => setIsEdit(true)} className="bg-blue-600 hover:bg-blue-700 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           정보 수정
                         </button>
-                        <button type="button" /*onClick={() => setIsChangePassword(true)}*/ className="bg-red-600 hover:bg-red-700 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
+                        <button type="button" onClick={() => setIsChangePassword(true)} className="bg-red-600 hover:bg-red-700 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           비밀번호 변경
                         </button>
-                        <button type="button" /*onClick={() => openDeleteModal()}*/ className="bg-red-500 hover:bg-red-600 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
+                        <button type="button" onClick={() => openDeleteModal()} className="bg-red-500 hover:bg-red-600 text-white md:px-4 md:py-2 rounded whitespace-nowrap max-md:text-sm max-md:py-1 max-md:px-2">
                           회원 탈퇴
                         </button>
                       </>

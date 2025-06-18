@@ -51,6 +51,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
                         //AccessToken 재발급
                         .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
+                        //이메일 인증 받기
+                        .requestMatchers(HttpMethod.POST, "/auth/email/*").permitAll()
                         .requestMatchers("/chat/answer/stream").permitAll()
 
                         //글 등록, 수정, 삭제, ChatBot 이용은 ROLE_USER, ROLE_ADMIN만 접근 가능(ROLE_GUEST는 불가능)
