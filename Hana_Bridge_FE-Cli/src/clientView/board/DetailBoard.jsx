@@ -403,12 +403,6 @@ const DetailBoard = () => {
                 </div>
               ) : (
                 <div className={detailCardStyle}>
-                  {/* 게시글 보기 (테두리 없이 투명 배경) */}
-                  {/* <div  className={detailCategory}>
-                    {category === "code"
-                      ? "코드/질문 게시판 > 상세글"
-                      : "공지 게시판 > 상세글"}
-                  </div> */}
                   <h2 className={detailTitle}>{board.title}</h2>
                   <div className={userDate}>
                     <span className='flex gap-1'>
@@ -422,7 +416,7 @@ const DetailBoard = () => {
                     </span>                  
                   </div>
                   <div className="border-t border-white/10 mb-3" />
-                  {category === "code"
+                  { (category === "code" || category === 'me') && (role !== 'ROLE_ADMIN')
                     ? 
                     <div className="text-white">
                       <ReactMarkdown

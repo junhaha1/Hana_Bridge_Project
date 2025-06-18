@@ -25,6 +25,7 @@ const MyBoard = () => {
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
+  const role = useSelector((state) => state.user.role);
 
   //토글에 따라 읽어오는 게시글 변경
   const [toggle, setToggle] = useState(backToggle);
@@ -344,7 +345,7 @@ const MyBoard = () => {
             }}
             className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
           >
-            코드 질문
+            {role === 'ROLE_ADMIN' ? '공지' : '코드 질문'}
           </button>
           <button
             onClick={() => {
