@@ -63,7 +63,7 @@ const BoardHeader = () => {
         <div
           className={titleBox}
           onClick={() => {
-            if (email && email !== "guest@email.com") {
+            if (nickName && nickName !== "guest") {
               //dispatch(setPage({page:'home'}));
               dispatch(setCategory({category:'dash'}));
               navigate("/dashboard/home");
@@ -79,7 +79,7 @@ const BoardHeader = () => {
 
         {/* 로그인 / 회원가입 or 로그아웃 */}
         <div className={serviceBox}>
-          {email === "guest@email.com" ? (
+          {nickName === "guest" ? (
             <>
               <button
                 onClick={() => openModal("login")}
@@ -112,19 +112,22 @@ const BoardHeader = () => {
 
 
             <div
-              className="relative z-[9000]"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              className="relative z-[9000]"              
             >
               <button
                 onClick={() => openModal("myinfo")}
                 className={userButton}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
               >
                  <FaUserCircle className={userIcon}/> {nickName}
               </button>   
               <div
                 className={`absolute top-full right-0 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
-                style={{ opacity: isHovered ? 1 : 0 }}
+                style={{ 
+                  opacity: isHovered ? 1 : 0,
+                  pointerEvents: isHovered ? "auto" : "none",  // 👈 핵심
+                }}
               >
                 사용자 정보를 확인하고 수정할 수 있습니다. 
               </div>

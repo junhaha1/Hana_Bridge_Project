@@ -64,6 +64,8 @@ const DetailBoard = () => {
   const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
+  const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
+
   //textarea 높이 자동화
   const textareaRef = useRef(null);
   const scrollRef = useRef(null);
@@ -299,7 +301,7 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] w-full max-w-full break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} w-full max-w-full break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
             {!board ? 
             (
               <div className="text-white text-center mt-10">불러오는 중...</div>

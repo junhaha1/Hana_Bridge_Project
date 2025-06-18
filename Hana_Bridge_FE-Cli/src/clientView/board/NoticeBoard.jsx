@@ -13,6 +13,7 @@ import { BiLike } from "react-icons/bi";
 import { upBottom, inputResetButton, addButton, cardAuthor, cardBottomLayout, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, mainTitle, searchBox,  } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
 
+
 const NoticeBoard = () => {
   const [boards, setBoards] = useState(null);
   const category = useSelector((state) => state.user.category);
@@ -23,6 +24,7 @@ const NoticeBoard = () => {
   const scrollRef = useRef(null);
   const location = useLocation();
   const isBack = location.state?.from === "back";
+  const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
 
   const [searchWord, setSearchWord] = useState(""); //검색창에 입력된 단어를 갱신하는 변수
   const [fixedWord, setFixedWord] = useState(""); //검색이 확정된 단어
@@ -256,7 +258,7 @@ const NoticeBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle +" max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+    <div ref={scrollRef} className={`${scrollStyle}  ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col mb-2">
         <h3 className={mainTitle}>공지 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">

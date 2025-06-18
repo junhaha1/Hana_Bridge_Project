@@ -6,6 +6,7 @@ import Header from "../header/Header.jsx";
 import LeftHeader from "../header/LeftHeader.jsx";
 
 import Lottie from "lottie-react";
+import { useNavigate } from "react-router-dom";
 import HelloWorld from "../../animations/helloworld.json";
 import DashboardCards from "./DashBoardCards.jsx";
 
@@ -16,11 +17,17 @@ const DashBoard = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const lottieRef = useRef();
   const playFlag = useSelector((state) => state.user.playFlag);
+  const nickName = useSelector((state) => state.user.nickName);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
   const page = useSelector((state) => state.user.page);  
 
   useEffect(() => {
+    if(!nickName || nickName === 'guest'){
+      navigate('/');
+    }
     if (lottieRef.current) {
       try {
         lottieRef.current.setSpeed(2);
