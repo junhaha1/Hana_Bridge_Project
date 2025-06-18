@@ -8,6 +8,7 @@ const initialState = {
   curNoticePage: 1,
   curAssemblePage: 1,
   curMyPage: 1,
+  isOpenLeftHeader: true,
 };
 
 const postSlice = createSlice({
@@ -52,9 +53,12 @@ const postSlice = createSlice({
       } else if (category === 'my') {
         state.curMyPage = 1;
       }
-    }
+    },
+    setIsOpenLeftHeader: (state, action) => {
+      state.isOpenLeftHeader = action.payload;
+    },
   }
 });
 
-export const { setPostLoading, setPostComplete, resetPostState, setCurPage, setCurPageGroup, resetPage } = postSlice.actions;
+export const { setPostLoading, setPostComplete, resetPostState, setCurPage, setCurPageGroup, resetPage, setIsOpenLeftHeader } = postSlice.actions;
 export default postSlice.reducer;

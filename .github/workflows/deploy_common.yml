@@ -99,6 +99,7 @@ jobs:
           echo "INIT_DB=init.sql" >> .env
           echo "MYSQL_HOST=mysql" >> .env
           echo "REDIS_HOST=redis" >> .env
+          
 
       - name: 📄 Generate frontend .env.production
         if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.compose_changed == 'true'

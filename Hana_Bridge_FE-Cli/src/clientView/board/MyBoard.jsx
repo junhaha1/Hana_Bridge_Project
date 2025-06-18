@@ -20,11 +20,11 @@ const MyBoard = () => {
   const location = useLocation();
   const isBack = location.state?.from === "back";
   const backToggle = location.state?.toggle ?? "code";
-  console.log('backToggle: ' + backToggle);
 
   const category = useSelector((state) => state.user.category);
   const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
+  const role = useSelector((state) => state.user.role);
 
   //토글에 따라 읽어오는 게시글 변경
   const [toggle, setToggle] = useState(backToggle);
@@ -41,9 +41,10 @@ const MyBoard = () => {
   const curPage = useSelector((state) => state.post.curMyPage);
   const curPageGroup = Math.floor((curPage -1) / 5 );
   const [page, setPage] = useState(curPage); // 현재 페이지 (1부터 시작)
-  console.log("curPage: " + curPage + "  page: "+ page);
   const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
+
+  const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
 
 
   //맨 위로가기 버튼 
@@ -65,7 +66,6 @@ const MyBoard = () => {
 
   //이전 버튼이 아니라면 초기화
   useEffect(() => {
-    console.log("isBack: "+isBack);
     if (!isBack) {
       dispatch(resetPage('My'));
     } else {
@@ -78,7 +78,7 @@ const MyBoard = () => {
   const getMySearch = (word) => {
     const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchUserAssembleBoards;
 
-    getSearchmyBoards(toggle, word, sortType, email, page)
+    getSearchmyBoards(toggle, word, sortType, page)
     .then(async  (res) => {
       if (!res.ok) {
         const errorData = await res.json(); // JSON으로 파싱
@@ -158,14 +158,18 @@ const MyBoard = () => {
         }
         else{
           let getSortMyboard = null;
+          let res = null;
           //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
           if (toggle === "code"){
-            getSortMyboard = ApiClient.getMyBoard
+            res = await ApiClient.getMyBoard(page, sortType);
+          } else if (toggle === "assemble"){
+            res = await ApiClient.getMyAssemble(page, sortType);
+          } else if (toggle === "goodAssemble"){
+            res = await ApiClient.getMyGoodAssemble(page);
+          } else if (toggle === "goodCode"){
+            res = await ApiClient.getMyGoodBoard(page);
           }
-          if (toggle === "assemble"){
-            getSortMyboard = ApiClient.getMyAssemble
-          }
-          const res = await getSortMyboard(email, page, sortType);
+          
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -178,13 +182,18 @@ const MyBoard = () => {
           }
 
           const data = await res.json();
-          if (toggle === "code" && data.boards.length === 0) {
+          if ((toggle === "code" || toggle === "goodCode" ) && data.boards.length === 0) {
             setBoards(null);
-          } else if(toggle === "assemble" && data.assembleBoards.length === 0){
+          }
+          if ((toggle === "code" || toggle === "goodCode" ) && data.boards.length != 0) {
+            setBoards(data.boards);
+            setTotalPages(data.totalPages);
+          }
+          if((toggle === "assemble" || toggle === "goodAssemble") && data.assembleBoards.length === 0){
             setBoards(null);
-          } else {
-            // console.log(data.boards);
-            setBoards(toggle === "code" ? data.boards : data.assembleBoards);
+          }
+          if((toggle === "assemble" || toggle === "goodAssemble") && data.assembleBoards.length != 0){
+            setBoards(data.assembleBoards);
             setTotalPages(data.totalPages);
           }
         }
@@ -240,7 +249,7 @@ const MyBoard = () => {
           className={`px-3 py-1 mx-1 rounded ${i === page ? 'bg-[#C5BCFF] text-black' : 'bg-white/20 text-white'}`}
           onClick={() => {
             setPage(i);
-            console.log("print i: " + i);
+            // console.log("print i: " + i);
             dispatch(setCurPage({curMyPage: i}));
           }}
 >
@@ -270,16 +279,22 @@ const MyBoard = () => {
 
   //board를 클릭했을 때 이동
   const boardClick = (boardId) => {
-    const address = toggle === "code" ? `/detailBoard/${boardId}` : `/detailAssemble/${boardId}`;
+    let address = null;
+    if (toggle === "code" || toggle === "goodCode"){
+      address = `/detailBoard/${boardId}`;
+    } 
+    if (toggle === "assemble" || toggle === "goodAssemble"){
+      address = `/detailAssemble/${boardId}`;
+    }
     navigate(address, { state: { category: category } });
-    console.log(category);
+    // console.log(category);
   };
 
   //enter로 전송
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       const word = e.target.value.trim();
-      console.log(word);
+      // console.log(word);
       if (word !== ""){
         getMySearch(word);
         setFixedWord(word);
@@ -303,7 +318,7 @@ const MyBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>내 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
@@ -342,7 +357,7 @@ const MyBoard = () => {
             }}
             className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
           >
-            코드 질문
+            {role === 'ROLE_ADMIN' ? '공지' : '코드 질문'}
           </button>
           <button
             onClick={() => {
@@ -352,6 +367,24 @@ const MyBoard = () => {
             className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
           >
             AI 답변
+          </button>
+          <button
+          onClick={() => {
+              setToggle("goodAssemble");
+              resetBoards();
+            }}
+            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodAssemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+          >
+            좋아요 누른 AI 답변
+          </button>
+          <button
+            onClick={() => {
+              setToggle("goodCode");
+              resetBoards();
+            }}
+            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+          >
+            좋아요 누른 코드/질문
           </button>
         </div>
         {boards !== null && (
@@ -402,7 +435,13 @@ const MyBoard = () => {
       ) : (
         <>
         {boards.map((post) => {
-          const boardId = toggle === "code" ? post.boardId : post.assembleBoardId;
+          let boardId = null;
+          if (toggle === "code" || toggle === "goodCode"){
+            boardId = post.boardId
+          } 
+          if (toggle === "assemble" || toggle === "goodAssemble"){
+            boardId = post.assembleBoardId;
+          }
           return (
             <div
               key={boardId}

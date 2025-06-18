@@ -29,6 +29,22 @@ public class AssembleBoardService {
     private final AssembleRepository assembleRepository;
     private final int SIZE = 8;
 
+    //사용자가 좋아요를 누른 assemble 게시글 조회
+    //모든 assemble 게시글 조회
+    public Page<AssembleBoard> findWithGood(int page, String sort, long userId) {
+        if (sort.equals("latest")) {
+            sort = "createAt";
+        } else {
+            sort = "likeCount";
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(sort).descending());
+
+        Page<AssembleBoard> pageBoards = assembleRepository.findAllWithGood(pageable, userId);
+
+        return pageBoards;
+    }
+
     //모든 assemble 게시글 조회
     public Page<AssembleBoard> findAllAssembleBoards(int page, String sort) {
         if (sort.equals("latest")) {

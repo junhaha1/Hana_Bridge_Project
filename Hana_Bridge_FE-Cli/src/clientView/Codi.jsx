@@ -31,8 +31,16 @@ const CodeHelper = () => {
   // const postAssembleId = useSelector((state) => state.user.postAssembleId);
 
   const [showCompleteMessage, setShowCompleteMessage] = useState(false);
-
   const [promptLevel, setPromptLevel] = useState(0);
+
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -115,12 +123,12 @@ const CodeHelper = () => {
           <motion.div
             key="chatBox"
             initial={{
-              width: subTalking ? 500 : "50vw",
-              height: subTalking ? 700 : "100vh",
+              width: isMobile ? "100%" : subTalking ? 500 : "50vw",
+              height: isMobile ? "100%" : subTalking ? 700 : "100vh",
             }}
             animate={{
-              width: fullTalking ? "50vw" : 500,
-              height: fullTalking ? "100vh" : 700,
+              width: isMobile ? "100%" : fullTalking ? "50vw" : 500,
+              height: isMobile ? "100%" : fullTalking ? "100vh" : 700,
             }}
             exit={{
               opacity: 0,
@@ -130,6 +138,10 @@ const CodeHelper = () => {
             transition={{
               duration: 0.5,
               ease: "easeInOut",
+            }}
+            style={{
+              width: window.innerWidth <= 768 ? "100%" : fullTalking ? "50vw" : "500px",
+              height: window.innerWidth <= 768 ? "100%" : fullTalking ? "100vh" : "700px",
             }}
             className="fixed bottom-0 right-0 z-[8000] overflow-hidden
               md:border-2 md:border-white/50 md:rounded-2xl bg-black

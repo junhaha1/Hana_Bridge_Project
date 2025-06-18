@@ -64,6 +64,8 @@ const DetailBoard = () => {
   const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
+  const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
+
   //textarea 높이 자동화
   const textareaRef = useRef(null);
   const scrollRef = useRef(null);
@@ -299,7 +301,7 @@ const DetailBoard = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] w-full max-w-full break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} w-full max-w-full break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
             {!board ? 
             (
               <div className="text-white text-center mt-10">불러오는 중...</div>
@@ -401,12 +403,6 @@ const DetailBoard = () => {
                 </div>
               ) : (
                 <div className={detailCardStyle}>
-                  {/* 게시글 보기 (테두리 없이 투명 배경) */}
-                  {/* <div  className={detailCategory}>
-                    {category === "code"
-                      ? "코드/질문 게시판 > 상세글"
-                      : "공지 게시판 > 상세글"}
-                  </div> */}
                   <h2 className={detailTitle}>{board.title}</h2>
                   <div className={userDate}>
                     <span className='flex gap-1'>
@@ -420,7 +416,7 @@ const DetailBoard = () => {
                     </span>                  
                   </div>
                   <div className="border-t border-white/10 mb-3" />
-                  {category === "code"
+                  { (category === "code") || (category === 'me' && role !== 'ROLE_ADMIN')
                     ? 
                     <div className="text-white">
                       <ReactMarkdown
