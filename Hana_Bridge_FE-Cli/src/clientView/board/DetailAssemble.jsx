@@ -147,14 +147,24 @@ const DetailAssemble = () => {
             ):(
               <>
               <button
-                onClick={() => navigate(`/board/${myCategory}`, { state: { from: "back", toggle: "assemble" } })}
+              onClick={() => {
+                   console.log("navigate 클릭됨, category:", myCategory); // 디버깅
+
+                    if (!myCategory || myCategory.trim() === "" || myCategory === "dash") {
+                      console.log("대시보드로 이동");
+                      navigate("/dashboard/home");
+                    } else {
+                      console.log("게시판으로 이동");
+                       navigate(`/board/${myCategory}`, { state: { from: "back", toggle: "assemble" } })
+                    }
+                }}
                 className={buttonStyle + backButton}
               >
                 이전
               </button>
 
               <div className={detailCardStyle}>
-                <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
+                {/* <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div> */}
 
                 <h2 className={detailTitle}>{board.title}</h2>
                 <div className={userDate}>

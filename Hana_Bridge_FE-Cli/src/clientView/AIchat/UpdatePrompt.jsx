@@ -3,6 +3,8 @@ import { cancelButton, okButton } from "../../style/AIChatStyle";
 import { useDispatch, useSelector } from "react-redux";
 import ApiClient from "../../service/ApiClient";
 import { setUserPromptList } from "../../store/aiChatSlice";
+import { promptButton } from "../../style/AIChatStyle";
+
 
 /*프롬포트 갱신, 삭제창 */
 const UpdatePrompt = ({onClose}) => {
@@ -89,37 +91,55 @@ const UpdatePrompt = ({onClose}) => {
     }
   }
 
+  
+
   return (
     <>
       <div>
-        <select
-          className="w-full p-2 rounded text-base text-black"
-          onChange={(e) => {
-            console.log("프롬포트 설정: " +  e.target.value);
-            const selected = userPromptList.find(
-              (p) => String(p.promptId) === e.target.value
-            );
-            console.log(selected);
-            setTargetPrompt(selected);
-            setTempPrompt(selected);
-            setIsEdit(false);
-          }}
-          value={targetPrompt?.promptId ?? ""}
-        >
-          <option value="" selected disabled hidden>
-            선택해주세요
-          </option>
-          {userPromptList.map((prom) => (
-            <option
-              className="text-black"
-              value={prom.promptId}
-              key={prom.promptId}
-            >
-              {prom.name}
-            </option>
-          ))}
-        </select>
+        <p className='text-base font-semibold'>수정할 프롬프트를 선택해주세요</p>
+
+        {userPromptList.map((prom) => (
+          <div
+            key={prom.promptId}
+            className={`bg-white/10 p-2 border rounded border-white/20 shadow-md 
+              cursor-pointer hover:bg-white/30 mb-2 w-full hover:bg-yellow-100 
+              ${targetPrompt?.promptId === prom.promptId ? 'border-2 border-yellow-400 bg-yellow-100' : ''}`}
+            onClick={() => {
+              const isSelected = targetPrompt?.promptId === prom.promptId;
+
+              if (isSelected) {
+                // 이미 선택된 카드 → 선택 해제
+                setTargetPrompt({
+                  promptId: '',
+                  name: '',
+                  role: '',
+                  form: '',
+                  level: '',
+                  option: ''
+                });
+                setTempPrompt({
+                  promptId: '',
+                  name: '',
+                  role: '',
+                  form: '',
+                  level: '',
+                  option: ''
+                });
+                setIsEdit(false);
+              } else {
+                // 새로 선택된 카드
+                console.log("프롬포트 설정: " + prom.promptId);
+                setTargetPrompt(prom);
+                setTempPrompt(prom);
+                setIsEdit(false);
+              }
+            }}
+          >
+            <p className='text-lg font-semibold mb-0'>{prom.name}</p>
+          </div>
+        ))}
       </div>
+
       {targetPrompt.promptId !== '' && (
         <>
           <p className='font-semibold mb-0'>내 프롬포트 이름</p>

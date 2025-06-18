@@ -155,7 +155,7 @@ const AddBoard = () => {
       <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         <main className={detailFrame}>
-          <div className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] max-md:mt-1 md:mt-12 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
             <h4 className="text-2xl font-bold mb-1 pb-2">글 작성하기</h4>
 
             <p className='text-white/80'>코드 질문 게시판</p>
@@ -177,7 +177,7 @@ const AddBoard = () => {
                           : 'border border-white text-white'
                       }`}
                     >
-                      NOTICE 게시판
+                      공지 게시판
                     </button>
                       <button
                       type="button"
@@ -188,7 +188,7 @@ const AddBoard = () => {
                           : 'border border-white text-white'
                       }`}
                     >
-                      CODE 게시판
+                      코드/질문 게시판
                     </button>
                   </div>
               </div>
@@ -265,7 +265,7 @@ const AddBoard = () => {
                     if (contentError) setContentError(""); // 수정 시 에러 제거
                   }}
                   placeholder="작성할 글을 적어 주세요"
-                  className={`${addContent} ${contentError ? '!border-red-500' : 'border-white'}`}
+                  className={`${addContent} ${scrollStyle} ${contentError ? '!border-red-500' : 'border-white'}`}
                 />
                 {contentError && (
                   <p className="text-red-500 text-sm mt-0">{contentError}</p>
@@ -273,7 +273,7 @@ const AddBoard = () => {
               </div>
 
               {/* 버튼 */}
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-4 mb-24">
                 <button 
                   onClick={() => navigate(-1)}
                   className={addBoardButton}

@@ -243,6 +243,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setMessages(updatedMessages);
     //입력창 초기화
     setInput('');
+    // 입력창 높이 초기화 (1줄로 복귀) 번외: 함수로 감싸는 이유: DOM 반영 후 안전하게 실행하기 위해 
+    requestAnimationFrame(() => { 
+      if (textRef.current) {
+        textRef.current.style.height = 'auto';
+      }
+    });
+
+    
     
     /* API 호출하여 스트림 연결 */
     console.log(userPrompt);
@@ -456,7 +464,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             </button>
 
             <div
-              className={`absolute top-full right-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+              className={`absolute top-full left-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
               style={{ opacity: isCountInfo ? 1 : 0 }}
             >
               <span className="text-yellow-400 font-semibold">남은 질문 횟수 : </span>{questionCount}<br/>
@@ -630,12 +638,18 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 <AiFillRobot className='w-7 h-7 text-white'/>
               )}
               <div
-                className={`max-w-[80%] px-3 py-2 mb-2 max-md:text-sm md:text-base whitespace-pre-wrap ${
+                className={`max-w-[80%] px-3 py-2 mb-2 max-md:text-sm md:text-base whitespace-pre-wrap 
+                ${
                   msg.role === '답변'
                     ? aiBox
                     : userBox
-                } [&>*]:m-0`}
+                } [&>*]:m-0 transform-none will-change-auto origin-top-left isolate`}
                 ref = {msg.role === '답변' ? copyRef : null}
+                style={{
+                  transform: "none",
+                  willChange: "auto",
+                  isolation: "isolate", // ✅ stacking context 분리
+                }}
               >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}

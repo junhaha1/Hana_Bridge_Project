@@ -15,12 +15,23 @@ import java.util.Date;
 public class TokenProvider {
     private final JwtProperties jwtProperties;
 
+    //사용자 로그인용
     public String createToken(String email, String role, long expirationMillis) {
         return JWT.create()
                 .withSubject(email)
                 .withIssuer(jwtProperties.getIssuer())
                 .withClaim("role", role)
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationMillis))
+                .sign(Algorithm.HMAC256(jwtProperties.getSecretKey()));
+    }
+    //이메일 인증에 사용되는 JWT
+    public String createEmailToken(String email, String code, long minues){
+        return  JWT.create()
+                .withSubject(email)
+                .withIssuer(jwtProperties.getIssuer())
+                .withClaim("email", email)
+                .withClaim("code", code)
+                .withExpiresAt(new Date(System.currentTimeMillis() + minues * 60 * 1000))
                 .sign(Algorithm.HMAC256(jwtProperties.getSecretKey()));
     }
 
@@ -42,8 +53,8 @@ public class TokenProvider {
     public String getEmail(String token) {
         return validateToken(token).getSubject();
     }
-
     public String getRole(String token) {
         return validateToken(token).getClaim("role").asString();
     }
+    public String getCode(String token) {return validateToken(token).getClaim("code").asString();}
 }

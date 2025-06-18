@@ -78,6 +78,9 @@ const DetailBoard = () => {
     }
   };
 
+  useEffect(() => {
+    setCategory(myCategory);
+  }, [myCategory]);
 
   //비회원이 좋아요 눌렀을때 띄울 메시지 
   const [showGuestMessage, setShowGuestMessage] = useState(false);
@@ -303,20 +306,23 @@ const DetailBoard = () => {
             ):(
               <>
               <button
-                onClick={() => navigate(`/board/ ${category}`, { state: { from: "back" } })}
+                onClick={() => {
+                   console.log("navigate 클릭됨, category:", category); // 디버깅
+
+                    if (!category || category.trim() === "" || category === "dash") {
+                      console.log("대시보드로 이동");
+                      navigate("/dashboard/home");
+                    } else {
+                      console.log("게시판으로 이동");
+                      navigate(`/board/${category}`, { state: { from: "back" } });
+                    }
+                }}
                 className={buttonStyle + backButton}
               >
                 이전
               </button>     
               {isEdit ? (              
                 <div className={detailCardStyle}>
-                  {/* 게시글 수정 폼 */}
-                    <div className={detailCategory}>
-                      {category === "code"
-                        ? "코드/질문 게시판 > 상세글"
-                        : "공지 게시판 > 상세글"}
-                    </div>
-
                     <input
                       type="text"
                       className={editTitle}
@@ -396,11 +402,11 @@ const DetailBoard = () => {
               ) : (
                 <div className={detailCardStyle}>
                   {/* 게시글 보기 (테두리 없이 투명 배경) */}
-                  <div  className={detailCategory}>
+                  {/* <div  className={detailCategory}>
                     {category === "code"
                       ? "코드/질문 게시판 > 상세글"
                       : "공지 게시판 > 상세글"}
-                  </div>
+                  </div> */}
                   <h2 className={detailTitle}>{board.title}</h2>
                   <div className={userDate}>
                     <span className='flex gap-1'>
