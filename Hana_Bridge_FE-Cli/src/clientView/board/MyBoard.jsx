@@ -45,6 +45,8 @@ const MyBoard = () => {
   const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
 
+  const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
+
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -303,7 +305,7 @@ const MyBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>내 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">

@@ -33,6 +33,7 @@ const DetailAssemble = () => {
 
   const navigate = useNavigate();
   const scrollRef = useRef(null);
+  const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
 
   //비회원이 좋아요 눌렀을때 띄울 메시지 
   const [showGuestMessage, setShowGuestMessage] = useState(false);
@@ -140,7 +141,7 @@ const DetailAssemble = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={scrollStyle + " max-md:h-[65vh] md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden"}>
+          <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
             {!board ? 
             (
               <div className="text-white text-center mt-10">불러오는 중...</div>

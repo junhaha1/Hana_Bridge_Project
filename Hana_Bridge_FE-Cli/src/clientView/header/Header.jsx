@@ -63,7 +63,7 @@ const BoardHeader = () => {
         <div
           className={titleBox}
           onClick={() => {
-            if (email && email !== "guest@email.com") {
+            if (nickName && nickName !== "guest") {
               //dispatch(setPage({page:'home'}));
               dispatch(setCategory({category:'dash'}));
               navigate("/dashboard/home");
@@ -79,7 +79,7 @@ const BoardHeader = () => {
 
         {/* 로그인 / 회원가입 or 로그아웃 */}
         <div className={serviceBox}>
-          {email === "guest@email.com" ? (
+          {nickName === "guest" ? (
             <>
               <button
                 onClick={() => openModal("login")}
