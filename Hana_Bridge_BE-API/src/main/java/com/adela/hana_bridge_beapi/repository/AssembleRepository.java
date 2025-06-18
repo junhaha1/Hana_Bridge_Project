@@ -47,4 +47,13 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
                                                             @Param("userId") Long userId,
                                                             @Param("sort") String sort,
                                                             Pageable pageable);
+
+    @Query("""
+      SELECT b 
+      FROM AssembleBoard b
+      WHERE  b.users.id IN (SELECT g.assembleBoard.assembleBoardId 
+                            FROM AssembleGood g 
+                            WHERE g.users.id = :userId)
+    """)
+    Page<AssembleBoard> findAllWithGood(Pageable pageable, @Param("userId") Long userId);
 }

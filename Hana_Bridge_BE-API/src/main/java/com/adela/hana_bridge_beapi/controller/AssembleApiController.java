@@ -5,6 +5,7 @@ import com.adela.hana_bridge_beapi.dto.board.BoardAddRequest;
 import com.adela.hana_bridge_beapi.dto.board.BoardList;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
+import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.service.AssembleBoardService;
 import com.adela.hana_bridge_beapi.service.AssembleGoodService;
 import com.adela.hana_bridge_beapi.service.TokenService;
@@ -27,6 +28,22 @@ public class AssembleApiController {
     private final AssembleGoodService assembleGoodService;
     private final TokenService tokenService;
     private final UsersService usersService;
+
+    //사용자가 좋아요 누른 게시글 조회
+    @GetMapping("/good/{page}/{sortType}/{email}")
+    public ResponseEntity<AssembleBoardList> findByGoodWithBoard(@PathVariable String email, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
+        long userId = usersService.findByEmail(email).getId();
+
+        Page<AssembleBoard> boardInfos = assembleBoardService.findWithGood(page, sortType, userId);
+        List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
+                .stream()
+                .map(assembleBoard -> new AssembleBoardResponse(assembleBoard))
+                .toList();
+        AssembleBoardList boardList = new AssembleBoardList(assembleBoardResponses, boardInfos.getTotalPages(),
+                boardInfos.getTotalElements(), boardInfos.getSize(), boardInfos.getNumber());
+
+        return ResponseEntity.ok().body(boardList);
+    }
 
     //게시글 전체 조회
     @GetMapping("/{page}/{sortType}")

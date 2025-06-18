@@ -58,4 +58,14 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                                                        @Param("word") String word,
                                                        @Param("sort") String sort,
                                                        Pageable pageable);
+
+    @Query("""
+    SELECT b
+    FROM Board b
+    WHERE b.category = :category
+      AND b.boardId IN (SELECT g.board.boardId
+                        FROM Good g
+                        WHERE g.users.id = :userId)
+    """)
+    Page<Board> findByCategoryWithGood(String category, long userId, Pageable pageable);
 }

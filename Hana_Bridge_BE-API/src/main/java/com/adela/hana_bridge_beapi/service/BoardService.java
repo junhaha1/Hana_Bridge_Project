@@ -30,6 +30,21 @@ public class BoardService {
     private final BoardRepository boardRepository;
     final int SIZE = 8; //조회해 오는 게시글 갯수
 
+    //사용자가 좋아요 누른 게시글 조회
+    public Page<Board> findByCategoryWithGood(String category, int page, String sort, long userId) {
+        if (sort.equals("latest")) {
+            sort = "createAt";
+        } else {
+            sort = "likeCount";
+        }
+        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(sort).descending());
+        Page<Board> pageBoards = boardRepository.findByCategoryWithGood(category, userId, pageable);
+        if (pageBoards.isEmpty()) {
+            throw new CategoryPostNotFoundException(category);
+        }
+        return pageBoards;
+    }
+
     //글 전체 조회
     public Page<Board> findByCategory(String category, int page, String sort) {
         if (sort.equals("latest")) {

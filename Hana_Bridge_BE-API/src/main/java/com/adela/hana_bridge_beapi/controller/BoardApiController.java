@@ -29,6 +29,21 @@ public class BoardApiController {
     private final CommentService commentService;
     private final GoodService goodService;
 
+    //사용자가 좋아요 누른 게시글 조회
+    @GetMapping("/good/category/{category}/{page}/{sortType}/{email}")
+    public ResponseEntity<BoardList> findByGoodWithBoard(@PathVariable String email, @PathVariable("category") String category, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
+        long userId = usersService.findByEmail(email).getId();
+
+        Page<Board> boards = boardService.findByCategoryWithGood(category, page, sortType, userId);
+        List<BoardResponse> boardInfos = boards.getContent()
+                .stream()
+                .map(board -> new BoardResponse(board))
+                .toList();
+
+        BoardList boardList = new BoardList(boardInfos, boards.getTotalPages(), boards.getTotalElements(), boards.getSize(), boards.getNumber());
+        return ResponseEntity.ok().body(boardList);
+    }
+
     //카데고리별 글 전체 조회 -> sortType으로 정렬 조건 변경 가능
     @GetMapping("/category/{category}/{page}/{sortType}")
     public ResponseEntity<BoardList> findAllBoard(@PathVariable("category") String category, @PathVariable("page") int page, @PathVariable("sortType") String sortType) {
