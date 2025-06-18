@@ -21,6 +21,7 @@ import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox,
 import { clearUserPrompt, setUserPrompt, setUserPromptList } from '../../store/aiChatSlice';
 import SettingModal from './SettingModal';
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from 'react-responsive';
 
 
 
@@ -78,6 +79,9 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const questionCount = useSelector((state) => state.user.questionCount);
   const summaryCount = useSelector((state) => state.user.summaryCount);
   const [isCountInfo, setIsCountInfo] = useState(false);
+
+  //반응형 감지
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   //질문, 요약 횟수 갱신
   const updateQuestionAndSummaryCount = () => {
@@ -426,9 +430,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   return (
     <div className={aiChatFrame}>
       {/* 상단 메뉴바 */}
-      <div className={topNavi}>
-        <div className="max-md:invisible md:visible mt-2 ">
-          {isAnswering === false && (
+      <div className={`${topNavi}
+                max-md:overflow-x-auto max-md:whitespace-nowrap
+                max-md:[-ms-overflow-style:none]
+                max-md:[scrollbar-width:none]
+                max-md:[&::-webkit-scrollbar]:hidden
+                flex gap-2 px-2 `}>
+        {/* <div className="max-md:invisible md:visible mt-2 "> */}
+          { (!isMobile && isAnswering === false) && (
             onMode === 'sub' ? (
               <button 
                 className='ml-2'
@@ -451,14 +460,14 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
               </button>
             )
           )}
-        </div>
+        {/* </div> */}
         <div className='flex flex-row gap-2 overflow-visible z-[9000] '>
           <div
             className="relative z-[9000]"
             onMouseEnter={() => setIsCountInfo(true)}
             onMouseLeave={() => setIsCountInfo(false)}
           >
-            <button className="flex flex-row items-center m-1 p-1 text-sm text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+            <button className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mx-1 text-sm text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
               <MdGeneratingTokens  className="m-1" />
               잔여량 확인
             </button>
@@ -472,11 +481,11 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
               <span>매일 오전 6시에 초기화됩니다!</span>
             </div>
           </div>
-          <div className='my-auto text-white text-sm font-semibold'>
-          {(promptLevel === -1 ? userPrompt.name : (promptLevel === 0 ? "초보자" : "전문가"))} 모드
+          <div className='my-auto text-white text-sm max-md:mx-1 font-semibold'>
+            {(promptLevel === -1 ? userPrompt.name : (promptLevel === 0 ? "초보자" : "전문가"))} 모드
           </div>
           <button 
-            className='p-1 m-1 rounded text-white text-sm hover:bg-gray-500'
+            className=' md:m-1 md:p-1 max-md:pt-0.5 max-md:mx-1 rounded-full text-white text-sm hover:bg-gray-500'
             onClick={() => {
               setShowNewChatModal(true);
               dispatch(clearUserPrompt());
@@ -489,7 +498,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <button className="flex flex-row items-center m-1 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
+            <button className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mr-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md">
               <FaLightbulb className="m-1" />
               Tip
             </button>
@@ -505,19 +514,19 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
           </div>
 
           <button
-            className='my-2 p-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md'
+            className='md:my-2 md:p-1 max-md:mx-1 max-md:mt-0 max-md:mx-1 text-white rounded-full hover:bg-zinc-600 hover:shadow-md'
             onClick={()=>{setSettingModal(true)}}  
           >
             <IoSettingsSharp/>
           </button>
           <button 
-            className='m-2 p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
+            className='md:m-2 md:py-1 md:px-1 max-md:mt-1 max-md:mb-1 max-md:p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
             onClick={()=>{
               onfullTalk(false);
               onClose(false);
             }}
           >
-            <IoClose/>
+            <IoClose />
           </button>
         </div>
       </div>
@@ -525,7 +534,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       {/* 상단 대화창 */}
       <div className={`${scrollStyle} ${chatBox} relative`}>
         {messages.length === 0 &&(
-          <div className="text-white mt-5">
+          <div className="text-white md:mt-5 max-md:mt-0">
             {/* 역할 소개 문구 */}
             <div className="rounded-2xl p-2 text-sm">
               <p className="mb-2">
