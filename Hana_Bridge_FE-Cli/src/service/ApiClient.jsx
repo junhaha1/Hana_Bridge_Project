@@ -99,16 +99,25 @@ class ApiClient{
   }
 
   //사용자 본인 게시글 조회 (CodeBoard, NoticeBoard)
-  static getMyBoard(email, page, sortType){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${email}/${page}/${sortType}`);
+  static getMyBoard(page, sortType){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/user/${page}/${sortType}`);
+  }
+
+  //사용자가 좋아요 누른 게시글 조회
+  static getMyGoodBoard(page){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/good/category/code/${page}`);
   }
 
   //사용자 본인 게시글 조회 (AssembleBoard)
-  static getMyAssemble(email, page, sortType){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${email}/${page}/${sortType}`);
+  static getMyAssemble(page, sortType){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${page}/${sortType}`);
   }
 
-
+  //사용자가 좋아요 누른 게시글 조회 (AssembleBoard)
+  static getMyGoodAssemble(page){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}`);
+  }
+  
 
   //OpenAi chat
   //스트림 기반 답변 요청
@@ -193,9 +202,9 @@ class ApiClient{
   }
 
   //검색어를 통해 Board 조회
-  static getSearchUserBoards(category, searchWord, sortType, email, page){
+  static getSearchUserBoards(category, searchWord, sortType, page){
     console.log(`검색 : ${category}, ${searchWord}, ${sortType}, ${email}`);
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/user/${email}/${page}`);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.BOARD + `/category/${category}/search/${searchWord}/orderBy/${sortType}/user/${page}`);
   }
 
   //Board 상세 조회
