@@ -27,6 +27,7 @@ const CustomFetch = async (url, options = {}) => {
     }
   } catch (e) {
     // 응답이 JSON이 아닐 수도 있음 → 무시
+    console.log(e)
   }
   
   if (response.status === 401 || isUnauthorized) {
