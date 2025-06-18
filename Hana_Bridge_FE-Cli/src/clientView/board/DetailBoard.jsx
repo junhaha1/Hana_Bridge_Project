@@ -416,7 +416,7 @@ const DetailBoard = () => {
                     </span>                  
                   </div>
                   <div className="border-t border-white/10 mb-3" />
-                  { (category === "code" || category === 'me') && (role !== 'ROLE_ADMIN')
+                  { (category === "code") || (category === 'me' && role !== 'ROLE_ADMIN')
                     ? 
                     <div className="text-white">
                       <ReactMarkdown
