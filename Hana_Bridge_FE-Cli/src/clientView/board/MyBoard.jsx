@@ -44,6 +44,8 @@ const MyBoard = () => {
   const [totalPages, setTotalPages] = useState(curPageGroup); // 총 페이지 갯수 
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); //좋아요 게시판 드롭다운 변수
+
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
 
 
@@ -352,15 +354,17 @@ const MyBoard = () => {
         <div className="flex rounded gap-2">
           <button
             onClick={() => {
+              setIsDropdownOpen(false)
               setToggle("code");
               resetBoards();
             }}
             className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
           >
-            {role === 'ROLE_ADMIN' ? '공지' : '코드 질문'}
+            {role === 'ROLE_ADMIN' ? '공지' : '코드/질문'}
           </button>
           <button
             onClick={() => {
+              setIsDropdownOpen(false)
               setToggle("assemble");
               resetBoards();
             }}
@@ -368,24 +372,42 @@ const MyBoard = () => {
           >
             AI 답변
           </button>
-          <button
-          onClick={() => {
-              setToggle("goodAssemble");
-              resetBoards();
-            }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodAssemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
-          >
-            좋아요 누른 AI 답변
-          </button>
-          <button
-            onClick={() => {
-              setToggle("goodCode");
-              resetBoards();
-            }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
-          >
-            좋아요 누른 코드/질문
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:text-sm`}
+            >
+              {toggle === "goodAssemble" && "좋아요 누른 AI 답변"}
+              {toggle === "goodCode" && "좋아요 누른 코드/질문"}
+              {toggle !== "goodAssemble" && toggle !== "goodCode" && "좋아요"}
+              <span className="max-md:text-sm">▼</span>
+            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute mt-2 bg-white shadow rounded w-56 z-10">
+                <button 
+                  onClick={() => {
+                    setIsDropdownOpen(!isDropdownOpen)
+                    setToggle("goodCode");
+                    resetBoards();
+                  }}
+                  className="block px-4 py-2 hover:bg-gray-100 w-full rounded-t text-left border-b"
+                >
+                  좋아요 누른 코드/질문
+                </button>
+                <button 
+                  className="block px-4 py-2 hover:bg-gray-100 w-full rounded text-left"
+                  onClick={() => {
+                    setIsDropdownOpen(!isDropdownOpen)
+                    setToggle("goodAssemble");
+                    resetBoards();
+                  }}
+                >
+                  좋아요 누른 AI 답변
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         {boards !== null && (
           <>
@@ -420,7 +442,7 @@ const MyBoard = () => {
               <h3 className="text-2xl font-bold mb-2">아직 게시글이 없습니다.</h3>
               <h2 className="text-lg text-white/80">첫 게시글을 작성해보세요 😊</h2>
             </>
-          ) : (
+          ) : toggle === "assemble" ? (
             <>
               <h3 className="text-2xl font-bold mb-2">아직 AI Codi와 대화를 안 해보셨나요?</h3>
               <p className="mb-2">
@@ -429,6 +451,26 @@ const MyBoard = () => {
               <p className="mb-2">막히는 코드, 이해 안 되는 개념, 자주 보는 에러 메시지까지!</p>
               <p>우측 하단에 AI Codi에게 궁금한 점을 자유롭게 물어보고</p>
               <p>원하는 답변을 자신만의 게시글로 자동 포스팅할 수 있어요!</p>
+            </>
+          ) : toggle === "goodCode" ? (
+            <>
+              <h3 className="text-2xl font-bold mb-2">아직 마음에 드는 코드/질문 게시글이 없나요?</h3>
+              <p className="mb-2">
+                <span className="font-semibold text-yellow-300">코드/질문 게시글</span>은!
+              </p>
+              <p className="mb-2">AI 답변으로도 부족한 답변, 실제 사용하는 코드, 다른 사람들의 의견까지!</p>
+              <p>코드/질문 게시판에서 자유롭게 의견과 정보를 얻을 수 있어요!</p>
+              <p>마음에 들거나 따로 스크랩해두고 싶은 게시글이 있나면 좋아요를 눌러서 확인해보세요!</p>
+            </>
+          ) : (
+            <>
+              <h3 className="text-2xl font-bold mb-2">아직 마음에 드는 AI 답변 게시글이 없나요?</h3>
+              <p className="mb-2">
+                <span className="font-semibold text-yellow-300">AI 답변 게시글</span>은!
+              </p>
+              <p className="mb-2">막히는 코드, 이해 안 되는 개념, 자주 보는 에러 메시지까지!</p>
+              <p>다른 사람들이 AI Codi에게 답변받은 내용들을 확인해볼 수 있어요!</p>
+              <p>자신에게 필요한 게시글이 이미 존재한다면 좋아요를 눌러서 확인해보세요!</p>
             </>
           )}
         </div>
