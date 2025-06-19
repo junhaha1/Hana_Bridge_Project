@@ -3,6 +3,7 @@ import userReducer from './userSlice';
 import authReducer from './authSlice';
 import aiChatReducer from './aiChatSlice';
 import postReducer from './postSlice'
+import modalReducer from './modalSlice';
 
 // userSlice의 기본 상태 정의
 const defaultUserState = {
@@ -91,6 +92,7 @@ const store = configureStore({
     auth: authReducer,
     aiChat: aiChatReducer,
     post: postReducer,
+    modal: modalReducer,
   },
   preloadedState: loadState(), // 초기 상태에 localStorage 값 사용
 });
