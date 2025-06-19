@@ -76,8 +76,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const [isCreated, setIsCreated] = useState(false);
 
   /* 사용자 질문 횟수 및 요약 횟수*/
-  const questionCount = useSelector((state) => state.user.questionCount);
-  const summaryCount = useSelector((state) => state.user.summaryCount);
+  const [questionCount, setQuestionCount] = useState(0);
+  const [summaryCount, setSummaryCount] = useState(0);
   const [isCountInfo, setIsCountInfo] = useState(false);
 
   //반응형 감지
@@ -92,14 +92,15 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       })
       .then((data) => {
         console.log(data);
-        dispatch(setQuestionCount({ questionCount: data.questionCount }));
-        dispatch(setSummaryCount({ summaryCount: data.summaryCount }));
+        setQuestionCount(data.questionCount);
+        setSummaryCount(data.summaryCount);
       })
       .catch((err) => console.error("API 요청 실패:", err));
   };
     
-  //사용자가 설정한 프롬포트 목록 가져오기
+  //사용자가 설정한 프롬포트, 질문, 요약 횟수 가져오기 (초기 렌더링)
   useEffect(() => {
+    //프롬포트 조회
     ApiClient.getCustomPrompts()
       .then((res) => {
         if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
@@ -110,6 +111,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         dispatch(setUserPromptList({userPromptList: data}));
       })
       .catch((err) => console.error("API 요청 실패:", err));
+    //질문, 요약 횟수 조회
+    updateQuestionAndSummaryCount();
   }, [])
 
   const closeNewChatModal = () => {
