@@ -4,7 +4,6 @@ import Header from '../header/Header';
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import LeftHeader from '../header/LeftHeader';
-
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle } from '../../style/CommonStyle';
 import { addBoardButton, addTitle, addContent, addCode } from '../../style/AddBoardStyle';
@@ -208,9 +207,6 @@ const AddBoard = () => {
                     setTitle(e.target.value);
                     if (titleError) setTitleError(""); // 수정 시 에러 제거
                   }}
-                  // onFocus={() => {
-                  //   if (titleError) setPasswordError("");
-                  // }}
                   placeholder="게시글 제목을 적어 주세요"
                   className={`${addTitle} ${titleError ? 'border-white' : 'border-white'}`}
                 />

@@ -3,12 +3,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurPage, setCurPageGroup, resetPage } from "../../store/postSlice";
-
 //디자인 
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
 import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
 import { userDate } from "../../style/CommonDetail";
-import {FaUser, FaSearch, FaArrowUp,  FaRegComment  } from 'react-icons/fa';
+import {FaUser, FaSearch, FaArrowUp,  FaRegComment, FaChevronDown } from 'react-icons/fa';
 import { BiLike } from "react-icons/bi"; 
 import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, inputResetButton, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
@@ -350,6 +349,7 @@ const MyBoard = () => {
           </button>
         </div>
       </div>
+      {/* export const sortCheckLayout = "flex gap-3 justify-end mt-3 mb-2"; */}
       <div className={sortCheckLayout + " justify-between"}>
         <div className="flex rounded gap-2">
           <button
@@ -358,7 +358,7 @@ const MyBoard = () => {
               setToggle("code");
               resetBoards();
             }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+            className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:px-1.5 max-md:py-1 max-md:text-sm`}
           >
             {role === 'ROLE_ADMIN' ? '공지' : '코드/질문'}
           </button>
@@ -368,19 +368,21 @@ const MyBoard = () => {
               setToggle("assemble");
               resetBoards();
             }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+            className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:px-1.5 max-md:py-1 max-md:text-sm`}
           >
             AI 답변
           </button>
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:text-sm`}
+              className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:px-1.5 max-md:py-1 max-md:text-sm`}
             >
-              {toggle === "goodAssemble" && "좋아요 누른 AI 답변"}
-              {toggle === "goodCode" && "좋아요 누른 코드/질문"}
-              {toggle !== "goodAssemble" && toggle !== "goodCode" && "좋아요"}
-              <span className="max-md:text-sm">▼</span>
+              <span className="flex flex-row">
+                {toggle === "goodAssemble" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>AI 답변</span>)}
+                {toggle === "goodCode" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>코드/질문</span>)}
+                {toggle !== "goodAssemble" && toggle !== "goodCode" && "좋아요"}
+                <FaChevronDown className="mt-1 ml-0.5"/>
+              </span>
             </button>
 
             {isDropdownOpen && (
