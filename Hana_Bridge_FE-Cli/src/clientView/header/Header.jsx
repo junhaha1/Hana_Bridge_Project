@@ -1,8 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCategory } from "../../store/userSlice";
-//import { setPage } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
+import { setOpenModal, setCloseModal } from "../../store/modalSlice.js";
 import { clearUser, clearAiChat } from "../../store/userSlice.js";
 import ApiClient from "../../service/ApiClient.jsx";
 
@@ -30,10 +30,12 @@ const BoardHeader = () => {
   const openModal = (type) => {
     setModalType(type);
     setModalOpen(true);
+    dispatch(setOpenModal());
   };
 
   const closeModal = () => {
     setModalOpen(false);
+    dispatch(setCloseModal());
   };
 
   const moveDashBoard = () => {
@@ -102,38 +104,27 @@ const BoardHeader = () => {
               >
                 글 작성
               </button>
-              
-              {/* <button
-                onClick={() => openModal("myinfo")}
-                className={userButton}
-              >
-                 <FaUserCircle className={userIcon}/> {nickName}
-              </button>      */}
-
-
-            <div
-              className="relative z-[9000]"              
-            >
-              <button
-                onClick={() => openModal("myinfo")}
-                className={userButton}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                 <FaUserCircle className={userIcon}/> {nickName}
-              </button>   
               <div
-                className={`absolute top-full right-0 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
-                style={{ 
-                  opacity: isHovered ? 1 : 0,
-                  pointerEvents: isHovered ? "auto" : "none",  // 👈 핵심
-                }}
+                className="relative z-[9000]"              
               >
-                사용자 정보를 확인하고 수정할 수 있습니다. 
+                <button
+                  onClick={() => openModal("myinfo")}
+                  className={userButton}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  <FaUserCircle className={userIcon}/> {nickName}
+                </button>   
+                <div
+                  className={`absolute top-full right-0 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+                  style={{ 
+                    opacity: isHovered ? 1 : 0,
+                    pointerEvents: isHovered ? "auto" : "none",  // 👈 핵심
+                  }}
+                >
+                  사용자 정보를 확인하고 수정할 수 있습니다. 
+                </div>
               </div>
-            </div>
-
-
               <button
                 onClick={() => setConfirmLogoutOpen(true)}
                 className={logoutButton}

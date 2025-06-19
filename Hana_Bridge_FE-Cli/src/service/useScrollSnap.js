@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // TopButton에서 강제로 초기화 가능하게 변경
-const useScrollSnap = (duration = 1200) => {
+const useScrollSnap = (duration = 1200, isModalOpen = false) => {
   const sectionRefs = useRef([]);
   const currentIndex = useRef(0);
   const isScrolling = useRef(false);
@@ -23,19 +23,22 @@ const useScrollSnap = (duration = 1200) => {
   };
 
   useEffect(() => {
+    if (sectionRefs.current.length === 0) return;
+
     const handleWheel = (e) => {
-      e.preventDefault();
-      if (isScrolling.current) return;
+      if (!isModalOpen) {
+        e.preventDefault();
+        if (isScrolling.current) return;
+        const direction = e.deltaY > 0 ? 1 : -1;
+        const nextIndex = currentIndex.current + direction;
 
-      const direction = e.deltaY > 0 ? 1 : -1;
-      const nextIndex = currentIndex.current + direction;
-
-      scrollToIndex(nextIndex);
+        scrollToIndex(nextIndex);
+      }      
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => window.removeEventListener("wheel", handleWheel);
-  }, [duration]);
+  }, [duration, isModalOpen]);
 
   return { sectionRefs, scrollToIndex };
 };
