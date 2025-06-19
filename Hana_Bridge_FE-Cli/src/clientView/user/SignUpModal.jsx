@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ApiClient from "../../service/ApiClient";
+import { scrollStyle } from "../../style/CommonStyle";
+
 
 const SignUpModal = ({ onClose, onSwitch }) => {
   const [email, setEmail] = useState("");
@@ -155,10 +157,10 @@ const SignUpModal = ({ onClose, onSwitch }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+    <div id='modal-root' className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] overflow-hidden`}>
       {/* 바깥 껍데기: 둥근 테두리 유지 */}
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade
-          md:h-auto max-md:h-full max-md:h-screen max-md:max-h-screen max-md:rounded-none">                      
+      <div className={`relative  bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-modal-fade
+          md:h-auto max-md:h-full max-md:h-screen max-md:max-h-screen max-md:rounded-none`}>                      
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
@@ -168,7 +170,7 @@ const SignUpModal = ({ onClose, onSwitch }) => {
         </button>
 
         {/* 안쪽 콘텐츠: 스크롤 허용 */}
-        <div className="p-8 overflow-y-hidden max-h-[90vh]">
+        <div className={` ${scrollStyle} p-8 overflow-y-hidden max-h-[90vh]`}>
           <h2 className="text-2xl font-bold text-center mb-8 max-md:mt-8 max-md:mb-12">회원가입</h2>
 
           <form className="space-y-6">
