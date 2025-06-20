@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux';
 function App() {
   const nickName = useSelector((state) => state.user.nickName);
   return (
-    <div className='font-sans'>
+    <div className='font-sans w-full h-screen overflow-x-hidden overflow-y-hidden'>
       <Routes>
         <Route path="/" element={<Home />} /> {/* 홈 화면 */}
         <Route path="/dashBoard/:page" element={<DashBoard/>} />

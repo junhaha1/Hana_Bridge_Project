@@ -295,13 +295,18 @@ const DetailBoard = () => {
   
 
   return (
-    <div className={mainFrame}>
+    <div className={`${mainFrame}`}>
       <Header />
       <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} w-full max-w-full break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+          <div 
+            ref={scrollRef} 
+            className={`${scrollStyle} 
+              ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} 
+              w-full max-w-full overflow-x-auto break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}
+              >
             {!board ? 
             (
               <div className="text-white text-center mt-10">불러오는 중...</div>
@@ -418,7 +423,7 @@ const DetailBoard = () => {
                   <div className="border-t border-white/10 mb-3" />
                   { (category === "code") || (category === 'me' && role !== 'ROLE_ADMIN')
                     ? 
-                    <div className="text-white">
+                    <div className="w-full max-w-full text-white">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -430,7 +435,7 @@ const DetailBoard = () => {
                                 style={prism}
                                 language={match[1]}
                                 PreTag="div"
-                                className="rounded overflow-x-auto max-w-[100%]"
+                                className="rounded overflow-x-auto max-w-full"
                                 wrapLongLines={true} // ✅ 긴 줄 wrap 처리
                               >
                                 {String(children).replace(/\n$/, '')}
