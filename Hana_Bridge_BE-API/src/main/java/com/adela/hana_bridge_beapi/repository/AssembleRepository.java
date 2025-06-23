@@ -69,7 +69,7 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
       SELECT b 
       FROM AssembleBoard b
       WHERE b.categorys = :categorys AND  
-          b.users.id IN (SELECT g.assembleBoard.assembleBoardId 
+          b.assembleBoardId IN (SELECT g.assembleBoard.assembleBoardId 
                             FROM AssembleGood g 
                             WHERE g.users.id = :userId)
     """)
