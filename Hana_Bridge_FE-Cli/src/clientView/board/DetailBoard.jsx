@@ -317,7 +317,7 @@ const DetailBoard = () => {
             ref={scrollRef} 
             className={`${scrollStyle} 
               ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} 
-              w-full max-w-full overflow-y-auto overflow-x-hidden break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}
+              overflow-x-hidden break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}
               >
             {!board ? 
             (
