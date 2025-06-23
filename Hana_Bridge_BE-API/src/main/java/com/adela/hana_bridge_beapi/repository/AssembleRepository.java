@@ -59,7 +59,7 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
     @Query("""
       SELECT b 
       FROM AssembleBoard b
-      WHERE  b.users.id IN (SELECT g.assembleBoard.assembleBoardId 
+      WHERE  b.assembleBoardId IN (SELECT g.assembleBoard.assembleBoardId 
                             FROM AssembleGood g 
                             WHERE g.users.id = :userId)
     """)
