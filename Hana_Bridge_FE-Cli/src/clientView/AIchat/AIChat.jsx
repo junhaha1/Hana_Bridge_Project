@@ -662,12 +662,12 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 <AiFillRobot className='w-7 h-7 text-white'/>
               )}
               <div
-                className={`max-w-[80%] px-3 py-2 mb-2 max-md:text-sm md:text-base whitespace-pre-wrap 
+                className={`max-w-[80%] px-3 py-2 mb-2 max-md:text-sm md:text-base whitespace-pre-wrap break-words 
                 ${
                   msg.role === '답변'
                     ? aiBox
                     : userBox
-                } [&>*]:m-0 transform-none will-change-auto origin-top-left isolate`}
+                } [&>*]:m-0 transform-none will-change-auto origin-top-left isolate `}
                 ref = {msg.role === '답변' ? copyRef : null}
                 style={{
                   transform: "none",
@@ -675,7 +675,8 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                   isolation: "isolate", // ✅ stacking context 분리
                 }}
               >
-                <ReactMarkdown
+                { msg.role === '답변' ? (
+                  <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
                     // 코드 블록 렌더링
@@ -700,6 +701,10 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
                 >
                   {msg.content.replace(/([ \t]*\n){3,}/g, '\n\n')}
                 </ReactMarkdown>
+                ):(
+                  <p>{msg.content}</p>                  
+                )}
+                
                 
                 {msg.role === "답변" && messages.length - 1 === idx && isCreated &&(
                   <div className='mt-2 flex flex-col'>

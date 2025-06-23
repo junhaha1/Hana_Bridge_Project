@@ -230,7 +230,7 @@ const DetailAssemble = () => {
                       {likeCount}
 
                       {showGuestMessage && (
-                        <div className="absolute bottom-full mb-2
+                        <div className="absolute bottom-full mb-2 
                           w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
                           text-center">
                           ⚠ 비회원은 이용할 수 없는 기능입니다.
