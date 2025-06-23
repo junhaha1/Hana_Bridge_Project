@@ -175,11 +175,6 @@ public class OpenAiService {
         }
     }
 
-    //응답이 끊기거나 잘못됐는지 판단하는 내부 함수
-    private boolean shouldRetry(String response){
-        return !response.trim().endsWith(".") && response.length() > 100;
-    }
-
     public String askChatGPT(ClientRequest clientRequest){
         PromptResult promptResult = promptFactory.createPromptResult(clientRequest.getPromptLevel(), clientRequest.getQuestion());
 
@@ -282,7 +277,7 @@ public class OpenAiService {
     }
 
     public String titleChatGPT(String summary) {
-        PromptResult promptResult = promptFactory.createTitlePromptResult(summary);
+        PromptResult promptResult = promptFactory.createTitlePromptResult();
 
         ChatGPTRequest chatGPTRequest = new ChatGPTRequest(model, List.of(
                 new ChatGPTRequest.Message("system", promptResult.getPrompt()),
@@ -304,6 +299,33 @@ public class OpenAiService {
         long elapsed = System.currentTimeMillis() - start;
         System.out.println("게시글 제목 요약 GPT 응답 시간: " + elapsed + "ms");
         System.out.println("제목  :" + chatGPTResponse.getChoices().get(0).getMessage().getContent());
+
+        return chatGPTResponse.getChoices().get(0).getMessage().getContent();
+    }
+
+    public String categoryChatGPT(String title) {
+        PromptResult promptResult = promptFactory.createCegoryPromptResult();
+
+        ChatGPTRequest chatGPTRequest = new ChatGPTRequest(model, List.of(
+                new ChatGPTRequest.Message("system", promptResult.getPrompt()),
+                new ChatGPTRequest.Message("user", title)
+        ),
+                promptResult.getMaxTokens(),
+                0.4,
+                false
+        );
+
+        long start = System.currentTimeMillis();
+        ChatGPTResponse chatGPTResponse = openAiWebClient.post()
+                .uri(apiUrl)
+                .bodyValue(chatGPTRequest)
+                .retrieve()
+                .bodyToMono(ChatGPTResponse.class)
+                .block();
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("게시글 제목 요약 GPT 응답 시간: " + elapsed + "ms");
+        System.out.println("카테고리 :" + chatGPTResponse.getChoices().get(0).getMessage().getContent());
 
         return chatGPTResponse.getChoices().get(0).getMessage().getContent();
     }

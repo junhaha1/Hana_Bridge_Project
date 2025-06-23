@@ -114,10 +114,30 @@ public class OpenAiApiController {
 
 
         //질문과 답변들을 이용하여 요약본 생성
-        String summary = openAiService.summaryChatGPT(clientSummaryRequest);
+        String summary = parseSummary(openAiService.summaryChatGPT(clientSummaryRequest));
         //요약본을 바탕으로 제목 생성
-        String title = openAiService.titleChatGPT(summary);
+        String title = parseTitle(openAiService.titleChatGPT(summary));
 
+        int categoryId = parseCategory(openAiService.categoryChatGPT(title));
+
+        SummaryResponse summaryResponse = new SummaryResponse(title, summary, categoryId);
+        usersService.updateSummaryCount(userId);
+        return ResponseEntity.ok().body(summaryResponse);
+    }
+
+    /*OpenAI 답변 파싱*/
+    private String parseSummary(String summary){
+        if (summary.startsWith("요약:")){
+            summary = summary.replace("요약:", "").trim();
+        }
+
+        if (summary.startsWith("내용:")){
+            summary = summary.replace("내용:", "").trim();
+        }
+        return summary;
+    }
+
+    private String parseTitle(String title){
         //양끝에 ""문자 없애기
         if (title.startsWith("\"") && title.endsWith("\"")) {
             title = title.substring(1, title.length() - 1);
@@ -130,17 +150,18 @@ public class OpenAiApiController {
         if (title.startsWith("제목:")) {
             title = title.replace("제목:", "").trim();
         }
+        return title;
+    }
 
-        if (summary.startsWith("요약:")){
-            summary = summary.replace("요약:", "").trim();
+    private static final int DEFAULT_CATEGORY_ID = 45; //기타
+
+    private int parseCategory(String category) {
+        if (category == null || category.isBlank()) return DEFAULT_CATEGORY_ID;
+
+        try {
+            return Integer.parseInt(category.split(" ")[0]);
+        } catch (NumberFormatException e) {
+            return DEFAULT_CATEGORY_ID;
         }
-
-        if (summary.startsWith("내용:")){
-            summary = summary.replace("내용:", "").trim();
-        }
-
-        SummaryResponse summaryResponse = new SummaryResponse(title, summary);
-        usersService.updateSummaryCount(userId);
-        return ResponseEntity.ok().body(summaryResponse);
     }
 }

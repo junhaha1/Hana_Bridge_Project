@@ -69,11 +69,59 @@ public class PromptFactory {
         return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
     }
 
-    public PromptResult createTitlePromptResult(String question) {
+    public PromptResult createTitlePromptResult() {
         StringBuilder systemPrompt = new StringBuilder();
         systemPrompt.append("""
                 현재 요약본을 내용으로 게시글용 제목 알려줘.
                 제목은 깔끔하고 한눈에 어떤 내용들이 담겨져 있는 글인지 나타나야 돼.
+                """);
+
+        System.out.println(systemPrompt.toString());
+        return new PromptResult(systemPrompt.toString().trim(), maxTokens, temperature);
+    }
+
+    public PromptResult createCegoryPromptResult() {
+        StringBuilder systemPrompt = new StringBuilder();
+        systemPrompt.append("""
+                카테고리 정보를 보고 해당 제목를 토대로 카테고리 번호 1개만 분류.
+                제목에 해당 이름이 없으면 45 기타로 분류.
+                   번호  이름
+                   10	Python
+                   11	Java
+                   12	JavaScript
+                   13	TypeScript
+                   14	C / C++
+                   15	기타 언어
+                   16	Linux
+                   17	Ubuntu
+                   18	CentOS
+                   19	기타 Linux 배포판
+                   20	Windows
+                   21	macOS
+                   22	WSL (Windows Subsystem for Linux)
+                   23	SQL 쿼리
+                   24	MySQL
+                   25	Oracle
+                   26	PostgreSQL
+                   27	NoSQL
+                   28	React
+                   29	Spring Boot
+                   30	Django
+                   31	Vue.js
+                   32	Next.js
+                   33	Flask
+                   34	AWS
+                   35	KT Cloud
+                   36	Azure
+                   37	Docker / 컨테이너
+                   38	Kubernetes
+                   39	Nginx / Apache
+                   40	CI/CD
+                   41	DevOps
+                   42	코딩 테스트
+                   43	알고리즘 이론
+                   44	Git / GitHub
+                   45	기타
                 """);
 
         System.out.println(systemPrompt.toString());
