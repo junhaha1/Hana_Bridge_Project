@@ -275,7 +275,7 @@ const MyBoard = () => {
         </button>
       );
     }
-    return <div className="mt-6 flex justify-center">{pages}</div>;
+    return <div className="mt-6  mb-12 flex justify-center">{pages}</div>;
   };
 
   //board를 클릭했을 때 이동
@@ -319,7 +319,7 @@ const MyBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] ' : 'max-md:h-[83vh]'}  md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>내 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">

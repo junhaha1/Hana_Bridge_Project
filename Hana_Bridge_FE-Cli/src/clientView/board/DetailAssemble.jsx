@@ -141,7 +141,11 @@ const DetailAssemble = () => {
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+          <div 
+            ref={scrollRef} 
+            className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} 
+              mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}
+            >
             {!board ? 
             (
               <div className="text-white text-center mt-10">불러오는 중...</div>
@@ -226,7 +230,7 @@ const DetailAssemble = () => {
                       {likeCount}
 
                       {showGuestMessage && (
-                        <div className="absolute bottom-full mb-2
+                        <div className="absolute bottom-full mb-2 
                           w-[280px]  py-2 text-sm bg-black text-white rounded-lg shadow-lg 
                           text-center">
                           ⚠ 비회원은 이용할 수 없는 기능입니다.
