@@ -12,6 +12,7 @@ import { createSlice } from '@reduxjs/toolkit';
   shouldAutoOpenHelper: false,
   questionCount: 0,
   summaryCount: 0,
+  item: '',
   aiPrompts: {
     promptId: '',
     name: '',
@@ -38,7 +39,7 @@ import { createSlice } from '@reduxjs/toolkit';
     state.email = action.payload.email;
     state.name = action.payload.name;
     state.nickName = action.payload.nickName;
-  },
+    },
     clearUser: (state) => {
       state.email = 'guest@email.com';
       state.name = 'guest';
@@ -51,6 +52,7 @@ import { createSlice } from '@reduxjs/toolkit';
       state.shouldAutoOpenHelper = false;
       state.questionCount = 0;
       state.summaryCount = 0;
+      state.item = '';
       state.aiPrompts = {
         promptId: '',
         name: '',
@@ -78,10 +80,7 @@ import { createSlice } from '@reduxjs/toolkit';
     },
     setCategory: (state, action) => {
       state.category = action.payload.category;
-    },
-    // setPage: (state, action) =>{
-    //   state.page = action.payload.page;
-    // },
+    },    
     setPlayFlag: (state, action) => {
       state.playFlag = action.payload.playFlag;
     },
@@ -91,9 +90,13 @@ import { createSlice } from '@reduxjs/toolkit';
     setAiPrompts: (state, action) =>{
       state.aiPrompts = action.payload.aiPrompts;
     },
+    setItem: (state, action) => {
+      state.item = action.payload;
+      console.log(state.item);
+    }
    },
  });
  
  export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, //setPage, 
-  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts, setQuestionCount, setSummaryCount } = userSlice.actions;
+  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts, setQuestionCount, setSummaryCount, setItem } = userSlice.actions;
  export default userSlice.reducer;

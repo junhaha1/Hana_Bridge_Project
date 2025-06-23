@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
+import { setItem } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
 import { FaFolder } from 'react-icons/fa';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
@@ -53,6 +54,7 @@ const toggleData = [
 
 function ToggleCategoryList() {
   const [openIndex, setOpenIndex] = useState(null);
+  const dispatch = useDispatch();
 
   return (
     <div className="mt-4 space-y-2 px-1 py-1 border rounded">
@@ -79,7 +81,11 @@ function ToggleCategoryList() {
                   <button
                     key={item}
                     className="w-full text-left text-white text-sm px-3 py-1 rounded hover:bg-[#C5BCFF] hover:text-black transition"
-                    onClick={() => console.log(`카테고리 선택됨: ${item}`)}
+                    onClick={() => {
+                      console.log(`카테고리 선택됨: ${item}`);
+                      //리덕스에 아이템 넣기 
+                      dispatch(setItem(item));
+                    }}
                   >
                     {item}
                   </button>

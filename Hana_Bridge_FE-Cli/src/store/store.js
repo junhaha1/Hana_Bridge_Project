@@ -17,6 +17,7 @@ const defaultUserState = {
   shouldAutoOpenHelper: false,
   questionCount: 0,
   summaryCount: 0,
+  item: '',
   aiPrompts: {
     promptId: '',
     name: '',
@@ -71,12 +72,13 @@ const loadState = () => {
 // localStorage에 저장하기
 const saveState = (state) => {
   try {
-    const { chatMessages, aiPrompts, category, nickName } = state.user;
+    const { chatMessages, aiPrompts, category, nickName, item } = state.user;
     const serializedState = JSON.stringify({
       chatMessages,
       aiPrompts,
       category,
       nickName,
+      item,
     });
     localStorage.setItem('userState', serializedState);
   } catch (err) {
@@ -109,7 +111,8 @@ let previousState = {
     option: ''
   },
   category: '',
-  nickName: 'guest'
+  nickName: 'guest',
+  item: ''
 };
 
 // 상태 변경 감지해서 일부만 저장
@@ -120,14 +123,16 @@ store.subscribe(() => {
     JSON.stringify(previousState.chatMessages) !== JSON.stringify(current.chatMessages) ||
     JSON.stringify(previousState.aiPrompts) !== JSON.stringify(current.aiPrompts) ||
     previousState.category !== current.category ||
-    previousState.nickName !== current.nickName;
+    previousState.nickName !== current.nickName ||
+    previousState.item !== current.item; 
 
   if (hasChanged) {
     previousState = {
       chatMessages: current.chatMessages,
       aiPrompts: current.aiPrompts,
       category: current.category,
-      nickName: current.nickName
+      nickName: current.nickName,
+      item: current.item, 
     };
 
     saveState({ user: previousState });
