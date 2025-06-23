@@ -8,11 +8,11 @@ import lombok.Setter;
 public class SummaryResponse {
     private String title;
     private String content;
-    private int categoryId;
+    private String categoryName;
 
-    public SummaryResponse(String title, String content, int categoryId) {
+    public SummaryResponse(String title, String content, String categoryName) {
         this.title = title;
         this.content = content;
-        this.categoryId = categoryId;
+        this.categoryName = categoryName;
     }
 }

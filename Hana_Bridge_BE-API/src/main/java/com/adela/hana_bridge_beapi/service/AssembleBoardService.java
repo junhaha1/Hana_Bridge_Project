@@ -6,10 +6,12 @@ import com.adela.hana_bridge_beapi.dto.assemble.AssembleSummaryResponse;
 import com.adela.hana_bridge_beapi.dto.board.BoardResponse;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.entity.Board;
+import com.adela.hana_bridge_beapi.entity.Category;
 import com.adela.hana_bridge_beapi.errorhandler.error.AssembleBoardNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.CategoryPostNotFoundException;
 import com.adela.hana_bridge_beapi.errorhandler.error.UserEmailNotFoundException;
 import com.adela.hana_bridge_beapi.repository.AssembleRepository;
+import com.adela.hana_bridge_beapi.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,49 +30,73 @@ import java.util.stream.Collectors;
 public class AssembleBoardService {
     private final AssembleRepository assembleRepository;
     private final int SIZE = 8;
+    private final CategoryRepository categoryRepository;
 
     //사용자가 좋아요를 누른 assemble 게시글 조회
     //모든 assemble 게시글 조회
-    public Page<AssembleBoard> findWithGood(int page, String sort, long userId) {
+    public Page<AssembleBoard> findWithGood(int page, String sort, long userId, String category) {
         if (sort.equals("latest")) {
             sort = "createAt";
         } else {
             sort = "likeCount";
         }
-
         Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(sort).descending());
+        Page<AssembleBoard> pageBoards = null;
 
-        Page<AssembleBoard> pageBoards = assembleRepository.findAllWithGood(pageable, userId);
+        if (category.equals("all")) { //전체 조회일 경우
+            pageBoards = assembleRepository.findAllWithGood(pageable, userId);
+        } else { //특정 카테고리일 경우
+            Category categorys = categoryRepository.findByName(category)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 없습니다."));
+
+            pageBoards = assembleRepository.findAllByCategoryWithGood(categorys, pageable, userId);
+        }
 
         return pageBoards;
     }
 
     //모든 assemble 게시글 조회
-    public Page<AssembleBoard> findAllAssembleBoards(int page, String sort) {
+    public Page<AssembleBoard> findAllAssembleBoards(int page, String sort, String category) {
         if (sort.equals("latest")) {
             sort = "createAt";
         } else {
             sort = "likeCount";
         }
-
+        //페이지 설정
         Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(sort).descending());
 
-        Page<AssembleBoard> pageBoards = assembleRepository.findAll(pageable);
+        Page<AssembleBoard> pageBoards = null;
+        if (category.equals("all")) { //전체 조회일 경우
+            pageBoards = assembleRepository.findAll(pageable);
+        } else { //특정 카테고리일 경우
+            Category categorys = categoryRepository.findByName(category)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 없습니다."));
 
+            pageBoards = assembleRepository.findByCategorys(categorys, pageable);
+        }
         return pageBoards;
     }
 
     //현재 사용자의 글 조회
-    public Page<AssembleBoard> findByUserId(Long userId, int page, String sort){
+    public Page<AssembleBoard> findByUserId(Long userId, int page, String sort, String category) {
         if (sort.equals("latest")) {
             sort = "createAt";
         } else {
             sort = "likeCount";
         }
-
         Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(sort).descending());
 
-        Page<AssembleBoard> assembleBoards = assembleRepository.findByUsers_Id(userId, pageable);
+        Page<AssembleBoard> assembleBoards = null;
+        if (category.equals("all")) { //전체 조회일 경우
+            assembleBoards = assembleRepository.findByUsers_Id(userId, pageable);
+        } else { //특정 카테고리일 경우
+            Category categorys = categoryRepository.findByName(category)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 없습니다."));
+
+            assembleBoards = assembleRepository.findByUsers_IdAndCategorys(userId, categorys, pageable);
+        }
+
+
         return assembleBoards;
     }
 
@@ -112,7 +138,10 @@ public class AssembleBoardService {
     //게시글 등록
     @Transactional
     public AssembleSummaryResponse save(AssembleAddRequest request){
-        AssembleBoard assembleBoard =  assembleRepository.save(request.toEntity());
+        Category categorys = categoryRepository.findByName(request.getCategoryName())
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 없습니다."));
+
+        AssembleBoard assembleBoard =  assembleRepository.save(request.toEntity(categorys));
         AssembleSummaryResponse assembleSummaryResponse = AssembleSummaryResponse.builder()
                 .assembleBoardId(assembleBoard.getAssembleBoardId())
                 .title(assembleBoard.getTitle())

@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.service;
 import com.adela.hana_bridge_beapi.config.openai.PromptFactory;
 import com.adela.hana_bridge_beapi.config.openai.PromptProperties;
 import com.adela.hana_bridge_beapi.dto.openai.*;
+import com.adela.hana_bridge_beapi.repository.CategoryRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.RateLimiter;
@@ -31,6 +32,7 @@ public class OpenAiService {
     private final PromptFactory promptFactory;
 
     private final RateLimiter rateLimiter = RateLimiter.create(0.2);
+    private final CategoryRepository categoryRepository;
 
     @Value("${openai.model}")
     private String model;
@@ -233,7 +235,7 @@ public class OpenAiService {
 
         String summary = sendChatGPT(messages, promptResult);
 
-        return summary;
+        return parseSummary(summary);
     }
 
     private String sendChatGPT(List<ChatGPTRequest.Message> messages, PromptResult promptResult) {
@@ -300,7 +302,7 @@ public class OpenAiService {
         System.out.println("게시글 제목 요약 GPT 응답 시간: " + elapsed + "ms");
         System.out.println("제목  :" + chatGPTResponse.getChoices().get(0).getMessage().getContent());
 
-        return chatGPTResponse.getChoices().get(0).getMessage().getContent();
+        return parseTitle(chatGPTResponse.getChoices().get(0).getMessage().getContent());
     }
 
     public String categoryChatGPT(String title) {
@@ -327,6 +329,49 @@ public class OpenAiService {
         System.out.println("게시글 제목 요약 GPT 응답 시간: " + elapsed + "ms");
         System.out.println("카테고리 :" + chatGPTResponse.getChoices().get(0).getMessage().getContent());
 
-        return chatGPTResponse.getChoices().get(0).getMessage().getContent();
+        int categoryId = parseCategory(chatGPTResponse.getChoices().get(0).getMessage().getContent());
+        String categoryName = categoryRepository.findById(categoryId).get().getName();
+
+        return categoryName;
+    }
+
+    /*OpenAI 답변 파싱*/
+    private String parseSummary(String summary){
+        if (summary.startsWith("요약:")){
+            summary = summary.replace("요약:", "").trim();
+        }
+
+        if (summary.startsWith("내용:")){
+            summary = summary.replace("내용:", "").trim();
+        }
+        return summary;
+    }
+
+    private String parseTitle(String title){
+        //양끝에 ""문자 없애기
+        if (title.startsWith("\"") && title.endsWith("\"")) {
+            title = title.substring(1, title.length() - 1);
+        }
+
+        if (title.startsWith("###")) {
+            title = title.replace("###", "").trim();
+        }
+
+        if (title.startsWith("제목:")) {
+            title = title.replace("제목:", "").trim();
+        }
+        return title;
+    }
+
+    private static final int DEFAULT_CATEGORY_ID = 45; //기타
+
+    private int parseCategory(String category) {
+        if (category == null || category.isBlank()) return DEFAULT_CATEGORY_ID;
+
+        try {
+            return Integer.parseInt(category.split(" ")[0]);
+        } catch (NumberFormatException e) {
+            return DEFAULT_CATEGORY_ID;
+        }
     }
 }

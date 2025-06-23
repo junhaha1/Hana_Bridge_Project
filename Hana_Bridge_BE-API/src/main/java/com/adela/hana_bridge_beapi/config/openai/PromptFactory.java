@@ -84,7 +84,7 @@ public class PromptFactory {
         StringBuilder systemPrompt = new StringBuilder();
         systemPrompt.append("""
                 카테고리 정보를 보고 해당 제목를 토대로 카테고리 번호 1개만 분류.
-                제목에 해당 이름이 없으면 45 기타로 분류.
+                제목에 해당 이름이 없으면 45 기타 문서로 분류.
                    번호  이름
                    10	Python
                    11	Java
@@ -121,7 +121,7 @@ public class PromptFactory {
                    42	코딩 테스트
                    43	알고리즘 이론
                    44	Git / GitHub
-                   45	기타
+                   45	기타 문서
                 """);
 
         System.out.println(systemPrompt.toString());
