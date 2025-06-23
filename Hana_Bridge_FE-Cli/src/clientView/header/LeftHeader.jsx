@@ -4,11 +4,95 @@ import { useNavigate } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
 import { FaFolder } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaQuery } from 'react-responsive'; // ✅ 이걸 사용
 
 import { leftFrame } from '../../style/CommonFrame';
 import { leftTitle } from '../../style/CommonLeftStyle';
+
+
+const toggleData = [
+  {
+    title: '프로그래밍 언어',
+    items: ['Python', 'Java', 'JavaScript', 'TypeScript', 'C / C++', '기타 언어'],
+  },
+  {
+    title: '운영체제',
+    items: ['Ubuntu', 'CentOS', '기타 Linux 배포판', 'Windows', 'macOS', 'WSL (Windows Subsystem for Linux)'],
+  },
+  {
+    title: '데이터베이스',
+    items: ['SQL 쿼리', 'MySQL', 'Oracle', 'PostgreSQL', 'NoSQL'],
+  },
+  {
+    title: '프레임워크',
+    items: ['React', 'Spring Boot', 'Django', 'Vue.js', 'Next.js', 'Flask'],
+  },
+  {
+    title: '클라우드',
+    items: ['AWS', 'KT Cloud', 'Azure'],
+  },
+  {
+    title: '인프라',
+    items: ['Docker / 컨테이너', 'Kubernetes', 'Nginx / Apache', 'CI/CD', 'DevOps'],
+  },
+  {
+    title: '알고리즘 & 자료구조',
+    items: ['코딩 테스트', '알고리즘 이론'],
+  },
+  {
+    title: '협업 & 도구',
+    items: ['Git / GitHub'],
+  },
+  {
+    title: '기타',
+    items: ['기타'],
+  },
+];
+
+function ToggleCategoryList() {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  return (
+    <div className="mt-4 space-y-2 px-1 py-1 border rounded">
+      {toggleData.map((group, index) => (
+        <div key={group.title}>
+          <button
+            onClick={() => setOpenIndex(openIndex === index ? null : index)} //여기에 상위 카테고리만 넣었을 시 그걸로 카테고리 설정하는 코드도 추가 
+            className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
+          >
+            {group.title}
+            {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+          </button>
+
+          <AnimatePresence initial={false}>
+            {openIndex === index && (
+              <motion.div
+                className="pl-4 mt-2 space-y-1"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {group.items.map((item) => (
+                  <button
+                    key={item}
+                    className="w-full text-left text-white text-sm px-3 py-1 rounded hover:bg-[#C5BCFF] hover:text-black transition"
+                    onClick={() => console.log(`카테고리 선택됨: ${item}`)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
 const boards = [
   { id: 'me', label: '내 게시판' },
@@ -79,6 +163,12 @@ export default function LeftHeader() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {category === 'assemble' && (
+        <div>
+          <ToggleCategoryList />
+        </div>
+      )}
     </aside>
   );
 }
