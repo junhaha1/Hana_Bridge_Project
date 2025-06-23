@@ -170,7 +170,7 @@ const AssembleBoard = () => {
   }, [redirect, sortType, page]);
 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1) return null;
+    if (isLoading || totalPages < 1) return null;
 
     const pages = [];
     const pagesPerGroup = 5;
