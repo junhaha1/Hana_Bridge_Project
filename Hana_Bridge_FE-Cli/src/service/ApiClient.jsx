@@ -113,6 +113,11 @@ class ApiClient{
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${page}/${sortType}/${category}`);
   }
 
+  //사용자 본인이 쓴 글 카테고리 가져오기 (AssembleBoard)
+  static getMyAssembleCategory(){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/category`);
+  }
+
   //사용자가 좋아요 누른 게시글 조회 (AssembleBoard)
   static getMyGoodAssemble(page, category){
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}/latest/${category}`);
