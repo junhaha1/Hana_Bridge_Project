@@ -167,7 +167,7 @@ const CodeBoard = () => {
 
   //페이지 버튼 렌더링 함수 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1) return null;
+    if (isLoading || totalPages < 1) return null;
 
     const pages = [];
     const pagesPerGroup = 5;
@@ -224,7 +224,7 @@ const CodeBoard = () => {
         </button>
       );
     }
-    return <div className="mt-6 flex justify-center">{pages}</div>;
+    return <div className="mt-6 mb-12 flex justify-center">{pages}</div>;
   };
 
   //상세보기로 
@@ -260,7 +260,7 @@ const CodeBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] ' : 'max-md:h-[83vh]'} md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>코드 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">

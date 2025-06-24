@@ -72,6 +72,16 @@ const DetailBoard = () => {
 
   // 내가 사용할 모나코 인스턴스를 생성
   const monaco = useMonaco();    
+
+  const editTextareaRef = useRef(null);
+
+  useEffect(() => {
+    const textarea = editTextareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto'; // 높이 초기화
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 500)}px`; // 최대 500px 제한
+    }
+  }, [content]); // content가 변경될 때마다 실행
   
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -136,6 +146,8 @@ const DetailBoard = () => {
     }
   }, [code, content]);
 
+
+  //board 내용 가져오기 
   useEffect(() => {
     ApiClient.getBoard(boardId)
     .then(async (res) => {
@@ -222,7 +234,7 @@ const DetailBoard = () => {
         throw error;  
       }
       console.log("게시글 수정 완료 ! ");
-      navigate(`/detailBoard/${boardId}`);
+      navigate(`/detailBoard/${boardId}`, { state: { category: category } });
       setIsEdit(false);
     })
     .catch((err) => {
@@ -295,13 +307,18 @@ const DetailBoard = () => {
   
 
   return (
-    <div className={mainFrame}>
+    <div className={`${mainFrame}`}>
       <Header />
       <div className="w-full flex md:flex-row max-md:flex-col md:mt-20">
         <LeftHeader />
         {/* 메인 콘텐츠 */}
         <main className={detailFrame}>
-          <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} w-full max-w-full break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+          <div 
+            ref={scrollRef} 
+            className={`${scrollStyle} 
+              ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} 
+              overflow-x-hidden break-words mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}
+              >
             {!board ? 
             (
               <div className="text-white text-center mt-10">불러오는 중...</div>
@@ -348,7 +365,7 @@ const DetailBoard = () => {
                     {category === "code"
                       ? 
                       <Editor
-                        height="200px"
+                        height={`${Math.max(200, cleanedCode.split('\n').length * 20)}px`} // 줄 수 × 20px//"200px"
                         defaultLanguage="markdown"
                         language={language}
                         value={cleanedCode}
@@ -360,16 +377,23 @@ const DetailBoard = () => {
                           scrollBeyondLastLine: false,            // 스크롤 밑 여백 제거
                           placeholder: "작성할 코드/에러를 적어 주세요", // 🔹 placeholder 직접 지정
                         }}
-                        className="my-custom-class p-1 overflow-x-auto max-w-full"  //스크롤바 설정 가져옴
+                        className="my-custom-class p-1 overflow-x-auto max-w-full mb-2"  //스크롤바 설정 가져옴
                       />
                       : null}                  
 
                     <textarea
-                      className={editContent}
+                      ref={editTextareaRef}
+                      className={`${editContent} min-h-[100px] max-h-[400px] box-border 
+                        leading-relaxed overflow-y-auto resize-none`}
                       placeholder="내용을 입력해주세요"
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
-                    />
+                      onInput={(e) => {
+                        const target = e.target;
+                        target.style.height = 'auto'; // 높이 초기화
+                        target.style.height = `${Math.min(target.scrollHeight, 400)}px`; // 최대 500px까지만 늘어남
+                      }}
+                    />                
 
                     <div className={liekCommentButton}>
                       <div className={liekComment}>
@@ -418,7 +442,7 @@ const DetailBoard = () => {
                   <div className="border-t border-white/10 mb-3" />
                   { (category === "code") || (category === 'me' && role !== 'ROLE_ADMIN')
                     ? 
-                    <div className="text-white">
+                    <div className="w-full max-w-full text-white">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -430,7 +454,7 @@ const DetailBoard = () => {
                                 style={prism}
                                 language={match[1]}
                                 PreTag="div"
-                                className="rounded overflow-x-auto max-w-[100%]"
+                                className="rounded overflow-x-auto max-w-full"
                                 wrapLongLines={true} // ✅ 긴 줄 wrap 처리
                               >
                                 {String(children).replace(/\n$/, '')}

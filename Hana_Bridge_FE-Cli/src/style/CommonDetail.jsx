@@ -4,7 +4,6 @@ export const editTitle = "w-full p-2 rounded bg-transparent border border-white/
 // - code, content 수정
 export const editContent = " w-full mb-3 p-2 rounded bg-transparent border border-white/30 text-white placeholder-white/50";
 
-
 //좋아요, 댓글 - 버튼 묶기
 export const liekCommentButton = "flex justify-between items-center mt-4";
 //좋아요, 댓글 묶기

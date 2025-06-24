@@ -5,6 +5,11 @@ html, body {
   overflow-x: hidden;
 }
 
+html, body, #root {
+  height: 100%;
+  overflow: hidden; /* ✅ 외부 스크롤 제거 */
+}
+
 /* 글 작성 코드 입력창 스크롤바 css */
 .my-custom-class .monaco-scrollable-element {
   scrollbar-width: thin;

@@ -10,7 +10,7 @@ export const addButton = "bg-white hover:!bg-[#C5BCFF] hover:text-black px-3 rou
 
 /*정렬 체크박스*/
 export const sortCheckLayout = "flex gap-3 justify-end mt-3 mb-2";
-export const sortCheckBox = "text-white pr-1 py-2 text-base bg-transparent rounded focus:outline-none focus:ring-0 focus:border-transparent";
+export const sortCheckBox = "text-white pr-1 md:py-2 md:text-base max-md:text-sm bg-transparent rounded focus:outline-none focus:ring-0 focus:border-transparent";
 
 /* Card 게시글 위치*/
 export const cardTopLayout = "flex justify-between items-start w-full min-w-0";

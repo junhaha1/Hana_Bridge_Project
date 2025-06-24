@@ -109,13 +109,13 @@ class ApiClient{
   }
 
   //사용자 본인 게시글 조회 (AssembleBoard)
-  static getMyAssemble(page, sortType){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${page}/${sortType}`);
+  static getMyAssemble(page, sortType, category){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${page}/${sortType}/${category}`);
   }
 
   //사용자가 좋아요 누른 게시글 조회 (AssembleBoard)
-  static getMyGoodAssemble(page){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}/latest`);
+  static getMyGoodAssemble(page, category){
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}/latest/${category}`);
   }
   
 
@@ -157,7 +157,7 @@ class ApiClient{
   }
 
   //assemble게시글 내용 저장(AI)
-  static saveAssemble(title, category, content, createAt){
+  static saveAssemble(title, category, content, createAt, categoryName){
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/article', {
       method: "POST",
       headers: {
@@ -168,6 +168,7 @@ class ApiClient{
         category: category,
         content: content,
         createAt: createAt,
+        categoryName: categoryName,
       }),
     });
   }
@@ -248,9 +249,9 @@ class ApiClient{
   }
       
   //Assemble 전체 조회
-  static getAssembleBoards(page, sortType){
-    console.log("Get AssembleBoard" + page + "/" + sortType);
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + "/" + page + "/" + sortType);
+  static getAssembleBoards(page, sortType, category){
+    console.log("Get AssembleBoard" + page + "/" + sortType + '/' + category);
+    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + "/" + page + "/" + sortType + "/" + category);
   }
 
   static getSearchAssembleBoards(word, sortType, page){

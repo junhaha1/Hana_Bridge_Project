@@ -18,7 +18,7 @@ const SettingModal = ({onClose}) => {
         <div className="sticky top-0 bg-white z-10 w-full pt-2 pl-2 flex align-center justify-between items-center">
           <h2 className="text-xl font-semibold">AI 사용자 프롬프트 설정</h2>
           <button 
-            className='p-1 mb-2 text-sm text-white rounded-full bg-zinc-500 shadow-md'
+            className='p-1 mr-2 mb-2 text-sm text-white rounded-full bg-zinc-500 shadow-md'
             onClick={()=>{
               setIsAddPrompt(false);
               setIsUpdatePrompt(false);
