@@ -20,7 +20,7 @@ import { createSlice } from '@reduxjs/toolkit';
     form: '',
     level: '',
     option: ''
-    }
+  }
  };
  
  const userSlice = createSlice({

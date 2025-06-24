@@ -20,7 +20,7 @@ const toggleData = [
   },
   {
     title: '운영체제',
-    items: ['Ubuntu', 'CentOS', '기타 Linux 배포판', 'Windows', 'macOS', 'WSL (Windows Subsystem for Linux)'],
+    items: ['Linux', 'Ubuntu', 'CentOS', '기타 Linux 배포판', 'Windows', 'macOS', 'WSL (Windows Subsystem for Linux)'],
   },
   {
     title: '데이터베이스',
@@ -48,56 +48,19 @@ const toggleData = [
   },
   {
     title: '기타',
-    items: ['기타'],
+    items: ['기타 문서'],
   },
 ];
 
-function ToggleCategoryList() {
-  const [openIndex, setOpenIndex] = useState(null);
-  const dispatch = useDispatch();
+// function ToggleCategoryList() {
+//   const [openIndex, setOpenIndex] = useState(null);
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
 
-  return (
-    <div className="mt-4 space-y-2 px-1 py-1 border rounded">
-      {toggleData.map((group, index) => (
-        <div key={group.title}>
-          <button
-            onClick={() => setOpenIndex(openIndex === index ? null : index)} //여기에 상위 카테고리만 넣었을 시 그걸로 카테고리 설정하는 코드도 추가 
-            className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
-          >
-            {group.title}
-            {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
-          </button>
-
-          <AnimatePresence initial={false}>
-            {openIndex === index && (
-              <motion.div
-                className="pl-4 mt-2 space-y-1"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                {group.items.map((item) => (
-                  <button
-                    key={item}
-                    className="w-full text-left text-white text-sm px-3 py-1 rounded hover:bg-[#C5BCFF] hover:text-black transition"
-                    onClick={() => {
-                      console.log(`카테고리 선택됨: ${item}`);
-                      //리덕스에 아이템 넣기 
-                      dispatch(setItem(item));
-                    }}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      ))}
-    </div>
-  );
-}
+//   return (
+    
+//   );
+// }
 
 
 const boards = [
@@ -115,6 +78,10 @@ export default function LeftHeader() {
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // ✅ 모바일 여부
   const [isOpen, setIsOpen] = useState(OpenState); // 모바일일 때만 토글됨
+
+  const [openIndex, setOpenIndex] = useState(null);
+  const [isAssembleOpen, setIsAssembleOpen] = useState(false);
+
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
@@ -155,7 +122,14 @@ export default function LeftHeader() {
             {boards.map(({ id, label }) => (
               <button
                 key={id}
-                onClick={() => postBoard(id)}
+                onClick={() => {
+                  postBoard(id);
+                  if (id === 'assemble') {
+                    setIsAssembleOpen((prev) => !prev); // toggle 열기/닫기
+                  } else {
+                    setIsAssembleOpen(false); // 다른 버튼 누르면 닫음
+                  }
+                }}
                 className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition ${
                   category === id
                     ? 'bg-[#C5BCFF] text-black font-bold'
@@ -170,11 +144,58 @@ export default function LeftHeader() {
         )}
       </AnimatePresence>
 
-      {category === 'assemble' && (
-        <div>
-          <ToggleCategoryList />
-        </div>
-      )}
+      <AnimatePresence>
+        {isAssembleOpen && (
+          <motion.div
+            key="assemble-submenu"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden mt-1 ml-3 space-y-2 px-1 py-1"
+          >
+            {toggleData.map((group, index) => (
+              <div key={group.title}>
+                <button
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
+                >
+                  {group.title}
+                  {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {openIndex === index && (
+                    <motion.div
+                      className="pl-4 mt-2 space-y-1 overflow-hidden"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {group.items.map((item) => (
+                        <button
+                          key={item}
+                          className="w-full text-left text-white text-sm px-3 py-1 rounded hover:bg-[#C5BCFF] hover:text-black transition"
+                          onClick={() => {
+                            dispatch(setItem(item));
+                            navigate("/board/assemble", {
+                              state: { categoryName: item },
+                            });
+                          }}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </aside>
   );
 }
