@@ -145,6 +145,8 @@ public class AssembleApiController {
         String role = tokenService.findRoleByToken(accessToken);
         String email = tokenService.findEmailByToken(accessToken);
 
+        System.out.printf("게시글 등록 요청 제목 : %s\n 카테고리 : %s\n", request.getTitle(),request.getCategoryName());
+
         if (request.getCategory().equals("notice") && !role.equals("ROLE_ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {

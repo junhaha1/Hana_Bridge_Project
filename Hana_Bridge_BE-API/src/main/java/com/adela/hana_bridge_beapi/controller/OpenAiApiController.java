@@ -129,6 +129,8 @@ public class OpenAiApiController {
             SummaryResponse summaryResponse = new SummaryResponse(title, summary, categoryName);
             usersService.updateSummaryCount(userId);
 
+            System.out.printf("요약된 제목 : %s\n 카테고리 : %s\n", title,categoryName);
+
             return ResponseEntity.ok().body(summaryResponse);
         } finally {
             sample.stop( // ⏹️ 측정 종료 + 메트릭 등록
