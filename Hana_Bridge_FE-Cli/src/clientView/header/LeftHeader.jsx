@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
-import { setItem } from '../../store/userSlice';
+import { setItem, clearItem } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
 import { FaFolder } from 'react-icons/fa';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
@@ -65,6 +65,7 @@ export default function LeftHeader() {
   const dispatch = useDispatch();
   const category = useSelector((state) => state.user.category);
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
+  const categoryName = useSelector((state) => state.user.item);
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // ✅ 모바일 여부
   const [isOpen, setIsOpen] = useState(OpenState); // 모바일일 때만 토글됨
@@ -75,7 +76,10 @@ export default function LeftHeader() {
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
-    navigate("/board/" + id);
+    if(category !== 'assemble'){
+      dispatch(clearItem());
+    }
+    navigate("/board/" + id);    
   };
 
   return (
@@ -120,14 +124,24 @@ export default function LeftHeader() {
                     setIsAssembleOpen(false); // 다른 버튼 누르면 닫음
                   }
                 }}
-                className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition ${
+                className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition  flex justify-between ${
                   category === id
                     ? 'bg-[#C5BCFF] text-black font-bold'
                     : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
                 }`}
-              >
+              > 
+                <span className='flex flex-row items-center'>
                 <FaFolder className="mr-2" />
                 {label}
+                </span>
+                {(category === 'assemble' && id === 'assemble' ) && (
+                  <>
+                    {isAssembleOpen 
+                    ? <FaChevronUp/>
+                    : <FaChevronDown/>
+                    }
+                  </>
+                )}
               </button>
             ))}
           </motion.div>
@@ -167,7 +181,11 @@ export default function LeftHeader() {
                         {group.items.map((item) => (
                           <button
                             key={item}
-                            className="w-full text-left text-white text-sm px-3 py-1 rounded hover:bg-[#C5BCFF] hover:text-black transition"
+                            className={`w-full text-left text-sm px-3 py-1 rounded transition
+                              ${categoryName === item 
+                                ? 'bg-[#C5BCFF]  font-bold text-black'
+                                : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
+                              }`}
                             onClick={() => {
                               dispatch(setItem(item));
                               navigate("/board/assemble", {

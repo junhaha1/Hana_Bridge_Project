@@ -47,6 +47,8 @@ const MyBoard = () => {
 
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
 
+  //const [myCategoryName, setMyCategoryName] = useState([]);
+
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -149,6 +151,38 @@ const MyBoard = () => {
       </div>      
     );
   }
+
+  //category 가져오기 
+  // useEffect(() =>{
+  //  ApiClient.getMyAssembleCategory() 
+  //  .then(async  (res) => {
+  //     if (!res.ok) {
+  //       const errorData = await res.json(); // JSON으로 파싱
+  //       console.log("errorData: " + errorData.code + " : " + errorData.message); 
+  //       // 👇 error 객체에 code를 추가해 던짐
+  //       const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+  //       error.code = errorData.code;
+  //       throw error;   
+  //     }
+  //     return res.json();
+  //   })
+  //   .then((data) => {
+  //     console.log(data);
+  //     setMyCategoryName;
+
+  //   })
+  //   .catch((err) => {
+  //     console.error("API 요청 실패:", err);
+  //     // 게시글 없을때 -> category error
+  //     if(err.code === 'CATEGORY_POST_NOT_FOUND'){
+  //       setBoards(null);
+  //     }
+  //     // 404일 때 에러 페이지로 이동
+  //     else if (err.code && err.code.includes('NOT_FOUND')) {
+  //       navigate("/error");
+  //     }
+  //   });
+  // })
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -411,6 +445,7 @@ const MyBoard = () => {
               </div>
             )}
           </div>
+
         </div>
         {boards !== null && (
           <>
