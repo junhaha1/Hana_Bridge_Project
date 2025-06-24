@@ -2,13 +2,66 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
+import { setItem } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
 import { FaFolder } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaQuery } from 'react-responsive'; // ✅ 이걸 사용
 
 import { leftFrame } from '../../style/CommonFrame';
 import { leftTitle } from '../../style/CommonLeftStyle';
+
+
+const toggleData = [
+  {
+    title: '프로그래밍 언어',
+    items: ['Python', 'Java', 'JavaScript', 'TypeScript', 'C / C++', '기타 언어'],
+  },
+  {
+    title: '운영체제',
+    items: ['Linux', 'Ubuntu', 'CentOS', '기타 Linux 배포판', 'Windows', 'macOS', 'WSL (Windows Subsystem for Linux)'],
+  },
+  {
+    title: '데이터베이스',
+    items: ['SQL 쿼리', 'MySQL', 'Oracle', 'PostgreSQL', 'NoSQL'],
+  },
+  {
+    title: '프레임워크',
+    items: ['React', 'Spring Boot', 'Django', 'Vue.js', 'Next.js', 'Flask'],
+  },
+  {
+    title: '클라우드',
+    items: ['AWS', 'KT Cloud', 'Azure'],
+  },
+  {
+    title: '인프라',
+    items: ['Docker / 컨테이너', 'Kubernetes', 'Nginx / Apache', 'CI/CD', 'DevOps'],
+  },
+  {
+    title: '알고리즘 & 자료구조',
+    items: ['코딩 테스트', '알고리즘 이론'],
+  },
+  {
+    title: '협업 & 도구',
+    items: ['Git / GitHub'],
+  },
+  {
+    title: '기타',
+    items: ['기타 문서'],
+  },
+];
+
+// function ToggleCategoryList() {
+//   const [openIndex, setOpenIndex] = useState(null);
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+
+//   return (
+    
+//   );
+// }
+
 
 const boards = [
   { id: 'me', label: '내 게시판' },
@@ -25,6 +78,10 @@ export default function LeftHeader() {
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // ✅ 모바일 여부
   const [isOpen, setIsOpen] = useState(OpenState); // 모바일일 때만 토글됨
+
+  const [openIndex, setOpenIndex] = useState(null);
+  const [isAssembleOpen, setIsAssembleOpen] = useState(false);
+
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
@@ -65,7 +122,14 @@ export default function LeftHeader() {
             {boards.map(({ id, label }) => (
               <button
                 key={id}
-                onClick={() => postBoard(id)}
+                onClick={() => {
+                  postBoard(id);
+                  if (id === 'assemble') {
+                    setIsAssembleOpen((prev) => !prev); // toggle 열기/닫기
+                  } else {
+                    setIsAssembleOpen(false); // 다른 버튼 누르면 닫음
+                  }
+                }}
                 className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition ${
                   category === id
                     ? 'bg-[#C5BCFF] text-black font-bold'
@@ -79,6 +143,59 @@ export default function LeftHeader() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {isAssembleOpen && (
+          <motion.div
+            key="assemble-submenu"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden mt-1 ml-3 space-y-2 px-1 py-1"
+          >
+            {toggleData.map((group, index) => (
+              <div key={group.title}>
+                <button
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
+                >
+                  {group.title}
+                  {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {openIndex === index && (
+                    <motion.div
+                      className="pl-4 mt-2 space-y-1 overflow-hidden"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {group.items.map((item) => (
+                        <button
+                          key={item}
+                          className="w-full text-left text-white text-sm px-3 py-1 rounded hover:bg-[#C5BCFF] hover:text-black transition"
+                          onClick={() => {
+                            dispatch(setItem(item));
+                            navigate("/board/assemble", {
+                              state: { categoryName: item },
+                            });
+                          }}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </aside>
   );
 }

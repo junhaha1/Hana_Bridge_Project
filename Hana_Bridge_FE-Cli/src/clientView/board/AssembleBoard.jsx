@@ -21,6 +21,8 @@ const AssembleBoard = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const isBack = location.state?.from === "back";
+  const categoryName = location.state?.categoryName ?? "all";
+  console.log("categoryName: " + categoryName);
 
   const [searchWord, setSearchWord] = useState(""); //검색창에 입력된 단어를 갱신하는 변수
   const [fixedWord, setFixedWord] = useState(""); //검색이 확정된 단어
@@ -128,9 +130,10 @@ const AssembleBoard = () => {
         setIsLoading(true);
         if (searchWord.trim() !== ""){ //검색어가 존재하는 경우
           getSearch(searchWord);
-        } else {
+        } 
+        else { //검색어가 존재하지 않을 경우 
           const getAssemble = ApiClient.getAssembleBoards;
-          const res = await getAssemble(page, sortType);
+          const res = await getAssemble(page, sortType, categoryName); //카테고리 추가하기
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
@@ -167,10 +170,10 @@ const AssembleBoard = () => {
     };
 
     fetchBoards();
-  }, [redirect, sortType, page]);
+  }, [redirect, sortType, page, categoryName]);
 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1) return null;
+    if (isLoading || totalPages < 1) return null;
 
     const pages = [];
     const pagesPerGroup = 5;
@@ -226,7 +229,7 @@ const AssembleBoard = () => {
         </button>
       );
     }
-    return <div className="mt-6 flex justify-center">{pages}</div>;
+    return <div className="mt-6  mb-12 flex justify-center">{pages}</div>;
   };
 
   //enter로 전송
@@ -262,7 +265,7 @@ const AssembleBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={`${scrollStyle}  ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+    <div ref={scrollRef} className={`${scrollStyle}  ${OpenState ? 'max-md:h-[63vh] ' : 'max-md:h-[83vh] '}   md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>AI 답변 게시판</h3>
         <div className={searchBox}>
@@ -297,7 +300,7 @@ const AssembleBoard = () => {
             </>
           ):(
             <>
-              <h3 className="text-2xl font-bold mb-2">아직 첫 공지가 작성되지 않았습니다. </h3>
+              <h3 className="text-2xl font-bold mb-2">아직 첫 게시글이 작성되지 않았습니다. </h3>
             </>
           )}
         </div>

@@ -33,6 +33,7 @@ public class OpenAiApiController {
     private final OpenAiService openAiService;
     private final TokenService tokenService;
     private final UsersService usersService;
+    private final AssembleBoardService assembleBoardService;
     private final PromptService promptService;
 
     @GetMapping("/prompt")
@@ -123,29 +124,11 @@ public class OpenAiApiController {
             //요약본을 바탕으로 제목 생성
             String title = openAiService.titleChatGPT(summary);
 
-            //양끝에 ""문자 없애기
-            if (title.startsWith("\"") && title.endsWith("\"")) {
-                title = title.substring(1, title.length() - 1);
-            }
+            String categoryName = openAiService.categoryChatGPT(title);
 
-            if (title.startsWith("###")) {
-                title = title.replace("###", "").trim();
-            }
-
-            if (title.startsWith("제목:")) {
-                title = title.replace("제목:", "").trim();
-            }
-
-            if (summary.startsWith("요약:")){
-                summary = summary.replace("요약:", "").trim();
-            }
-
-            if (summary.startsWith("내용:")){
-                summary = summary.replace("내용:", "").trim();
-            }
-
-            SummaryResponse summaryResponse = new SummaryResponse(title, summary);
+            SummaryResponse summaryResponse = new SummaryResponse(title, summary, categoryName);
             usersService.updateSummaryCount(userId);
+
             return ResponseEntity.ok().body(summaryResponse);
         } finally {
             sample.stop( // ⏹️ 측정 종료 + 메트릭 등록

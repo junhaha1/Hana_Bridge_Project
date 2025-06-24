@@ -3,12 +3,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ApiClient from "../../service/ApiClient";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurPage, setCurPageGroup, resetPage } from "../../store/postSlice";
-
 //디자인 
 import { scrollStyle, cardStyle } from "../../style/CommonStyle";
 import { emptyDiv, writeButton } from "../../style/CommonEmptyBoard";
 import { userDate } from "../../style/CommonDetail";
-import {FaUser, FaSearch, FaArrowUp,  FaRegComment  } from 'react-icons/fa';
+import {FaUser, FaSearch, FaArrowUp,  FaRegComment, FaChevronDown } from 'react-icons/fa';
 import { BiLike } from "react-icons/bi"; 
 import {addButton, cardAuthor, cardBottomLayout, cardComment, cardContent, cardGood, cardTitle, cardTopLayout, inputBox, inputResetButton, mainTitle, searchBox, sortCheckBox, sortCheckLayout, upBottom } from "../../style/CommonBoardStyle";
 import { IoMdClose } from "react-icons/io";
@@ -165,9 +164,9 @@ const MyBoard = () => {
           if (toggle === "code"){
             res = await ApiClient.getMyBoard(page, sortType);
           } else if (toggle === "assemble"){
-            res = await ApiClient.getMyAssemble(page, sortType);
+            res = await ApiClient.getMyAssemble(page, sortType, "all"); //카테고리 추가하기
           } else if (toggle === "goodAssemble"){
-            res = await ApiClient.getMyGoodAssemble(page);
+            res = await ApiClient.getMyGoodAssemble(page, "all"); //카테고리 추가하기
           } else if (toggle === "goodCode"){
             res = await ApiClient.getMyGoodBoard(page);
           }
@@ -184,6 +183,7 @@ const MyBoard = () => {
           }
 
           const data = await res.json();
+          console.log(data.assembleBoards);
           if ((toggle === "code" || toggle === "goodCode" ) && data.boards.length === 0) {
             setBoards(null);
           }
@@ -219,7 +219,7 @@ const MyBoard = () => {
 
   //페이지 번호 렌더링 함수 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1) return null;
+    if (isLoading || totalPages < 1) return null;
 
     const pages = [];
     const pagesPerGroup = 5;
@@ -276,7 +276,7 @@ const MyBoard = () => {
         </button>
       );
     }
-    return <div className="mt-6 flex justify-center">{pages}</div>;
+    return <div className="mt-6  mb-12 flex justify-center">{pages}</div>;
   };
 
   //board를 클릭했을 때 이동
@@ -320,7 +320,7 @@ const MyBoard = () => {
 
   return (
     <>
-    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+    <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] ' : 'max-md:h-[83vh]'}  md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="flex justify-between p-1 md:mt-11 max-md:flex-col">
         <h3 className={mainTitle}>내 게시판</h3>
         <div className="w-1/2 flex justify-end gap-6 max-md:w-full">
@@ -350,6 +350,7 @@ const MyBoard = () => {
           </button>
         </div>
       </div>
+      {/* export const sortCheckLayout = "flex gap-3 justify-end mt-3 mb-2"; */}
       <div className={sortCheckLayout + " justify-between"}>
         <div className="flex rounded gap-2">
           <button
@@ -358,7 +359,7 @@ const MyBoard = () => {
               setToggle("code");
               resetBoards();
             }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+            className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "code" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:px-1.5 max-md:py-1 max-md:text-sm`}
           >
             {role === 'ROLE_ADMIN' ? '공지' : '코드/질문'}
           </button>
@@ -368,19 +369,21 @@ const MyBoard = () => {
               setToggle("assemble");
               resetBoards();
             }}
-            className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:text-sm`}
+            className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:px-1.5 max-md:py-1 max-md:text-sm`}
           >
             AI 답변
           </button>
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={`bg-gray-600 font-semibold px-4 py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:text-sm`}
+              className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:px-1.5 max-md:py-1 max-md:text-sm`}
             >
-              {toggle === "goodAssemble" && "좋아요 누른 AI 답변"}
-              {toggle === "goodCode" && "좋아요 누른 코드/질문"}
-              {toggle !== "goodAssemble" && toggle !== "goodCode" && "좋아요"}
-              <span className="max-md:text-sm">▼</span>
+              <span className="flex flex-row">
+                {toggle === "goodAssemble" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>AI 답변</span>)}
+                {toggle === "goodCode" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>코드/질문</span>)}
+                {toggle !== "goodAssemble" && toggle !== "goodCode" && "좋아요"}
+                <FaChevronDown className="mt-1 ml-0.5"/>
+              </span>
             </button>
 
             {isDropdownOpen && (

@@ -15,7 +15,7 @@ export const deleteButton = "px-3 py-1 w-15 h-7 bg-red-600 hover:bg-red-700 text
 //구분선
 export const whiteLine = "border-t border-white/40 my-3 max-md:my-4";
 //댓글 작성 버튼
-export const writeCommentButton = "px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded";
+export const writeCommentButton = "px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded mb-20";
 
 //댓글 추가 입력창 
 export const commentInput = "custom-scroll w-full resize-none p-3 pr-10 bg-transparent text-white placeholder-white/60 rounded border border-white/30";
