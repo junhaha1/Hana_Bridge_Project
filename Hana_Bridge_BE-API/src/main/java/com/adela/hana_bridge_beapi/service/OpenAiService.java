@@ -331,6 +331,7 @@ public class OpenAiService {
 
         int categoryId = parseCategory(chatGPTResponse.getChoices().get(0).getMessage().getContent());
         String categoryName = categoryRepository.findById(categoryId).get().getName();
+        System.out.println("생성된 카테고리 : " + categoryName);
 
         return categoryName;
     }
