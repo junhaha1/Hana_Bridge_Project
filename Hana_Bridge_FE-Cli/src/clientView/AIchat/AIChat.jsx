@@ -395,12 +395,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     .then((data) => {     
       const assembleTitle = data.title;
       const assembleContent = data.content;
+      const categoryName = data.categoryName;
       setIsPostComplete(true);
       dispatch(setPostComplete({isPostComplete: true}));
       setIsPostLoading(false);      
       dispatch(resetPostState());
       console.log("posting complete!");
-      navigate('/writeAssemble', { state: {assembleTitle: assembleTitle, assembleContent: assembleContent}});
+      navigate('/writeAssemble', { state: {assembleTitle: assembleTitle, assembleContent: assembleContent, assembleCategoryName: categoryName}});
     })
     .catch((err) => {
       setIsPostLoading(false);

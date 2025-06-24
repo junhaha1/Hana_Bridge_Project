@@ -13,13 +13,94 @@ import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
 import { upBottom } from "../../style/CommonBoardStyle";
 import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
-import { FaUser, FaArrowUp  } from 'react-icons/fa';
+import { FaUser, FaArrowUp, FaChevronDown, FaChevronUp  } from 'react-icons/fa';
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { FaLightbulb } from "react-icons/fa";
 
+const categoryOptions = [
+  {
+    label: "프로그래밍 언어",
+    items: ["Python", "Java", "JavaScript", "TypeScript", "C / C++", "기타 언어"],
+  },
+  {
+    label: "운영체제",
+    items: ["Linux", "Ubuntu", "CentOS", "기타 Linux 배포판", "Windows", "macOS", "WSL (Windows Subsystem for Linux)"],
+  },
+  {
+    label: "데이터베이스",
+    items: ["SQL 쿼리", "MySQL", "Oracle", "PostgreSQL", "NoSQL"],
+  },
+  {
+    label: "프레임워크",
+    items: ["React", "Spring Boot", "Django", "Vue.js", "Next.js", "Flask"],
+  },
+  {
+    label: "클라우드",
+    items: ["AWS", "KT Cloud", "Azure"],
+  },
+  {
+    label: "인프라",
+    items: ["Docker / 컨테이너", "Kubernetes", "Nginx / Apache", "CI/CD", "DevOps"],
+  },
+  {
+    label: "알고리즘 & 자료구조",
+    items: ["코딩 테스트", "알고리즘 이론"],
+  },
+  {
+    label: "협업 & 도구",
+    items: ["Git / GitHub"],
+  },
+  {
+    label: "기타",
+    items: ["기타 문서"],
+  },
+];
+
+function CategorySelector({ categoryName, setCategoryName }) {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  return (
+    <div className="text-white border border-gray-100 rounded p-3 mb-4">
+      <p className="text-sm mb-2">카테고리를 선택하세요</p>
+      {categoryOptions.map((group, index) => (
+        <div key={group.label} className="mb-2">
+          <button
+            type="button"
+            onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            className="w-full flex justify-between items-center font-semibold text-sm bg-gray-700 px-3 py-1 rounded hover:bg-gray-600"
+          >
+            {group.label}
+            {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+          </button>
+
+          {openIndex === index && (
+            <div className="mt-2 pl-4 space-y-1">
+              {group.items.map((item) => (
+                <label key={item} className="block text-sm">
+                  <input
+                    type="radio"
+                    name="categoryName" // 동일한 name으로 묶어야 radio 기능이 동작함
+                    value={item}
+                    checked={categoryName === item}
+                    onChange={() => setCategoryName(item)}
+                    className="mr-2"
+                  />
+                  {item}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
 const AddAssemble = () => {
   const location = useLocation();
-  const { assembleTitle, assembleContent } = location.state || {};
+  const { assembleTitle, assembleContent, assembleCategoryName } = location.state || {};
   //const [board, setBoard] = useState(null);
 
   const navigate = useNavigate();
@@ -27,6 +108,7 @@ const AddAssemble = () => {
 
   const [title, setTitle] = useState(assembleTitle);
   const [content, setContent] = useState(assembleContent);
+  const [categoryName, setCategoryName] = useState(assembleCategoryName);
   const [createAt, setCreateAt] = useState(new Date());
   const likeCount = 0;
   const nickName = useSelector((state) => state.user.nickName);
@@ -48,6 +130,9 @@ const AddAssemble = () => {
   const [contentError, setContentError] = useState("");
 
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
+
+  const [showCategorySelector, setShowCategorySelector] = useState(false);
+
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -83,7 +168,7 @@ const AddAssemble = () => {
     if (!isValid) return;
 
 
-    ApiClient.saveAssemble(title, 'assemble', content, createAt)
+    ApiClient.saveAssemble(title, 'assemble', content, createAt, categoryName)
     .then(async (res) => {
       if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
       return res.json();      
@@ -136,7 +221,9 @@ const AddAssemble = () => {
               </div>
   
               <div className={detailCardStyle}>
-                <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div>
+                {/* <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div> */}
+                {/* <div className={detailCategory}>AI답변 게시판 &gt; {board.categoryName === "all" ? 상세글 : board.categoryName}</div> */}
+
   
                 {/* <h2 className={detailTitle}>{board.title}</h2> */}
                 <div className="mb-3">
@@ -166,6 +253,20 @@ const AddAssemble = () => {
                   </span>                  
                 </div>
                 <div className="border-t border-white/10 mb-3" />
+
+                <p
+                  className="text-white font-semibold cursor-pointer hover:text-[#C5BCFF] flex flex-row"
+                  onClick={() => setShowCategorySelector((prev) => !prev)}
+                >
+                  카테고리 - <span className="text-yellow-400">{categoryName}  </span><span>{showCategorySelector ? (<FaChevronUp className="mt-1 text-gray-400"/>) : (<FaChevronDown className="mt-1 text-gray-400"/>)}</span>
+                </p>
+
+                {showCategorySelector && (
+                  <CategorySelector
+                    categoryName={categoryName}
+                    setCategoryName={setCategoryName}
+                  />
+                )}
   
                 <div className="text-white">
                   {/* <MarkdownEditor content={content} onChange={setContent} /> */}

@@ -157,7 +157,7 @@ class ApiClient{
   }
 
   //assemble게시글 내용 저장(AI)
-  static saveAssemble(title, category, content, createAt){
+  static saveAssemble(title, category, content, createAt, categoryName){
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/article', {
       method: "POST",
       headers: {
@@ -168,6 +168,7 @@ class ApiClient{
         category: category,
         content: content,
         createAt: createAt,
+        categoryName: categoryName,
       }),
     });
   }
@@ -249,7 +250,7 @@ class ApiClient{
       
   //Assemble 전체 조회
   static getAssembleBoards(page, sortType, category){
-    console.log("Get AssembleBoard" + page + "/" + sortType);
+    console.log("Get AssembleBoard" + page + "/" + sortType + '/' + category);
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + "/" + page + "/" + sortType + "/" + category);
   }
 

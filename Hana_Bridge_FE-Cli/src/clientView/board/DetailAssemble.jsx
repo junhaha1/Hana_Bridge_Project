@@ -63,6 +63,7 @@ const DetailAssemble = () => {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
         setBoard(data);        
         setLikeCount(data.likeCount);
         setIsLike(data.goodCheck);
@@ -169,7 +170,7 @@ const DetailAssemble = () => {
               </button>
 
               <div className={detailCardStyle}>
-                {/* <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div> */}
+                <div className={detailCategory}>AI답변 게시판 &gt; {board.categoryName === "all" ? 상세글 : board.categoryName}</div>
 
                 <h2 className={detailTitle}>{board.title}</h2>
                 <div className={userDate}>

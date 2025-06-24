@@ -219,7 +219,7 @@ const MyBoard = () => {
 
   //페이지 번호 렌더링 함수 
   const renderPagination = () => {
-    if (isLoading || totalPages <= 1) return null;
+    if (isLoading || totalPages < 1) return null;
 
     const pages = [];
     const pagesPerGroup = 5;
