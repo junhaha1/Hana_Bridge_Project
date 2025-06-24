@@ -59,6 +59,7 @@ services:
     volumes:
       - mysql_service:/var/lib/mysql
       - ./MySQL_init/${INIT_DB}:/docker-entrypoint-initdb.d/init.sql
+      - ./MySQL_init/my.cnf:/etc/mysql/conf.d/my.cnf # 한글 설정
 
 volumes:
   #자동으로 프로젝트 폴더명이 앞에 붙음
