@@ -164,9 +164,9 @@ const MyBoard = () => {
           if (toggle === "code"){
             res = await ApiClient.getMyBoard(page, sortType);
           } else if (toggle === "assemble"){
-            res = await ApiClient.getMyAssemble(page, sortType);
+            res = await ApiClient.getMyAssemble(page, sortType, "all"); //카테고리 추가하기
           } else if (toggle === "goodAssemble"){
-            res = await ApiClient.getMyGoodAssemble(page);
+            res = await ApiClient.getMyGoodAssemble(page, "all"); //카테고리 추가하기
           } else if (toggle === "goodCode"){
             res = await ApiClient.getMyGoodBoard(page);
           }
@@ -183,6 +183,7 @@ const MyBoard = () => {
           }
 
           const data = await res.json();
+          console.log(data.assembleBoards);
           if ((toggle === "code" || toggle === "goodCode" ) && data.boards.length === 0) {
             setBoards(null);
           }

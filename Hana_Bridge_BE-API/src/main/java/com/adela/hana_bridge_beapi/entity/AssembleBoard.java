@@ -29,6 +29,10 @@ public class AssembleBoard {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category categorys; //카테고리 목록
+
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 
@@ -36,10 +40,11 @@ public class AssembleBoard {
     private int likeCount = 0;
 
     @Builder
-    public AssembleBoard(Users users, String title, String category, String content, LocalDateTime createAt) {
+    public AssembleBoard(Users users, String title, String category, String content, Category categorys,LocalDateTime createAt) {
         this.users = users;
         this.title = title;
         this.category = category;
+        this.categorys = categorys;
         this.content = content;
         this.createAt = createAt;
     }

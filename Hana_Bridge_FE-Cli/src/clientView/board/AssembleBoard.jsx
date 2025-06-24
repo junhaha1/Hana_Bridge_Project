@@ -128,9 +128,10 @@ const AssembleBoard = () => {
         setIsLoading(true);
         if (searchWord.trim() !== ""){ //검색어가 존재하는 경우
           getSearch(searchWord);
-        } else {
+        } 
+        else { //검색어가 존재하지 않을 경우 
           const getAssemble = ApiClient.getAssembleBoards;
-          const res = await getAssemble(page, sortType);
+          const res = await getAssemble(page, sortType, "all"); //카테고리 추가하기
           if (!res.ok) {
             //error handler 받음 
             const errorData = await res.json(); // JSON으로 파싱
