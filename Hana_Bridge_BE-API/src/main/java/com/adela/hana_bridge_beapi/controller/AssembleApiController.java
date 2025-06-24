@@ -127,7 +127,17 @@ public class AssembleApiController {
         }
         return ResponseEntity.ok().body(detailBoard);
     }
+    //사용자가 등록한 글에 대한 카테고리 목록만 가져오기
+    @GetMapping("/user/category")
+    public ResponseEntity<UserCategoryResponse> findUserCategory(@RequestHeader("Authorization") String authHeader) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
 
+        UserCategoryResponse userCategory = new UserCategoryResponse(assembleBoardService.getUserCategories(userId));
+        return ResponseEntity.ok().body(userCategory);
+    }
+
+    //글 등록
     @PostMapping("/article")
     public ResponseEntity<AssembleSummaryResponse> addAssembleBoard(@RequestHeader("Authorization") String authHeader,
                                          @RequestBody AssembleAddRequest request) {
