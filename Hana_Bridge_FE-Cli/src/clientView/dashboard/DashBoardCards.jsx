@@ -37,7 +37,7 @@ const DashboardCards = () => {
   }; 
 
   return (
-    <div ref={scrollRef} className={`${scrollStyle}  ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} pt-8 pb-8 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+    <div ref={scrollRef} className={`${scrollStyle}  ${OpenState ? 'max-md:h-[63vh]' : 'max-md:h-[83vh]'}  md:h-[90vh] pt-8 pb-8 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
       <div className="backdrop-blur-sm bg-white/10 border p-5 border-white/20 rounded-2xl text-center text-white shadow-2xl max-md:!p-3">
         <div className="mb-6 text-left space-y-4 text-xl font-semibold leading-snug max-md:space-y-3">
           <p className="flex items-center gap-2 max-md:text-base"><FaQuestionCircle className="text-yellow-300 size-6 shrink-0 max-md:size-5" />혼자 공부하는 게 막막하지 않으셨나요?</p>

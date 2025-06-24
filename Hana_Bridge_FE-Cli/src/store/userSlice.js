@@ -12,7 +12,7 @@ import { createSlice } from '@reduxjs/toolkit';
   shouldAutoOpenHelper: false,
   questionCount: 0,
   summaryCount: 0,
-  item: '',
+  item: 'all',
   aiPrompts: {
     promptId: '',
     name: '',
@@ -52,7 +52,7 @@ import { createSlice } from '@reduxjs/toolkit';
       state.shouldAutoOpenHelper = false;
       state.questionCount = 0;
       state.summaryCount = 0;
-      state.item = '';
+      state.item = 'all';
       state.aiPrompts = {
         promptId: '',
         name: '',
@@ -93,10 +93,13 @@ import { createSlice } from '@reduxjs/toolkit';
     setItem: (state, action) => {
       state.item = action.payload;
       console.log(state.item);
-    }
+    },
+    clearItem: (state) =>{
+      state.item = 'all';
+    },
    },
  });
  
  export const { setUser, modifyUser, clearUser, setAiChat, clearAiChat, setCategory, //setPage, 
-  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts, setQuestionCount, setSummaryCount, setItem } = userSlice.actions;
+  setPlayFlag, setShouldAutoOpenHelper, setAiPrompts, setQuestionCount, setSummaryCount, setItem, clearItem } = userSlice.actions;
  export default userSlice.reducer;
