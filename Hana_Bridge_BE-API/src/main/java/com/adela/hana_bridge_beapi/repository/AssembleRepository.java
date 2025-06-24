@@ -73,8 +73,16 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
                             FROM AssembleGood g 
                             WHERE g.users.id = :userId)
     """)
-    Page<AssembleBoard> findAllByCategoryWithGood(Category categorys, Pageable pageable, @Param("userId") Long userId);
+    Page<AssembleBoard> findAllByCategoryWithGood(@Param("categorys") Category categorys, Pageable pageable, @Param("userId") Long userId);
 
     Page<AssembleBoard> findByCategorys(Category categorys, Pageable pageable);
 
+    @Query("""
+      SELECT b.categorys.name 
+      FROM AssembleBoard b 
+      WHERE b.users.id = :userId 
+      GROUP BY b.categorys.id, b.categorys.name 
+      ORDER BY b.categorys.id
+    """)
+    List<String> findCategoryByUsers(@Param("userId") Long userId);
 }

@@ -99,6 +99,11 @@ public class AssembleBoardService {
         return assembleBoards;
     }
 
+    //사용자가 작성한 게시글의 카테고리 목록 조회
+    public List<String> getUserCategories(Long userId) {
+        return assembleRepository.findCategoryByUsers(userId);
+    }
+
     //검색어가 제목, 내용에 포함되어 있는 게시글 정렬기준으로 정렬하여 조회
     public Page<AssembleBoard> getSearchAssembleBoards(String word, String sort, int page) {
         if (sort.equals("latest")) {
