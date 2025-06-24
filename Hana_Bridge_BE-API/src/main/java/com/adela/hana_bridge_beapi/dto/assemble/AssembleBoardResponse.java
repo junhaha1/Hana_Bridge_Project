@@ -14,6 +14,7 @@ public class AssembleBoardResponse {
     private String nickName;
     private String title;
     private String category;
+    private String categoryName;
     private String content;
     private LocalDateTime createAt;
     private int likeCount;
@@ -25,6 +26,7 @@ public class AssembleBoardResponse {
         this.title = assembleBoard.getTitle();
         this.nickName = assembleBoard.getUsers().getNickName();
         this.category = assembleBoard.getCategory();
+        this.categoryName = assembleBoard.getCategorys().getName();
         this.content = assembleBoard.getContent();
         this.createAt = assembleBoard.getCreateAt();
         this.likeCount = assembleBoard.getLikeCount();
