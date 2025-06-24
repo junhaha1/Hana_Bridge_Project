@@ -197,7 +197,7 @@ const AddAssemble = () => {
                 해당 화면을 나가면 내용이 사라집니다
               </div>
             )}
-            <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] md:h-full ' : 'max-md:h-[83vh]'} mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
+            <div ref={scrollRef} className={`${scrollStyle} ${OpenState ? 'max-md:h-[63vh] ' : 'max-md:h-[83vh]'} md:h-[90vh] mt-1 ml-20 pr-40 max-md:m-1 max-md:p-2 max-md:overflow-x-hidden`}>
               <div className="flex flex-row items-center gap-2 w-1/2 md:mt-12 mb-3 relative">
                 <button
                   onClick={() => setConfirmBackOpen(true)}

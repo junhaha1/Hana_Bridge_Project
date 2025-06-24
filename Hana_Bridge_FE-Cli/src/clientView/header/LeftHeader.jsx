@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
-import { setItem } from '../../store/userSlice';
+import { setItem, clearItem } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
 import { FaFolder } from 'react-icons/fa';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMediaQuery } from 'react-responsive'; // ✅ 이걸 사용
+import { useMediaQuery } from 'react-responsive'; 
+import { scrollStyle } from '../../style/CommonStyle';
 
 import { leftFrame } from '../../style/CommonFrame';
 import { leftTitle } from '../../style/CommonLeftStyle';
@@ -52,17 +53,6 @@ const toggleData = [
   },
 ];
 
-// function ToggleCategoryList() {
-//   const [openIndex, setOpenIndex] = useState(null);
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   return (
-    
-//   );
-// }
-
-
 const boards = [
   { id: 'me', label: '내 게시판' },
   { id: 'notice', label: '공지 게시판' },
@@ -75,6 +65,7 @@ export default function LeftHeader() {
   const dispatch = useDispatch();
   const category = useSelector((state) => state.user.category);
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
+  const categoryName = useSelector((state) => state.user.item);
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // ✅ 모바일 여부
   const [isOpen, setIsOpen] = useState(OpenState); // 모바일일 때만 토글됨
@@ -85,7 +76,10 @@ export default function LeftHeader() {
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
-    navigate("/board/" + id);
+    if(category !== 'assemble'){
+      dispatch(clearItem());
+    }
+    navigate("/board/" + id);    
   };
 
   return (
@@ -130,14 +124,24 @@ export default function LeftHeader() {
                     setIsAssembleOpen(false); // 다른 버튼 누르면 닫음
                   }
                 }}
-                className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition ${
+                className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition  flex justify-between ${
                   category === id
                     ? 'bg-[#C5BCFF] text-black font-bold'
                     : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
                 }`}
-              >
+              > 
+                <span className='flex flex-row items-center'>
                 <FaFolder className="mr-2" />
                 {label}
+                </span>
+                {(category === 'assemble' && id === 'assemble' ) && (
+                  <>
+                    {isAssembleOpen 
+                    ? <FaChevronUp/>
+                    : <FaChevronDown/>
+                    }
+                  </>
+                )}
               </button>
             ))}
           </motion.div>
@@ -152,46 +156,52 @@ export default function LeftHeader() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden mt-1 ml-3 space-y-2 px-1 py-1"
+            className={`mt-1 ml-3 space-y-2 px-1 py-1`}
           >
-            {toggleData.map((group, index) => (
-              <div key={group.title}>
-                <button
-                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
-                >
-                  {group.title}
-                  {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
-                </button>
+            <div className={`${scrollStyle} h-[55vh] `}>
+              {toggleData.map((group, index) => (
+                <div key={group.title}>
+                  <button
+                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                    className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
+                  >
+                    {group.title}
+                    {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {openIndex === index && (
-                    <motion.div
-                      className="pl-4 mt-2 space-y-1 overflow-hidden"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {group.items.map((item) => (
-                        <button
-                          key={item}
-                          className="w-full text-left text-white text-sm px-3 py-1 rounded hover:bg-[#C5BCFF] hover:text-black transition"
-                          onClick={() => {
-                            dispatch(setItem(item));
-                            navigate("/board/assemble", {
-                              state: { categoryName: item },
-                            });
-                          }}
-                        >
-                          {item}
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+                  <AnimatePresence initial={false}>
+                    {openIndex === index && (
+                      <motion.div
+                        className="pl-4 mt-2 space-y-1 overflow-hidden"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {group.items.map((item) => (
+                          <button
+                            key={item}
+                            className={`w-full text-left text-sm px-3 py-1 rounded transition
+                              ${categoryName === item 
+                                ? 'bg-[#C5BCFF]  font-bold text-black'
+                                : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
+                              }`}
+                            onClick={() => {
+                              dispatch(setItem(item));
+                              navigate("/board/assemble", {
+                                state: { categoryName: item },
+                              });
+                            }}
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
