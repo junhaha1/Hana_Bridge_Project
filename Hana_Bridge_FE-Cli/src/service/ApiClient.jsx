@@ -158,6 +158,7 @@ class ApiClient{
 
   //assemble게시글 내용 저장(AI)
   static saveAssemble(title, category, content, createAt, categoryName){
+    console.log("categoryName : " + categoryName);
     return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + '/article', {
       method: "POST",
       headers: {
