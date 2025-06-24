@@ -50,6 +50,8 @@ services:
       - MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_DB}
       - TZ=Asia/Seoul
+      - MYSQL_CHARACTER_SET_SERVER=utf8mb4
+      - MYSQL_COLLATION_SERVER=utf8mb4_unicode_ci
     env_file:
       - .env
     command:
