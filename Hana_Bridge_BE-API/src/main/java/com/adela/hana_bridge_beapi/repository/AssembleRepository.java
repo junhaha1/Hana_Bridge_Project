@@ -75,7 +75,11 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
     """)
     Page<AssembleBoard> findAllByCategoryWithGood(@Param("categorys") Category categorys, Pageable pageable, @Param("userId") Long userId);
 
+    //하위 카테고리로 조회
     Page<AssembleBoard> findByCategorys(Category categorys, Pageable pageable);
+
+    //상위 카테고리로 조회
+    Page<AssembleBoard> findByCategorys_Parent_Id(int parentId, Pageable pageable);
 
     @Query("""
       SELECT b.categorys.name 
