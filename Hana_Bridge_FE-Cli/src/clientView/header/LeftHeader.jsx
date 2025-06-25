@@ -67,7 +67,7 @@ export default function LeftHeader() {
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
   const categoryName = useSelector((state) => state.user.item);
 
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // ✅ 모바일 여부
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // 모바일 여부
   const [isOpen, setIsOpen] = useState(OpenState); // 모바일일 때만 토글됨
 
   const [openIndex, setOpenIndex] = useState(null);
@@ -162,8 +162,19 @@ export default function LeftHeader() {
               {toggleData.map((group, index) => (
                 <div key={group.title}>
                   <button
-                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                    className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
+                    onClick={() => {
+                      setOpenIndex(openIndex === index ? null : index);
+                      dispatch(setItem(group.title));
+                      navigate("/board/assemble", {
+                        state: { categoryName: group.title },
+                      });
+                    }}
+                    className={`w-full flex justify-between items-center text-left font-semibold 
+                    text-sm px-2 py-2 rounded 
+                    ${categoryName ===  group.title
+                        ? 'bg-gray-600  font-bold'
+                        : 'text-white hover:bg-gray-600'
+                    }`}
                   >
                     {group.title}
                     {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
