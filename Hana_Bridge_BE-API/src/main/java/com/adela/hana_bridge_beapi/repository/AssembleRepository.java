@@ -20,7 +20,7 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
       WHERE  b.users.id = :userId 
           AND b.categorys = :categorys
     """)
-    Page<AssembleBoard> findByUsers_IdAndCategorys(Long userId, Category categorys, Pageable pageable);
+    Page<AssembleBoard> findByUsers_IdAndCategorys(@Param("userId") Long userId, @Param("categorys") Category categorys, Pageable pageable);
 
     @Query("SELECT b.likeCount FROM AssembleBoard b WHERE b.assembleBoardId = :assembleBoardId")
     Long findLikeCountById(@Param("assembleBoardId") Long assembleBoardId);
