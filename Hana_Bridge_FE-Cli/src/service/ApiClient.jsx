@@ -110,7 +110,8 @@ class ApiClient{
 
   //사용자 본인 게시글 조회 (AssembleBoard)
   static getMyAssemble(page, sortType, category){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${page}/${sortType}/${category}`);
+      const url = `${ApiClient.SERVER_URL}${ApiClient.ASSEMBLE_BOARD}/user/${page}/${sortType}?category=${encodeURIComponent(category)}`;
+    return CustomFetch(url);
   }
 
   //사용자 본인이 쓴 글 카테고리 가져오기 (AssembleBoard)

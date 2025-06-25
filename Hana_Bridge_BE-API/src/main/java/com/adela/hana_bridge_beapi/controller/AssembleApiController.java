@@ -110,8 +110,7 @@ public class AssembleApiController {
 
         return ResponseEntity.ok().body(boardList);
     }
-
-
+    
     //게시글 상세 조회
     @GetMapping("/{assembleboard_id}")
     public ResponseEntity<AssembleBoardResponse> findAssembleBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
@@ -127,6 +126,7 @@ public class AssembleApiController {
         }
         return ResponseEntity.ok().body(detailBoard);
     }
+
     //사용자가 등록한 글에 대한 카테고리 목록만 가져오기
     @GetMapping("/user/category")
     public ResponseEntity<UserCategoryResponse> findUserCategory(@RequestHeader("Authorization") String authHeader) {
