@@ -121,7 +121,8 @@ class ApiClient{
 
   //사용자가 좋아요 누른 게시글 조회 (AssembleBoard)
   static getMyGoodAssemble(page, category){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}/latest/${category}`);
+    const url = `${ApiClient.SERVER_URL}${ApiClient.ASSEMBLE_BOARD}/good/${page}/latest?category=${encodeURIComponent(category)}`;
+    return CustomFetch(url);
   }
   
 
