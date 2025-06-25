@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaChartBar, FaRobot, FaThumbsUp, FaComment, FaCalendarAlt } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AdminService } from '../../service/AdminService';
 
 const AIAssembleStats = () => {
@@ -33,6 +33,65 @@ const AIAssembleStats = () => {
 
   // 카테고리 토글 상태
   const [expandedCategories, setExpandedCategories] = useState(new Set());
+
+  // 트렌드 정렬 상태
+  const [trendSort, setTrendSort] = useState('date'); // 'date' | 'ratio'
+
+  // 카테고리 분포 정렬 상태
+  const [categorySort, setCategorySort] = useState('desc'); // 'desc' | 'asc'
+
+  // 상위 카테고리 9개 고정 배열
+  const FIXED_PARENT_CATEGORIES = [
+    { id: 1, name: '프로그래밍 언어' },
+    { id: 2, name: '운영체제' },
+    { id: 3, name: '데이터베이스' },
+    { id: 4, name: '프레임워크' },
+    { id: 5, name: '클라우드' },
+    { id: 6, name: '인프라' },
+    { id: 7, name: '알고리즘 & 자료구조' },
+    { id: 8, name: '협업 & 도구' },
+    { id: 9, name: '기타' },
+  ];
+
+  // 하위 카테고리 고정 배열
+  const FIXED_CHILD_CATEGORIES = [
+    { id: 10, name: 'Python', parentId: 1 },
+    { id: 11, name: 'Java', parentId: 1 },
+    { id: 12, name: 'JavaScript', parentId: 1 },
+    { id: 13, name: 'TypeScript', parentId: 1 },
+    { id: 14, name: 'C / C++', parentId: 1 },
+    { id: 15, name: '기타 언어', parentId: 1 },
+    { id: 16, name: 'Linux', parentId: 2 },
+    { id: 17, name: 'Ubuntu', parentId: 2 },
+    { id: 18, name: 'CentOS', parentId: 2 },
+    { id: 19, name: '기타 Linux 배포판', parentId: 2 },
+    { id: 20, name: 'Windows', parentId: 2 },
+    { id: 21, name: 'macOS', parentId: 2 },
+    { id: 22, name: 'WSL (Windows Subsystem for Linux)', parentId: 2 },
+    { id: 23, name: 'SQL 쿼리', parentId: 3 },
+    { id: 24, name: 'MySQL', parentId: 3 },
+    { id: 25, name: 'Oracle', parentId: 3 },
+    { id: 26, name: 'PostgreSQL', parentId: 3 },
+    { id: 27, name: 'NoSQL', parentId: 3 },
+    { id: 28, name: 'React', parentId: 4 },
+    { id: 29, name: 'Spring Boot', parentId: 4 },
+    { id: 30, name: 'Django', parentId: 4 },
+    { id: 31, name: 'Vue.js', parentId: 4 },
+    { id: 32, name: 'Next.js', parentId: 4 },
+    { id: 33, name: 'Flask', parentId: 4 },
+    { id: 34, name: 'AWS', parentId: 5 },
+    { id: 35, name: 'KT Cloud', parentId: 5 },
+    { id: 36, name: 'Azure', parentId: 5 },
+    { id: 37, name: 'Docker / 컨테이너', parentId: 6 },
+    { id: 38, name: 'Kubernetes', parentId: 6 },
+    { id: 39, name: 'Nginx / Apache', parentId: 6 },
+    { id: 40, name: 'CI/CD', parentId: 6 },
+    { id: 41, name: 'DevOps', parentId: 6 },
+    { id: 42, name: '코딩 테스트', parentId: 7 },
+    { id: 43, name: '알고리즘 이론', parentId: 7 },
+    { id: 44, name: 'Git / GitHub', parentId: 8 },
+    { id: 45, name: '기타 문서', parentId: 9 },
+  ];
 
   // 관리자가 아닌 경우 접근 차단
   useEffect(() => {
@@ -114,26 +173,20 @@ const AIAssembleStats = () => {
         groups[key].push(post);
       });
     }
-    // 결과를 최신 날짜(내림차순)로 정렬
-    const sorted = Object.entries(groups).sort(([a], [b]) => b.localeCompare(a));
-    return sorted.map(([key, posts]) => ({ key, count: posts.length }));
+    // 결과를 정렬
+    let sorted = Object.entries(groups).map(([key, posts]) => ({ key, count: posts.length }));
+    if (trendSort === 'date') {
+      sorted = sorted.sort((a, b) => b.key.localeCompare(a.key)); // 최신순
+    } else if (trendSort === 'ratio') {
+      const total = assemblePosts.length;
+      sorted = sorted.sort((a, b) => (b.count / total) - (a.count / total)); // 비율순
+    }
+    return sorted;
   };
 
-  // 기간 필터링된 인기 게시글
-  const getFilteredTopPosts = () => {
-    let filteredPosts = [...stats.topPosts];
-    
-    if (selectedPeriod.startDate && selectedPeriod.endDate) {
-      filteredPosts = filteredPosts.filter(post => {
-        const postDate = new Date(post.date);
-        const startDate = new Date(selectedPeriod.startDate);
-        const endDate = new Date(selectedPeriod.endDate);
-        return postDate >= startDate && postDate <= endDate;
-      });
-    }
-    
-    // 좋아요 기준으로 내림차순 정렬
-    return filteredPosts.sort((a, b) => b.likes - a.likes);
+  // 인기 게시글(좋아요순) - assemblePosts 기준
+  const getSortedAssemblePostsByLikes = () => {
+    return [...assemblePosts].sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
   };
 
   // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
@@ -164,6 +217,30 @@ const AIAssembleStats = () => {
     const day = String(oneYearAgo.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+
+  // 현재 assemblePosts에서 카테고리별 통계 계산
+  const getCategoryStats = () => {
+    // 상위 카테고리별 카운트 (하위 카테고리 합산)
+    const parentCounts = {};
+    // 하위 카테고리별 카운트
+    const childCounts = {};
+    let total = 0;
+    assemblePosts.forEach(post => {
+      const parent = post.parentName;
+      const child = post.categoryName;
+      if (child) {
+        childCounts[child] = (childCounts[child] || 0) + 1;
+        total++;
+      }
+    });
+    // 상위 카테고리별 합산
+    FIXED_PARENT_CATEGORIES.forEach(parentCat => {
+      const childList = FIXED_CHILD_CATEGORIES.filter(child => child.parentId === parentCat.id);
+      parentCounts[parentCat.name] = childList.reduce((sum, child) => sum + (childCounts[child.name] || 0), 0);
+    });
+    return { parentCounts, childCounts, total };
+  };
+  const { parentCounts, childCounts, total: categoryTotal } = getCategoryStats();
 
   if (loading) {
     return (
@@ -365,7 +442,17 @@ const AIAssembleStats = () => {
               <h2 className="text-xl font-semibold text-gray-900">
                 {periodType === 'monthly' ? '월별' : periodType === 'weekly' ? '주별' : '일자별'} 트렌드
               </h2>
-              <span className="ml-4 text-sm text-gray-500">해당 기간 게시글 수: {totalAssemblePosts}개</span>
+              <span className="ml-4 text-sm text-gray-500">해당 기간 게시글 수: {assemblePosts.length}개</span>
+              <div className="ml-4 flex flex-row gap-1">
+                <button
+                  className={`px-2 py-0.5 rounded text-xs border ${trendSort === 'date' ? 'bg-purple-500 text-white border-purple-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                  onClick={() => setTrendSort('date')}
+                >최신순</button>
+                <button
+                  className={`px-2 py-0.5 rounded text-xs border ${trendSort === 'ratio' ? 'bg-purple-500 text-white border-purple-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                  onClick={() => setTrendSort('ratio')}
+                >비율순</button>
+              </div>
             </div>
             
             <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2">
@@ -397,7 +484,7 @@ const AIAssembleStats = () => {
                       <div className="flex-1 mx-4">
                         <div className="flex justify-between text-xs text-gray-500 mb-1">
                           <span>게시글: {item.count}</span>
-                          <span>{totalAssemblePosts > 0 ? `비율: ${(item.count / totalAssemblePosts * 100).toFixed(1)}%` : ''}</span>
+                          <span>{assemblePosts.length > 0 ? `비율: ${(item.count / assemblePosts.length * 100).toFixed(1)}%` : ''}</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <motion.div
@@ -429,96 +516,97 @@ const AIAssembleStats = () => {
             <div className="flex items-center mb-6">
               <FaChartBar className="h-6 w-6 text-blue-600 mr-3" />
               <h2 className="text-xl font-semibold text-gray-900">카테고리 분포</h2>
+              <div className="ml-4 flex flex-row gap-1">
+                <button
+                  className={`px-2 py-0.5 rounded text-xs border ${categorySort === 'desc' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                  onClick={() => setCategorySort('desc')}
+                >비율순(내림차순)</button>
+                <button
+                  className={`px-2 py-0.5 rounded text-xs border ${categorySort === 'asc' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300'}`}
+                  onClick={() => setCategorySort('asc')}
+                >비율순(오름차순)</button>
+              </div>
             </div>
             
             <div className="space-y-2 pr-2 h-[26rem] overflow-y-auto">
-              {stats.categoryDistribution.parentCategories.map((category, index) => {
-                const isExpanded = expandedCategories.has(category.id);
-                const childCategories = stats.categoryDistribution.childCategories[category.id];
-                
-                return (
-                  <div key={category.id} className="border border-gray-200 rounded-lg overflow-hidden">
-                    {/* 상위 카테고리 */}
-                    <div 
-                      className="flex items-center cursor-pointer hover:bg-gray-50 p-4 transition-colors"
-                      onClick={() => {
-                        const newExpanded = new Set(expandedCategories);
-                        if (isExpanded) {
-                          newExpanded.delete(category.id);
-                        } else {
-                          newExpanded.add(category.id);
-                        }
-                        setExpandedCategories(newExpanded);
-                      }}
-                    >
-                      <div className="flex-1">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700">{category.name}</span>
-                          <span className="text-sm text-gray-500">{category.percentage}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${category.percentage}%` }}
-                            transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
-                            className="h-2 rounded-full bg-blue-500"
-                          />
-                        </div>
-                      </div>
-                      <div className="ml-4 text-gray-400">
-                        <motion.svg 
-                          className="w-5 h-5" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                          animate={{ rotate: isExpanded ? 90 : 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </motion.svg>
-                      </div>
-                    </div>
-                    
-                    {/* 하위 카테고리 */}
-                    <motion.div
-                      initial={false}
-                      animate={{ 
-                        height: isExpanded ? 'auto' : 0,
-                        opacity: isExpanded ? 1 : 0
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="bg-gray-50 p-4 space-y-3">
-                        {childCategories.map((child, childIndex) => (
-                          <motion.div
-                            key={child.id}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: childIndex * 0.05 }}
-                            className="flex items-center ml-4"
-                          >
-                            <div className="flex-1">
-                              <div className="flex justify-between mb-1">
-                                <span className="text-sm text-gray-600">{child.name}</span>
-                                <span className="text-sm text-gray-500">{child.percentage}%</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${child.percentage}%` }}
-                                  transition={{ delay: 0.3 + childIndex * 0.05, duration: 0.6 }}
-                                  className="h-1.5 rounded-full bg-blue-400"
-                                />
-                              </div>
+              {[...FIXED_PARENT_CATEGORIES]
+                .map((cat, i) => {
+                  // 비율 계산 동일하게 적용
+                  const percentage = categoryTotal > 0 ? Math.round((parentCounts[cat.name] || 0) / categoryTotal * 100) : 0;
+                  return { ...cat, _percentage: percentage, _origIndex: i };
+                })
+                .sort((a, b) => categorySort === 'desc' ? b._percentage - a._percentage : a._percentage - b._percentage)
+                .map((category, index) => {
+                  const percentage = category._percentage;
+                  const isExpanded = expandedCategories.has(category.id);
+                  const handleClick = () => {
+                    const newSet = new Set(expandedCategories);
+                    if (isExpanded) newSet.delete(category.id);
+                    else newSet.add(category.id);
+                    setExpandedCategories(newSet);
+                  };
+                  const childList = FIXED_CHILD_CATEGORIES.filter(child => child.parentId === category.id);
+                  // 하위 카테고리 퍼센트 정보 (assemblePosts 기준)
+                  const childPercentMap = {};
+                  childList.forEach(child => {
+                    childPercentMap[child.id] = categoryTotal > 0 ? Math.round((childCounts[child.name] || 0) / categoryTotal * 100) : 0;
+                  });
+                  return (
+                    <motion.div key={category.id} className="mb-2" layout>
+                      <motion.div
+                        className={`bg-white rounded-lg shadow-md transition-shadow border-2 ${isExpanded ? 'border-blue-500 shadow-lg' : 'border-gray-200 hover:shadow-lg'}`}
+                        layout
+                      >
+                        <div className="flex items-center p-4 cursor-pointer" onClick={handleClick}>
+                          <span className="w-40 text-sm font-medium text-gray-700">{category.name}</span>
+                          <span className="w-12 text-right text-sm text-gray-500">{percentage}%</span>
+                          <div className="flex-1 ml-4">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${percentage}%` }}
+                                transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
+                                className="h-2 rounded-full bg-blue-500"
+                              />
                             </div>
-                          </motion.div>
-                        ))}
-                      </div>
+                          </div>
+                        </div>
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              key="child-list"
+                              initial={{ opacity: 0, scaleY: 0 }}
+                              animate={{ opacity: 1, scaleY: 1 }}
+                              exit={{ opacity: 0, scaleY: 0 }}
+                              transition={{ duration: 0.32, ease: 'easeInOut' }}
+                              className="px-8 pb-4 origin-top overflow-hidden"
+                            >
+                              {childList.map((child, childIndex) => {
+                                const childPercent = childPercentMap[child.id] || 0;
+                                return (
+                                  <div key={child.id} className="flex items-center py-1">
+                                    <span className="w-40 text-sm text-gray-600">{child.name}</span>
+                                    <span className="w-12 text-right text-sm text-gray-400">{childPercent}%</span>
+                                    <div className="flex-1 ml-4">
+                                      <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                        <motion.div
+                                          initial={{ width: 0 }}
+                                          animate={{ width: `${childPercent}%` }}
+                                          transition={{ delay: 0.3 + childIndex * 0.05, duration: 0.6 }}
+                                          className="h-1.5 rounded-full bg-blue-400"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
                     </motion.div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </motion.div>
         </div>
@@ -543,27 +631,30 @@ const AIAssembleStats = () => {
           </div>
           
           <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2">
-            {getFilteredTopPosts().length > 0 ? (
-              getFilteredTopPosts().map((post, index) => (
+            {getSortedAssemblePostsByLikes().length > 0 ? (
+              getSortedAssemblePostsByLikes().map((post, index) => (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
-                  className="border-l-4 border-gray-200 pl-4 py-3 hover:border-purple-400 transition-colors cursor-pointer"
+                  className={`border-l-4 border-gray-200 pl-4 py-3 hover:border-purple-400 transition-colors cursor-pointer border border-gray-200 rounded-lg shadow-md
+                    ${index === 0 ? 'bg-yellow-200' : ''}
+                    ${index === 1 ? 'bg-gray-200' : ''}
+                    ${index === 2 ? 'bg-orange-100' : ''}
+                  `}
                   onClick={() => navigate(`/detailAssemble/${post.id}`)}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="text-sm font-medium text-gray-900 truncate">{post.title}</h3>
+                      <div className="text-xs text-gray-500 mt-1 w-full overflow-hidden whitespace-nowrap text-ellipsis">
+                        {post.content && post.content.length > 50 ? post.content.substring(0, 50) + '...' : post.content}
+                      </div>
                       <div className="flex items-center mt-2 space-x-4 text-xs text-gray-500">
                         <span className="flex items-center">
                           <FaThumbsUp className="mr-1" />
-                          좋아요: {post.likes}
-                        </span>
-                        <span className="flex items-center">
-                          <FaComment className="mr-1" />
-                          댓글: {post.comments}
+                          좋아요: {post.likeCount}
                         </span>
                       </div>
                     </div>
