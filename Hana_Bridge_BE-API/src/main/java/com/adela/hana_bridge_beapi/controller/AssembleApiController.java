@@ -110,7 +110,7 @@ public class AssembleApiController {
 
         return ResponseEntity.ok().body(boardList);
     }
-    
+
     //게시글 상세 조회
     @GetMapping("/{assembleboard_id}")
     public ResponseEntity<AssembleBoardResponse> findAssembleBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
