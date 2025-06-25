@@ -44,10 +44,12 @@ const MyBoard = () => {
   const [pageGroup, setPageGroup] = useState(0); // 현재 5개 단위 페이지 그룹 인덱스
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); //좋아요 게시판 드롭다운 변수
+  const [isAiDropdownOpen, setIsAiDropdownOpen] = useState(false); //AI 게시판 드롭다운 변수
 
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
 
-  //const [myCategoryName, setMyCategoryName] = useState([]);
+  const [categoryNameList, setCategoryNameList] = useState([]);
+  const [categoryName, setCategoryName] = useState('');
 
 
   //맨 위로가기 버튼 
@@ -153,36 +155,36 @@ const MyBoard = () => {
   }
 
   //category 가져오기 
-  // useEffect(() =>{
-  //  ApiClient.getMyAssembleCategory() 
-  //  .then(async  (res) => {
-  //     if (!res.ok) {
-  //       const errorData = await res.json(); // JSON으로 파싱
-  //       console.log("errorData: " + errorData.code + " : " + errorData.message); 
-  //       // 👇 error 객체에 code를 추가해 던짐
-  //       const error = new Error(errorData.message || `서버 오류: ${res.status}`);
-  //       error.code = errorData.code;
-  //       throw error;   
-  //     }
-  //     return res.json();
-  //   })
-  //   .then((data) => {
-  //     console.log(data);
-  //     setMyCategoryName;
-
-  //   })
-  //   .catch((err) => {
-  //     console.error("API 요청 실패:", err);
-  //     // 게시글 없을때 -> category error
-  //     if(err.code === 'CATEGORY_POST_NOT_FOUND'){
-  //       setBoards(null);
-  //     }
-  //     // 404일 때 에러 페이지로 이동
-  //     else if (err.code && err.code.includes('NOT_FOUND')) {
-  //       navigate("/error");
-  //     }
-  //   });
-  // })
+  useEffect(() =>{
+   ApiClient.getMyAssembleCategory() 
+   .then(async  (res) => {
+      if (!res.ok) {
+        const errorData = await res.json(); // JSON으로 파싱
+        console.log("errorData: " + errorData.code + " : " + errorData.message); 
+        // 👇 error 객체에 code를 추가해 던짐
+        const error = new Error(errorData.message || `서버 오류: ${res.status}`);
+        error.code = errorData.code;
+        throw error;   
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+      console.log("categoryList" + data.categoryList);
+      setCategoryNameList(data.categoryList);
+    })
+    .catch((err) => {
+      console.error("API 요청 실패:", err);
+      // 게시글 없을때 -> category error
+      if(err.code === 'CATEGORY_POST_NOT_FOUND'){
+        setBoards(null);
+      }
+      // 404일 때 에러 페이지로 이동
+      else if (err.code && err.code.includes('NOT_FOUND')) {
+        navigate("/error");
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -194,11 +196,12 @@ const MyBoard = () => {
         else{
           let getSortMyboard = null;
           let res = null;
+          console.log(categoryName);
           //토글, 정렬 값에 따라 게시글 조회 호출 함수 교체
           if (toggle === "code"){
             res = await ApiClient.getMyBoard(page, sortType);
           } else if (toggle === "assemble"){
-            res = await ApiClient.getMyAssemble(page, sortType, "all"); //카테고리 추가하기
+            res = await ApiClient.getMyAssemble(page, sortType, categoryName); //카테고리 추가하기
           } else if (toggle === "goodAssemble"){
             res = await ApiClient.getMyGoodAssemble(page, "all"); //카테고리 추가하기
           } else if (toggle === "goodCode"){
@@ -397,7 +400,11 @@ const MyBoard = () => {
           >
             {role === 'ROLE_ADMIN' ? '공지' : '코드/질문'}
           </button>
-          <button
+
+
+          {/* ------------------------------- */}
+
+          {/* <button
             onClick={() => {
               setIsDropdownOpen(false)
               setToggle("assemble");
@@ -406,10 +413,70 @@ const MyBoard = () => {
             className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} whitespace-nowrap max-md:px-1.5 max-md:py-1 max-md:text-sm`}
           >
             AI 답변
-          </button>
+          </button> */}
+
+
           <div className="relative">
             <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              onClick={() => {
+                setIsAiDropdownOpen(!isAiDropdownOpen);
+                setIsDropdownOpen(false);
+              }}
+              className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:px-1.5 max-md:py-1 max-md:text-sm`}
+            >
+              <span className="flex flex-row">
+                {toggle === "all" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>AI 답변</span>)}
+                {toggle === "categoryName" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>{categoryName}</span>)}
+                {toggle !== "goodAssemble" && toggle !== "goodCode" && "AI 답변"}
+                <FaChevronDown className="mt-1 ml-0.5"/>
+              </span>
+            </button>
+
+            {isAiDropdownOpen && (
+              <div className="absolute mt-2 bg-white shadow rounded w-56 z-10">
+                <button 
+                  onClick={() => {
+                    setIsAiDropdownOpen(!isAiDropdownOpen);
+                    setToggle("assemble");
+                    setCategoryName('all');
+                    resetBoards();
+                  }}
+                  className="block px-4 py-2 hover:bg-gray-100 w-full rounded-t text-left border-b"
+                >
+                  전체 보기
+                </button>
+                {categoryNameList.map((category, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setIsAiDropdownOpen(!isAiDropdownOpen);
+                      setToggle('assemble');
+                      setCategoryName(category);
+                      resetBoards();
+                    }}
+                    className={`block px-4 py-2 hover:bg-gray-100 w-full text-left border-b ${
+                      index === 0 ? 'rounded-t' : ''
+                    } ${index === categoryNameList.length - 1 ? 'rounded-b border-b-0' : ''}`}
+                  >
+                    {category} 
+                  </button>
+                ))}
+
+              </div>
+            )}
+          </div>
+          {/* ------------------------------- */}
+
+
+
+
+
+          <div className="relative">
+            <button
+              onClick={() => {
+                setIsDropdownOpen(!isDropdownOpen);
+                setIsAiDropdownOpen(false);
+              }}
               className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:px-1.5 max-md:py-1 max-md:text-sm`}
             >
               <span className="flex flex-row">
