@@ -256,7 +256,8 @@ class ApiClient{
   //Assemble 전체 조회
   static getAssembleBoards(page, sortType, category){
     console.log("Get AssembleBoard" + page + "/" + sortType + '/' + category);
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + "/" + page + "/" + sortType + "/" + category);
+    const url = `${ApiClient.SERVER_URL}${ApiClient.ASSEMBLE_BOARD}/${page}/${sortType}?category=${encodeURIComponent(category)}`;
+    return CustomFetch(url);
   }
 
   static getSearchAssembleBoards(word, sortType, page){
