@@ -71,7 +71,11 @@ public class AssembleBoardService {
             Category categorys = categoryRepository.findByName(category)
                     .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 없습니다."));
 
-            pageBoards = assembleRepository.findByCategorys(categorys, pageable);
+            if(categorys.getParent() != null) { //하위 카테고리로 조회
+                pageBoards = assembleRepository.findByCategorys(categorys, pageable);
+            } else { //상위 카테고리로 조회
+                pageBoards = assembleRepository.findByCategorys_Parent_Id(categorys.getId(), pageable);
+            }
         }
         return pageBoards;
     }
