@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
@@ -89,4 +90,12 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
       ORDER BY b.categorys.id
     """)
     List<String> findCategoryByUsers(@Param("userId") Long userId);
+
+    @Query("""
+    SELECT b
+    FROM AssembleBoard b
+    WHERE b.createAt BETWEEN :start AND :end
+    ORDER BY b.createAt DESC
+    """)
+    List<AssembleBoard>findWithCreateAt(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }

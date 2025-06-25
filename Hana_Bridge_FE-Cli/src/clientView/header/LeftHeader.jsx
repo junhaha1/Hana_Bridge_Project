@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
 import { setItem, clearItem } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
-import { FaFolder } from 'react-icons/fa';
+import { FaFolder, FaCog } from 'react-icons/fa';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaQuery } from 'react-responsive'; 
@@ -66,6 +66,7 @@ export default function LeftHeader() {
   const category = useSelector((state) => state.user.category);
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
   const categoryName = useSelector((state) => state.user.item);
+  const userRole = useSelector((state) => state.user.role);
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // ✅ 모바일 여부
   const [isOpen, setIsOpen] = useState(OpenState); // 모바일일 때만 토글됨
@@ -80,6 +81,10 @@ export default function LeftHeader() {
       dispatch(clearItem());
     }
     navigate("/board/" + id);    
+  };
+
+  const goToAdmin = () => {
+    navigate("/admin");
   };
 
   return (
@@ -144,6 +149,30 @@ export default function LeftHeader() {
                 )}
               </button>
             ))}
+
+            {/* 관리자 메뉴 - ROLE_ADMIN인 경우에만 표시 */}
+            {userRole === 'ROLE_ADMIN' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="pt-2 border-t border-gray-600"
+              >
+                <button
+                  onClick={goToAdmin}
+                  className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition ${
+                    category === 'admin'
+                      ? 'bg-[#C5BCFF] text-black font-bold'
+                      : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
+                  }`}
+                >
+                  <span className='flex flex-row items-center'>
+                    <FaCog className="mr-2" />
+                    관리자 페이지
+                  </span>
+                </button>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
