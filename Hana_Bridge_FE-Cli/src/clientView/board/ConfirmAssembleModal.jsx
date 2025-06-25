@@ -11,15 +11,17 @@ const ConfirmAssembleModal = ({ onConfirm, onCancel, onMode }) => {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           {onMode === 'cancel' ? (
             <>게시글 등록을 취소하시겠습니까? <br/>대화 내용은 유지됩니다. </>
-          ) : (
+          ) : onMode === 'back' ? (
             <>페이지를 나가겠습니까? <br/>게시글은 자동으로 등록이 취소됩니다. <br/>대화 내용은 유지됩니다. </>
+          ) : (
+             <>게시글을 등록하시겠습니까? <br/>등록한 게시글은 삭제만 가능합니다.  </>
           )}           
         </h3>
         
         <div className="flex justify-center space-x-4">
           <button
             onClick={onConfirm}
-            className={`text-white px-4 py-2 rounded transition bg-red-500  hover:bg-red-600`}            
+            className={`text-white px-4 py-2 rounded transition ${onMode === 'save' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500  hover:bg-red-600'}`}            
           >
             확인
           </button>
