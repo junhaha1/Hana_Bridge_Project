@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaChartBar, FaRobot, FaThumbsUp, FaComment, FaCalendarAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaChartBar, FaRobot, FaThumbsUp, FaComment, FaCalendarAlt, FaClock, FaChartPie, FaSortAmountDownAlt, FaSortAmountUpAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AdminService } from '../../service/AdminService';
 
@@ -10,16 +10,6 @@ const AIAssembleStats = () => {
   const userRole = useSelector((state) => state.user.role);
   const [totalAssemblePosts, setTotalAssemblePosts] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
-  const [stats, setStats] = useState({
-    monthlyTrend: [],
-    weeklyTrend: [],
-    dailyTrend: [],
-    topPosts: [],
-    categoryDistribution: {
-      parentCategories: [],
-      childCategories: {}
-    }
-  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [assemblePosts, setAssemblePosts] = useState([]);
@@ -127,13 +117,6 @@ const AIAssembleStats = () => {
       const response = await AdminService.getAssembleStats();
       setTotalAssemblePosts(response.assembleCount || 0);
       setTotalLikes(response.likeCount || 0);
-      setStats({
-        monthlyTrend: response.monthlyTrend || [],
-        weeklyTrend: response.weeklyTrend || [],
-        dailyTrend: response.dailyTrend || [],
-        topPosts: response.topPosts || [],
-        categoryDistribution: response.categoryDistribution || { parentCategories: [], childCategories: {} }
-      });
     } catch {
       setError('통계 데이터를 불러오는데 실패했습니다.');
     } finally {
@@ -225,7 +208,6 @@ const AIAssembleStats = () => {
     const childCounts = {};
     let total = 0;
     assemblePosts.forEach(post => {
-      const parent = post.parentName;
       const child = post.categoryName;
       if (child) {
         childCounts[child] = (childCounts[child] || 0) + 1;
@@ -442,15 +424,27 @@ const AIAssembleStats = () => {
                 {periodType === 'monthly' ? '월별' : periodType === 'weekly' ? '주별' : '일자별'} 트렌드
               </h2>
               <span className="ml-4 text-sm text-gray-500">해당 기간 게시글 수: {assemblePosts.length}개</span>
-              <div className="ml-4 flex flex-row gap-1">
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${trendSort === 'date' ? 'bg-purple-500 text-white border-purple-500' : 'bg-white text-gray-700 border-gray-300'}`}
-                  onClick={() => setTrendSort('date')}
-                >최신순</button>
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${trendSort === 'ratio' ? 'bg-purple-500 text-white border-purple-500' : 'bg-white text-gray-700 border-gray-300'}`}
-                  onClick={() => setTrendSort('ratio')}
-                >비율순</button>
+              <div className="ml-4 flex flex-row items-center">
+                <div className="flex bg-gray-100 rounded-full shadow-inner p-1 gap-1">
+                  <button
+                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                      ${trendSort === 'date' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                    onClick={() => setTrendSort('date')}
+                    style={{ boxShadow: trendSort === 'date' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                  >
+                    <FaClock className="w-4 h-4" />
+                    최신순
+                  </button>
+                  <button
+                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                      ${trendSort === 'ratio' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                    onClick={() => setTrendSort('ratio')}
+                    style={{ boxShadow: trendSort === 'ratio' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                  >
+                    <FaChartPie className="w-4 h-4" />
+                    비율순
+                  </button>
+                </div>
               </div>
             </div>
             
@@ -515,15 +509,27 @@ const AIAssembleStats = () => {
             <div className="flex items-center mb-6">
               <FaChartBar className="h-6 w-6 text-blue-600 mr-3" />
               <h2 className="text-xl font-semibold text-gray-900">카테고리 분포</h2>
-              <div className="ml-4 flex flex-row gap-1">
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${categorySort === 'desc' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300'}`}
-                  onClick={() => setCategorySort('desc')}
-                >비율순(내림차순)</button>
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${categorySort === 'asc' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300'}`}
-                  onClick={() => setCategorySort('asc')}
-                >비율순(오름차순)</button>
+              <div className="ml-4 flex flex-row items-center">
+                <div className="flex bg-gray-100 rounded-full shadow-inner p-1 gap-1">
+                  <button
+                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                      ${categorySort === 'desc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
+                    onClick={() => setCategorySort('desc')}
+                    style={{ boxShadow: categorySort === 'desc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
+                  >
+                    <FaSortAmountDownAlt className="w-4 h-4" />
+                    비율순(내림차순)
+                  </button>
+                  <button
+                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                      ${categorySort === 'asc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
+                    onClick={() => setCategorySort('asc')}
+                    style={{ boxShadow: categorySort === 'asc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
+                  >
+                    <FaSortAmountUpAlt className="w-4 h-4" />
+                    비율순(오름차순)
+                  </button>
+                </div>
               </div>
             </div>
             

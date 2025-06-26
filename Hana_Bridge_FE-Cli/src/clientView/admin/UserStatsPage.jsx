@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaUsers, FaComments, FaQuestionCircle, FaCalendarAlt, FaCalendar, FaRobot, FaCode } from 'react-icons/fa';
+import { FaUsers, FaComments, FaQuestionCircle, FaCalendarAlt, FaCalendar, FaRobot, FaCode, FaChartBar, FaClock } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { AdminService } from '../../service/AdminService';
 
@@ -17,6 +17,7 @@ const UserStatsPage = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [viewType, setViewType] = useState('monthly'); // monthly, weekly, daily
+  const [barSort, setBarSort] = useState('recent'); // 'recent' | 'users'
   
   // API에서 받아온 실제 데이터
   const [apiStats, setApiStats] = useState({
@@ -679,67 +680,101 @@ const UserStatsPage = () => {
 
                   {/* 사용자 성장 차트 */}
                   <div className="bg-gray-50 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      신규 사용자 가입 추이 ({viewType === 'monthly' ? '월별' : viewType === 'weekly' ? '주별' : '일별'})
-                    </h3>
-                    
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        신규 사용자 가입 추이 ({viewType === 'monthly' ? '월별' : viewType === 'weekly' ? '주별' : '일별'})
+                      </h3>
+                      <div className="flex flex-row items-center">
+                        <div className="flex bg-gray-100 rounded-full shadow-inner p-1 gap-1">
+                          <button
+                            className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                              ${barSort === 'recent' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                            onClick={() => setBarSort('recent')}
+                            style={{ boxShadow: barSort === 'recent' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                          >
+                            <FaClock className="w-4 h-4" />
+                            최근순
+                          </button>
+                          <button
+                            className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                              ${barSort === 'users' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                            onClick={() => setBarSort('users')}
+                            style={{ boxShadow: barSort === 'users' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                          >
+                            <FaUsers className="w-4 h-4" />
+                            사용자순
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                     {periodUsers && periodUsers.length > 0 ? (
-                      <div>
-                        <div className="grid grid-cols-6 gap-4 h-40 items-end">
-                          {getGroupedData().map((item, index) => (
-                            <motion.div 
-                              key={index} 
-                              className="text-center flex flex-col items-center justify-end h-full"
-                              initial={{ opacity: 0, scaleY: 0 }}
-                              animate={{ opacity: 1, scaleY: 1 }}
-                              transition={{ 
-                                duration: 0.6, 
-                                delay: index * 0.1,
-                                ease: "easeOut"
-                              }}
-                            >
+                      <div className="max-h-72 overflow-y-auto">
+                        <div className="grid grid-cols-6 gap-4 items-end">
+                          {(() => {
+                            let grouped = getGroupedData();
+                            const maxCount = Math.max(...grouped.map(g => g.users));
+                            // 정렬 적용
+                            if (barSort === 'users') {
+                              grouped = [...grouped].sort((a, b) => b.users - a.users);
+                            } else {
+                              grouped = [...grouped].reverse(); // 최근순(기본은 오래된순)
+                            }
+                            return grouped.map((item, index) => (
                               <motion.div 
-                                className="bg-purple-500 rounded-t-lg w-full origin-bottom" 
-                                style={{ 
-                                  height: `${Math.max(20, (item.users / Math.max(...getGroupedData().map(m => m.users))) * 100)}px` 
-                                }}
-                                initial={{ scaleY: 0 }}
-                                animate={{ scaleY: 1 }}
+                                key={index} 
+                                className="text-center flex flex-col items-center justify-end h-full"
+                                initial={{ opacity: 0, scaleY: 0 }}
+                                animate={{ opacity: 1, scaleY: 1 }}
                                 transition={{ 
-                                  duration: 0.8, 
-                                  delay: index * 0.1 + 0.2,
+                                  duration: 0.6, 
+                                  delay: index * 0.1,
                                   ease: "easeOut"
                                 }}
-                              />
-                              <motion.p 
-                                className="text-xs text-gray-600 mt-2"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ 
-                                  duration: 0.4, 
-                                  delay: index * 0.1 + 0.6
-                                }}
                               >
-                                {item.month || item.week || item.day}
-                              </motion.p>
-                              <motion.p 
-                                className="text-sm font-medium"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ 
-                                  duration: 0.4, 
-                                  delay: index * 0.1 + 0.8
-                                }}
-                              >
-                                {item.users}명
-                              </motion.p>
-                            </motion.div>
-                          ))}
+                                <motion.div 
+                                  className="bg-purple-500 rounded-t-lg w-6 origin-bottom" 
+                                  style={{ 
+                                    height: `${Math.max(20, (item.users / (maxCount || 1)) * 100)}px` 
+                                  }}
+                                  initial={{ scaleY: 0 }}
+                                  animate={{ scaleY: 1 }}
+                                  transition={{ 
+                                    duration: 0.8, 
+                                    delay: index * 0.1 + 0.2,
+                                    ease: "easeOut"
+                                  }}
+                                />
+                                <motion.p 
+                                  className="text-sm font-medium mt-2"
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ 
+                                    duration: 0.4, 
+                                    delay: index * 0.1 + 0.8
+                                  }}
+                                >
+                                  {item.users}명
+                                </motion.p>
+                                <motion.p 
+                                  className="text-xs text-gray-600 mt-1"
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ 
+                                    duration: 0.4, 
+                                    delay: index * 0.1 + 0.6
+                                  }}
+                                >
+                                  {item.month || item.week || item.day}
+                                </motion.p>
+                              </motion.div>
+                            ));
+                          })()}
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center py-8">
-                        <p className="text-gray-500">선택된 기간의 데이터가 없습니다.</p>
+                      <div className="text-center py-8 text-gray-500">
+                        <FaChartBar className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                        <p>선택된 기간의 데이터가 없습니다.</p>
                         <p className="text-sm text-gray-400 mt-2">다른 기간을 선택해보세요.</p>
                       </div>
                     )}

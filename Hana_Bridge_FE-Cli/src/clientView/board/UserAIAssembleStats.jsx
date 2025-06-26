@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaArrowLeft, FaChartBar, FaRobot, FaThumbsUp, FaCalendarAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaChartBar, FaRobot, FaThumbsUp, FaCalendarAlt, FaClock, FaChartPie, FaSortAmountDownAlt, FaSortAmountUpAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import CustomFetch from '../../service/CustomFetch';
 
@@ -18,10 +18,8 @@ const UserAIAssembleStats = ({ onBack }) => {
   // 카테고리 토글 상태
   const [expandedCategories, setExpandedCategories] = useState(new Set());
 
-  // 트렌드 정렬 상태
+  // 트렌드 정렬 상태와 카테고리 분포 정렬 상태를 분리
   const [trendSort, setTrendSort] = useState('date'); // 'date' | 'ratio'
-
-  // 카테고리 분포 정렬 상태
   const [categorySort, setCategorySort] = useState('desc'); // 'desc' | 'asc'
 
   // 상위 카테고리 9개 고정 배열
@@ -203,6 +201,20 @@ const UserAIAssembleStats = ({ onBack }) => {
     return { parentCounts, childCounts, total };
   };
   const { parentCounts, childCounts, total: categoryTotal } = getCategoryStats();
+
+  // 카테고리 분포 정렬 함수
+  const getSortedCategories = () => {
+    return [...FIXED_PARENT_CATEGORIES]
+      .map((cat, i) => {
+        const percentage = categoryTotal > 0 ? Math.round((parentCounts[cat.name] || 0) / categoryTotal * 100) : 0;
+        return { ...cat, _percentage: percentage, _origIndex: i };
+      })
+      .sort((a, b) => {
+        if (categorySort === 'desc') return b._percentage - a._percentage;
+        if (categorySort === 'asc') return a._percentage - b._percentage;
+        return b._percentage - a._percentage;
+      });
+  };
 
   return (
     <div className="min-h-screen bg-zinc-800">
@@ -387,19 +399,33 @@ const UserAIAssembleStats = ({ onBack }) => {
           >
             <div className="flex items-center mb-6">
               <FaChartBar className="h-6 w-6 text-purple-400 mr-3" />
-              <h2 className="text-xl font-semibold text-white">
-                {periodType === 'monthly' ? '월별 등록 게시글' : periodType === 'weekly' ? '주별 등록 게시글' : '일자별 등록 게시글'}
-              </h2>
-              <span className="ml-4 text-sm text-gray-400">해당 기간 게시글 수: {assemblePosts.length}개</span>
-              <div className="ml-4 flex flex-row gap-1">
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${trendSort === 'date' ? 'bg-purple-500 text-white border-purple-500' : 'bg-gray-800 text-gray-300 border-gray-600'}`}
-                  onClick={() => setTrendSort('date')}
-                >최신순</button>
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${trendSort === 'ratio' ? 'bg-purple-500 text-white border-purple-500' : 'bg-gray-800 text-gray-300 border-gray-600'}`}
-                  onClick={() => setTrendSort('ratio')}
-                >비율순</button>
+              <div className="flex flex-col">
+                <h2 className="text-xl font-semibold text-white">
+                  {periodType === 'monthly' ? '월별 등록 게시글' : periodType === 'weekly' ? '주별 등록 게시글' : '일자별 등록 게시글'}
+                </h2>
+                <span className="text-xs text-gray-400 mt-1">해당 기간 게시글 수: {assemblePosts.length}개</span>
+              </div>
+              <div className="ml-4 flex flex-row items-center">
+                <div className="flex bg-gray-100 rounded-full shadow-inner p-0.5 gap-0.5">
+                  <button
+                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                      ${trendSort === 'date' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                    onClick={() => setTrendSort('date')}
+                    style={{ boxShadow: trendSort === 'date' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                  >
+                    <FaClock className="w-3.5 h-3.5" />
+                    최신순
+                  </button>
+                  <button
+                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                      ${trendSort === 'ratio' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                    onClick={() => setTrendSort('ratio')}
+                    style={{ boxShadow: trendSort === 'ratio' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                  >
+                    <FaChartPie className="w-3.5 h-3.5" />
+                    비율순
+                  </button>
+                </div>
               </div>
             </div>
             
@@ -464,97 +490,102 @@ const UserAIAssembleStats = ({ onBack }) => {
             <div className="flex items-center mb-6">
               <FaChartBar className="h-6 w-6 text-blue-400 mr-3" />
               <h2 className="text-xl font-semibold text-white">카테고리 분포</h2>
-              <div className="ml-4 flex flex-row gap-1">
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${categorySort === 'desc' ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-800 text-gray-300 border-gray-600'}`}
-                  onClick={() => setCategorySort('desc')}
-                >비율순(내림차순)</button>
-                <button
-                  className={`px-2 py-0.5 rounded text-xs border ${categorySort === 'asc' ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-800 text-gray-300 border-gray-600'}`}
-                  onClick={() => setCategorySort('asc')}
-                >비율순(오름차순)</button>
+              <div className="ml-4 flex flex-row items-center">
+                <div className="flex bg-gray-100 rounded-full shadow-inner p-0.5 gap-0.5">
+                  <button
+                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                      ${categorySort === 'desc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
+                    onClick={() => setCategorySort('desc')}
+                    style={{ boxShadow: categorySort === 'desc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
+                  >
+                    <FaSortAmountDownAlt className="w-3.5 h-3.5" />
+                    비율순(내림차순)
+                  </button>
+                  <button
+                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                      ${categorySort === 'asc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
+                    onClick={() => setCategorySort('asc')}
+                    style={{ boxShadow: categorySort === 'asc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
+                  >
+                    <FaSortAmountUpAlt className="w-3.5 h-3.5" />
+                    비율순(오름차순)
+                  </button>
+                </div>
               </div>
             </div>
             
             <div className="space-y-2 pr-2 h-[26rem] overflow-y-auto">
-              {[...FIXED_PARENT_CATEGORIES]
-                .map((cat, i) => {
-                  // 비율 계산 동일하게 적용
-                  const percentage = categoryTotal > 0 ? Math.round((parentCounts[cat.name] || 0) / categoryTotal * 100) : 0;
-                  return { ...cat, _percentage: percentage, _origIndex: i };
-                })
-                .sort((a, b) => categorySort === 'desc' ? b._percentage - a._percentage : a._percentage - b._percentage)
-                .map((category, index) => {
-                  const percentage = category._percentage;
-                  const isExpanded = expandedCategories.has(category.id);
-                  const handleClick = () => {
-                    const newSet = new Set(expandedCategories);
-                    if (isExpanded) newSet.delete(category.id);
-                    else newSet.add(category.id);
-                    setExpandedCategories(newSet);
-                  };
-                  const childList = FIXED_CHILD_CATEGORIES.filter(child => child.parentId === category.id);
-                  // 하위 카테고리 퍼센트 정보 (assemblePosts 기준)
-                  const childPercentMap = {};
-                  childList.forEach(child => {
-                    childPercentMap[child.id] = categoryTotal > 0 ? Math.round((childCounts[child.name] || 0) / categoryTotal * 100) : 0;
-                  });
-                  return (
-                    <motion.div key={category.id} className="mb-2" layout>
-                      <motion.div
-                        className={`bg-white/5 backdrop-blur-sm rounded-xl shadow-lg transition-shadow border-2 ${isExpanded ? 'border-blue-500 shadow-xl' : 'border-white/20 hover:shadow-xl'}`}
-                        layout
-                      >
-                        <div className="flex items-center p-4 cursor-pointer" onClick={handleClick}>
-                          <span className="w-40 text-sm font-medium text-gray-300">{category.name}</span>
-                          <span className="w-12 text-right text-sm text-gray-400">{percentage}%</span>
-                          <div className="flex-1 ml-4">
-                            <div className="w-full bg-white rounded-full h-2">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${percentage}%` }}
-                                transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
-                                className="h-2 rounded-full bg-blue-500"
-                              />
-                            </div>
+              {getSortedCategories().map((category, index) => {
+                const percentage = category._percentage;
+                const isExpanded = expandedCategories.has(category.id);
+                const handleClick = () => {
+                  const newSet = new Set(expandedCategories);
+                  if (isExpanded) newSet.delete(category.id);
+                  else newSet.add(category.id);
+                  setExpandedCategories(newSet);
+                };
+                const childList = FIXED_CHILD_CATEGORIES.filter(child => child.parentId === category.id);
+                // 하위 카테고리 퍼센트 정보 (assemblePosts 기준)
+                const childPercentMap = {};
+                childList.forEach(child => {
+                  childPercentMap[child.id] = categoryTotal > 0 ? Math.round((childCounts[child.name] || 0) / categoryTotal * 100) : 0;
+                });
+                return (
+                  <motion.div key={category.id} className="mb-2" layout>
+                    <motion.div
+                      className={`bg-white/5 backdrop-blur-sm rounded-xl shadow-lg transition-shadow border-2 ${isExpanded ? 'border-blue-500 shadow-xl' : 'border-white/20 hover:shadow-xl'}`}
+                      layout
+                    >
+                      <div className="flex items-center p-4 cursor-pointer" onClick={handleClick}>
+                        <span className="w-40 text-sm font-medium text-gray-300">{category.name}</span>
+                        <span className="w-12 text-right text-sm text-gray-400">{percentage}%</span>
+                        <div className="flex-1 ml-4">
+                          <div className="w-full bg-white rounded-full h-2">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${percentage}%` }}
+                              transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
+                              className="h-2 rounded-full bg-blue-500"
+                            />
                           </div>
                         </div>
-                        <AnimatePresence initial={false}>
-                          {isExpanded && (
-                            <motion.div
-                              key="child-list"
-                              initial={{ opacity: 0, scaleY: 0 }}
-                              animate={{ opacity: 1, scaleY: 1 }}
-                              exit={{ opacity: 0, scaleY: 0 }}
-                              transition={{ duration: 0.32, ease: 'easeInOut' }}
-                              className="px-8 pb-4 origin-top overflow-hidden"
-                            >
-                              {childList.map((child, childIndex) => {
-                                const childPercent = childPercentMap[child.id] || 0;
-                                return (
-                                  <div key={child.id} className="flex items-center py-1">
-                                    <span className="w-40 text-sm text-gray-400">{child.name}</span>
-                                    <span className="w-12 text-right text-sm text-gray-500">{childPercent}%</span>
-                                    <div className="flex-1 ml-4">
-                                      <div className="w-full bg-white rounded-full h-1.5">
-                                        <motion.div
-                                          initial={{ width: 0 }}
-                                          animate={{ width: `${childPercent}%` }}
-                                          transition={{ delay: 0.3 + childIndex * 0.05, duration: 0.6 }}
-                                          className="h-1.5 rounded-full bg-blue-400"
-                                        />
-                                      </div>
+                      </div>
+                      <AnimatePresence initial={false}>
+                        {isExpanded && (
+                          <motion.div
+                            key="child-list"
+                            initial={{ opacity: 0, scaleY: 0 }}
+                            animate={{ opacity: 1, scaleY: 1 }}
+                            exit={{ opacity: 0, scaleY: 0 }}
+                            transition={{ duration: 0.32, ease: 'easeInOut' }}
+                            className="px-8 pb-4 origin-top overflow-hidden"
+                          >
+                            {childList.map((child, childIndex) => {
+                              const childPercent = childPercentMap[child.id] || 0;
+                              return (
+                                <div key={child.id} className="flex items-center py-1">
+                                  <span className="w-40 text-sm text-gray-400">{child.name}</span>
+                                  <span className="w-12 text-right text-sm text-gray-500">{childPercent}%</span>
+                                  <div className="flex-1 ml-4">
+                                    <div className="w-full bg-white rounded-full h-1.5">
+                                      <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${childPercent}%` }}
+                                        transition={{ delay: 0.3 + childIndex * 0.05, duration: 0.6 }}
+                                        className="h-1.5 rounded-full bg-blue-400"
+                                      />
                                     </div>
                                   </div>
-                                );
-                              })}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
+                                </div>
+                              );
+                            })}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
-                  );
-                })}
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
