@@ -20,11 +20,68 @@ export const AdminService = {
 
       return await response.json();
     } catch (error) {
-      console.error('통계 데이터 로딩 오류:', error);
       throw error;
     }
   },
 
+  getUserStats: async () => {
+    const url = ApiClient.SERVER_URL + "/state/user/total";
+    try {
+      const response = await customFetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('통계 데이터를 가져오는데 실패했습니다.');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 기간별 사용자 데이터 가져오기
+  getUserPeriod: async (start, end) => {
+    const url = `${ApiClient.SERVER_URL}/state/user/period?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    try {
+      const response = await customFetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('기간별 사용자 데이터를 가져오는데 실패했습니다.');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 사용자 정보 목록 가져오기 (페이지별)
+  getUserInfo: async (page, sortType = 'totalPost', sortDirection = 'desc') => {
+    const url = `${ApiClient.SERVER_URL}/state/user/info/${page}?sortType=${encodeURIComponent(sortType)}&sortDirection=${encodeURIComponent(sortDirection)}`;
+    try {
+      const response = await customFetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('사용자 정보를 가져오는데 실패했습니다.');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  },
 
   getAssembleStats: async () => {
     const url = `${ApiClient.SERVER_URL}/state/data/assemble`;
@@ -37,7 +94,6 @@ export const AdminService = {
       });
       return await response.json();
     } catch (error) {
-      console.error('AI답변 통계 데이터 로딩 실패:', error);
       throw error;
     }
   },
@@ -59,7 +115,6 @@ export const AdminService = {
 
       return await response.json();
     } catch (error) {
-      console.error('카테고리별 통계 로딩 오류:', error);
       throw error;
     }
   },
@@ -86,7 +141,6 @@ export const AdminService = {
 
       return await response.json();
     } catch (error) {
-      console.error('최근 게시글 로딩 오류:', error);
       throw error;
     }
   },
@@ -107,7 +161,6 @@ export const AdminService = {
 
       return await response.json();
     } catch (error) {
-      console.error('월별 통계 로딩 오류:', error);
       throw error;
     }
   },

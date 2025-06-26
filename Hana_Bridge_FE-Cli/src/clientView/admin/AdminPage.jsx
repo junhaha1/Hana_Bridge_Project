@@ -52,17 +52,12 @@ const AdminPage = () => {
 
       // 실제 API 호출 - getStats()만 사용
       const statsData = await AdminService.getStats();
-      console.log(statsData);
       
       const today = getTodayDate();
       
       const todayCodePostsData = await AdminService.getTodayPosts("code", today, today);
       const todayAssemblePostsData = await AdminService.getTodayPosts("assemble", today, today);
       const todayNoticePostsData = await AdminService.getTodayPosts("notice", today, today);
-      
-      console.log(todayCodePostsData);
-      console.log(todayAssemblePostsData);
-      console.log(todayNoticePostsData);
 
       // 각 탭별 게시글 데이터 설정
       setTodayNoticePosts(todayNoticePostsData);
@@ -79,8 +74,7 @@ const AdminPage = () => {
         likeCount: statsData.likeCount || 0,
       });
 
-    } catch (error) {
-      console.error('통계 데이터 로딩 실패:', error);
+    } catch {
       setError('통계 데이터를 불러오는데 실패했습니다.');
       
       // 에러 시 임시 데이터로 표시 (오늘 날짜만)
@@ -128,32 +122,46 @@ const AdminPage = () => {
 
   const statCards = [
     {
+      title: '총 사용자 수',
+      value: stats.userCount,
+      icon: FaChartBar,
+      color: 'bg-indigo-500',
+      bgColor: 'bg-indigo-100',
+      linkable: true,
+      linkPath: '/admin/user-stats'
+    },
+    {
       title: '전체 게시글',
       value: stats.totalPosts,
       icon: FaFileAlt,
       color: 'bg-blue-500',
-      bgColor: 'bg-blue-100'
+      bgColor: 'bg-blue-100',
+      linkable: false
     },
     {
       title: '코드/질문 게시글',
       value: stats.codePosts,
       icon: FaComments,
       color: 'bg-green-500',
-      bgColor: 'bg-green-100'
+      bgColor: 'bg-green-100',
+      linkable: false
     },
     {
       title: 'AI답변 게시글',
       value: stats.assemblePosts,
       icon: FaLightbulb,
       color: 'bg-purple-500',
-      bgColor: 'bg-purple-100'
+      bgColor: 'bg-purple-100',
+      linkable: true,
+      linkPath: '/admin/assemble-stats'
     },
     {
       title: '공지 게시글',
       value: stats.noticePosts,
       icon: FaExclamationTriangle,
       color: 'bg-red-500',
-      bgColor: 'bg-red-100'
+      bgColor: 'bg-red-100',
+      linkable: false
     }
   ];
 
@@ -214,7 +222,7 @@ const AdminPage = () => {
         </motion.div>
 
         {/* 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           {statCards.map((card, index) => (
             <motion.div
               key={card.title}
@@ -222,26 +230,26 @@ const AdminPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className={`bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow ${
-                card.title === 'AI답변 게시글' ? 'cursor-pointer' : ''
+                card.linkable ? 'cursor-pointer' : ''
               }`}
               onClick={() => {
-                if (card.title === 'AI답변 게시글') {
-                  navigate('/admin/assemble-stats');
+                if (card.linkable && card.linkPath) {
+                  navigate(card.linkPath);
                 }
               }}
             >
-              <div className="flex items-center">
-                <div className={`p-3 rounded-full ${card.bgColor}`}>
+              <div className="flex flex-col items-center text-center">
+                <div className={`p-3 rounded-full ${card.bgColor} mb-3`}>
                   <card.icon className={`h-6 w-6 ${card.color.replace('bg-', 'text-')}`} />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">{card.title}</p>
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-1">{card.title}</p>
                   <p className="text-2xl font-bold text-gray-900">{card.value}</p>
                 </div>
               </div>
-              {card.title === 'AI답변 게시글' && (
-                <div className="mt-3 text-xs text-purple-600 font-medium">
-                  클릭하여 상세 통계 보기 →
+              {card.linkable && (
+                <div className="mt-3 text-xs text-purple-600 font-medium text-center">
+                  클릭하여 자세한 통계 보기 →
                 </div>
               )}
             </motion.div>
@@ -376,47 +384,6 @@ const AdminPage = () => {
             </div>
           </motion.div>
         </div>
-
-        {/* 사용자 통계 정보 */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mt-8 bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate('/admin/user-stats')}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">사용자 통계</h2>
-            <div className="text-sm text-purple-600 font-medium flex items-center">
-              <span>상세 보기</span>
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-purple-600">{stats.userCount}</p>
-              <p className="text-sm text-gray-600">총 사용자 수</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">{(stats.userCount / stats.assemblePosts * 100).toFixed(1)}%</p>
-              <p className="text-sm text-gray-600">AI 답변 포스팅 사용자 비율</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{(stats.userCount / stats.codePosts * 100).toFixed(1)}%</p>
-              <p className="text-sm text-gray-600">코드/질문 작성 사용자 비율</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-orange-600">{(stats.userCount / stats.commentCount * 100).toFixed(1)}%</p>
-              <p className="text-sm text-gray-600">댓글 작성 사용자 비율</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-red-600">{(stats.userCount / stats.likeCount * 100).toFixed(1)}%</p>
-              <p className="text-sm text-gray-600">좋아요 사용자 비율</p>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </div>
   );

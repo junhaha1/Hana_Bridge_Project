@@ -1,15 +1,18 @@
 package com.adela.hana_bridge_beapi.service;
 
-import com.adela.hana_bridge_beapi.dto.state.AssembleDataResponse;
-import com.adela.hana_bridge_beapi.dto.state.BoardDataResponse;
-import com.adela.hana_bridge_beapi.dto.state.TotalDataResponse;
-import com.adela.hana_bridge_beapi.dto.state.UserDataResponse;
+import com.adela.hana_bridge_beapi.dto.state.*;
 import com.adela.hana_bridge_beapi.entity.AssembleBoard;
 import com.adela.hana_bridge_beapi.entity.Board;
+import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -51,9 +54,9 @@ public class DataService {
         return new BoardDataResponse(category, count);
     }
 
-    public UserDataResponse getUserData(){
+    public UserCountResponse getUserData(){
         long count = usersRepository.count();
-        return new UserDataResponse(count);
+        return new UserCountResponse(count);
     }
 
     public List<Board> getBoardByCategoryWithPeriod(String category, String start, String end){
@@ -69,5 +72,34 @@ public class DataService {
 
         List<AssembleBoard> assembleBoards = assembleRepository.findWithCreateAt(startDate, endDate);
         return assembleBoards;
+    }
+
+    public TotalUserDataResponse getTotalUserData(){
+        long totalUsers = usersRepository.count();
+
+        LocalDateTime startDate = LocalDate.now()
+                .withDayOfMonth(1)
+                .atStartOfDay();
+
+        LocalDateTime endDate = LocalDate.now()
+                .withDayOfMonth(LocalDate.now().lengthOfMonth())
+                .atTime(23, 59, 59);
+
+        long monthUsers = usersRepository.countByCreatedAtBetween(startDate, endDate);
+        long questionCount = usersRepository.sumWithTotalQuestion();
+        long summaryCount = usersRepository.sumWithTotalSummary();
+        long assembleArticle = assembleRepository.count();
+        long codeArticle = boardRepository.countByCategory("code");
+        long commentCount = commentRepository.count();
+
+        return new TotalUserDataResponse(totalUsers, monthUsers, questionCount, summaryCount, assembleArticle, codeArticle, commentCount);
+    }
+
+    public List<Users> getUserDataWithPeriod(String start, String end){
+        LocalDateTime startDate = LocalDateTime.parse(start + "T00:00:00");
+        LocalDateTime endDate = LocalDateTime.parse(end + "T23:59:59");
+
+        List<Users> userList = usersRepository.findByCreatedAtBetween(startDate, endDate);
+        return userList;
     }
 }

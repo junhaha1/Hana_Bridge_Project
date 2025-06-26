@@ -113,7 +113,7 @@ const AIAssembleStats = () => {
     try {
       const response = await AdminService.getTodayPosts("assemble", selectedPeriod.startDate, selectedPeriod.endDate);
       setAssemblePosts(Array.isArray(response) ? response : []);
-    } catch (error) {
+    } catch {
       setAssemblePosts([]);
       setError('게시글 데이터를 불러오는데 실패했습니다.');
     }
@@ -134,8 +134,7 @@ const AIAssembleStats = () => {
         topPosts: response.topPosts || [],
         categoryDistribution: response.categoryDistribution || { parentCategories: [], childCategories: {} }
       });
-    } catch (error) {
-      console.error('AI답변 통계 데이터 로딩 실패:', error);
+    } catch {
       setError('통계 데이터를 불러오는데 실패했습니다.');
     } finally {
       setLoading(false);
