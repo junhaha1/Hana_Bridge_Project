@@ -101,6 +101,7 @@ public class OpenAiApiController {
         String accessToken = authHeader.replace("Bearer ", "");
         Long userId = tokenService.findUsersIdByToken(accessToken);
         usersService.updateQuestionCount(userId);
+        usersService.addQuestionCount(userId);
 
         ResponseBodyEmitter emitter = new ResponseBodyEmitter();
         openAiService.streamAnswerToClient(clientRequest, emitter);
@@ -121,7 +122,9 @@ public class OpenAiApiController {
         String categoryName = openAiService.categoryChatGPT(title);
 
         SummaryResponse summaryResponse = new SummaryResponse(title, summary, categoryName);
+
         usersService.updateSummaryCount(userId);
+        usersService.addSummaryCount(userId);
 
         return ResponseEntity.ok().body(summaryResponse);
     }
