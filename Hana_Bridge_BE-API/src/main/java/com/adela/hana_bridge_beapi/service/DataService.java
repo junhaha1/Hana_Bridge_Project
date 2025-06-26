@@ -102,4 +102,29 @@ public class DataService {
         List<Users> userList = usersRepository.findByCreatedAtBetween(startDate, endDate);
         return userList;
     }
+
+    public UserInfoResponse getUserInfo(Long userId){
+        Users user = usersRepository.findById(userId).orElse(null);
+        if(user == null){
+            return null;
+        }
+
+        int totalCodeCount = boardRepository.countByUsers_Id(userId);
+        int totalAssembleCount = assembleRepository.countByUsers_Id(userId);
+        int totalComment = commentRepository.countByUsers_Id(userId);
+        int receivedLikeCodeCount = goodRepository.countLikesByUserId(userId);
+        int receivedLikeAssembleCount = assembleGoodRepository.countLikesByUserId(userId);
+
+        return new UserInfoResponse(user.getEmail(), user.getName(), user.getNickName(),
+                user.getTotalQuestion(), user.getTotalSummary(),
+                totalCodeCount, totalAssembleCount, totalComment, receivedLikeCodeCount, receivedLikeAssembleCount);
+    }
+
+    public List<AssembleBoard> getUserAssembleBoardWithPeriod(Long userId, String start, String end){
+        LocalDateTime startDate = LocalDateTime.parse(start + "T00:00:00");
+        LocalDateTime endDate = LocalDateTime.parse(end + "T23:59:59");
+
+        List<AssembleBoard> assembleBoards = assembleRepository.findByUsers_IdWithCreateAt(userId, startDate, endDate);
+        return assembleBoards;
+    }
 }

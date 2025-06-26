@@ -9,19 +9,25 @@ public class UserInfoResponse {
     private final String nickName;
     private final int totalQuestion;
     private final int totalSummary;
-    private final int totalPost;
+    private final int totalCodeCount;
+    private final int totalAssembleCount;
     private final int totalComment;
+    private final int receivedLikeCodeCount;
+    private final int receivedLikeAssembleCount;
 
     public UserInfoResponse(String email, String name, String nickName,
-                            Integer totalQuestion, Integer totalSummary,
-                            Long boardCount, Long assembleBoardCount,
-                            Long commentCount) {
+                            int totalQuestion, int totalSummary,
+                            int boardCount, int assembleBoardCount,
+                            int commentCount, int receivedLikeCodeCount, int receivedLikeAssembleCount) {
         this.email = email;
         this.name = name;
         this.nickName = nickName;
         this.totalQuestion = totalQuestion;
         this.totalSummary = totalSummary;
-        this.totalPost = (int) (boardCount + assembleBoardCount); // 형 변환
-        this.totalComment = commentCount.intValue();
+        this.totalCodeCount = boardCount;
+        this.totalAssembleCount = assembleBoardCount;
+        this.totalComment = commentCount;
+        this.receivedLikeCodeCount = receivedLikeCodeCount;
+        this.receivedLikeAssembleCount = receivedLikeAssembleCount;
     }
 }

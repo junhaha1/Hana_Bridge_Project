@@ -84,4 +84,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     ORDER BY b.createAt DESC
     """)
     List<Board> findByCategoryWithCreateAt(@Param("category") String category, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    int countByUsers_Id(Long userId);
 }
