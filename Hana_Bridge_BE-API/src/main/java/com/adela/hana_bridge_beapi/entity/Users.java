@@ -50,6 +50,12 @@ public class Users implements UserDetails {
     @Column(name = "summary_count", nullable = false)
     private int summaryCount;
 
+    @Column(name = "total_question")
+    private int totalQuestion;
+
+    @Column(name = "total_summary")
+    private int totalSummary;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(this.role));
@@ -116,6 +122,14 @@ public class Users implements UserDetails {
         }else {
             this.summaryCount = summaryCount - 1;
         }
+    }
+
+    public void addTotalQuestion() {
+        this.totalQuestion++;
+    }
+
+    public void addTotalSummary() {
+        this.totalSummary++;
     }
 
     public void updatePassword(String password) {

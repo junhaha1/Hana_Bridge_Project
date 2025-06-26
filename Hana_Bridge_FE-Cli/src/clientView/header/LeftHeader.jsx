@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
 import { setItem, clearItem } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
-import { FaFolder } from 'react-icons/fa';
+import { FaFolder, FaCog } from 'react-icons/fa';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaQuery } from 'react-responsive'; 
@@ -66,13 +66,40 @@ export default function LeftHeader() {
   const category = useSelector((state) => state.user.category);
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
   const categoryName = useSelector((state) => state.user.item);
+  const userRole = useSelector((state) => state.user.role);
 
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // ✅ 모바일 여부
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // 모바일 여부
   const [isOpen, setIsOpen] = useState(OpenState); // 모바일일 때만 토글됨
 
   const [openIndex, setOpenIndex] = useState(null);
   const [isAssembleOpen, setIsAssembleOpen] = useState(false);
+  const scrollContainerRef = useRef(null);
 
+  // 카테고리 클릭 시 스크롤 위치 조정
+  useEffect(() => {
+    if (openIndex !== null && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const categoryElements = container.querySelectorAll('[data-category]');
+      const targetElement = categoryElements[openIndex];
+      
+      if (targetElement) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = targetElement.getBoundingClientRect();
+        const scrollTop = container.scrollTop;
+        const elementTop = elementRect.top - containerRect.top + scrollTop;
+        
+        // 요소가 컨테이너의 중앙에 오도록 스크롤 조정
+        const containerHeight = container.clientHeight;
+        const elementHeight = elementRect.height;
+        const targetScrollTop = elementTop - (containerHeight / 2) + (elementHeight / 2);
+        
+        container.scrollTo({
+          top: targetScrollTop,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [openIndex]);
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
@@ -80,6 +107,10 @@ export default function LeftHeader() {
       dispatch(clearItem());
     }
     navigate("/board/" + id);    
+  };
+
+  const goToAdmin = () => {
+    navigate("/admin");
   };
 
   return (
@@ -144,64 +175,100 @@ export default function LeftHeader() {
                 )}
               </button>
             ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      <AnimatePresence>
-        {isAssembleOpen && (
-          <motion.div
-            key="assemble-submenu"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className={`mt-1 ml-3 space-y-2 px-1 py-1`}
-          >
-            <div className={`${scrollStyle} h-[55vh] `}>
-              {toggleData.map((group, index) => (
-                <div key={group.title}>
-                  <button
-                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                    className="w-full flex justify-between items-center text-left text-white font-semibold text-sm px-2 py-2 rounded hover:bg-gray-600"
-                  >
-                    {group.title}
-                    {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
-                  </button>
+            {/* AI답변 게시판 서브메뉴 */}
+            <AnimatePresence>
+              {isAssembleOpen && (
+                <motion.div
+                  key="assemble-submenu"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`mt-1 ml-3 space-y-2 px-1 py-1`}
+                >
+                  <div className={`${scrollStyle} h-[40vh] `} ref={scrollContainerRef}>
+                    {toggleData.map((group, index) => (
+                      <div key={group.title} data-category={index}>
+                        <button
+                          onClick={() => {
+                            setOpenIndex(openIndex === index ? null : index);
+                            dispatch(setItem(group.title));
+                            navigate("/board/assemble", {
+                              state: { categoryName: group.title },
+                            });
+                          }}
+                          className={`w-full flex justify-between items-center text-left font-semibold 
+                          text-sm px-2 py-2 rounded 
+                          ${categoryName ===  group.title
+                              ? 'bg-gray-600  font-bold'
+                              : 'text-white hover:bg-gray-600'
+                          }`}
+                        >
+                          {group.title}
+                          {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+                        </button>
 
-                  <AnimatePresence initial={false}>
-                    {openIndex === index && (
-                      <motion.div
-                        className="pl-4 mt-2 space-y-1 overflow-hidden"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {group.items.map((item) => (
-                          <button
-                            key={item}
-                            className={`w-full text-left text-sm px-3 py-1 rounded transition
-                              ${categoryName === item 
-                                ? 'bg-[#C5BCFF]  font-bold text-black'
-                                : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
-                              }`}
-                            onClick={() => {
-                              dispatch(setItem(item));
-                              navigate("/board/assemble", {
-                                state: { categoryName: item },
-                              });
-                            }}
-                          >
-                            {item}
-                          </button>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
-            </div>
+                        <AnimatePresence initial={false}>
+                          {openIndex === index && (
+                            <motion.div
+                              className="pl-4 mt-2 space-y-1 overflow-hidden"
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              {group.items.map((item) => (
+                                <button
+                                  key={item}
+                                  className={`w-full text-left text-sm px-3 py-1 rounded transition
+                                    ${categoryName === item 
+                                      ? 'bg-[#C5BCFF]  font-bold text-black'
+                                      : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
+                                    }`}
+                                  onClick={() => {
+                                    dispatch(setItem(item));
+                                    navigate("/board/assemble", {
+                                      state: { categoryName: item },
+                                    });
+                                  }}
+                                >
+                                  {item}
+                                </button>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* 관리자 메뉴 - ROLE_ADMIN인 경우에만 표시 */}
+            {userRole === 'ROLE_ADMIN' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="pt-2 border-t border-gray-600"
+              >
+                <button
+                  onClick={goToAdmin}
+                  className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition ${
+                    category === 'admin'
+                      ? 'bg-[#C5BCFF] text-black font-bold'
+                      : 'text-white hover:bg-[#C5BCFF] hover:text-gray-700'
+                  }`}
+                >
+                  <span className='flex flex-row items-center'>
+                    <FaCog className="mr-2" />
+                    관리자 페이지
+                  </span>
+                </button>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

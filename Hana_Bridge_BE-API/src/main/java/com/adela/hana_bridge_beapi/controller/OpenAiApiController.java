@@ -128,6 +128,7 @@ public class OpenAiApiController {
 
             SummaryResponse summaryResponse = new SummaryResponse(title, summary, categoryName);
             usersService.updateSummaryCount(userId);
+            usersService.addSummaryCount(userId);
 
             System.out.printf("요약된 제목 : %s\n 카테고리 : %s\n", title,categoryName);
 

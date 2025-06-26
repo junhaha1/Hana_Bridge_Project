@@ -30,8 +30,8 @@ public class AssembleApiController {
     private final UsersService usersService;
 
     //사용자가 좋아요 누른 게시글 조회
-    @GetMapping("/good/{page}/{sortType}/{category}")
-    public ResponseEntity<AssembleBoardList> findByGoodWithBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("page") int page, @PathVariable("sortType") String sortType, @PathVariable String category) {
+    @GetMapping("/good/{page}/{sortType}")
+    public ResponseEntity<AssembleBoardList> findByGoodWithBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("page") int page, @PathVariable("sortType") String sortType, @RequestParam String category) {
         String accessToken = authHeader.replace("Bearer ", "");
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
@@ -47,8 +47,8 @@ public class AssembleApiController {
     }
 
     //게시글 전체 조회
-    @GetMapping("/{page}/{sortType}/{category}")
-    public ResponseEntity<AssembleBoardList> findAllAssembleBoards(@PathVariable int page, @PathVariable String sortType, @PathVariable String category) {
+    @GetMapping("/{page}/{sortType}")
+    public ResponseEntity<AssembleBoardList> findAllAssembleBoards(@PathVariable int page, @PathVariable String sortType, @RequestParam String category) {
         //추후 확장을 위해 assembleBoard를 직접 전달
         Page<AssembleBoard> boardInfos = assembleBoardService.findAllAssembleBoards(page, sortType, category);
         List<AssembleBoardResponse> assembleBoardResponses = boardInfos.getContent()
@@ -62,8 +62,8 @@ public class AssembleApiController {
     }
 
     //사용자가 작성한 게시글 전체 조회
-    @GetMapping("/user/{page}/{sortType}/{category}")
-    public ResponseEntity<AssembleBoardList> findAssembleByEmail(@RequestHeader("Authorization") String authHeader, @PathVariable int page, @PathVariable String sortType, @PathVariable String category) {
+    @GetMapping("/user/{page}/{sortType}")
+    public ResponseEntity<AssembleBoardList> findAssembleByEmail(@RequestHeader("Authorization") String authHeader, @PathVariable int page, @PathVariable String sortType, @RequestParam String category) {
         String accessToken = authHeader.replace("Bearer ", "");
         Long userId = tokenService.findUsersIdByToken(accessToken);
 
@@ -111,7 +111,6 @@ public class AssembleApiController {
         return ResponseEntity.ok().body(boardList);
     }
 
-
     //게시글 상세 조회
     @GetMapping("/{assembleboard_id}")
     public ResponseEntity<AssembleBoardResponse> findAssembleBoard(@RequestHeader("Authorization") String authHeader, @PathVariable("assembleboard_id") Long assembleBoardId) {
@@ -127,6 +126,7 @@ public class AssembleApiController {
         }
         return ResponseEntity.ok().body(detailBoard);
     }
+
     //사용자가 등록한 글에 대한 카테고리 목록만 가져오기
     @GetMapping("/user/category")
     public ResponseEntity<UserCategoryResponse> findUserCategory(@RequestHeader("Authorization") String authHeader) {

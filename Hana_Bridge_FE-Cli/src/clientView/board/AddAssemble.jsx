@@ -108,7 +108,7 @@ const AddAssemble = () => {
 
   const [title, setTitle] = useState(assembleTitle);
   const [content, setContent] = useState(assembleContent);
-  const [categoryName, setCategoryName] = useState(assembleCategoryName);
+  const [categoryName, setCategoryName] = useState(assembleCategoryName || 'all');
   const [createAt, setCreateAt] = useState(new Date());
   const likeCount = 0;
   const nickName = useSelector((state) => state.user.nickName);
@@ -121,6 +121,7 @@ const AddAssemble = () => {
   //취소, 이전 확인 모달
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
 
   //tip 설명 모달
   const [tipModal, setTipModal] = useState(false);
@@ -153,12 +154,12 @@ const AddAssemble = () => {
   const saveAssemble =() =>{
     let isValid = true;
 
-    if (!title.trim()) {
+    if (!title || !title.trim()) {
       setTitleError("제목은 필수 입력항목입니다.");
       isValid = false;
     }
 
-    if (!content.trim()) {
+    if (!content || !content.trim()) {
       setContentError("내용은 필수 입력항목입니다.");
       isValid = false;
     }
@@ -220,13 +221,10 @@ const AddAssemble = () => {
                 </div>
               </div>
   
-              <div className={detailCardStyle}>
-                {/* <div className={detailCategory}>AI답변 게시판 &gt; 상세글</div> */}
-                {/* <div className={detailCategory}>AI답변 게시판 &gt; {board.categoryName === "all" ? 상세글 : board.categoryName}</div> */}
+              <div className={`border-b-2 py-3 bg-white/5 border-white/70 mb-24 rounded-t-md p-4 w-full break-words whitespace-pre-wrap overflow-hidden`}>
+                <div className={detailCategory}>AI답변 게시판 &gt; {categoryName === "all" ? '상세글' : categoryName}</div>
 
-  
-                {/* <h2 className={detailTitle}>{board.title}</h2> */}
-                <div className="mb-3">
+                  <div className="mb-3">
                   <input
                     type="text"
                     className={editTitle}
@@ -295,12 +293,12 @@ const AddAssemble = () => {
                   </div>
                   <div className="flex-row">
                     <button 
-                      className={buttonStyle +" text-green-400 text-sm hover:underline mr-3"} 
-                      onClick={() => saveAssemble()}>
+                      className={buttonStyle +" text-green-400 md:text-base max-md:text-sm hover:underline mr-3"} 
+                      onClick={() => {setConfirmSaveOpen(true); console.log('등록')}}>
                       등록하기 
                     </button>
                     <button 
-                      className={buttonStyle +" text-red-400 text-sm hover:underline"} 
+                      className={buttonStyle +" text-red-400 md:text-base max-md:text-sm hover:underline"} 
                       onClick={() => setConfirmCancelOpen(true)}>
                       취소하기 
                     </button>
@@ -326,7 +324,6 @@ const AddAssemble = () => {
       {confirmCancelOpen && (
         <ConfirmAssembleModal
           onConfirm={() => {
-            //boardDeleteButton(assembleBoardId);
             setConfirmCancelOpen(false);
             navigate("/board/assemble");
           }}
@@ -338,12 +335,22 @@ const AddAssemble = () => {
       {confirmBackOpen && (
         <ConfirmAssembleModal
           onConfirm={() => {
-            //boardDeleteButton(assembleBoardId);
             setConfirmBackOpen(false);
             navigate("/board/assemble");
           }}
           onCancel={() => setConfirmBackOpen(false)}
           onMode={"back"}
+        />
+      )}
+      {/* 등록 확인 모달 */}
+      {confirmSaveOpen && (
+        <ConfirmAssembleModal
+          onConfirm={() => {
+            saveAssemble();
+            setConfirmSaveOpen(false);           
+          }}
+          onCancel={() => setConfirmSaveOpen(false)}
+          onMode={"save"}
         />
       )}
     </div>

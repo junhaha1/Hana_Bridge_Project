@@ -110,7 +110,9 @@ class ApiClient{
 
   //사용자 본인 게시글 조회 (AssembleBoard)
   static getMyAssemble(page, sortType, category){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/user/${page}/${sortType}/${category}`);
+    console.log("assemble 개시글 조회: " + category);
+    const url = `${ApiClient.SERVER_URL}${ApiClient.ASSEMBLE_BOARD}/user/${page}/${sortType}?category=${encodeURIComponent(category)}`;
+    return CustomFetch(url);
   }
 
   //사용자 본인이 쓴 글 카테고리 가져오기 (AssembleBoard)
@@ -120,7 +122,8 @@ class ApiClient{
 
   //사용자가 좋아요 누른 게시글 조회 (AssembleBoard)
   static getMyGoodAssemble(page, category){
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + `/good/${page}/latest/${category}`);
+    const url = `${ApiClient.SERVER_URL}${ApiClient.ASSEMBLE_BOARD}/good/${page}/latest?category=${encodeURIComponent(category)}`;
+    return CustomFetch(url);
   }
   
 
@@ -257,7 +260,8 @@ class ApiClient{
   //Assemble 전체 조회
   static getAssembleBoards(page, sortType, category){
     console.log("Get AssembleBoard" + page + "/" + sortType + '/' + category);
-    return CustomFetch(ApiClient.SERVER_URL + ApiClient.ASSEMBLE_BOARD + "/" + page + "/" + sortType + "/" + category);
+    const url = `${ApiClient.SERVER_URL}${ApiClient.ASSEMBLE_BOARD}/${page}/${sortType}?category=${encodeURIComponent(category)}`;
+    return CustomFetch(url);
   }
 
   static getSearchAssembleBoards(word, sortType, page){

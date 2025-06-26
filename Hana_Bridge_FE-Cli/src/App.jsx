@@ -12,6 +12,11 @@ import AddAssemble from './clientView/board/AddAssemble';
 import AIChat from './clientView/AIchat/AIChat';
 import Home from './clientView/Home';
 import DashBoard from './clientView/dashboard/DashBoard';
+import AdminPage from './clientView/admin/AdminPage';
+import AIAssembleStats from './clientView/admin/AIAssembleStats';
+import UserStatsPage from './clientView/admin/UserStatsPage';
+import UserAIAssembleStats from './clientView/board/UserAIAssembleStats';
+import AdminRoute from './component/AdminRoute';
 import NotFound from './clientView/error/NotFound';
 import RenderError from './clientView/error/RenderError';
 
@@ -20,6 +25,7 @@ import { useSelector } from 'react-redux';
 
 function App() {
   const nickName = useSelector((state) => state.user.nickName);
+  const userRole = useSelector((state) => state.user.role);
   return (
     <div className='font-sans'>
       <Routes>
@@ -31,10 +37,26 @@ function App() {
         <Route path="/write" element={<AddBoard/>} />  {/* 게시글 작성 화면 */}
         <Route path="/writeAssemble" element={<AddAssemble/>} />  {/* Assemble 작성 화면 */}
         <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
+        <Route path="/user/ai-assemble-stats" element={<UserAIAssembleStats/>} /> {/* 사용자 AI답변 통계 페이지 */}
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminPage/>
+          </AdminRoute>
+        } /> {/* 관리자 페이지 */}
+        <Route path="/admin/assemble-stats" element={
+          <AdminRoute>
+            <AIAssembleStats/>
+          </AdminRoute>
+        } /> {/* AI답변 상세 통계 페이지 */}
+        <Route path="/admin/user-stats" element={
+          <AdminRoute>
+            <UserStatsPage/>
+          </AdminRoute>
+        } /> {/* 사용자 통계 페이지 */}
         <Route path="/error" element={<NotFound/>} /> {/* 404 화면 */}
         <Route path="/renderError" element={<RenderError/>} />  {/* 렌더링 오류 화면 */}
       </Routes>
-      {nickName !== "guest" && (<Codi/>)}
+      {nickName !== "guest" && userRole !== "ROLE_ADMIN" && (<Codi/>)}
     </div>
   );
 }

@@ -3,6 +3,7 @@ package com.adela.hana_bridge_beapi.repository;
 import com.adela.hana_bridge_beapi.entity.Good;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -14,6 +15,12 @@ public interface GoodRepository extends JpaRepository<Good, Long> {
     //삭제
     void deleteByBoard_BoardIdAndUsers_Id(Long boardId, Long userId);
 
-    @Query(value = "SELECT board_id FROM good GROUP BY board_id ORDER BY COUNT(*) DESC LIMIT 5", nativeQuery = true)
-    List<Long> findTop5BoardIdsByGoodCountNative();
+
+    @Query("""
+    SELECT COUNT(g)
+    FROM Good g
+    JOIN g.board b
+    WHERE b.users.id = :userId
+    """)
+    int countLikesByUserId(@Param("userId") Long userId);
 }

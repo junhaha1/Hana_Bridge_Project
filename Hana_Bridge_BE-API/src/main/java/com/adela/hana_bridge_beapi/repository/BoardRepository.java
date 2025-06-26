@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
@@ -68,4 +69,21 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         WHERE g.users.id = :userId)
     """)
     Page<Board> findByCategoryWithGood(String category, long userId, Pageable pageable);
+
+    @Query("""
+    SELECT count(*)
+    FROM Board b
+    WHERE b.category = :category
+    """)
+    Long countByCategory(String category);
+
+    @Query("""
+    SELECT b
+    FROM Board b
+    WHERE b.createAt BETWEEN :start AND :end AND b.category = :category
+    ORDER BY b.createAt DESC
+    """)
+    List<Board> findByCategoryWithCreateAt(@Param("category") String category, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    int countByUsers_Id(Long userId);
 }

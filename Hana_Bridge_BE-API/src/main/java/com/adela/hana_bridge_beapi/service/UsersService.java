@@ -65,6 +65,21 @@ public class UsersService {
                 .nickName(users.getNickName())
                 .build();
     }
+    @Transactional
+    public void addQuestionCount(Long userId) {
+        Users users = usersRepository.findById(userId)
+                .orElseThrow(()-> new UserIdNotFoundException(userId));
+
+        users.addTotalQuestion();
+    }
+
+    @Transactional
+    public void addSummaryCount(Long userId) {
+        Users users = usersRepository.findById(userId)
+                .orElseThrow(()-> new UserIdNotFoundException(userId));
+
+        users.addTotalSummary();
+    }
 
     //사용자 질문 횟수 수정
     @Transactional
