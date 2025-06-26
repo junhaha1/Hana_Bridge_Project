@@ -15,6 +15,7 @@ import DashBoard from './clientView/dashboard/DashBoard';
 import AdminPage from './clientView/admin/AdminPage';
 import AIAssembleStats from './clientView/admin/AIAssembleStats';
 import UserStatsPage from './clientView/admin/UserStatsPage';
+import UserAIAssembleStats from './clientView/board/UserAIAssembleStats';
 import AdminRoute from './component/AdminRoute';
 import NotFound from './clientView/error/NotFound';
 import RenderError from './clientView/error/RenderError';
@@ -36,6 +37,7 @@ function App() {
         <Route path="/write" element={<AddBoard/>} />  {/* 게시글 작성 화면 */}
         <Route path="/writeAssemble" element={<AddAssemble/>} />  {/* Assemble 작성 화면 */}
         <Route path="/aiChat" element={<AIChat/>} /> {/* AI 대화 화면 */}
+        <Route path="/user/ai-assemble-stats" element={<UserAIAssembleStats/>} /> {/* 사용자 AI답변 통계 페이지 */}
         <Route path="/admin" element={
           <AdminRoute>
             <AdminPage/>

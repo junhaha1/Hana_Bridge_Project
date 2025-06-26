@@ -2,6 +2,7 @@ package com.adela.hana_bridge_beapi.repository;
 import com.adela.hana_bridge_beapi.entity.AssembleGood;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -15,7 +16,12 @@ public interface AssembleGoodRepository extends CrudRepository<AssembleGood, Lon
     // 게시글 ID + 사용자 ID로 좋아요 삭제
     void deleteByAssembleBoard_AssembleBoardIdAndUsers_Id(Long assembleBoardId, Long userId);
 
-    @Query(value = "SELECT assembleboard_id FROM assemblegood GROUP BY assembleboard_id ORDER BY COUNT(*) DESC LIMIT 5", nativeQuery = true)
-    List<Long> findTop5BoardIdsByGoodCountNative();
+    @Query("""
+    SELECT COUNT(ag)
+    FROM AssembleGood ag
+    JOIN ag.assembleBoard ab
+    WHERE ab.users.id = :userId
+    """)
+    int countLikesByUserId(@Param("userId") Long userId);
 }
 

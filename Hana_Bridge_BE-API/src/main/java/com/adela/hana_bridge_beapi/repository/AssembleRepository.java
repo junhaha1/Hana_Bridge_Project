@@ -98,4 +98,14 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
     ORDER BY b.createAt DESC
     """)
     List<AssembleBoard>findWithCreateAt(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT b
+    FROM AssembleBoard b
+    WHERE b.users.id = :userId AND b.createAt BETWEEN :start AND :end
+    ORDER BY b.createAt DESC
+    """)
+    List<AssembleBoard>findByUsers_IdWithCreateAt(@Param("userId")Long userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    int countByUsers_Id(Long usersId);
 }

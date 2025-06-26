@@ -9,6 +9,7 @@ import com.adela.hana_bridge_beapi.entity.Board;
 import com.adela.hana_bridge_beapi.entity.Users;
 import com.adela.hana_bridge_beapi.service.BoardService;
 import com.adela.hana_bridge_beapi.service.DataService;
+import com.adela.hana_bridge_beapi.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.util.List;
 public class StateApiController {
 
     private final DataService dataService;
-    private final BoardService boardService;
+    private final TokenService tokenService;
 
     //전체적인 통계 데이터
     @GetMapping("/data/total")
@@ -90,5 +91,27 @@ public class StateApiController {
                 .map(user -> new UserDataResponse(user))
                 .toList();
         return ResponseEntity.ok().body(userList);
+    }
+
+    //해당 사용자의 정보를 반환
+    @GetMapping("/user/info")
+    public ResponseEntity<UserInfoResponse> getUserInfo(@RequestHeader("Authorization") String authHeader) {
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
+        return ResponseEntity.ok().body(dataService.getUserInfo(userId));
+    }
+
+    @GetMapping("/user/assemble")
+    public ResponseEntity<List<AssembleBoardResponse>> getUserAssembleBoardwithPeriod(@RequestHeader("Authorization") String authHeader, @RequestParam String start, @RequestParam String end){
+        String accessToken = authHeader.replace("Bearer ", "");
+        Long userId = tokenService.findUsersIdByToken(accessToken);
+
+        List<AssembleBoard> boards = dataService.getUserAssembleBoardWithPeriod(userId, start, end);
+        List<AssembleBoardResponse> boardList = boards
+                .stream()
+                .map(board -> new AssembleBoardResponse(board))
+                .toList();
+        return ResponseEntity.ok().body(boardList);
     }
 }
