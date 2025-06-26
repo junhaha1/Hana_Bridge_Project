@@ -132,6 +132,7 @@ const AssembleBoard = () => {
           getSearch(searchWord);
         } 
         else { //검색어가 존재하지 않을 경우 
+          console.log("assembleBoard: " + categoryName);
           const getAssemble = ApiClient.getAssembleBoards;
           const res = await getAssemble(page, sortType, categoryName); //카테고리 추가하기
           if (!res.ok) {

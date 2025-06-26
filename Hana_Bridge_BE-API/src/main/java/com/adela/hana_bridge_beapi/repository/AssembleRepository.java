@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
@@ -20,7 +21,7 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
       WHERE  b.users.id = :userId 
           AND b.categorys = :categorys
     """)
-    Page<AssembleBoard> findByUsers_IdAndCategorys(Long userId, Category categorys, Pageable pageable);
+    Page<AssembleBoard> findByUsers_IdAndCategorys(@Param("userId") Long userId, @Param("categorys") Category categorys, Pageable pageable);
 
     @Query("SELECT b.likeCount FROM AssembleBoard b WHERE b.assembleBoardId = :assembleBoardId")
     Long findLikeCountById(@Param("assembleBoardId") Long assembleBoardId);
@@ -75,7 +76,11 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
     """)
     Page<AssembleBoard> findAllByCategoryWithGood(@Param("categorys") Category categorys, Pageable pageable, @Param("userId") Long userId);
 
+    //하위 카테고리로 조회
     Page<AssembleBoard> findByCategorys(Category categorys, Pageable pageable);
+
+    //상위 카테고리로 조회
+    Page<AssembleBoard> findByCategorys_Parent_Id(int parentId, Pageable pageable);
 
     @Query("""
       SELECT b.categorys.name 
@@ -85,4 +90,22 @@ public interface AssembleRepository extends JpaRepository<AssembleBoard, Long> {
       ORDER BY b.categorys.id
     """)
     List<String> findCategoryByUsers(@Param("userId") Long userId);
+
+    @Query("""
+    SELECT b
+    FROM AssembleBoard b
+    WHERE b.createAt BETWEEN :start AND :end
+    ORDER BY b.createAt DESC
+    """)
+    List<AssembleBoard>findWithCreateAt(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("""
+    SELECT b
+    FROM AssembleBoard b
+    WHERE b.users.id = :userId AND b.createAt BETWEEN :start AND :end
+    ORDER BY b.createAt DESC
+    """)
+    List<AssembleBoard>findByUsers_IdWithCreateAt(@Param("userId")Long userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    int countByUsers_Id(Long usersId);
 }
