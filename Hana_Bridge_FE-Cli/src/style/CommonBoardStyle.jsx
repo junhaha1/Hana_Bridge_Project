@@ -9,7 +9,7 @@ export const inputResetButton = "absolute rounded-full bg-gray-200 p-1 right-3 t
 export const addButton = "bg-white hover:!bg-[#C5BCFF] hover:text-black px-3 rounded text-sm font-semibold max-md:text-xs max-md:py-0 text-indigo-900 transition-colors duration-300 whitespace-nowrap";
 
 /*정렬 체크박스*/
-export const sortCheckLayout = "flex gap-3 justify-end mt-3 mb-2";
+export const sortCheckLayout = "flex gap-3 justify-between mt-2 mb-1";
 export const sortCheckBox = "text-white pr-1 md:py-2 md:text-base max-md:text-sm bg-transparent rounded focus:outline-none focus:ring-0 focus:border-transparent";
 
 /* Card 게시글 위치*/
