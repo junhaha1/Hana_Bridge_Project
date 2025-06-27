@@ -21,6 +21,11 @@ spring:
     database: mysql
 
   datasource:
+    hikari:
+      maximum-pool-size: 20 # 동시에 사용할 수 있는 최대 DB 커넥션 수
+      connection-timeout: 60000 # 커넥션 얻기까지 최대 대기 시간 (ms)
+      idle-timeout: 600000 # 유휴 커넥션이 제거되기까지 시간 (ms)
+      max-lifetime: 1800000 # 커넥션 최대 수명 (ms)
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/${DATABASE_DB}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowMultiQueries=true
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
