@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isPostLoading: false,
   isPostComplete: false,
+  assembleData: null,
   curCodePage: 1,
   curNoticePage: 1,
   curAssemblePage: 1,
@@ -21,9 +22,13 @@ const postSlice = createSlice({
     setPostComplete: (state, action) => {
       state.isPostComplete = action.payload;
     },
+    setAssembleData: (state, action) => {
+      state.assembleData = action.payload;
+    },
     resetPostState: (state) => {
       state.isPostLoading = false;
       state.isPostComplete = false;
+      state.assembleData = null;
     },
     setCurPage: (state, action) => {
       const payload = action.payload;
@@ -60,5 +65,5 @@ const postSlice = createSlice({
   }
 });
 
-export const { setPostLoading, setPostComplete, resetPostState, setCurPage, setCurPageGroup, resetPage, setIsOpenLeftHeader } = postSlice.actions;
+export const { setPostLoading, setPostComplete, setAssembleData, resetPostState, setCurPage, setCurPageGroup, resetPage, setIsOpenLeftHeader } = postSlice.actions;
 export default postSlice.reducer;
