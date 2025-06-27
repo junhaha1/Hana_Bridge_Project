@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { setCategory } from '../../store/userSlice';
 import { setItem, clearItem } from '../../store/userSlice';
 import { setIsOpenLeftHeader } from '../../store/postSlice';
@@ -62,6 +62,7 @@ const boards = [
 
 export default function LeftHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const category = useSelector((state) => state.user.category);
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
@@ -74,6 +75,63 @@ export default function LeftHeader() {
   const [openIndex, setOpenIndex] = useState(null);
   const [isAssembleOpen, setIsAssembleOpen] = useState(false);
   const scrollContainerRef = useRef(null);
+
+  // location.state에서 전달받은 상태 처리 (명시적으로 전달된 경우에만)
+  useEffect(() => {
+    if (location.state?.from === "back") {
+      if (location.state?.isAssembleOpen !== undefined) {
+        setIsAssembleOpen(location.state.isAssembleOpen);
+      } else {
+        setIsAssembleOpen(false);
+      }
+      if (location.state?.openIndex !== undefined) {
+        setOpenIndex(location.state.openIndex);
+      } else {
+        setOpenIndex(null);
+      }
+    }
+  }, [location.state]);
+
+  // location.state가 없을 때 리덕스 상태 기준으로 자동 오픈/하이라이트
+  useEffect(() => {
+    // 게시글 상세화면이면 무조건 assemble 오픈
+    if (location.pathname.startsWith('/board/assemble/')) {
+      setIsAssembleOpen(true);
+      // 상위/하위 카테고리 자동 오픈
+      const mainCategoryIndex = toggleData.findIndex(group => group.title === categoryName);
+      if (mainCategoryIndex !== -1) {
+        setOpenIndex(mainCategoryIndex);
+      } else {
+        for (let i = 0; i < toggleData.length; i++) {
+          if (toggleData[i].items.includes(categoryName)) {
+            setOpenIndex(i);
+            break;
+          }
+        }
+      }
+      return;
+    }
+    // 기존 로직
+    if (!location.state) {
+      if (category === 'assemble') {
+        setIsAssembleOpen(true);
+        const mainCategoryIndex = toggleData.findIndex(group => group.title === categoryName);
+        if (mainCategoryIndex !== -1) {
+          setOpenIndex(mainCategoryIndex);
+        } else {
+          for (let i = 0; i < toggleData.length; i++) {
+            if (toggleData[i].items.includes(categoryName)) {
+              setOpenIndex(i);
+              break;
+            }
+          }
+        }
+      } else {
+        setIsAssembleOpen(false);
+        setOpenIndex(null);
+      }
+    }
+  }, [category, categoryName, location.state, location.pathname]);
 
   // 카테고리 클릭 시 스크롤 위치 조정
   useEffect(() => {
@@ -105,9 +163,11 @@ export default function LeftHeader() {
     dispatch(setCategory({ category: id }));
     if(id === 'assemble'){
       dispatch(clearItem()); // AI답변 게시판 클릭 시 전체보기로 설정
-      setIsAssembleOpen((prev) => !prev); // 토글 기능 추가
+      setIsAssembleOpen((prev) => !prev); // 토글 기능
+      if (!isAssembleOpen) setOpenIndex(null); // 열릴 때는 상위만 열고 하위는 닫힘
     } else {
       setIsAssembleOpen(false); // 다른 게시판 선택 시 닫기
+      setOpenIndex(null);
       if(category !== 'assemble'){
         dispatch(clearItem());
       }
@@ -193,7 +253,11 @@ export default function LeftHeader() {
                       <div key={group.title} data-category={index}>
                         <button
                           onClick={() => {
-                            setOpenIndex(openIndex === index ? null : index);
+                            if (openIndex === index) {
+                              setOpenIndex(null);
+                            } else {
+                              setOpenIndex(index);
+                            }
                             dispatch(setItem(group.title));
                             navigate("/board/assemble", {
                               state: { categoryName: group.title },
