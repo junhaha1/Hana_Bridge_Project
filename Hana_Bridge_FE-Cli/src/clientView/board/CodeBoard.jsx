@@ -315,19 +315,21 @@ const CodeBoard = () => {
       ) : (
         <>
         <div className={sortCheckLayout}>
-          <label htmlFor="sort" className="sr-only">정렬 기준</label>
-          <select
-            id="sort"
-            name="sort"
-            value={sortType}
-            className={`${sortCheckBox} cursor-pointer`}
-            onChange={(e) => {
-              setSortType(e.target.value)
-            }}
-          >
-            <option className="text-black" value="like">좋아요순</option>
-            <option className="text-black" value="latest">최신순</option>
-          </select>
+          <div className="flex justify-end w-full">
+            <label htmlFor="sort" className="sr-only">정렬 기준</label>
+            <select
+              id="sort"
+              name="sort"
+              value={sortType}
+              className={`${sortCheckBox} cursor-pointer`}
+              onChange={(e) => {
+                setSortType(e.target.value)
+              }}
+            >
+              <option className="text-black" value="like">좋아요순</option>
+              <option className="text-black" value="latest">최신순</option>
+            </select>
+          </div>
         </div>
         {boards.map((post) => (
           <div

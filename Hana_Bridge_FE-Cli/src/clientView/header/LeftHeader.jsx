@@ -103,8 +103,14 @@ export default function LeftHeader() {
 
   const postBoard = (id) => {
     dispatch(setCategory({ category: id }));
-    if(category !== 'assemble'){
-      dispatch(clearItem());
+    if(id === 'assemble'){
+      dispatch(clearItem()); // AI답변 게시판 클릭 시 전체보기로 설정
+      setIsAssembleOpen((prev) => !prev); // 토글 기능 추가
+    } else {
+      setIsAssembleOpen(false); // 다른 게시판 선택 시 닫기
+      if(category !== 'assemble'){
+        dispatch(clearItem());
+      }
     }
     navigate("/board/" + id);    
   };
@@ -149,11 +155,6 @@ export default function LeftHeader() {
                 key={id}
                 onClick={() => {
                   postBoard(id);
-                  if (id === 'assemble') {
-                    setIsAssembleOpen((prev) => !prev); // toggle 열기/닫기
-                  } else {
-                    setIsAssembleOpen(false); // 다른 버튼 누르면 닫음
-                  }
                 }}
                 className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition  flex justify-between ${
                   category === id
