@@ -6,7 +6,7 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiClient from '../../service/ApiClient';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAiChat, clearAiChat, setQuestionCount, setSummaryCount} from '../../store/userSlice';
-import { setPostLoading, setPostComplete, resetPostState } from '../../store/postSlice';
+import { setPostLoading, setPostComplete, setAssembleData } from '../../store/postSlice';
 import { scrollStyle } from '../../style/CommonStyle';
 import { IoClose } from "react-icons/io5";
 import { RiSendPlaneFill } from "react-icons/ri";
@@ -20,7 +20,6 @@ import { aiChatFrame, topNavi, chatBox, promptButton, aiBox, userBox,
  postingDiv, sipnning, postCompleteDiv, answerChooseButton } from '../../style/AIChatStyle';
 import { clearUserPrompt, setUserPrompt, setUserPromptList } from '../../store/aiChatSlice';
 import SettingModal from './SettingModal';
-import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from 'react-responsive';
 
 
@@ -33,13 +32,6 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   //채팅의 마지막을 가르킴
   const messagesEndRef = useRef(null);  
   const textRef = useRef(null);
-
-  const navigate = useNavigate();
-  
-  //답변 복사
-  const copyRef = useRef(null);
-  //메시지 상태
-  const [copied, setCopied] = useState(false); 
 
   const dispatch = useDispatch();
 
@@ -59,9 +51,19 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   //새 대화창 초기화
   const [showNewChatModal, setShowNewChatModal] = useState(false);
 
-  const [isPostLoading, setIsPostLoading] = useState(useSelector((state) => state.post.isPostLoading));
-  const [isPostComplete, setIsPostComplete] = useState(useSelector((state) => state.post.isPostComplete));
-  console.log("isPostLoding: " + isPostLoading + "  isPostComplete: " + isPostComplete);
+  const isPostLoadingRedux = useSelector((state) => state.post.isPostLoading);
+  const isPostCompleteRedux = useSelector((state) => state.post.isPostComplete);
+
+  const [isPostLoading, setIsPostLoading] = useState(isPostLoadingRedux);
+  const [isPostComplete, setIsPostComplete] = useState(isPostCompleteRedux);
+
+  useEffect(() => {
+    setIsPostLoading(isPostLoadingRedux);
+  }, [isPostLoadingRedux]);
+
+  useEffect(() => {
+    setIsPostComplete(isPostCompleteRedux);
+  }, [isPostCompleteRedux]);
 
   //프롬프트 설정 모달
   const [settingModal, setSettingModal] = useState(false);
@@ -125,6 +127,10 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setShowNewChatModal(false);
   }
 
+  //답변 복사
+  const copyRef = useRef(null);
+  //메시지 상태
+  const [copied, setCopied] = useState(false);
   //답변 복사해오기
   const copyToClipboard = () => {
     const text = copyRef.current.innerText;
@@ -136,7 +142,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       console.error("복사 실패:", err);
     });
   };
-  
+
   //메세지 추가 시 스크롤 자동 이동
   //redux에 대화내용 저장
   useEffect(() => {
@@ -395,15 +401,12 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
       return res.json();
     })
     .then((data) => {     
-      const assembleTitle = data.title;
-      const assembleContent = data.content;
-      const categoryName = data.categoryName;
       setIsPostComplete(true);
       dispatch(setPostComplete({isPostComplete: true}));
-      setIsPostLoading(false);      
-      dispatch(resetPostState());
+      dispatch(setAssembleData(data)); // 생성된 데이터 저장
+      setIsPostLoading(false);
       console.log("posting complete!");
-      navigate('/writeAssemble', { state: {assembleTitle: assembleTitle, assembleContent: assembleContent, assembleCategoryName: categoryName}});
+      // navigate('/writeAssemble', { state: {assembleTitle: assembleTitle, assembleContent: assembleContent, assembleCategoryName: categoryName}});
     })
     .catch((err) => {
       setIsPostLoading(false);

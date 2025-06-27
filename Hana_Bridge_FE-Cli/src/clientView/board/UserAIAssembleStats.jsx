@@ -244,7 +244,7 @@ const UserAIAssembleStats = ({ onBack }) => {
         </motion.div>
 
         {/* 주요 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-8">
           {[
             {
               title: '총 AI답변 게시글',
@@ -268,7 +268,7 @@ const UserAIAssembleStats = ({ onBack }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className={`bg-white/5 backdrop-blur-sm rounded-xl shadow-lg border ${card.borderColor} p-4 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 max-w-xs`}
+              className={`bg-white/5 backdrop-blur-sm rounded-xl shadow-lg border ${card.borderColor} p-4 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 w-full md:max-w-xs`}
             >
               <div className="flex flex-col items-center text-center">
                 <div className={`p-2 rounded-full ${card.bgColor} mb-2`}>
@@ -336,23 +336,23 @@ const UserAIAssembleStats = ({ onBack }) => {
             {/* 날짜 범위 선택 */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">날짜 범위</label>
-              <div className="flex space-x-2">
+              <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
                 <input
                   type="date"
                   value={selectedPeriod.startDate}
                   onChange={(e) => setSelectedPeriod(prev => ({ ...prev, startDate: e.target.value }))}
                   max={selectedPeriod.endDate || getTodayDate()}
-                  className="flex-1 px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-800 text-white"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-800 text-white"
                   placeholder="시작일"
                 />
-                <span className="flex items-center text-gray-400">~</span>
+                <span className="flex items-center justify-center text-gray-400 md:w-auto w-full">~</span>
                 <input
                   type="date"
                   value={selectedPeriod.endDate}
                   onChange={(e) => setSelectedPeriod(prev => ({ ...prev, endDate: e.target.value }))}
                   min={selectedPeriod.startDate}
                   max={getTodayDate()}
-                  className="flex-1 px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-800 text-white"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-800 text-white"
                   placeholder="종료일"
                 />
               </div>
@@ -400,7 +400,7 @@ const UserAIAssembleStats = ({ onBack }) => {
             <div className="flex items-center mb-6">
               <FaChartBar className="h-6 w-6 text-purple-400 mr-3" />
               <div className="flex flex-col">
-                <h2 className="text-xl font-semibold text-white">
+                <h2 className="sm:text-xl text-base font-semibold text-white">
                   {periodType === 'monthly' ? '월별 등록 게시글' : periodType === 'weekly' ? '주별 등록 게시글' : '일자별 등록 게시글'}
                 </h2>
                 <span className="text-xs text-gray-400 mt-1">해당 기간 게시글 수: {assemblePosts.length}개</span>
@@ -433,8 +433,8 @@ const UserAIAssembleStats = ({ onBack }) => {
               {getTrendGroups().length > 0 ? (
                 getTrendGroups().map((item, index) => {
                   return (
-                    <div key={item.key} className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-300 w-40">
+                    <div key={item.key} className="flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2">
+                      <div className="w-full sm:w-40 text-sm font-medium text-gray-300 flex-1 min-w-0 break-words">
                         {periodType === 'monthly' ? `${item.key.split('-')[0]}년 ${item.key.split('-')[1]}월` :
                          periodType === 'weekly' ? (() => {
                            const [year, weekStr] = item.key.split('-W');
@@ -453,12 +453,12 @@ const UserAIAssembleStats = ({ onBack }) => {
                            return `${year}년 ${week}주 (${startStr}~${endStr})`;
                          })() :
                          item.key}
-                      </span>
-                      <div className="flex-1 mx-4">
-                        <div className="flex justify-between text-xs text-gray-400 mb-1">
-                          <span>게시글: {item.count}</span>
-                          <span>{assemblePosts.length > 0 ? `비율: ${(item.count / assemblePosts.length * 100).toFixed(1)}%` : ''}</span>
-                        </div>
+                      </div>
+                      <div className="w-full sm:w-auto flex flex-row sm:flex-col justify-between items-center sm:items-start gap-1">
+                        <span className="text-xs text-gray-400">게시글: {item.count}</span>
+                        <span className="text-xs text-gray-400">{assemblePosts.length > 0 ? `비율: ${(item.count / assemblePosts.length * 100).toFixed(1)}%` : ''}</span>
+                      </div>
+                      <div className="w-full sm:flex-1 mx-0 sm:mx-4">
                         <div className="w-full bg-white rounded-full h-2">
                           <motion.div
                             initial={{ width: 0 }}
@@ -488,25 +488,25 @@ const UserAIAssembleStats = ({ onBack }) => {
           >
             <div className="flex items-center mb-6">
               <FaChartBar className="h-6 w-6 text-blue-400 mr-3" />
-              <h2 className="text-xl font-semibold text-white">카테고리 분포</h2>
-              <div className="ml-4 flex flex-row items-center">
-                <div className="flex bg-gray-100 rounded-full shadow-inner p-0.5 gap-0.5">
+              <h2 className="sm:text-xl text-base font-semibold text-white">카테고리 분포</h2>
+              <div className="ml-4 flex flex-col sm:flex-row items-center gap-1 sm:gap-0">
+                <div className="flex bg-gray-100 rounded-full shadow-inner p-0.5 gap-0.5 w-full sm:w-auto">
                   <button
-                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                    className={`flex items-center gap-1 px-1 sm:px-2 py-1 rounded-full text-xs sm:text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
                       ${categorySort === 'desc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
                     onClick={() => setCategorySort('desc')}
                     style={{ boxShadow: categorySort === 'desc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
                   >
-                    <FaSortAmountDownAlt className="w-3.5 h-3.5" />
+                    <FaSortAmountDownAlt className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     비율순(내림차순)
                   </button>
                   <button
-                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                    className={`flex items-center gap-1 px-1 sm:px-2 py-1 rounded-full text-xs sm:text-[11px] font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
                       ${categorySort === 'asc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
                     onClick={() => setCategorySort('asc')}
                     style={{ boxShadow: categorySort === 'asc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
                   >
-                    <FaSortAmountUpAlt className="w-3.5 h-3.5" />
+                    <FaSortAmountUpAlt className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     비율순(오름차순)
                   </button>
                 </div>
@@ -536,8 +536,8 @@ const UserAIAssembleStats = ({ onBack }) => {
                       layout
                     >
                       <div className="flex items-center p-4 cursor-pointer" onClick={handleClick}>
-                        <span className="w-40 text-sm font-medium text-gray-300">{category.name}</span>
-                        <span className="w-12 text-right text-sm text-gray-400">{percentage}%</span>
+                        <span className="flex-1 min-w-0 break-words text-sm font-medium text-gray-300">{category.name}</span>
+                        <span className="text-right text-xs sm:text-sm text-gray-400 flex-shrink-0 w-14">{percentage}%</span>
                         <div className="flex-1 ml-4">
                           <div className="w-full bg-white rounded-full h-2">
                             <motion.div
@@ -563,8 +563,8 @@ const UserAIAssembleStats = ({ onBack }) => {
                               const childPercent = childPercentMap[child.id] || 0;
                               return (
                                 <div key={child.id} className="flex items-center py-1">
-                                  <span className="w-40 text-sm text-gray-400">{child.name}</span>
-                                  <span className="w-12 text-right text-sm text-gray-500">{childPercent}%</span>
+                                  <span className="flex-1 min-w-0 break-words text-sm text-gray-400">{child.name}</span>
+                                  <span className="text-right text-xs sm:text-sm text-gray-500 flex-shrink-0 w-14">{childPercent}%</span>
                                   <div className="flex-1 ml-4">
                                     <div className="w-full bg-white rounded-full h-1.5">
                                       <motion.div
