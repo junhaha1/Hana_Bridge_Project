@@ -101,14 +101,15 @@ function CategorySelector({ categoryName, setCategoryName }) {
 const AddAssemble = () => {
   const location = useLocation();
   const { assembleTitle, assembleContent, assembleCategoryName } = location.state || {};
+  const assembleData = useSelector((state) => state.post.assembleData);
   //const [board, setBoard] = useState(null);
 
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
-  const [title, setTitle] = useState(assembleTitle);
-  const [content, setContent] = useState(assembleContent);
-  const [categoryName, setCategoryName] = useState(assembleCategoryName || 'all');
+  const [title, setTitle] = useState(assembleTitle || (assembleData?.title || ''));
+  const [content, setContent] = useState(assembleContent || (assembleData?.content || ''));
+  const [categoryName, setCategoryName] = useState(assembleCategoryName || (assembleData?.categoryName || 'all'));
   const [createAt, setCreateAt] = useState(new Date());
   const likeCount = 0;
   const nickName = useSelector((state) => state.user.nickName);
