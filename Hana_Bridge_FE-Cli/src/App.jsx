@@ -4,6 +4,9 @@ import './index.css'
 import './css/Scroll.css';
 
 import { Routes, Route } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { reloadUserFromStorage } from './store/userSlice';
 import MainBoard from './clientView/MainBoard';
 import DetailBoard from './clientView/board/DetailBoard';
 import AddBoard from './clientView/board/AddBoard';
@@ -21,11 +24,17 @@ import NotFound from './clientView/error/NotFound';
 import RenderError from './clientView/error/RenderError';
 
 import Codi from './clientView/Codi';
-import { useSelector } from 'react-redux';
 
 function App() {
+  const dispatch = useDispatch();
   const nickName = useSelector((state) => state.user.nickName);
   const userRole = useSelector((state) => state.user.role);
+
+  // 앱 시작 시 localStorage에서 사용자 정보를 다시 불러오기
+  useEffect(() => {
+    dispatch(reloadUserFromStorage());
+  }, [dispatch]);
+
   return (
     <div className='font-sans'>
       <Routes>

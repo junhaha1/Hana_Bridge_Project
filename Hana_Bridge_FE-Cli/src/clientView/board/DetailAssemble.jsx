@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
@@ -17,6 +17,47 @@ import { upBottom } from "../../style/CommonBoardStyle";
 import { liekCommentButton, liekComment, userDate, detailCategory, detailTitle, backButton } from "../../style/CommonDetail";
 import { FaUser, FaArrowUp  } from 'react-icons/fa';
 import { BiLike, BiSolidLike } from "react-icons/bi";
+import { setCategory, setItem } from '../../store/userSlice';
+
+// LeftHeader와 동일한 toggleData 정의
+const toggleData = [
+  {
+    title: '프로그래밍 언어',
+    items: ['Python', 'Java', 'JavaScript', 'TypeScript', 'C / C++', '기타 언어'],
+  },
+  {
+    title: '운영체제',
+    items: ['Linux', 'Ubuntu', 'CentOS', '기타 Linux 배포판', 'Windows', 'macOS', 'WSL (Windows Subsystem for Linux)'],
+  },
+  {
+    title: '데이터베이스',
+    items: ['SQL 쿼리', 'MySQL', 'Oracle', 'PostgreSQL', 'NoSQL'],
+  },
+  {
+    title: '프레임워크',
+    items: ['React', 'Spring Boot', 'Django', 'Vue.js', 'Next.js', 'Flask'],
+  },
+  {
+    title: '클라우드',
+    items: ['AWS', 'KT Cloud', 'Azure'],
+  },
+  {
+    title: '인프라',
+    items: ['Docker / 컨테이너', 'Kubernetes', 'Nginx / Apache', 'CI/CD', 'DevOps'],
+  },
+  {
+    title: '알고리즘 & 자료구조',
+    items: ['코딩 테스트', '알고리즘 이론'],
+  },
+  {
+    title: '협업 & 도구',
+    items: ['Git / GitHub'],
+  },
+  {
+    title: '기타',
+    items: ['기타 문서'],
+  },
+];
 
 const DetailAssemble = () => {
   const email = useSelector((state) => state.user.email);
@@ -35,6 +76,7 @@ const DetailAssemble = () => {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
+  const dispatch = useDispatch();
 
   //비회원이 좋아요 눌렀을때 띄울 메시지 
   const [showGuestMessage, setShowGuestMessage] = useState(false);
@@ -145,6 +187,14 @@ const DetailAssemble = () => {
       });
   }, [assembleBoardId]);
 
+  // 게시글 상세화면 진입 시 LeftHeader 카테고리 자동 세팅
+  useEffect(() => {
+    if (board && board.categoryName) {
+      dispatch(setCategory({ category: 'assemble' }));
+      dispatch(setItem(board.categoryName));
+    }
+  }, [board, dispatch]);
+
   const boardDeleteButton = (assembleBoardId) => {
     ApiClient.deleteAssembleBoard(assembleBoardId)
       .then(async (res) => {
@@ -246,11 +296,24 @@ const DetailAssemble = () => {
                       if (myCategory === "assemble") {
                         // fromCategory가 있으면 그것을 사용, 없으면 board.categoryName 사용
                         const targetCategory = fromCategory || board.categoryName;
-                        console.log("targetCategory:", targetCategory);
+                        // openIndex 계산
+                        const mainCategoryIndex = toggleData.findIndex(group => group.title === targetCategory);
+                        let openIndexToSend = undefined;
+                        if (mainCategoryIndex === -1) {
+                          // 하위 카테고리(서브카테고리)인 경우에만 openIndex 전달
+                          for (let i = 0; i < toggleData.length; i++) {
+                            if (toggleData[i].items.includes(targetCategory)) {
+                              openIndexToSend = i;
+                              break;
+                            }
+                          }
+                        }
                         navigate(`/board/${myCategory}`, { 
                           state: { 
                             from: "back", 
-                            categoryName: targetCategory 
+                            categoryName: targetCategory,
+                            isAssembleOpen: true,
+                            ...(openIndexToSend !== undefined ? { openIndex: openIndexToSend } : {})
                           } 
                         });
                       } else {
