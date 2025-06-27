@@ -1,7 +1,7 @@
 //최상단 프레임
 export const aiChatFrame = "w-full h-full flex flex-col bg-zinc-800 overflow-hidden relative";
 //상단 메뉴바 
-export const topNavi = 'flex justify-between bg-white/15';
+export const topNavi = 'flex justify-between max-md:justify-end bg-white/15 max-md:py-2';
 //상단 대화창
 export const chatBox = " h-full bg-white/10 p-4 overflow-x-hidden";
 //초보자 전문자 버튼
@@ -30,7 +30,7 @@ export const answerChooseButton = "text-sm bg-gray-800 text-white px-3 py-1 roun
 
 //모달창 
 // - 최상단 div
-export const upDiv = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9000]";
+export const upDiv = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999]";
 // - 하위 div
 export const settingDiv = "md:h-2/3 max-md:h-full bg-white text-black md:rounded w-full max-w-md";
 export const downDiv = "bg-white text-black rounded p-6 w-full md:w-[600px] max-md:max-w-md max-md:mx-3";
