@@ -432,7 +432,6 @@ const UserAIAssembleStats = ({ onBack }) => {
             <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2">
               {getTrendGroups().length > 0 ? (
                 getTrendGroups().map((item, index) => {
-                  const maxCount = Math.max(...getTrendGroups().map(g => g.count));
                   return (
                     <div key={item.key} className="flex items-center justify-between">
                       <span className="text-sm font-medium text-gray-300 w-40">
@@ -463,7 +462,7 @@ const UserAIAssembleStats = ({ onBack }) => {
                         <div className="w-full bg-white rounded-full h-2">
                           <motion.div
                             initial={{ width: 0 }}
-                            animate={{ width: `${maxCount > 0 ? (item.count / maxCount) * 100 : 0}%` }}
+                            animate={{ width: `${assemblePosts.length > 0 ? (item.count / assemblePosts.length) * 100 : 0}%` }}
                             transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
                             className="h-2 rounded-full bg-purple-500"
                           />
@@ -514,7 +513,7 @@ const UserAIAssembleStats = ({ onBack }) => {
               </div>
             </div>
             
-            <div className="space-y-2 pr-2 h-[26rem] overflow-y-auto">
+            <div className="space-y-2 pr-2 h-[26rem] overflow-y-auto custom-scroll">
               {getSortedCategories().map((category, index) => {
                 const percentage = category._percentage;
                 const isExpanded = expandedCategories.has(category.id);
