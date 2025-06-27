@@ -418,37 +418,33 @@ const AIAssembleStats = () => {
             animate={{ opacity: 1, x: 0 }}
             className="bg-white rounded-lg shadow-md p-6"
           >
-            <div className="flex items-center mb-6">
-              <FaChartBar className="h-6 w-6 text-purple-600 mr-3" />
-              <h2 className="text-xl font-semibold text-gray-900">
-                {periodType === 'monthly' ? '월별' : periodType === 'weekly' ? '주별' : '일자별'} 트렌드
-              </h2>
-              <span className="ml-4 text-sm text-gray-500">해당 기간 게시글 수: {assemblePosts.length}개</span>
-              <div className="ml-4 flex flex-row items-center">
-                <div className="flex bg-gray-100 rounded-full shadow-inner p-1 gap-1">
-                  <button
-                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
-                      ${trendSort === 'date' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
-                    onClick={() => setTrendSort('date')}
-                    style={{ boxShadow: trendSort === 'date' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
-                  >
-                    <FaClock className="w-4 h-4" />
-                    최신순
-                  </button>
-                  <button
-                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
-                      ${trendSort === 'ratio' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
-                    onClick={() => setTrendSort('ratio')}
-                    style={{ boxShadow: trendSort === 'ratio' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
-                  >
-                    <FaChartPie className="w-4 h-4" />
-                    비율순
-                  </button>
-                </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0 mb-6 w-full">
+              <FaChartBar className="h-6 w-6 text-purple-600 mr-0 sm:mr-3 flex-shrink-0" />
+              <h2 className="text-base sm:text-xl font-semibold text-gray-900 whitespace-nowrap">{periodType === 'monthly' ? '월별' : periodType === 'weekly' ? '주별' : '일자별'} 트렌드</h2>
+              <span className="ml-0 sm:ml-4 text-xs sm:text-sm text-gray-500 whitespace-nowrap">해당 기간 게시글 수: {assemblePosts.length}개</span>
+              <div className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-4 flex flex-row flex-wrap gap-1 sm:gap-2 items-center justify-start sm:justify-center">
+                <button
+                  className={`flex items-center gap-1 px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                    ${trendSort === 'date' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                  onClick={() => setTrendSort('date')}
+                  style={{ boxShadow: trendSort === 'date' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                >
+                  <FaClock className="w-3 h-3 sm:w-4 sm:h-4" />
+                  최신순
+                </button>
+                <button
+                  className={`flex items-center gap-1 px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                    ${trendSort === 'ratio' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
+                  onClick={() => setTrendSort('ratio')}
+                  style={{ boxShadow: trendSort === 'ratio' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
+                >
+                  <FaChartPie className="w-3 h-3 sm:w-4 sm:h-4" />
+                  비율순
+                </button>
               </div>
             </div>
             
-            <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2 custom-scroll">
               {getTrendGroups().length > 0 ? (
                 getTrendGroups().map((item, index) => {
                   return (
@@ -505,34 +501,32 @@ const AIAssembleStats = () => {
             animate={{ opacity: 1, x: 0 }}
             className="bg-white rounded-lg shadow-md p-6"
           >
-            <div className="flex items-center mb-6">
-              <FaChartBar className="h-6 w-6 text-blue-600 mr-3" />
-              <h2 className="text-xl font-semibold text-gray-900">카테고리 분포</h2>
-              <div className="ml-4 flex flex-row items-center">
-                <div className="flex bg-gray-100 rounded-full shadow-inner p-1 gap-1">
-                  <button
-                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
-                      ${categorySort === 'desc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
-                    onClick={() => setCategorySort('desc')}
-                    style={{ boxShadow: categorySort === 'desc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
-                  >
-                    <FaSortAmountDownAlt className="w-4 h-4" />
-                    비율순(내림차순)
-                  </button>
-                  <button
-                    className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
-                      ${categorySort === 'asc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
-                    onClick={() => setCategorySort('asc')}
-                    style={{ boxShadow: categorySort === 'asc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
-                  >
-                    <FaSortAmountUpAlt className="w-4 h-4" />
-                    비율순(오름차순)
-                  </button>
-                </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0 mb-6 w-full">
+              <FaChartBar className="h-6 w-6 text-blue-600 mr-0 sm:mr-3 flex-shrink-0" />
+              <h2 className="text-base sm:text-xl font-semibold text-gray-900 whitespace-nowrap">카테고리 분포</h2>
+              <div className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-4 flex flex-row flex-wrap gap-1 sm:gap-2 items-center justify-start sm:justify-center">
+                <button
+                  className={`flex items-center gap-1 px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                    ${categorySort === 'desc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
+                  onClick={() => setCategorySort('desc')}
+                  style={{ boxShadow: categorySort === 'desc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
+                >
+                  <FaSortAmountDownAlt className="w-3 h-3 sm:w-4 sm:h-4" />
+                  비율순(내림차순)
+                </button>
+                <button
+                  className={`flex items-center gap-1 px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-blue-300
+                    ${categorySort === 'asc' ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}
+                  onClick={() => setCategorySort('asc')}
+                  style={{ boxShadow: categorySort === 'asc' ? '0 2px 8px 0 rgba(59,130,246,0.15)' : undefined }}
+                >
+                  <FaSortAmountUpAlt className="w-3 h-3 sm:w-4 sm:h-4" />
+                  비율순(오름차순)
+                </button>
               </div>
             </div>
             
-            <div className="space-y-2 pr-2 h-[26rem] overflow-y-auto custom-scroll">
+            <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2 custom-scroll">
               {[...FIXED_PARENT_CATEGORIES]
                 .map((cat, i) => {
                   // 비율 계산 동일하게 적용
@@ -622,19 +616,19 @@ const AIAssembleStats = () => {
           transition={{ delay: 0.6 }}
           className="bg-white rounded-lg shadow-md p-6"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 mb-6 w-full">
             <div className="flex items-center">
-              <FaComment className="h-6 w-6 text-green-600 mr-3" />
-              <h2 className="text-xl font-semibold text-gray-900">인기 AI답변 게시글 (좋아요순)</h2>
+              <FaComment className="h-6 w-6 text-green-600 mr-0 sm:mr-3 flex-shrink-0" />
+              <h2 className="text-base sm:text-xl font-semibold text-gray-900 whitespace-nowrap ml-2 sm:ml-0">인기 AI답변 게시글 (좋아요순)</h2>
             </div>
             {selectedPeriod.startDate && selectedPeriod.endDate && (
-              <span className="text-sm text-gray-500">
+              <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap ml-0 sm:ml-4">
                 {selectedPeriod.startDate} ~ {selectedPeriod.endDate}
               </span>
             )}
           </div>
           
-          <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2">
+          <div className="space-y-4 max-h-[26rem] overflow-y-auto pr-2 custom-scroll">
             {getSortedAssemblePostsByLikes().length > 0 ? (
               getSortedAssemblePostsByLikes().map((post, index) => (
                 <motion.div
@@ -651,9 +645,11 @@ const AIAssembleStats = () => {
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="text-sm font-medium text-gray-900 truncate">{post.title}</h3>
+                      <h3 className="text-sm font-medium text-gray-900 truncate">
+                        {post.title && post.title.length > 30 ? post.title.substring(0, 30) + '...' : post.title}
+                      </h3>
                       <div className="text-xs text-gray-500 mt-1 w-full overflow-hidden whitespace-nowrap text-ellipsis">
-                        {post.content && post.content.length > 50 ? post.content.substring(0, 50) + '...' : post.content}
+                        {post.content && post.content.length > 30 ? post.content.substring(0, 30) + '...' : post.content}
                       </div>
                       <div className="flex items-center mt-2 space-x-4 text-xs text-gray-500">
                         <span className="flex items-center">
