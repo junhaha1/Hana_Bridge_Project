@@ -75,6 +75,15 @@ export default function LeftHeader() {
   const [isAssembleOpen, setIsAssembleOpen] = useState(false);
   const scrollContainerRef = useRef(null);
 
+  // AI답변 게시판이 선택되었을 때 자동으로 서브메뉴 펼치기
+  useEffect(() => {
+    if (category === 'assemble') {
+      setIsAssembleOpen(true);
+    } else {
+      setIsAssembleOpen(false);
+    }
+  }, [category]);
+
   // 카테고리 클릭 시 스크롤 위치 조정
   useEffect(() => {
     if (openIndex !== null && scrollContainerRef.current) {
@@ -149,11 +158,7 @@ export default function LeftHeader() {
                 key={id}
                 onClick={() => {
                   postBoard(id);
-                  if (id === 'assemble') {
-                    setIsAssembleOpen((prev) => !prev); // toggle 열기/닫기
-                  } else {
-                    setIsAssembleOpen(false); // 다른 버튼 누르면 닫음
-                  }
+                  // assemble 게시판은 자동으로 펼쳐지므로 토글 제거
                 }}
                 className={`w-full text-left flex items-center px-3 py-1 md:py-2 rounded transition  flex justify-between ${
                   category === id

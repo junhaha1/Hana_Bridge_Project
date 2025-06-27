@@ -21,8 +21,11 @@ const AssembleBoard = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const isBack = location.state?.from === "back";
-  const categoryName = location.state?.categoryName ?? "all";
+  const reduxCategory = useSelector((state) => state.user.item); // Redux에서 카테고리 가져오기
+  const categoryName = location.state?.categoryName ?? reduxCategory ?? "all";
   console.log("categoryName: " + categoryName);
+  console.log("reduxCategory: " + reduxCategory);
+  console.log("location.state?.categoryName: " + location.state?.categoryName);
 
   const [searchWord, setSearchWord] = useState(""); //검색창에 입력된 단어를 갱신하는 변수
   const [fixedWord, setFixedWord] = useState(""); //검색이 확정된 단어
@@ -70,6 +73,68 @@ const AssembleBoard = () => {
     }
   }, []);
 
+  // 카테고리 매핑 함수
+  const getCategoryDisplay = (categoryName) => {
+    if (categoryName === "all") return "전체보기";
+    
+    const categoryMapping = {
+      // 프로그래밍 언어
+      "Python": "프로그래밍 언어 - Python",
+      "Java": "프로그래밍 언어 - Java", 
+      "JavaScript": "프로그래밍 언어 - JavaScript",
+      "TypeScript": "프로그래밍 언어 - TypeScript",
+      "C / C++": "프로그래밍 언어 - C / C++",
+      "기타 언어": "프로그래밍 언어 - 기타 언어",
+      
+      // 운영체제
+      "Linux": "운영체제 - Linux",
+      "Ubuntu": "운영체제 - Ubuntu",
+      "CentOS": "운영체제 - CentOS",
+      "기타 Linux 배포판": "운영체제 - 기타 Linux 배포판",
+      "Windows": "운영체제 - Windows",
+      "macOS": "운영체제 - macOS",
+      "WSL (Windows Subsystem for Linux)": "운영체제 - WSL (Windows Subsystem for Linux)",
+      
+      // 데이터베이스
+      "SQL 쿼리": "데이터베이스 - SQL 쿼리",
+      "MySQL": "데이터베이스 - MySQL",
+      "Oracle": "데이터베이스 - Oracle",
+      "PostgreSQL": "데이터베이스 - PostgreSQL",
+      "NoSQL": "데이터베이스 - NoSQL",
+      
+      // 프레임워크
+      "React": "프레임워크 - React",
+      "Spring Boot": "프레임워크 - Spring Boot",
+      "Django": "프레임워크 - Django",
+      "Vue.js": "프레임워크 - Vue.js",
+      "Next.js": "프레임워크 - Next.js",
+      "Flask": "프레임워크 - Flask",
+      
+      // 클라우드
+      "AWS": "클라우드 - AWS",
+      "KT Cloud": "클라우드 - KT Cloud",
+      "Azure": "클라우드 - Azure",
+      
+      // 인프라
+      "Docker / 컨테이너": "인프라 - Docker / 컨테이너",
+      "Kubernetes": "인프라 - Kubernetes",
+      "Nginx / Apache": "인프라 - Nginx / Apache",
+      "CI/CD": "인프라 - CI/CD",
+      "DevOps": "인프라 - DevOps",
+      
+      // 알고리즘 & 자료구조
+      "코딩 테스트": "알고리즘 & 자료구조 - 코딩 테스트",
+      "알고리즘 이론": "알고리즘 & 자료구조 - 알고리즘 이론",
+      
+      // 협업 & 도구
+      "Git / GitHub": "협업 & 도구 - Git / GitHub",
+      
+      // 기타
+      "기타 문서": "기타 - 기타 문서"
+    };
+    
+    return categoryMapping[categoryName] || categoryName;
+  };
 
   const getSearch = (word) => {
     ApiClient.getSearchAssembleBoards(word, sortType, page)
@@ -249,8 +314,13 @@ const AssembleBoard = () => {
 
   //상세 화면으로 
   const boardClick = (assembleboardId) =>{
-    console.log(assembleboardId);
-    navigate(`/detailAssemble/${assembleboardId}`);
+    console.log("boardClick 호출됨, assembleboardId:", assembleboardId);
+    console.log("현재 categoryName:", categoryName);
+    navigate(`/detailAssemble/${assembleboardId}`, {
+      state: { 
+        categoryName: categoryName 
+      }
+    });
   }
 
   //화면 새로고침을 위해 useEffect 의존 변수들을 초기화하는 함수
@@ -297,7 +367,7 @@ const AssembleBoard = () => {
         <div className={`${emptyDiv} mt-4`}>
           {fixedWord.trim().length > 0 ? (
             <>
-              <h3 className="text-2xl font-bold mb-2">'{fixedWord}'에 대한 검색 결과가 없습니다.</h3>
+              <h3 className="text-2xl font-bold mb-2">&apos;{fixedWord}&apos;에 대한 검색 결과가 없습니다.</h3>
             </>
           ):(
             <>
@@ -308,19 +378,24 @@ const AssembleBoard = () => {
       ) : (
         <>
           <div className={sortCheckLayout}>
-            <label htmlFor="sort" className="sr-only">정렬 기준</label>
-            <select
-              id="sort"
-              name="sort"
-              value={sortType}
-              className={`${sortCheckBox} cursor-pointer`}
-              onChange={(e) => {
-                setSortType(e.target.value)
-              }}
-            >
-              <option className="text-black" value="like">좋아요순</option>
-              <option className="text-black" value="latest">최신순</option>
-            </select>
+            <p className="pt-4 text-sm text-gray-400 self-center">
+              카테고리 - {getCategoryDisplay(categoryName)}
+            </p>
+            <div className="flex justify-end">
+              <label htmlFor="sort" className="sr-only">정렬 기준</label>
+              <select
+                id="sort"
+                name="sort"
+                value={sortType}
+                className={`${sortCheckBox} cursor-pointer`}
+                onChange={(e) => {
+                  setSortType(e.target.value)
+                }}
+              >
+                <option className="text-black" value="like">좋아요순</option>
+                <option className="text-black" value="latest">최신순</option>
+              </select>
+            </div>
           </div>
           {boards.map((post) => (
             <div
