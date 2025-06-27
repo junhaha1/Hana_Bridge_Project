@@ -84,6 +84,9 @@ const MyBoard = () => {
 
   //검색어로 검색하기
   const getMySearch = (word) => {
+    // 비회원이면 API 호출하지 않음
+    if(nickName === 'guest') return;
+    
     const getSearchmyBoards = toggle === "code" ? ApiClient.getSearchUserBoards : ApiClient.getSearchUserAssembleBoards;
 
     getSearchmyBoards(toggle, word, sortType, page)
@@ -113,6 +116,11 @@ const MyBoard = () => {
       console.error("API 요청 실패:", err);
       // 게시글 없을때 -> category error
       if(err.code === 'CATEGORY_POST_NOT_FOUND'){
+        setBoards(null);
+      }
+      // 세션 만료나 인증 에러일 때는 홈으로 이동하지 않음
+      else if (err.code && (err.code.includes('UNAUTHORIZED') || err.code.includes('FORBIDDEN'))) {
+        console.log("인증 에러 발생");
         setBoards(null);
       }
       // 404일 때 에러 페이지로 이동
@@ -148,6 +156,9 @@ const MyBoard = () => {
 
   //category 가져오기 
   useEffect(() =>{
+    // 비회원이면 API 호출하지 않음
+    if(nickName === 'guest') return;
+    
    ApiClient.getMyAssembleCategory() 
    .then(async  (res) => {
       if (!res.ok) {
@@ -169,16 +180,23 @@ const MyBoard = () => {
       console.error("API 요청 실패:", err);
       // 게시글 없을때 -> category error
       if(err.code === 'CATEGORY_POST_NOT_FOUND'){
-        setBoards(null);
+        setCategoryNameList([]);
+      }
+      // 세션 만료나 인증 에러일 때는 홈으로 이동하지 않음
+      else if (err.code && (err.code.includes('UNAUTHORIZED') || err.code.includes('FORBIDDEN'))) {
+        console.log("인증 에러 발생");
       }
       // 404일 때 에러 페이지로 이동
       else if (err.code && err.code.includes('NOT_FOUND')) {
         navigate("/error");
       }
     });
-  }, []);
+  }, [nickName]);
 
   useEffect(() => {
+    // 비회원이면 API 호출하지 않음
+    if(nickName === 'guest') return;
+    
     const fetchBoards = async () => {
       setIsLoading(true);
       try{
@@ -233,6 +251,11 @@ const MyBoard = () => {
         if(err.code === 'CATEGORY_POST_NOT_FOUND'){
           setBoards(null);
         }
+        // 세션 만료나 인증 에러일 때는 홈으로 이동하지 않음
+        else if (err.code && (err.code.includes('UNAUTHORIZED') || err.code.includes('FORBIDDEN'))) {
+          console.log("인증 에러 발생");
+          setBoards(null);
+        }
         // 404일 때 에러 페이지로 이동
         else if (err.code && err.code.includes('NOT_FOUND')) {
           navigate("/error");
@@ -243,8 +266,9 @@ const MyBoard = () => {
     };  
     
     fetchBoards();
-  }, [toggle, sortType, redirect, page]);
+  }, [toggle, sortType, redirect, page, nickName]);
 
+  // 비회원 체크를 모든 Hook 호출 이후에 수행
   if(nickName === 'guest'){
     return (
       <div className="md:mt-32 ml-20 pr-40 max-md:mt-2 max-md:ml-2.5 max-md:pr-1">
