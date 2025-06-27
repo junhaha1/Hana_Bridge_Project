@@ -440,12 +440,11 @@ const MyBoard = () => {
                     setIsAiDropdownOpen(!isAiDropdownOpen);
                     setIsDropdownOpen(false);
                   }}
-                  className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "goodAssemble" || toggle === "goodCode" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:px-1.5 max-md:py-1 max-md:text-sm`}
+                  className={`bg-gray-600 font-semibold md:px-4 md:py-2 rounded ${toggle === "assemble" ? "!bg-[#C5BCFF] !text-gray-800 hover:bg-gray-600" : "text-white hover:!bg-[#C5BCFF] hover:!text-gray-800"} max-md:px-1.5 max-md:py-1 max-md:text-sm`}
                 >
                   <span className="flex flex-row">
-                    {toggle === "all" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>AI 답변</span>)}
-                    {toggle === "categoryName" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>{categoryName}</span>)}
-                    {toggle !== "goodAssemble" && toggle !== "goodCode" && "AI 답변"}
+                    {toggle === "assemble" && (<span className="flex flex-row"><BiLike className="mt-0.5 mxr-0.5"/>{categoryName === 'all' ? '전체 보기' : categoryName}</span>)}
+                    {toggle !== "assemble" && "AI 답변"}
                     <FaChevronDown className="mt-1 ml-0.5"/>
                   </span>
                 </button>
