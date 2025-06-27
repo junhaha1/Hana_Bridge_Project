@@ -46,6 +46,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   const [promptLevel, setPromptLevel] = useState(level);
   //ai chat 답변 로딩
   const [isLoading, setIsLoading] = useState(false);
+  const [isAnswering, setIsAnswering] = useState(false);
   const [coreContent, setCoreContent] = useState('');
 
   //게시판 게시 문의 모달
@@ -72,7 +73,6 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
   //질문 tip
   const [isHovered, setIsHovered] = useState(false);
   //답변중인지 체크 
-  const [isAnswering, setIsAnswering] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
 
   /* 사용자 질문 횟수 및 요약 횟수*/
@@ -168,6 +168,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     let partial = "";
 
     setIsCreated(false); //답변 이어받기 비활성화
+    setIsAnswering(true);
     while(true){
       const {done, value} = await reader.read();
       if (done) break;
@@ -231,14 +232,13 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         }
       }
     }
+    setIsAnswering(false);
   }
 
   /*사용자 질문 보낸 뒤 스트림방식으로 답변 받아오기*/
   const streamMessage = async () => {
     /*스트림 연결 전에 실행 흐름 -> 로딩 시작, 답변 받기 전 화면 갱신*/
     setIsLoading(true);
-    setIsAnswering(true);
-    //setResponse("");
     //질문 저장
     const newMessage = { role: '질문', content: input};    
     //전체 메세지 저장
@@ -278,6 +278,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     setIsLoading(false);
 
     setIsCreated(false); //답변 이어받기 비활성화
+    setIsAnswering(true);
 
     while(true){
       const {done, value} = await reader.read();
@@ -342,6 +343,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
         }
       }
     }
+    setIsAnswering(false);
   };
 
   //enter로 전송
@@ -435,42 +437,48 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
     <div className={aiChatFrame}>
       {/* 상단 메뉴바 */}
       <div className={`${topNavi}
-                max-md:overflow-x-auto max-md:whitespace-nowrap
+                max-md:overflow-visible max-md:whitespace-nowrap
                 max-md:[-ms-overflow-style:none]
                 max-md:[scrollbar-width:none]
                 max-md:[&::-webkit-scrollbar]:hidden
-                flex gap-2 px-2 `}>
+                flex max-md:justify-end gap-2 px-2 `}>
         {/* <div className="max-md:invisible md:visible mt-2 "> */}
-          { (!isMobile && isAnswering === false) && (
+          { (!isMobile) && (
             onMode === 'sub' ? (
               <button 
-                className='ml-2'
+                className={`ml-2 ${isAnswering ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => {
-                  onfullTalk(true);
-                  onClose(false);
+                  if (!isAnswering) {
+                    onfullTalk(true);
+                    onClose(false);
+                  }
                 }}
+                disabled={isAnswering}
               >
                 <AiOutlineFullscreen size={20} className='text-white' />
               </button>
             ) : (
               <button 
-                className='ml-2'
+                className={`ml-2 ${isAnswering ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => {
-                  onfullTalk(false);
-                  onClose(true);
+                  if (!isAnswering) {
+                    onfullTalk(false);
+                    onClose(true);
+                  }
                 }}
+                disabled={isAnswering}
               >
                 <AiOutlineFullscreenExit size={20} className='text-white' />
               </button>
             )
           )}
         {/* </div> */}
-        <div className='flex flex-row gap-2 overflow-visible z-[9000] '>
+        <div className='flex flex-row max-md:flex-row-reverse gap-2 overflow-visible z-[100] '>
           <div
-            className="relative z-[9000]"            
+            className="relative z-[100] flex items-center"            
           >
             <button 
-              className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mx-1 
+              className="flex flex-row items-center md:m-1 md:p-1 max-md:mx-1 
               text-sm text-white rounded-full hover:bg-zinc-600 hover:shadow-md"
               onMouseEnter={() => setIsCountInfo(true)}
               onMouseLeave={() => setIsCountInfo(false)}
@@ -480,7 +488,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             </button>
 
             <div
-              className={`absolute top-full left-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+              className={`absolute top-full left-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[99999]`}
               style={{ 
                 opacity: isCountInfo ? 1 : 0,
                 pointerEvents: isHovered ? "auto" : "none",
@@ -504,10 +512,10 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             새 대화창
           </button>
           <div
-            className="relative z-[9000]"            
+            className="relative z-[100]"            
           >
             <button 
-              className="flex flex-row items-center md:m-1 md:p-1 max-md:pt-0.5 max-md:mr-1 text-white 
+              className="flex flex-row items-center md:m-1 md:p-1 max-md:mx-1 text-white 
                 rounded-full hover:bg-zinc-600 hover:shadow-md"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
@@ -517,7 +525,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             </button>
 
             <div
-              className={`absolute top-full right-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[9999]`}
+              className={`absolute top-full right-0 mt-1 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-opacity z-[99999]`}
               style={{ 
                 opacity: isHovered ? 1 : 0,
                 pointerEvents: isHovered ? "auto" : "none",
@@ -536,7 +544,7 @@ function AIChat({onClose, onfullTalk, onMode, setLevel, level}) {
             <IoSettingsSharp/>
           </button>
           <button 
-            className='md:m-2 md:py-1 md:px-1 max-md:mt-1 max-md:mb-1 max-md:p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md'
+            className='md:m-2 md:py-1 md:px-1 max-md:mt-1 max-md:mb-1 max-md:p-1 text-sm text-white rounded-full bg-zinc-500 shadow-md w-[22px] h-[22px] flex items-center justify-center'
             onClick={()=>{
               onfullTalk(false);
               onClose(false);

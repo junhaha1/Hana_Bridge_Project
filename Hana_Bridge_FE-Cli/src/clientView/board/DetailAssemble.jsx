@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from 'react-redux';
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -23,6 +23,7 @@ const DetailAssemble = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
   const { assembleBoardId } = useParams();
+  const location = useLocation();
   const [board, setBoard] = useState(null);
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
@@ -44,12 +45,80 @@ const DetailAssemble = () => {
     }, 2000); // 2초 후 자동 사라짐
   };
   
+  // 카테고리 매핑 함수
+  const getCategoryDisplay = (categoryName) => {
+    if (categoryName === "all") return "전체보기";
+    
+    const categoryMapping = {
+      // 프로그래밍 언어
+      "Python": "프로그래밍 언어 - Python",
+      "Java": "프로그래밍 언어 - Java", 
+      "JavaScript": "프로그래밍 언어 - JavaScript",
+      "TypeScript": "프로그래밍 언어 - TypeScript",
+      "C / C++": "프로그래밍 언어 - C / C++",
+      "기타 언어": "프로그래밍 언어 - 기타 언어",
+      
+      // 운영체제
+      "Linux": "운영체제 - Linux",
+      "Ubuntu": "운영체제 - Ubuntu",
+      "CentOS": "운영체제 - CentOS",
+      "기타 Linux 배포판": "운영체제 - 기타 Linux 배포판",
+      "Windows": "운영체제 - Windows",
+      "macOS": "운영체제 - macOS",
+      "WSL (Windows Subsystem for Linux)": "운영체제 - WSL (Windows Subsystem for Linux)",
+      
+      // 데이터베이스
+      "SQL 쿼리": "데이터베이스 - SQL 쿼리",
+      "MySQL": "데이터베이스 - MySQL",
+      "Oracle": "데이터베이스 - Oracle",
+      "PostgreSQL": "데이터베이스 - PostgreSQL",
+      "NoSQL": "데이터베이스 - NoSQL",
+      
+      // 프레임워크
+      "React": "프레임워크 - React",
+      "Spring Boot": "프레임워크 - Spring Boot",
+      "Django": "프레임워크 - Django",
+      "Vue.js": "프레임워크 - Vue.js",
+      "Next.js": "프레임워크 - Next.js",
+      "Flask": "프레임워크 - Flask",
+      
+      // 클라우드
+      "AWS": "클라우드 - AWS",
+      "KT Cloud": "클라우드 - KT Cloud",
+      "Azure": "클라우드 - Azure",
+      
+      // 인프라
+      "Docker / 컨테이너": "인프라 - Docker / 컨테이너",
+      "Kubernetes": "인프라 - Kubernetes",
+      "Nginx / Apache": "인프라 - Nginx / Apache",
+      "CI/CD": "인프라 - CI/CD",
+      "DevOps": "인프라 - DevOps",
+      
+      // 알고리즘 & 자료구조
+      "코딩 테스트": "알고리즘 & 자료구조 - 코딩 테스트",
+      "알고리즘 이론": "알고리즘 & 자료구조 - 알고리즘 이론",
+      
+      // 협업 & 도구
+      "Git / GitHub": "협업 & 도구 - Git / GitHub",
+      
+      // 기타
+      "기타 문서": "기타 - 기타 문서"
+    };
+    
+    return categoryMapping[categoryName] || categoryName;
+  };
+  
   //맨 위로가기 버튼 
   const scrollToTop = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  // MyBoard에서 온 경우를 확인
+  const isFromMyBoard = location.state?.from === "myBoard";
+  const myBoardToggle = location.state?.toggle; // MyBoard에서 전달받은 토글 상태
+  const fromCategory = location.state?.categoryName; // 이전 페이지에서 전달받은 카테고리
 
   useEffect(() => {
     ApiClient.getAssembleBoard(assembleBoardId)
@@ -154,14 +223,39 @@ const DetailAssemble = () => {
               <>
               <button
               onClick={() => {
-                   console.log("navigate 클릭됨, category:", myCategory); // 디버깅
+                   console.log("navigate 클릭됨, myCategory:", myCategory); // 디버깅
+                   console.log("fromCategory:", fromCategory); // 디버깅
+                   console.log("board.categoryName:", board.categoryName); // 디버깅
 
-                    if (!myCategory || myCategory.trim() === "" || myCategory === "dash") {
+                    // MyBoard에서 온 경우 MyBoard로 돌아가기
+                    if (isFromMyBoard) {
+                      console.log("MyBoard로 이동");
+                      navigate("/board/me", { 
+                        state: { 
+                          from: "back", 
+                          toggle: myBoardToggle, // 전달받은 토글 상태 사용
+                          categoryName: board.categoryName // 카테고리 정보 추가
+                        } 
+                      });
+                    } else if (!myCategory || myCategory.trim() === "" || myCategory === "dash") {
                       console.log("대시보드로 이동");
                       navigate("/dashboard/home");
                     } else {
                       console.log("게시판으로 이동");
-                       navigate(`/board/${myCategory}`, { state: { from: "back", toggle: "assemble" } })
+                      // assemble 게시판인 경우 카테고리 정보와 함께 이동
+                      if (myCategory === "assemble") {
+                        // fromCategory가 있으면 그것을 사용, 없으면 board.categoryName 사용
+                        const targetCategory = fromCategory || board.categoryName;
+                        console.log("targetCategory:", targetCategory);
+                        navigate(`/board/${myCategory}`, { 
+                          state: { 
+                            from: "back", 
+                            categoryName: targetCategory 
+                          } 
+                        });
+                      } else {
+                        navigate(`/board/${myCategory}`, { state: { from: "back" } });
+                      }
                     }
                 }}
                 className={buttonStyle + backButton}
@@ -170,7 +264,7 @@ const DetailAssemble = () => {
               </button>
 
               <div className={detailCardStyle}>
-                <div className={detailCategory}>AI답변 게시판 &gt; {board.categoryName === "all" ? 상세글 : board.categoryName}</div>
+                <div className={detailCategory}>AI답변 게시판 &gt; {getCategoryDisplay(board.categoryName)}</div>
 
                 <h2 className={detailTitle}>{board.title}</h2>
                 <div className={userDate}>
