@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from 'react-redux';
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -23,6 +23,7 @@ const DetailAssemble = () => {
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
   const { assembleBoardId } = useParams();
+  const location = useLocation();
   const [board, setBoard] = useState(null);
   const [isLike, setIsLike] = useState('');
   const [likeCount, setLikeCount] = useState(0);
@@ -50,6 +51,10 @@ const DetailAssemble = () => {
       scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  // MyBoard에서 온 경우를 확인
+  const isFromMyBoard = location.state?.from === "myBoard";
+  const myBoardToggle = location.state?.toggle; // MyBoard에서 전달받은 토글 상태
 
   useEffect(() => {
     ApiClient.getAssembleBoard(assembleBoardId)
@@ -156,7 +161,17 @@ const DetailAssemble = () => {
               onClick={() => {
                    console.log("navigate 클릭됨, category:", myCategory); // 디버깅
 
-                    if (!myCategory || myCategory.trim() === "" || myCategory === "dash") {
+                    // MyBoard에서 온 경우 MyBoard로 돌아가기
+                    if (isFromMyBoard) {
+                      console.log("MyBoard로 이동");
+                      navigate("/board/me", { 
+                        state: { 
+                          from: "back", 
+                          toggle: myBoardToggle, // 전달받은 토글 상태 사용
+                          categoryName: board.categoryName // 카테고리 정보 추가
+                        } 
+                      });
+                    } else if (!myCategory || myCategory.trim() === "" || myCategory === "dash") {
                       console.log("대시보드로 이동");
                       navigate("/dashboard/home");
                     } else {
@@ -170,7 +185,7 @@ const DetailAssemble = () => {
               </button>
 
               <div className={detailCardStyle}>
-                <div className={detailCategory}>AI답변 게시판 &gt; {board.categoryName === "all" ? 상세글 : board.categoryName}</div>
+                <div className={detailCategory}>AI답변 게시판 &gt; {board.categoryName === "all" ? "상세글" : board.categoryName}</div>
 
                 <h2 className={detailTitle}>{board.title}</h2>
                 <div className={userDate}>

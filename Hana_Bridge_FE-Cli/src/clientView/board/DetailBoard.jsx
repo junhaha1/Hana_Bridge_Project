@@ -2,7 +2,7 @@ import ApiClient from "../../service/ApiClient";
 import Header from '../header/Header';
 import { useSelector } from 'react-redux';
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import Comments from './Comments';
 
@@ -12,7 +12,7 @@ import ConfirmBoardModal from "./ConfirmBoardModal";
 import { mainFrame, detailFrame } from "../../style/CommonFrame";
 import { scrollStyle, buttonStyle, detailCardStyle } from "../../style/CommonStyle";
 import { upBottom } from "../../style/CommonBoardStyle";
-import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailCategory, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
+import { editTitle, editContent, liekCommentButton, liekComment, userDate, detailTitle, detailContent, backButton } from "../../style/CommonDetail";
 import { FaUser, FaArrowUp,  FaRegComment  } from 'react-icons/fa';
 import { BiLike, BiSolidLike } from "react-icons/bi";
 
@@ -21,7 +21,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { setCategory } from "../../store/userSlice";
 
 //입력창 코드 테마 가져오기 
 import Editor, { useMonaco } from "@monaco-editor/react";
@@ -30,7 +29,6 @@ import tomorrowNightTheme from 'monaco-themes/themes/Tomorrow-Night.json';
 
 //상세 게시글 보드
 const DetailBoard = () => {
-  const email = useSelector((state) => state.user.email);
   const nickName = useSelector((state) => state.user.nickName);
   const role = useSelector((state) => state.user.role);
 
@@ -45,7 +43,6 @@ const DetailBoard = () => {
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
   const [content, setContent] = useState('');
-  const [updateAt, setUpdateAt] = useState(new Date());
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,6 +51,10 @@ const DetailBoard = () => {
   const [category, setCategory] = useState(myCategory);
   console.log("myCategory(location.state?.category): " + myCategory);
   console.log("category(DetailBoard: useState): " + category);
+
+  // MyBoard에서 온 경우를 확인
+  const isFromMyBoard = location.state?.from === "myBoard";
+  const myBoardToggle = location.state?.toggle; // MyBoard에서 전달받은 토글 상태
 
   const [commentCount, setCommentCount] = useState(0);
   //전처리 된 코드 
@@ -221,7 +222,7 @@ const DetailBoard = () => {
   //수정 저장 버튼
   const saveBoard = (boardId) => {
     const finalCode = ["```" + language, cleanedCode, "```"].join("\n");
-    ApiClient.updateBoard(boardId, category, title, content, finalCode, updateAt)
+    ApiClient.updateBoard(boardId, category, title, content, finalCode, new Date())
     .then(async(res) => {
       if (!res.ok) {
         //error handler 받음 
@@ -328,7 +329,16 @@ const DetailBoard = () => {
                 onClick={() => {
                    console.log("navigate 클릭됨, category:", category); // 디버깅
 
-                    if (!category || category.trim() === "" || category === "dash") {
+                    // MyBoard에서 온 경우 MyBoard로 돌아가기
+                    if (isFromMyBoard) {
+                      console.log("MyBoard로 이동");
+                      navigate("/board/me", { 
+                        state: { 
+                          from: "back", 
+                          toggle: myBoardToggle // 전달받은 토글 상태 사용
+                        } 
+                      });
+                    } else if (!category || category.trim() === "" || category === "dash") {
                       console.log("대시보드로 이동");
                       navigate("/dashboard/home");
                     } else {

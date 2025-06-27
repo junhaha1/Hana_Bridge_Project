@@ -20,6 +20,7 @@ const MyBoard = () => {
   const location = useLocation();
   const isBack = location.state?.from === "back";
   const backToggle = location.state?.toggle ?? "code";
+  const backCategoryName = location.state?.categoryName ?? ""; // 이전에서 전달받은 카테고리
 
   const category = useSelector((state) => state.user.category);
   const nickName = useSelector((state) => state.user.nickName);
@@ -52,7 +53,7 @@ const MyBoard = () => {
   const OpenState = useSelector((state) => state.post.isOpenLeftHeader);
 
   const [categoryNameList, setCategoryNameList] = useState([]);
-  const [categoryName, setCategoryName] = useState('');
+  const [categoryName, setCategoryName] = useState(backCategoryName); // 이전에서 전달받은 카테고리로 초기화
 
   //맨 위로가기 버튼 
   const scrollToTop = () => {
@@ -326,7 +327,9 @@ const MyBoard = () => {
     if (toggle === "assemble" || toggle === "goodAssemble"){
       address = `/detailAssemble/${boardId}`;
     }
-    navigate(address, { state: { category: category } });
+    
+    // MyBoard에서 온 경우 from: "myBoard" 상태와 현재 토글 상태 추가
+    navigate(address, { state: { category: category, from: "myBoard", toggle: toggle } });
     // console.log(category);
   };
 
