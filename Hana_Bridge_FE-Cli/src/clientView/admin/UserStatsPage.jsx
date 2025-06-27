@@ -355,7 +355,7 @@ const UserStatsPage = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/admin')}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2 whitespace-nowrap min-w-0 max-w-[120px] text-sm"
             >
               <span>관리자 홈</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -563,15 +563,16 @@ const UserStatsPage = () => {
                   className="space-y-6"
                 >
                   {/* 시간 범위 선택 */}
-                  <div className="flex items-center space-x-4 mb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-6 space-y-2 sm:space-y-0">
                     <span className="text-sm font-medium text-gray-700">조회 기간:</span>
-                    <div className="flex space-x-2">
-                      {timeRanges.map((range) => (
+                    {/* 첫 번째 그룹: 사용자 지정 제외 */}
+                    <div className="flex space-x-2 overflow-x-auto no-scrollbar">
+                      {timeRanges.filter(r => r.value !== 'custom').map((range) => (
                         <button
                           key={range.value}
                           onClick={() => handleDateRangeChange(range.value)}
                           disabled={statsLoading}
-                          className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                          className={`px-3 py-1 text-sm rounded-md transition-colors whitespace-nowrap flex-shrink-0 max-w-[120px] ${
                             timeRange === range.value
                               ? 'bg-purple-100 text-purple-700'
                               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -581,10 +582,25 @@ const UserStatsPage = () => {
                         </button>
                       ))}
                     </div>
-                    
-                    {/* 선택된 날짜 표시 */}
+                    {/* 두 번째 그룹: 사용자 지정만 모바일에서 아래로 */}
+                    <div className="flex space-x-2 mt-2 sm:mt-0 sm:ml-2">
+                      {timeRanges.filter(r => r.value === 'custom').map((range) => (
+                        <button
+                          key={range.value}
+                          onClick={() => handleDateRangeChange(range.value)}
+                          disabled={statsLoading}
+                          className={`px-3 py-1 text-sm rounded-md transition-colors whitespace-nowrap flex-shrink-0 max-w-[120px] ${
+                            timeRange === range.value
+                              ? 'bg-purple-100 text-purple-700'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          } ${statsLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {range.label}
+                        </button>
+                      ))}
+                    </div>
                     {(startDate || endDate) && (
-                      <div className="flex items-center space-x-2 ml-4">
+                      <div className="flex items-center space-x-2 sm:ml-4 mt-2 sm:mt-0">
                         <FaCalendar className="h-4 w-4 text-gray-500" />
                         <span className="text-sm text-gray-600">
                           {startDate && endDate ? `${startDate} ~ ${endDate}` : '날짜 선택 중...'}
@@ -640,37 +656,37 @@ const UserStatsPage = () => {
                       animate={{ opacity: 1, y: 0 }}
                       className="bg-gray-50 rounded-lg p-4 mb-6"
                     >
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-2">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full">
+                        <div className="flex items-center space-x-2 w-full">
                           <label className="text-sm font-medium text-gray-700">시작일:</label>
                           <input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent min-w-0 w-full"
                           />
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 w-full">
                           <label className="text-sm font-medium text-gray-700">종료일:</label>
                           <input
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
                             min={startDate}
-                            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent min-w-0 w-full"
                           />
                         </div>
                         <button
                           onClick={handleCustomDateSubmit}
                           disabled={!startDate || !endDate || statsLoading}
-                          className="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                          className="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors w-full sm:w-auto"
                         >
                           {statsLoading ? '업데이트 중...' : '적용'}
                         </button>
                         <button
                           onClick={() => setShowDatePicker(false)}
                           disabled={statsLoading}
-                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full sm:w-auto"
                         >
                           취소
                         </button>
@@ -687,7 +703,7 @@ const UserStatsPage = () => {
                       <div className="flex flex-row items-center">
                         <div className="flex bg-gray-100 rounded-full shadow-inner p-1 gap-1">
                           <button
-                            className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                            className={`flex items-center gap-1 px-2 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300 whitespace-nowrap min-w-0 max-w-[90px] flex-shrink-0
                               ${barSort === 'recent' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
                             onClick={() => setBarSort('recent')}
                             style={{ boxShadow: barSort === 'recent' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
@@ -696,7 +712,7 @@ const UserStatsPage = () => {
                             최근순
                           </button>
                           <button
-                            className={`flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300
+                            className={`flex items-center gap-1 px-2 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 border-none outline-none focus:ring-2 focus:ring-purple-300 whitespace-nowrap min-w-0 max-w-[90px] flex-shrink-0
                               ${barSort === 'users' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`}
                             onClick={() => setBarSort('users')}
                             style={{ boxShadow: barSort === 'users' ? '0 2px 8px 0 rgba(139,92,246,0.15)' : undefined }}
@@ -708,7 +724,7 @@ const UserStatsPage = () => {
                       </div>
                     </div>
                     {periodUsers && periodUsers.length > 0 ? (
-                      <div className="max-h-72 overflow-y-auto">
+                      <div className="max-h-72 overflow-y-auto customScroll">
                         <div className="grid grid-cols-6 gap-4 items-end">
                           {(() => {
                             let grouped = getGroupedData();
